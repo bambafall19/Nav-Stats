@@ -286,17 +286,15 @@ export default async function MatchDetailPage({ params }: Props) {
             />
           )}
 
-          {/* IA Estimation */}
-          {totalProno > 0 && (
-            <AIEstimation
-              equipeA={equipeA}
-              equipeB={equipeB}
-              pctA={pctA}
-              pctNul={pctNul}
-              pctB={pctB}
-              totalProno={totalProno}
-            />
-          )}
+          {/* Pronostics de la communauté — visible par tous */}
+          <AIEstimation
+            equipeA={equipeA}
+            equipeB={equipeB}
+            pctA={pctA}
+            pctNul={pctNul}
+            pctB={pctB}
+            totalProno={totalProno}
+          />
 
           {/* Statistiques équipes */}
           <div className="card" style={{ padding: 24 }}>

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Outfit, Roboto_Mono } from "next/font/google";
 import "./globals.css";
+import PWAInstallBanner from "@/components/shared/PWAInstallBanner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,8 +28,8 @@ export const metadata: Metadata = {
   keywords: ["navétanes", "khombole", "football", "pronostics", "statistiques", "sénégal"],
   authors: [{ name: "NavéStats" }],
   icons: {
-    icon: "/favicon.png",
-    apple: "/favicon.png",
+    icon: "/icons/icon-192.png",
+    apple: "/icons/icon-192.png",
   },
   openGraph: {
     title: "NavéStats – Pronostics Navétanes Khombole",
@@ -54,6 +55,7 @@ export default function RootLayout({
     <html lang="fr" className={`${inter.variable} ${outfit.variable} ${robotoMono.variable}`} suppressHydrationWarning>
       <body className="font-inter antialiased bg-surface text-text-primary">
         {children}
+        <PWAInstallBanner />
       </body>
     </html>
   );
