@@ -103,7 +103,7 @@ export default function Header() {
         </Link>
 
         {/* Partnership Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ width: 1, height: 22, background: 'var(--color-border)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <img
@@ -111,7 +111,7 @@ export default function Header() {
               alt="ONCAV Zone 6"
               style={{ width: 28, height: 28, objectFit: 'contain' }}
             />
-            <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.1 }} className="hidden-mobile">
+            <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.1 }}>
               Zone 6<br />Khombole
             </span>
           </div>
@@ -211,7 +211,7 @@ export default function Header() {
                       : profile.username.charAt(0).toUpperCase()
                     }
                   </div>
-                  <span style={{ fontSize: '0.875rem', fontWeight: 600, maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span className="hidden-mobile" style={{ fontSize: '0.875rem', fontWeight: 600, maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {profile.username}
                   </span>
                   <div style={{

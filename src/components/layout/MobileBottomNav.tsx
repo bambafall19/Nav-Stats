@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Home, CalendarDays, Trophy, BarChart2, MessageSquare } from 'lucide-react'
 
 const mobileNavLinks = [
-  { href: '/', label: 'Accueil', icon: '🏠' },
-  { href: '/matchs', label: 'Matchs', icon: '⚽' },
-  { href: '/classements', label: 'Classement', icon: '🏆' },
-  { href: '/statistiques', label: 'Stats', icon: '📊' },
-  { href: '/communaute', label: 'Comm.', icon: '💬' },
+  { href: '/', label: 'Accueil', icon: <Home size={22} /> },
+  { href: '/matchs', label: 'Matchs', icon: <CalendarDays size={22} /> },
+  { href: '/classements', label: 'Classement', icon: <Trophy size={22} /> },
+  { href: '/statistiques', label: 'Stats', icon: <BarChart2 size={22} /> },
+  { href: '/communaute', label: 'Comm.', icon: <MessageSquare size={22} /> },
 ]
 
 export default function MobileBottomNav() {
@@ -72,10 +73,15 @@ export default function MobileBottomNav() {
             }}
           >
             <span style={{
-              fontSize: isActive ? '1.2rem' : '1.15rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               marginRight: isActive ? 6 : 0,
               transition: 'all 0.2s ease',
-            }}>{link.icon}</span>
+              color: isActive ? 'white' : 'var(--color-text-secondary)',
+            }}>
+              {link.icon}
+            </span>
             
             {isActive && (
               <span style={{
