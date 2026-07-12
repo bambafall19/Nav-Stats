@@ -25,6 +25,14 @@ interface Team {
   points_classement: number
 }
 
+interface TopButeur {
+  id: string
+  prenom: string
+  nom: string
+  buts: number
+  equipe: Pick<Team, 'nom' | 'couleur_principale' | 'couleur_secondaire' | 'sigle' | 'logo_url'> | null
+}
+
 export default async function StatistiquesPage() {
   const supabase = await createClient()
 
@@ -41,7 +49,7 @@ export default async function StatistiquesPage() {
     .gt('buts', 0)
     .limit(10)
 
-  const topButeurs = (rawButeurs || []) as any[]
+  const topButeurs = (rawButeurs || []) as TopButeur[]
 
   const teams = (equipes || []) as Team[]
   const pouleA = teams.filter(t => t.poule === 'A')
@@ -54,85 +62,161 @@ export default async function StatistiquesPage() {
     { name: 'Poule C', teams: pouleC, color: '#B91C1C', bg: 'rgba(185,28,28,0.05)' },
   ]
 
+  const meilleureAttaque = [...teams].sort((a, b) => b.buts_marques - a.buts_marques)[0]
+  const meilleureDefense = [...teams].sort((a, b) => a.buts_encaisses - b.buts_encaisses)[0]
+  const meilleureForme = [...teams].sort((a, b) => {
+    const pctA = a.matchs_joues > 0 ? a.victoires / a.matchs_joues : 0
+    const pctB = b.matchs_joues > 0 ? b.victoires / b.matchs_joues : 0
+    return pctB - pctA
+  })[0]
+  const cleanSheets = teams.filter(t => t.matchs_joues > 0 && t.buts_encaisses === 0).length
+
   function StandingsTable({ pouleTeams, color, bg }: { pouleTeams: Team[]; color: string; bg: string }) {
     return (
       <div className="card" style={{ overflow: 'hidden', marginBottom: 28, borderTop: `4px solid ${color}`, boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
-        <table className="data-table">
-          <thead>
-            <tr style={{ background: bg }}>
-              <th style={{ color: color, fontWeight: 800, width: 50, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>#</th>
-              <th style={{ color: color, fontWeight: 800, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Équipe</th>
-              <th style={{ textAlign: 'center', width: 45, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>MJ</th>
-              <th style={{ textAlign: 'center', width: 45, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-primary)' }}>V</th>
-              <th style={{ textAlign: 'center', width: 45, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#D97706' }}>N</th>
-              <th style={{ textAlign: 'center', width: 45, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-red)' }}>D</th>
-              <th style={{ textAlign: 'center', width: 55, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Diff</th>
-              <th style={{ textAlign: 'center', width: 55, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: color }}>Pts</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pouleTeams.map((eq, i) => {
-              const diff = eq.buts_marques - eq.buts_encaisses
-              const isQualifie = eq.poule === 'A' ? i < 2 : i < 3
-
-              return (
-                <tr key={eq.id} style={{
-                  position: 'relative',
-                  borderLeft: isQualifie ? '4px solid #00A651' : '4px solid transparent',
-                  background: isQualifie ? 'rgba(0,166,81,0.01)' : 'transparent',
-                }}>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
-                      <span style={{ fontWeight: 700, color: isQualifie ? '#00A651' : 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-                        {i + 1}
-                      </span>
-                      {isQualifie && (
-                        <span title="Qualifié" style={{ width: 6, height: 6, borderRadius: '50%', background: '#00A651' }} />
-                      )}
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      {eq.logo_url ? (
-                        <img src={eq.logo_url} alt={eq.nom} style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} />
-                      ) : (
-                        <div style={{
-                          width: 32, height: 32, borderRadius: 8,
-                          background: `linear-gradient(135deg, ${eq.couleur_principale || '#006233'}, ${eq.couleur_secondaire || '#FBBF00'})`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.65rem', fontWeight: 800, color: 'white', flexShrink: 0,
-                        }}>
-                          {eq.sigle || eq.nom.charAt(0)}
-                        </div>
-                      )}
-                      <div>
-                        <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--color-text-primary)' }}>{eq.nom}</div>
-                        <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{eq.asc_nom}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{ textAlign: 'center', fontSize: '0.85rem', fontFamily: 'var(--font-mono)', color: 'var(--color-text-secondary)' }}>{eq.matchs_joues}</td>
-                  <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--color-primary)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>{eq.victoires}</td>
-                  <td style={{ textAlign: 'center', color: '#D97706', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>{eq.nuls}</td>
-                  <td style={{ textAlign: 'center', color: 'var(--color-red)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>{eq.defaites}</td>
-                  <td style={{ textAlign: 'center', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'var(--font-mono)', color: diff > 0 ? 'var(--color-primary)' : diff < 0 ? 'var(--color-red)' : 'var(--color-text-secondary)' }}>
-                    {diff > 0 ? `+${diff}` : diff}
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <span className="stat-number" style={{ fontSize: '1rem', fontWeight: 800, color: color, fontFamily: 'var(--font-outfit)' }}>{eq.points_classement}</span>
-                  </td>
+        <div className="desktop-table-only">
+          <div className="table-scroll">
+            <table className="data-table" style={{ minWidth: 620 }}>
+              <thead>
+                <tr style={{ background: bg }}>
+                  <th style={{ color: color, fontWeight: 800, width: 50, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>#</th>
+                  <th style={{ color: color, fontWeight: 800, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Équipe</th>
+                  <th style={{ textAlign: 'center', width: 45, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>MJ</th>
+                  <th style={{ textAlign: 'center', width: 45, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-primary)' }}>V</th>
+                  <th style={{ textAlign: 'center', width: 45, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#D97706' }}>N</th>
+                  <th style={{ textAlign: 'center', width: 45, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-red)' }}>D</th>
+                  <th style={{ textAlign: 'center', width: 55, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Diff</th>
+                  <th style={{ textAlign: 'center', width: 55, fontFamily: 'var(--font-outfit)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: color }}>Pts</th>
                 </tr>
-              )
-            })}
-            {pouleTeams.length === 0 && (
-              <tr>
-                <td colSpan={8} style={{ padding: 32, textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-                  Aucune équipe dans cette poule
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {pouleTeams.map((eq, i) => {
+                  const diff = eq.buts_marques - eq.buts_encaisses
+                  const isQualifie = eq.poule === 'A' ? i < 2 : i < 3
+
+                  return (
+                    <tr key={eq.id} style={{
+                      position: 'relative',
+                      borderLeft: isQualifie ? '4px solid #00A651' : '4px solid transparent',
+                      background: isQualifie ? 'rgba(0,166,81,0.01)' : 'transparent',
+                    }}>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+                          <span style={{ fontWeight: 700, color: isQualifie ? '#00A651' : 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+                            {i + 1}
+                          </span>
+                          {isQualifie && (
+                            <span title="Qualifié" style={{ width: 6, height: 6, borderRadius: '50%', background: '#00A651' }} />
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          {eq.logo_url ? (
+                            <img src={eq.logo_url} alt={eq.nom} style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} />
+                          ) : (
+                            <div style={{
+                              width: 32, height: 32, borderRadius: 8,
+                              background: `linear-gradient(135deg, ${eq.couleur_principale || '#006233'}, ${eq.couleur_secondaire || '#FBBF00'})`,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: '0.65rem', fontWeight: 800, color: 'white', flexShrink: 0,
+                            }}>
+                              {eq.sigle || eq.nom.charAt(0)}
+                            </div>
+                          )}
+                          <div>
+                            <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--color-text-primary)' }}>{eq.nom}</div>
+                            <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{eq.asc_nom}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style={{ textAlign: 'center', fontSize: '0.85rem', fontFamily: 'var(--font-mono)', color: 'var(--color-text-secondary)' }}>{eq.matchs_joues}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--color-primary)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>{eq.victoires}</td>
+                      <td style={{ textAlign: 'center', color: '#D97706', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>{eq.nuls}</td>
+                      <td style={{ textAlign: 'center', color: 'var(--color-red)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>{eq.defaites}</td>
+                      <td style={{ textAlign: 'center', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'var(--font-mono)', color: diff > 0 ? 'var(--color-primary)' : diff < 0 ? 'var(--color-red)' : 'var(--color-text-secondary)' }}>
+                        {diff > 0 ? `+${diff}` : diff}
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <span className="stat-number" style={{ fontSize: '1rem', fontWeight: 800, color: color, fontFamily: 'var(--font-outfit)' }}>{eq.points_classement}</span>
+                      </td>
+                    </tr>
+                  )
+                })}
+                {pouleTeams.length === 0 && (
+                  <tr>
+                    <td colSpan={8} style={{ padding: 32, textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
+                      Aucune équipe dans cette poule
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="mobile-table-cards" style={{ background: bg }}>
+          {pouleTeams.length === 0 ? (
+            <div style={{ padding: 20, textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
+              Aucune équipe dans cette poule
+            </div>
+          ) : pouleTeams.map((eq, i) => {
+            const diff = eq.buts_marques - eq.buts_encaisses
+            const isQualifie = eq.poule === 'A' ? i < 2 : i < 3
+            const stats = [
+              { label: 'MJ', value: eq.matchs_joues, valueColor: 'var(--color-text-secondary)' },
+              { label: 'V', value: eq.victoires, valueColor: 'var(--color-primary)' },
+              { label: 'N', value: eq.nuls, valueColor: '#D97706' },
+              { label: 'D', value: eq.defaites, valueColor: 'var(--color-red)' },
+              { label: 'Diff', value: diff > 0 ? `+${diff}` : diff, valueColor: diff > 0 ? 'var(--color-primary)' : diff < 0 ? 'var(--color-red)' : 'var(--color-text-secondary)' },
+              { label: 'Pts', value: eq.points_classement, valueColor: color },
+            ]
+
+            return (
+              <div key={eq.id} style={{
+                background: 'var(--color-surface-card)',
+                border: '1px solid var(--color-border)',
+                borderLeft: isQualifie ? '4px solid #00A651' : '4px solid transparent',
+                borderRadius: 12,
+                padding: 12,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 32, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+                    <span style={{ fontWeight: 800, color: isQualifie ? '#00A651' : 'var(--color-text-muted)', fontSize: '0.9rem' }}>{i + 1}</span>
+                    {isQualifie && <span title="Qualifié" style={{ width: 6, height: 6, borderRadius: '50%', background: '#00A651' }} />}
+                  </div>
+
+                  {eq.logo_url ? (
+                    <img src={eq.logo_url} alt={eq.nom} style={{ width: 38, height: 38, borderRadius: 9, objectFit: 'cover', flexShrink: 0, boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }} />
+                  ) : (
+                    <div style={{
+                      width: 38, height: 38, borderRadius: 9,
+                      background: `linear-gradient(135deg, ${eq.couleur_principale || '#006233'}, ${eq.couleur_secondaire || '#FBBF00'})`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '0.68rem', fontWeight: 800, color: 'white', flexShrink: 0,
+                    }}>
+                      {eq.sigle || eq.nom.charAt(0)}
+                    </div>
+                  )}
+
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--color-text-primary)', lineHeight: 1.15, overflowWrap: 'anywhere' }}>{eq.nom}</div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', lineHeight: 1.25, overflowWrap: 'anywhere' }}>{eq.asc_nom}</div>
+                  </div>
+                </div>
+
+                <div className="mobile-stat-grid">
+                  {stats.map(stat => (
+                    <div key={stat.label} className="mobile-stat-cell">
+                      <span className="mobile-stat-label">{stat.label}</span>
+                      <span className="mobile-stat-value" style={{ color: stat.valueColor }}>{stat.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
     )
   }
@@ -144,6 +228,50 @@ export default async function StatistiquesPage() {
           <h1 className="section-title" style={{ fontSize: '2rem', marginBottom: 4 }}>📊 Poules & Statistiques</h1>
           <p className="section-subtitle">Les classements officiels du tournoi et performances des joueurs</p>
         </div>
+
+        <section className="stats-highlight-grid">
+          {[
+            {
+              label: 'Meilleure attaque',
+              value: meilleureAttaque ? `${meilleureAttaque.buts_marques} buts` : '—',
+              detail: meilleureAttaque?.nom || 'Aucune donnée',
+              icon: '⚡',
+              color: '#006233',
+            },
+            {
+              label: 'Meilleure défense',
+              value: meilleureDefense ? `${meilleureDefense.buts_encaisses} encaissé(s)` : '—',
+              detail: meilleureDefense?.nom || 'Aucune donnée',
+              icon: '🧱',
+              color: '#1D4ED8',
+            },
+            {
+              label: 'Forme récente',
+              value: meilleureForme && meilleureForme.matchs_joues > 0 ? `${Math.round((meilleureForme.victoires / meilleureForme.matchs_joues) * 100)}%` : '—',
+              detail: meilleureForme?.nom || 'Aucune donnée',
+              icon: '📈',
+              color: '#B45309',
+            },
+            {
+              label: 'Clean sheets',
+              value: cleanSheets,
+              detail: 'équipes invaincues défensivement',
+              icon: '🧤',
+              color: '#7C3AED',
+            },
+          ].map(item => (
+            <article key={item.label} className="card" style={{ padding: 18, display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 14, background: `${item.color}14`, color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
+                {item.icon}
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <span style={{ display: 'block', color: 'var(--color-text-muted)', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{item.label}</span>
+                <strong style={{ display: 'block', color: item.color, fontFamily: 'var(--font-outfit)', fontSize: '1.2rem', lineHeight: 1.1 }}>{item.value}</strong>
+                <small style={{ display: 'block', color: 'var(--color-text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.detail}</small>
+              </div>
+            </article>
+          ))}
+        </section>
 
         <div style={{ display: 'grid', gap: 32 }} className="stats-page-grid">
           {/* Poules de qualification */}
@@ -188,20 +316,20 @@ export default async function StatistiquesPage() {
                     }}>{i < 3 ? ['🥇','🥈','🥉'][i] : i + 1}</div>
 
                     {/* Team mini-logo */}
-                    {(j.equipe as any)?.logo_url ? (
-                      <img src={(j.equipe as any).logo_url} alt={(j.equipe as any).nom} style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }} />
+                    {j.equipe?.logo_url ? (
+                      <img src={j.equipe.logo_url} alt={j.equipe.nom} style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }} />
                     ) : (
                       <div style={{
                         width: 32, height: 32, borderRadius: 6,
-                        background: `linear-gradient(135deg, ${(j.equipe as any)?.couleur_principale || '#006233'}, ${(j.equipe as any)?.couleur_secondaire || '#FBBF00'})`,
+                        background: `linear-gradient(135deg, ${j.equipe?.couleur_principale || '#006233'}, ${j.equipe?.couleur_secondaire || '#FBBF00'})`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: '0.6rem', fontWeight: 800, color: 'white', flexShrink: 0,
-                      }}>{(j.equipe as any)?.sigle || '?'}</div>
+                      }}>{j.equipe?.sigle || '?'}</div>
                     )}
 
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontWeight: 700, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{j.prenom} {j.nom}</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: 1 }}>{(j.equipe as any)?.nom}</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: 1 }}>{j.equipe?.nom}</div>
                     </div>
 
                     <div style={{
@@ -267,8 +395,20 @@ export default async function StatistiquesPage() {
         </div>
 
         <style>{`
+          .stats-highlight-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+          }
           @media (min-width: 1024px) {
             .stats-page-grid { grid-template-columns: 2fr 1fr !important; }
+          }
+          @media (max-width: 920px) {
+            .stats-highlight-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          }
+          @media (max-width: 560px) {
+            .stats-highlight-grid { grid-template-columns: 1fr; }
           }
         `}</style>
       </div>

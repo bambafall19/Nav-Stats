@@ -1,13 +1,8 @@
+import Image from 'next/image'
+import { ACTUALITE_CATEGORY_CONFIG } from '@/lib/constants/actualiteCategories'
 import type { Database } from '@/types/database.types'
 
 type Actualite = Database['public']['Tables']['actualites']['Row']
-
-const categorieColor: Record<string, { bg: string; color: string; label: string }> = {
-  actualite: { bg: 'rgba(59,130,246,0.1)', color: '#1d4ed8', label: '📰 Actualité' },
-  annonce: { bg: 'rgba(251,191,0,0.15)', color: '#7a5900', label: '📢 Annonce' },
-  resultat: { bg: 'rgba(0,166,81,0.1)', color: '#006233', label: '🏆 Résultat' },
-  classement: { bg: 'rgba(139,92,246,0.1)', color: '#6d28d9', label: '📊 Classement' },
-}
 
 export default function Actualites({ actualites }: { actualites: Actualite[] }) {
   return (
@@ -17,7 +12,7 @@ export default function Actualites({ actualites }: { actualites: Actualite[] }) 
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {actualites.map(actu => {
-          const cat = categorieColor[actu.categorie] || categorieColor.actualite
+          const cat = ACTUALITE_CATEGORY_CONFIG[actu.categorie as keyof typeof ACTUALITE_CATEGORY_CONFIG] || ACTUALITE_CATEGORY_CONFIG.actualite
           return (
             <div key={actu.id} className="card" style={{ padding: 20 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
@@ -40,7 +35,7 @@ export default function Actualites({ actualites }: { actualites: Actualite[] }) 
                   </p>
                 </div>
                 {actu.image_url && (
-                  <img src={actu.image_url} alt={actu.titre} style={{ width: 72, height: 72, borderRadius: 'var(--radius-md)', objectFit: 'cover', flexShrink: 0 }} />
+                  <Image src={actu.image_url} alt={actu.titre} width={72} height={72} style={{ borderRadius: 'var(--radius-md)', objectFit: 'cover', flexShrink: 0 }} />
                 )}
               </div>
             </div>

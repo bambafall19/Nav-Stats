@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import FormSubmitButton from '@/components/shared/FormSubmitButton'
+import LinkButton from '@/components/shared/LinkButton'
 import type { Database } from '@/types/database.types'
 
 type Equipe = Database['public']['Tables']['equipes']['Row']
@@ -46,8 +48,8 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
           Connectez-vous pour pronostiquer ce match et gagner des points !
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/auth/login" className="btn btn-primary" style={{ textDecoration: 'none' }}>🔑 Connexion</Link>
-          <Link href="/auth/register" className="btn btn-outline" style={{ textDecoration: 'none' }}>✨ S'inscrire</Link>
+          <LinkButton href="/auth/login" variant="primary" size="md">🔑 Connexion</LinkButton>
+          <LinkButton href="/auth/register" variant="secondary" size="md">✨ S'inscrire</LinkButton>
         </div>
       </div>
     )
@@ -225,15 +227,9 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
           </div>
         )}
 
-        <button
-          type="submit"
-          className="btn btn-primary"
-          disabled={loading || !resultat}
-          style={{ width: '100%', opacity: (!resultat || loading) ? 0.7 : 1 }}
-          id="submit-pronostic"
-        >
-          {loading ? '⏳ Enregistrement...' : '🎯 Valider mon Pronostic'}
-        </button>
+        <FormSubmitButton loading={loading} disabled={!resultat} icon="🎯" loadingIcon="⏳" loadingText="Enregistrement...">
+          Valider mon Pronostic
+        </FormSubmitButton>
       </form>
     </div>
   )

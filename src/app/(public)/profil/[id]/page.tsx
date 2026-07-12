@@ -83,7 +83,16 @@ export default async function ProfilPage({ params }: Props) {
     supabase.from('user_badges').select('*, badge:badges_types(*)').eq('user_id', id).order('obtenu_le', { ascending: false }),
     supabase
       .from('pronostics')
-      .select('*, match:matchs(*, equipe_a:equipes!matchs_equipe_a_id_fkey(*), equipe_b:equipes!matchs_equipe_b_id_fkey(*))')
+      .select(`
+        *,
+        premier_buteur:joueurs!pronostics_premier_buteur_id_fkey(nom, prenom),
+        homme_du_match:joueurs!pronostics_homme_du_match_predit_id_fkey(nom, prenom),
+        match:matchs(
+          id, date_match, heure_match, statut, phase, score_a, score_b, homme_du_match_id,
+          equipe_a:equipes!matchs_equipe_a_id_fkey(nom, sigle, logo_url, couleur_principale),
+          equipe_b:equipes!matchs_equipe_b_id_fkey(nom, sigle, logo_url, couleur_principale)
+        )
+      `)
       .eq('user_id', id)
       .order('created_at', { ascending: false })
       .limit(12),
@@ -248,7 +257,7 @@ export default async function ProfilPage({ params }: Props) {
                 </div>
               )}
               {isOwnProfile && (
-                <Link href="/auth/register" className="btn btn-sm" style={{ marginTop: 16, textDecoration: 'none', background: 'rgba(255,255,255,0.18)', color: 'white', border: '1px solid rgba(255,255,255,0.26)' }}>
+                <Link href="/profil/modifier" className="btn btn-sm" style={{ marginTop: 16, textDecoration: 'none', background: 'rgba(255,255,255,0.18)', color: 'white', border: '1px solid rgba(255,255,255,0.26)' }}>
                   Modifier mon profil
                 </Link>
               )}
@@ -297,21 +306,18 @@ export default async function ProfilPage({ params }: Props) {
                     if (!match) return null
                     const isCorrect = p.est_correct === true
                     const isWrong = p.est_correct === false
+                    // 🔒 Hide details of upcoming matches for other users
+                    const isHidden = !isOwnProfile && (match.statut === 'a_venir' || match.statut === 'en_cours')
                     return (
                       <Link key={p.id} href={`/matchs/${p.match_id}`} style={{ textDecoration: 'none' }}>
                         <div className="profile-row">
                           <div style={{
-                            width: 42,
-                            height: 42,
-                            borderRadius: 12,
-                            background: isCorrect ? 'rgba(0,166,81,0.1)' : isWrong ? 'rgba(232,0,45,0.1)' : 'var(--color-surface)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '1.15rem',
-                            flexShrink: 0,
+                            width: 42, height: 42, borderRadius: 12,
+                            background: isHidden ? 'var(--color-surface)' : isCorrect ? 'rgba(0,166,81,0.1)' : isWrong ? 'rgba(232,0,45,0.1)' : 'var(--color-surface)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '1.15rem', flexShrink: 0,
                           }}>
-                            {isCorrect ? '✅' : isWrong ? '❌' : '⏳'}
+                            {isHidden ? '🔒' : isCorrect ? '✅' : isWrong ? '❌' : '⏳'}
                           </div>
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4 }}>
@@ -320,17 +326,35 @@ export default async function ProfilPage({ params }: Props) {
                               </strong>
                               <span className="badge badge-gray" style={{ fontSize: '0.65rem' }}>{phaseLabel(match.phase)}</span>
                             </div>
-                            <div style={{ fontSize: '0.76rem', color: 'var(--color-text-secondary)' }}>
-                              Prédit : {resultLabel(p, match)}
-                              {p.score_a_predit !== null && p.score_b_predit !== null && ` (${p.score_a_predit}-${p.score_b_predit})`}
-                              {' · '}{formatDate(p.created_at)}
-                            </div>
+                            {isHidden ? (
+                              <div style={{ fontSize: '0.76rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
+                                🔒 Masqué — Match non commencé
+                              </div>
+                            ) : (
+                              <div style={{ fontSize: '0.76rem', color: 'var(--color-text-secondary)' }}>
+                                Prédit : {resultLabel(p, match)}
+                                {p.score_a_predit !== null && p.score_b_predit !== null && ` (${p.score_a_predit}-${p.score_b_predit})`}
+                                {p.premier_buteur && (
+                                  <span style={{ color: '#1D4ED8' }}> · ⚽ {p.premier_buteur.prenom} {p.premier_buteur.nom}</span>
+                                )}
+                                {p.homme_du_match && (
+                                  <span style={{ color: '#7C3AED' }}> · ⭐ {p.homme_du_match.prenom} {p.homme_du_match.nom}</span>
+                                )}
+                                {' · '}{formatDate(p.created_at)}
+                              </div>
+                            )}
                           </div>
                           <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                            <div className="stat-number" style={{ fontSize: '0.95rem', color: p.points_gagnes > 0 ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
-                              +{p.points_gagnes || 0}
-                            </div>
-                            <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>pts</div>
+                            {isHidden ? (
+                              <span className="badge badge-gray" style={{ fontSize: '0.65rem' }}>À venir</span>
+                            ) : (
+                              <>
+                                <div className="stat-number" style={{ fontSize: '0.95rem', color: p.points_gagnes > 0 ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
+                                  +{p.points_gagnes || 0}
+                                </div>
+                                <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>pts</div>
+                              </>
+                            )}
                           </div>
                         </div>
                       </Link>

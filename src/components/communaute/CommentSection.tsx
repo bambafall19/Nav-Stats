@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
+import CommunityReactionButton from './CommunityReactionButton'
 
 type Commentaire = Database['public']['Tables']['commentaires']['Row'] & {
   user?: Database['public']['Tables']['profiles']['Row']
@@ -46,8 +47,6 @@ export default function CommentSection({ matchId, userId }: { matchId: string; u
     setLoading(false)
     fetchCommentaires()
   }
-
-  const reactions = ['🔥', '👏', '😮', '❤️']
 
   return (
     <div className="card" style={{ padding: 24 }}>
@@ -112,18 +111,7 @@ export default function CommentSection({ matchId, userId }: { matchId: string; u
                 </div>
                 <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>{c.contenu}</p>
                 <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                  {reactions.map(r => (
-                    <button key={r} style={{
-                      background: 'var(--color-surface)', border: '1px solid var(--color-border)',
-                      borderRadius: 'var(--radius-full)', padding: '2px 8px',
-                      cursor: 'pointer', fontSize: '0.8rem', transition: 'all 0.2s',
-                    }}
-                    onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,98,51,0.08)' }}
-                    onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-surface)' }}
-                    >
-                      {r}
-                    </button>
-                  ))}
+                  <CommunityReactionButton commentId={c.id} initialLikes={c.likes || 0} />
                 </div>
               </div>
             </div>

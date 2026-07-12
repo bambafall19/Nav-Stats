@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
   const today = new Date().toISOString().split('T')[0]
 
@@ -49,6 +50,10 @@ export default async function HomePage() {
     .order('points', { ascending: false })
     .limit(10)
 
+  const { count: totalPronostiqueurs } = await supabase
+    .from('profiles')
+    .select('*', { count: 'exact', head: true })
+
   // Actualités
   const { data: actualites } = await supabase
     .from('actualites')
@@ -63,9 +68,37 @@ export default async function HomePage() {
   return (
     <div className="page-content">
       {/* Hero */}
-      <HeroSection matchCount={displayMatchs.length} />
+      <HeroSection matchCount={displayMatchs.length} userCount={totalPronostiqueurs || 0} isAuthenticated={!!user} />
 
       <div className="container-app" style={{ paddingTop: 32 }}>
+        <section className="home-action-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
+          {[
+            { href: '/matchs', icon: '🎯', label: 'Pronostiquer', detail: 'Choisir un match' },
+            { href: '/statistiques', icon: '📊', label: 'Poules', detail: 'Classements ASC' },
+            { href: '/classements', icon: '🏆', label: 'Top fans', detail: 'Rang général' },
+            { href: '/communaute', icon: '💬', label: 'Communauté', detail: 'Discussions' },
+          ].map(action => (
+            <a key={action.href} href={action.href} className="home-action-card" style={{
+              textDecoration: 'none',
+              background: 'var(--color-surface-card)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 14,
+              padding: 16,
+              boxShadow: 'var(--shadow-sm)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              minWidth: 0,
+            }}>
+              <span style={{ width: 38, height: 38, borderRadius: 12, background: 'rgba(0,98,51,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{action.icon}</span>
+              <span style={{ minWidth: 0 }}>
+                <strong style={{ display: 'block', color: 'var(--color-text-primary)', fontFamily: 'var(--font-outfit)', fontSize: '0.9rem', lineHeight: 1.1 }}>{action.label}</strong>
+                <small style={{ color: 'var(--color-text-muted)', fontSize: '0.72rem' }}>{action.detail}</small>
+              </span>
+            </a>
+          ))}
+        </section>
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 32 }}>
 
           {/* Main content grid */}
@@ -112,6 +145,14 @@ export default async function HomePage() {
         @media (min-width: 1024px) {
           .sidebar-grid {
             grid-template-columns: 1fr 1fr !important;
+          }
+        }
+        @media (max-width: 760px) {
+          .home-action-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+          .home-action-card {
+            padding: 12px !important;
           }
         }
       `}</style>

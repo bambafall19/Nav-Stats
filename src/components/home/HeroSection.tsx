@@ -10,7 +10,7 @@ const STADIUM_IMAGES = [
   '/stadium/stadium4.jpg',
 ]
 
-export default function HeroSection({ matchCount }: { matchCount: number }) {
+export default function HeroSection({ matchCount, userCount, isAuthenticated = false }: { matchCount: number; userCount: number; isAuthenticated?: boolean }) {
   const [mounted, setMounted] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
 
@@ -25,6 +25,7 @@ export default function HeroSection({ matchCount }: { matchCount: number }) {
   return (
     <section
       id="hero-section"
+      className="hero-section"
       style={{
         padding: '100px 0 80px',
         position: 'relative',
@@ -66,14 +67,19 @@ export default function HeroSection({ matchCount }: { matchCount: number }) {
               onClick={() => setCurrentSlide(i)}
               aria-label={`Slide ${i + 1}`}
               style={{
-                width: i === currentSlide ? 24 : 8,
-                height: 8,
+                width: i === currentSlide ? 24 : 12,
+                height: 12,
                 borderRadius: 'var(--radius-full)',
                 background: i === currentSlide ? 'var(--color-accent)' : 'rgba(255,255,255,0.4)',
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'all 0.4s ease',
                 padding: 0,
+                minHeight: '44px',
+                minWidth: '44px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             />
           ))}
@@ -160,9 +166,9 @@ export default function HeroSection({ matchCount }: { matchCount: number }) {
           flexWrap: 'wrap',
         }}>
           {[
-            { label: "Matchs Aujourd'hui", value: matchCount, icon: '⚽' },
+            { label: "Matchs à suivre", value: matchCount, icon: '⚽' },
             { label: 'Équipes', value: '17', icon: '🛡️' },
-            { label: 'Pronostiqueurs', value: '—', icon: '👥' },
+            { label: 'Pronostiqueurs', value: userCount || '—', icon: '👥' },
           ].map(stat => (
             <div key={stat.label} style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white', fontFamily: 'var(--font-outfit)', letterSpacing: '-0.03em', lineHeight: 1 }}>
@@ -183,8 +189,8 @@ export default function HeroSection({ matchCount }: { matchCount: number }) {
           flexWrap: 'wrap',
           animation: mounted ? 'fadeInUp 0.6s 0.4s ease both' : 'none',
         }}>
-          <Link href="/auth/register" className="btn btn-accent btn-lg" style={{ textDecoration: 'none' }}>
-            🚀 Commencer à Pronostiquer
+          <Link href={isAuthenticated ? '/matchs' : '/auth/register'} className="btn btn-accent btn-lg" style={{ textDecoration: 'none' }}>
+            Pronostiquer
           </Link>
           <Link href="/matchs" className="btn btn-lg" style={{
             textDecoration: 'none',
@@ -193,10 +199,18 @@ export default function HeroSection({ matchCount }: { matchCount: number }) {
             border: '1.5px solid rgba(255,255,255,0.4)',
             backdropFilter: 'blur(10px)',
           }}>
-            ⚽ Voir les Matchs
+            Voir les matchs
           </Link>
         </div>
       </div>
+      <style>{`
+        @media (max-width: 640px) {
+          .hero-section {
+            min-height: 440px !important;
+            padding: 72px 0 56px !important;
+          }
+        }
+      `}</style>
     </section>
   )
 }

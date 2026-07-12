@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import CommunityReactionButton from '@/components/communaute/CommunityReactionButton'
 
 export const metadata: Metadata = {
   title: 'Communauté – NavéStats',
@@ -27,6 +28,7 @@ export default async function CommunautePage() {
     .order('created_at', { ascending: false })
     .limit(10)
   const votesHdM = (rawVotes || []) as any[]
+  const commentairesPopulaires = [...commentaires].sort((a, b) => (b.likes || 0) - (a.likes || 0)).slice(0, 4)
 
   return (
     <div className="page-content">
@@ -114,17 +116,7 @@ export default async function CommunautePage() {
                         </div>
                         <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>{c.contenu}</p>
                         <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-                          {['🔥', '👏', '😮', '❤️'].map(r => (
-                            <button key={r} style={{
-                              background: 'var(--color-surface)',
-                              border: '1px solid var(--color-border)',
-                              borderRadius: 'var(--radius-full)',
-                              padding: '3px 10px',
-                              cursor: 'pointer',
-                              fontSize: '0.8rem',
-                              transition: 'all 0.2s',
-                            }}>{r}</button>
-                          ))}
+                          <CommunityReactionButton commentId={c.id} initialLikes={c.likes || 0} />
                           <Link href={match ? `/matchs/${match.id}` : '#'} style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 500, display: 'flex', alignItems: 'center' }}>
                             Répondre →
                           </Link>
@@ -139,6 +131,32 @@ export default async function CommunautePage() {
 
           {/* Sidebar */}
           <div>
+            {/* Commentaires populaires */}
+            <div style={{ marginBottom: 24 }}>
+              <h2 className="section-title" style={{ marginBottom: 16 }}>🔥 Commentaires populaires</h2>
+              <div className="card" style={{ padding: 20 }}>
+                {commentairesPopulaires.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: 24, color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
+                    Aucun commentaire populaire pour l'instant
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {commentairesPopulaires.map(commentaire => (
+                      <Link key={commentaire.id} href={commentaire.match ? `/matchs/${commentaire.match.id}` : '/communaute'} style={{ textDecoration: 'none', color: 'inherit', paddingBottom: 12, borderBottom: '1px solid var(--color-border)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, marginBottom: 4 }}>
+                          <strong style={{ fontSize: '0.82rem' }}>{commentaire.user?.username || 'Utilisateur'}</strong>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--color-red)', fontWeight: 800 }}>❤️ {commentaire.likes || 0}</span>
+                        </div>
+                        <p style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', lineHeight: 1.45, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          {commentaire.contenu}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Vote HdM */}
             <div style={{ marginBottom: 24 }}>
               <h2 className="section-title" style={{ marginBottom: 16 }}>⭐ Votes Homme du Match</h2>

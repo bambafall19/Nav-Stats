@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import FormSubmitButton from '@/components/shared/FormSubmitButton'
+import LinkButton from '@/components/shared/LinkButton'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -126,10 +128,11 @@ export default function RegisterPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#F8FAFC',
+      background: 'var(--color-surface)',
       display: 'flex',
       flexDirection: 'column',
       fontFamily: 'var(--font-outfit), system-ui, sans-serif',
+      transition: 'background 0.3s ease',
     }}>
       {/* Top Header - Curved green header */}
       <div style={{
@@ -159,7 +162,7 @@ export default function RegisterPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.8)', fontWeight: 500 }}>Déjà inscrit ?</span>
             <Link href="/auth/login" style={{
-              background: 'white', color: '#006233',
+              background: 'var(--color-surface-card)', color: 'var(--color-primary)',
               padding: '5px 12px', borderRadius: 'var(--radius-full)',
               fontSize: '0.72rem', fontWeight: 700, textDecoration: 'none',
               boxShadow: '0 4px 10px rgba(0,0,0,0.05)',
@@ -184,14 +187,15 @@ export default function RegisterPage() {
       <div style={{
         flex: 1,
         marginTop: '-20px',
-        background: 'white',
+        background: 'var(--color-surface-card)',
         borderTopLeftRadius: '28px',
         borderTopRightRadius: '28px',
         padding: '28px 20px',
-        boxShadow: '0 -8px 24px rgba(0,0,0,0.02)',
+        boxShadow: 'var(--shadow-md)',
         zIndex: 5,
         display: 'flex',
         flexDirection: 'column',
+        transition: 'background-color 0.3s ease',
       }}>
         {/* Form container to control width and layout */}
         <div style={{ width: '100%', maxWidth: 360, margin: '0 auto' }}>
@@ -200,7 +204,7 @@ export default function RegisterPage() {
             {[1, 2].map(s => (
               <div key={s} style={{
                 flex: 1, height: 4, borderRadius: 'var(--radius-full)',
-                background: s <= step ? 'var(--color-primary-light)' : '#E2E8F0',
+                background: s <= step ? 'var(--color-primary-light)' : 'var(--color-border)',
                 transition: 'background 0.3s',
               }} />
             ))}
@@ -211,20 +215,20 @@ export default function RegisterPage() {
               <>
                 {/* Title Step 1 */}
                 <div style={{ marginBottom: 20 }}>
-                  <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1.6rem', color: '#0F172A', marginBottom: 4, letterSpacing: '-0.02em' }}>
+                  <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1.6rem', color: 'var(--color-text-primary)', marginBottom: 4, letterSpacing: '-0.02em' }}>
                     Créer un compte
                   </h2>
-                  <p style={{ color: '#64748B', fontSize: '0.85rem', lineHeight: 1.4 }}>
+                  <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', lineHeight: 1.4 }}>
                     Étape 1 sur 2 : Informations personnelles
                   </p>
                 </div>
 
                 {/* Username field */}
                 <div style={{
-                  position: 'relative', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12,
+                  position: 'relative', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12,
                   padding: '8px 14px 6px', marginBottom: 12,
                 }}>
-                  <label style={{ fontSize: '0.62rem', color: '#64748B', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
+                  <label style={{ fontSize: '0.62rem', color: 'var(--color-text-secondary)', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
                     Nom d'utilisateur *
                   </label>
                   <input
@@ -232,17 +236,17 @@ export default function RegisterPage() {
                     placeholder="ex: diallo_foot"
                     style={{
                       border: 'none', outline: 'none', background: 'transparent', width: '100%', fontSize: '0.9rem',
-                      fontWeight: 500, color: '#0F172A', padding: 0, fontFamily: 'var(--font-outfit)',
+                      fontWeight: 500, color: 'var(--color-text-primary)', padding: 0, fontFamily: 'var(--font-outfit)',
                     }}
                   />
                 </div>
 
                 {/* Fullname field */}
                 <div style={{
-                  position: 'relative', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12,
+                  position: 'relative', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12,
                   padding: '8px 14px 6px', marginBottom: 12,
                 }}>
-                  <label style={{ fontSize: '0.62rem', color: '#64748B', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
+                  <label style={{ fontSize: '0.62rem', color: 'var(--color-text-secondary)', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
                     Nom complet
                   </label>
                   <input
@@ -250,35 +254,40 @@ export default function RegisterPage() {
                     placeholder="ex: Moussa Diallo"
                     style={{
                       border: 'none', outline: 'none', background: 'transparent', width: '100%', fontSize: '0.9rem',
-                      fontWeight: 500, color: '#0F172A', padding: 0, fontFamily: 'var(--font-outfit)',
+                      fontWeight: 500, color: 'var(--color-text-primary)', padding: 0, fontFamily: 'var(--font-outfit)',
                     }}
                   />
                 </div>
 
                 {/* Quartier field */}
                 <div style={{
-                  position: 'relative', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12,
+                  position: 'relative', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12,
                   padding: '8px 14px 6px', marginBottom: 12,
                 }}>
-                  <label style={{ fontSize: '0.62rem', color: '#64748B', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
+                  <label style={{ fontSize: '0.62rem', color: 'var(--color-text-secondary)', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
                     Quartier
                   </label>
-                  <input
-                    id="quartier-input" type="text" value={form.quartier} onChange={e => update('quartier', e.target.value)}
-                    placeholder="ex: Centre, Nord, Sud..."
+                  <select
+                    id="quartier-select" value={form.quartier} onChange={e => update('quartier', e.target.value)}
                     style={{
                       border: 'none', outline: 'none', background: 'transparent', width: '100%', fontSize: '0.9rem',
-                      fontWeight: 500, color: '#0F172A', padding: 0, fontFamily: 'var(--font-outfit)',
+                      fontWeight: 500, color: 'var(--color-text-primary)', padding: 0, fontFamily: 'var(--font-outfit)',
+                      cursor: 'pointer',
                     }}
-                  />
+                  >
+                    <option value="" disabled style={{ background: 'var(--color-surface-card)', color: 'var(--color-text-muted)' }}>Choisir un quartier...</option>
+                    {['Escale', 'Hannene', 'Ngandiol', 'Ngaye', 'Thilla', 'Kairé', 'Keur macodou', 'Guinnaw Rail', 'Niobene', 'Ndiayene Guouye', 'Diokoul'].map(q => (
+                      <option key={q} value={q} style={{ background: 'var(--color-surface-card)', color: 'var(--color-text-primary)' }}>{q}</option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* ASC field */}
                 <div style={{
-                  position: 'relative', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12,
+                  position: 'relative', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12,
                   padding: '8px 14px 6px', marginBottom: 20,
                 }}>
-                  <label style={{ fontSize: '0.62rem', color: '#64748B', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
+                  <label style={{ fontSize: '0.62rem', color: 'var(--color-text-secondary)', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
                     ASC soutenue
                   </label>
                   <input
@@ -286,7 +295,7 @@ export default function RegisterPage() {
                     placeholder="ex: ASC Book Joom"
                     style={{
                       border: 'none', outline: 'none', background: 'transparent', width: '100%', fontSize: '0.9rem',
-                      fontWeight: 500, color: '#0F172A', padding: 0, fontFamily: 'var(--font-outfit)',
+                      fontWeight: 500, color: 'var(--color-text-primary)', padding: 0, fontFamily: 'var(--font-outfit)',
                     }}
                   />
                 </div>
@@ -301,22 +310,22 @@ export default function RegisterPage() {
               <>
                 {/* Title Step 2 */}
                 <div style={{ marginBottom: 20 }}>
-                  <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1.6rem', color: '#0F172A', marginBottom: 4, letterSpacing: '-0.02em' }}>
+                  <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1.6rem', color: 'var(--color-text-primary)', marginBottom: 4, letterSpacing: '-0.02em' }}>
                     Informations d'accès
                   </h2>
-                  <p style={{ color: '#64748B', fontSize: '0.85rem', lineHeight: 1.4 }}>
+                  <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', lineHeight: 1.4 }}>
                     Étape 2 sur 2 : Numéro & mot de passe
                   </p>
                 </div>
 
                  {/* Phone field */}
                 <div style={{
-                  position: 'relative', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12,
+                  position: 'relative', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12,
                   padding: '8px 14px 6px', marginBottom: 12,
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ fontSize: '0.62rem', color: '#64748B', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
+                    <label style={{ fontSize: '0.62rem', color: 'var(--color-text-secondary)', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
                       Numéro de téléphone *
                     </label>
                     <input
@@ -324,14 +333,14 @@ export default function RegisterPage() {
                       placeholder="ex: 771234567"
                       style={{
                         border: 'none', outline: 'none', background: 'transparent', width: '100%', fontSize: '0.9rem',
-                        fontWeight: 500, color: '#0F172A', padding: 0, fontFamily: 'var(--font-outfit)',
+                        fontWeight: 500, color: 'var(--color-text-primary)', padding: 0, fontFamily: 'var(--font-outfit)',
                       }}
                     />
                   </div>
                   {operator && (
                     <span style={{
                       fontSize: '0.68rem', fontWeight: 800, color: operator.color,
-                      background: 'white', padding: '3px 8px', borderRadius: 6,
+                      background: 'var(--color-surface-card)', padding: '3px 8px', borderRadius: 6,
                       border: `1px solid ${operator.color}40`, display: 'inline-flex', alignItems: 'center', gap: 4
                     }}>
                       {operator.icon} {operator.name}
@@ -341,10 +350,10 @@ export default function RegisterPage() {
 
                 {/* Email field */}
                 <div style={{
-                  position: 'relative', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12,
+                  position: 'relative', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12,
                   padding: '8px 14px 6px', marginBottom: 12,
                 }}>
-                  <label style={{ fontSize: '0.62rem', color: '#64748B', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
+                  <label style={{ fontSize: '0.62rem', color: 'var(--color-text-secondary)', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
                     Email (Optionnel)
                   </label>
                   <input
@@ -352,17 +361,17 @@ export default function RegisterPage() {
                     placeholder="votre@email.com (facultatif)"
                     style={{
                       border: 'none', outline: 'none', background: 'transparent', width: '100%', fontSize: '0.9rem',
-                      fontWeight: 500, color: '#0F172A', padding: 0, fontFamily: 'var(--font-outfit)',
+                      fontWeight: 500, color: 'var(--color-text-primary)', padding: 0, fontFamily: 'var(--font-outfit)',
                     }}
                   />
                 </div>
 
                 {/* Password field */}
                 <div style={{
-                  position: 'relative', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12,
+                  position: 'relative', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12,
                   padding: '8px 14px 6px', marginBottom: strength.label ? 8 : 20,
                 }}>
-                  <label style={{ fontSize: '0.62rem', color: '#64748B', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
+                  <label style={{ fontSize: '0.62rem', color: 'var(--color-text-secondary)', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 1 }}>
                     Mot de passe *
                   </label>
                   <input
@@ -370,7 +379,7 @@ export default function RegisterPage() {
                     placeholder="Minimum 6 caractères"
                     style={{
                       border: 'none', outline: 'none', background: 'transparent', width: '100%', fontSize: '0.9rem',
-                      fontWeight: 500, color: '#0F172A', padding: 0, fontFamily: 'var(--font-outfit)',
+                      fontWeight: 500, color: 'var(--color-text-primary)', padding: 0, fontFamily: 'var(--font-outfit)',
                     }}
                   />
                 </div>
@@ -382,7 +391,7 @@ export default function RegisterPage() {
                       {[1, 2, 3].map(seg => (
                         <div key={seg} style={{
                           flex: 1, height: '100%', borderRadius: 2,
-                          background: seg <= strength.score ? strength.color : '#E2E8F0',
+                          background: seg <= strength.score ? strength.color : 'var(--color-border)',
                           transition: 'background 0.2s',
                         }} />
                       ))}
@@ -400,21 +409,23 @@ export default function RegisterPage() {
                 )}
 
                 <div style={{ display: 'flex', gap: 10 }}>
-                  <button type="button" onClick={() => setStep(1)} style={{ flex: 1, padding: '14px', borderRadius: 'var(--radius-full)', background: 'transparent', color: '#64748B', border: '1.5px solid #E2E8F0', fontWeight: 700, fontSize: '0.85rem', fontFamily: 'var(--font-outfit)' }}>
+                  <button type="button" onClick={() => setStep(1)} style={{ flex: 1, padding: '14px', borderRadius: 'var(--radius-full)', background: 'transparent', color: 'var(--color-text-secondary)', border: '1.5px solid var(--color-border)', fontWeight: 700, fontSize: '0.85rem', fontFamily: 'var(--font-outfit)' }}>
                     ← Retour
                   </button>
-                  <button type="submit" disabled={loading} style={{ flex: 2, padding: '14px', borderRadius: 'var(--radius-full)', background: 'var(--gradient-green)', color: 'white', border: 'none', fontWeight: 700, fontSize: '0.88rem', fontFamily: 'var(--font-outfit)', boxShadow: 'var(--shadow-green)' }} id="register-btn">
-                    {loading ? 'Création...' : 'Créer le compte'}
-                  </button>
+                  <div style={{ flex: 2 }}>
+                    <FormSubmitButton loading={loading} icon="✨" loadingIcon="⏳" loadingText="Création...">
+                      Créer le compte
+                    </FormSubmitButton>
+                  </div>
                 </div>
               </>
             )}
 
             {/* Social Divider */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, marginTop: 16 }}>
-              <div style={{ flex: 1, height: 1, background: '#E2E8F0' }} />
-              <span style={{ fontSize: '0.68rem', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Ou s'inscrire avec</span>
-              <div style={{ flex: 1, height: 1, background: '#E2E8F0' }} />
+              <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
+              <span style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Ou s'inscrire avec</span>
+              <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
             </div>
 
             {/* Social buttons */}
@@ -426,8 +437,8 @@ export default function RegisterPage() {
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   padding: '12px', borderRadius: 'var(--radius-full)',
-                  background: '#F8FAFC', border: '1px solid #E2E8F0',
-                  fontSize: '0.8rem', fontWeight: 700, color: '#0F172A', cursor: 'pointer',
+                  background: 'var(--color-surface)', border: '1px solid var(--color-border)',
+                  fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-primary)', cursor: 'pointer',
                   fontFamily: 'var(--font-outfit)',
                 }}
               >
@@ -441,8 +452,8 @@ export default function RegisterPage() {
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   padding: '12px', borderRadius: 'var(--radius-full)',
-                  background: '#F8FAFC', border: '1px solid #E2E8F0',
-                  fontSize: '0.8rem', fontWeight: 700, color: '#0F172A', cursor: 'pointer',
+                  background: 'var(--color-surface)', border: '1px solid var(--color-border)',
+                  fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-primary)', cursor: 'pointer',
                   fontFamily: 'var(--font-outfit)',
                 }}
               >

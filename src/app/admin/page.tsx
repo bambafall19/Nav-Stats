@@ -15,31 +15,43 @@ function predictionLabel(result: string, match: any) {
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
+  const today = new Date().toISOString().split('T')[0]
 
   const [
     { count: totalUsers },
     { count: totalMatchs },
     { count: totalPronostics },
     { count: totalEquipes },
+    { count: matchsAujourdhui },
     { data: recentPronosticsRaw },
     { data: matchsAVenirRaw },
     { data: pronoDistRaw },
     { data: topUsersRaw },
+    { data: recentCommentsRaw },
+    { data: equipesSansLogoRaw },
+    { data: matchsSansResultatRaw },
   ] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('matchs').select('*', { count: 'exact', head: true }),
     supabase.from('pronostics').select('*', { count: 'exact', head: true }),
     supabase.from('equipes').select('*', { count: 'exact', head: true }),
+    supabase.from('matchs').select('*', { count: 'exact', head: true }).eq('date_match', today),
     supabase.from('pronostics').select('*, user:profiles(username), match:matchs(equipe_a:equipes!matchs_equipe_a_id_fkey(nom), equipe_b:equipes!matchs_equipe_b_id_fkey(nom))').order('created_at', { ascending: false }).limit(8),
     supabase.from('matchs').select('*, equipe_a:equipes!matchs_equipe_a_id_fkey(nom,sigle), equipe_b:equipes!matchs_equipe_b_id_fkey(nom,sigle)').eq('statut', 'a_venir').order('date_match').limit(5),
     supabase.from('pronostics').select('resultat_predit'),
     supabase.from('profiles').select('username, points').order('points', { ascending: false }).limit(5),
+    supabase.from('commentaires').select('*, user:profiles(username), match:matchs(equipe_a:equipes!matchs_equipe_a_id_fkey(nom), equipe_b:equipes!matchs_equipe_b_id_fkey(nom))').order('created_at', { ascending: false }).limit(5),
+    supabase.from('equipes').select('id, nom').is('logo_url', null).limit(5),
+    supabase.from('matchs').select('id, date_match, equipe_a:equipes!matchs_equipe_a_id_fkey(nom), equipe_b:equipes!matchs_equipe_b_id_fkey(nom)').eq('statut', 'termine').or('score_a.is.null,score_b.is.null').limit(5),
   ])
 
   const recentPronostics = (recentPronosticsRaw || []) as any[]
   const matchsAVenir = (matchsAVenirRaw || []) as any[]
   const pronoDist = (pronoDistRaw || []) as any[]
   const topUsers = (topUsersRaw || []) as any[]
+  const recentComments = (recentCommentsRaw || []) as any[]
+  const equipesSansLogo = (equipesSansLogoRaw || []) as any[]
+  const matchsSansResultat = (matchsSansResultatRaw || []) as any[]
 
   let pronoDom = 0
   let pronoNul = 0
@@ -70,6 +82,12 @@ export default async function AdminDashboard() {
     { href: '/admin/equipes', icon: '◆', label: 'Equipes', detail: 'ASC et couleurs' },
     { href: '/admin/actualites', icon: '↗', label: 'Annonce', detail: 'Publier une info' },
   ]
+  const opsCards = [
+    { label: "Matchs aujourd'hui", value: matchsAujourdhui || 0, detail: 'à surveiller', icon: '📅', href: '/admin/matchs' },
+    { label: 'Résultats manquants', value: matchsSansResultat.length, detail: 'matchs terminés incomplets', icon: '📝', href: '/admin/resultats' },
+    { label: 'Commentaires récents', value: recentComments.length, detail: 'dernière activité', icon: '💬', href: '/communaute' },
+    { label: 'Equipes sans logo', value: equipesSansLogo.length, detail: 'identité à compléter', icon: '🛡️', href: '/admin/equipes' },
+  ]
 
   return (
     <div className="admin-dashboard">
@@ -96,6 +114,19 @@ export default async function AdminDashboard() {
               <small>{s.helper}</small>
             </div>
           </article>
+        ))}
+      </section>
+
+      <section className="admin-ops-grid">
+        {opsCards.map(card => (
+          <a key={card.label} href={card.href} className="admin-op-card">
+            <span>{card.icon}</span>
+            <div>
+              <strong>{card.value}</strong>
+              <small>{card.label}</small>
+              <em>{card.detail}</em>
+            </div>
+          </a>
         ))}
       </section>
 
@@ -221,6 +252,67 @@ export default async function AdminDashboard() {
         </div>
       </section>
 
+      <section className="admin-bottom-grid">
+        <div className="admin-panel">
+          <div className="admin-section-heading">
+            <div>
+              <h2>Commentaires récents</h2>
+              <p>Dernières discussions de la communauté.</p>
+            </div>
+            <a href="/communaute" className="admin-link">Voir</a>
+          </div>
+          <div className="admin-list">
+            {recentComments.length === 0 ? (
+              <EmptyPanel text="Aucun commentaire récent" />
+            ) : recentComments.map(commentaire => {
+              const match = commentaire.match as any
+              return (
+                <div key={commentaire.id} className="admin-comment-row">
+                  <div className="admin-user-dot">{(commentaire.user?.username || '?').charAt(0).toUpperCase()}</div>
+                  <div className="admin-row-main">
+                    <strong>{commentaire.user?.username || 'Utilisateur'}</strong>
+                    <span>{match?.equipe_a?.nom} vs {match?.equipe_b?.nom}</span>
+                    <small>{commentaire.contenu}</small>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="admin-panel">
+          <div className="admin-section-heading">
+            <div>
+              <h2>Points à compléter</h2>
+              <p>Petites actions qui améliorent la qualité du site.</p>
+            </div>
+          </div>
+          <div className="admin-list">
+            {matchsSansResultat.map(match => (
+              <a key={match.id} href={`/admin/resultats?match=${match.id}`} className="admin-todo-row">
+                <span>📝</span>
+                <div className="admin-row-main">
+                  <strong>Résultat incomplet</strong>
+                  <small>{match.equipe_a?.nom} vs {match.equipe_b?.nom}</small>
+                </div>
+              </a>
+            ))}
+            {equipesSansLogo.map(equipe => (
+              <a key={equipe.id} href="/admin/equipes" className="admin-todo-row">
+                <span>🛡️</span>
+                <div className="admin-row-main">
+                  <strong>Logo manquant</strong>
+                  <small>{equipe.nom}</small>
+                </div>
+              </a>
+            ))}
+            {matchsSansResultat.length === 0 && equipesSansLogo.length === 0 && (
+              <EmptyPanel text="Rien à signaler pour le moment" />
+            )}
+          </div>
+        </div>
+      </section>
+
       <style>{`
         .admin-dashboard {
           display: grid;
@@ -286,6 +378,7 @@ export default async function AdminDashboard() {
           margin: 8px 0;
         }
         .admin-stats-grid,
+        .admin-ops-grid,
         .admin-actions-grid,
         .admin-main-grid,
         .admin-bottom-grid {
@@ -295,7 +388,11 @@ export default async function AdminDashboard() {
         .admin-stats-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+        .admin-ops-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
         .admin-stat-card,
+        .admin-op-card,
         .admin-panel,
         .admin-actions {
           background: var(--color-surface-card);
@@ -308,6 +405,47 @@ export default async function AdminDashboard() {
           align-items: center;
           gap: 14px;
           padding: 18px;
+        }
+        .admin-op-card {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+          padding: 16px;
+          text-decoration: none;
+          color: inherit;
+        }
+        .admin-op-card > span {
+          width: 40px;
+          height: 40px;
+          border-radius: 13px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0,98,51,0.08);
+          flex-shrink: 0;
+        }
+        .admin-op-card strong,
+        .admin-op-card small,
+        .admin-op-card em {
+          display: block;
+        }
+        .admin-op-card strong {
+          font-family: var(--font-outfit);
+          font-size: 1.45rem;
+          line-height: 1;
+          color: var(--color-primary);
+          font-style: normal;
+        }
+        .admin-op-card small {
+          margin-top: 3px;
+          color: var(--color-text-primary);
+          font-weight: 850;
+          font-size: 0.78rem;
+        }
+        .admin-op-card em {
+          color: var(--color-text-muted);
+          font-size: 0.7rem;
+          font-style: normal;
         }
         .admin-stat-icon {
           width: 48px;
@@ -458,13 +596,29 @@ export default async function AdminDashboard() {
         }
         .admin-leader-row,
         .admin-match-row,
-        .admin-prono-row {
+        .admin-prono-row,
+        .admin-comment-row,
+        .admin-todo-row {
           display: flex;
           align-items: center;
           gap: 12px;
           padding: 12px;
           border-radius: 14px;
           background: var(--color-surface);
+        }
+        .admin-todo-row {
+          color: inherit;
+          text-decoration: none;
+        }
+        .admin-todo-row > span {
+          width: 34px;
+          height: 34px;
+          border-radius: 11px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: white;
+          flex-shrink: 0;
         }
         .admin-rank {
           width: 34px;
@@ -538,11 +692,16 @@ export default async function AdminDashboard() {
           min-width: 0;
         }
         .admin-row-main strong,
-        .admin-row-main span {
+        .admin-row-main span,
+        .admin-row-main small {
           display: block;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+        }
+        .admin-row-main small {
+          color: var(--color-text-secondary);
+          font-size: 0.74rem;
         }
         .admin-row-action {
           padding: 7px 12px;
@@ -581,8 +740,12 @@ export default async function AdminDashboard() {
         @media (min-width: 1180px) {
           .admin-stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         }
+        @media (max-width: 920px) {
+          .admin-ops-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
         @media (max-width: 560px) {
           .admin-stats-grid,
+          .admin-ops-grid,
           .admin-actions-grid { grid-template-columns: 1fr; }
           .admin-section-heading { flex-direction: column; }
           .admin-choice { max-width: 110px; }

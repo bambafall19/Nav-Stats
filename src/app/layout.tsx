@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Outfit, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import PWAInstallBanner from "@/components/shared/PWAInstallBanner";
+import ErrorBoundary from "@/components/shared/ErrorBoundary";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -54,8 +55,10 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${inter.variable} ${outfit.variable} ${robotoMono.variable}`} suppressHydrationWarning>
       <body className="font-inter antialiased bg-surface text-text-primary">
-        {children}
-        <PWAInstallBanner />
+        <ErrorBoundary>
+          {children}
+          <PWAInstallBanner />
+        </ErrorBoundary>
       </body>
     </html>
   );

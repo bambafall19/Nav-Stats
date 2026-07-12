@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
+import LinkButton from '@/components/shared/LinkButton'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -64,7 +65,7 @@ export default function Header() {
         left: 0,
         right: 0,
         zIndex: 100,
-        background: isDark ? 'rgba(10,15,13,0.95)' : 'rgba(255,255,255,0.95)',
+        background: 'var(--color-surface-overlay)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid var(--color-border)',
@@ -102,16 +103,16 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Partnership Logo */}
-        <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ width: 1, height: 22, background: 'var(--color-border)' }} />
+        {/* Partnership Logo — visible on all sizes, compact on mobile */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ width: 1, height: 22, background: 'var(--color-border)', flexShrink: 0 }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <img
               src="/oncav-logo.png"
               alt="ONCAV Zone 6"
-              style={{ width: 28, height: 28, objectFit: 'contain' }}
+              style={{ width: 28, height: 28, objectFit: 'contain', flexShrink: 0 }}
             />
-            <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.1 }}>
+            <span className="oncav-label" style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.1 }}>
               Zone 6<br />Khombole
             </span>
           </div>
@@ -279,12 +280,12 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Link href="/auth/login" className="btn btn-outline btn-sm" style={{ textDecoration: 'none' }}>
-                Connexion
-              </Link>
-              <Link href="/auth/register" className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
-                S'inscrire
-              </Link>
+              <LinkButton href="/auth/login" variant="secondary" size="sm">
+                🔑 Connexion
+              </LinkButton>
+              <LinkButton href="/auth/register" variant="primary" size="sm">
+                ✨ S'inscrire
+              </LinkButton>
             </>
           )}
         </div>
@@ -295,7 +296,98 @@ export default function Header() {
         @media (min-width: 768px) { .hidden-mobile { display: flex !important; } }
         @media (max-width: 767px) { .hidden-mobile { display: none !important; } }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* ── Mobile Bottom Navigation ── */
+        .mobile-bottom-nav {
+          display: none;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 99;
+          background: var(--color-surface-card);
+          border-top: 1px solid var(--color-border);
+          padding: 6px 4px env(safe-area-inset-bottom, 6px);
+          box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+        }
+        .mobile-bottom-nav-inner {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          max-width: 480px;
+          margin: 0 auto;
+        }
+        .mobile-nav-link {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+          padding: 6px 8px;
+          border-radius: 12px;
+          text-decoration: none;
+          color: var(--color-text-muted);
+          font-size: 0.58rem;
+          font-weight: 600;
+          font-family: var(--font-outfit);
+          letter-spacing: 0.01em;
+          transition: all 0.18s ease;
+          min-width: 52px;
+          text-align: center;
+        }
+        .mobile-nav-link.active {
+          color: var(--color-primary);
+          background: rgba(0, 98, 51, 0.08);
+        }
+        .mobile-nav-link .nav-icon {
+          font-size: 1.25rem;
+          line-height: 1;
+          display: block;
+        }
+        .mobile-nav-link.active .nav-icon {
+          transform: scale(1.12);
+        }
+        @media (max-width: 767px) {
+          .mobile-bottom-nav { display: block; }
+          body { padding-bottom: 68px; }
+          .oncav-label { display: none; }
+        }
+        @media (min-width: 768px) {
+          .mobile-bottom-nav { display: none !important; }
+        }
       `}</style>
+
+      {/* ── Mobile Bottom Navigation Bar ── */}
+      <nav className="mobile-bottom-nav" aria-label="Navigation mobile">
+        <div className="mobile-bottom-nav-inner">
+          {navLinks.map(link => {
+            const isActive = pathname === link.href
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`mobile-nav-link${isActive ? ' active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <span className="nav-icon">{link.icon}</span>
+                <span>{link.label}</span>
+              </Link>
+            )
+          })}
+          {profile && (
+            <Link
+              href={`/profil/${profile.id}`}
+              className={`mobile-nav-link${pathname.startsWith('/profil') ? ' active' : ''}`}
+            >
+              <span className="nav-icon">
+                {profile.avatar_url
+                  ? <img src={profile.avatar_url} alt="" style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }} />
+                  : '👤'}
+              </span>
+              <span>Profil</span>
+            </Link>
+          )}
+        </div>
+      </nav>
     </header>
   )
 }

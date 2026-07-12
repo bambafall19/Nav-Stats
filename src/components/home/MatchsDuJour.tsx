@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Share2 } from 'lucide-react'
 import type { Database } from '@/types/database.types'
 
 type Match = Database['public']['Tables']['matchs']['Row'] & {
@@ -50,10 +51,12 @@ function MatchCard({ match }: { match: Match }) {
   const matchDate = new Date(`${match.date_match}T${match.heure_match}`)
 
   const formatDate = (d: Date) => d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+  const shareText = `⚽ ${match.equipe_a.nom} vs ${match.equipe_b.nom} sur NavéStats\n📅 ${formatDate(matchDate)} à ${match.heure_match?.slice(0, 5)}\n👉 https://navestats.site/matchs/${match.id}`
+  const shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`
 
   return (
     <Link href={`/matchs/${match.id}`} style={{ textDecoration: 'none' }}>
-      <div className="match-card">
+      <div className="match-card" style={{ position: 'relative' }}>
         {/* Top bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -69,6 +72,33 @@ function MatchCard({ match }: { match: Match }) {
             {formatDate(matchDate)} · J{match.journee || '?'}
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={event => {
+            event.preventDefault()
+            event.stopPropagation()
+            window.open(shareUrl, '_blank', 'noopener,noreferrer')
+          }}
+          aria-label="Partager ce match sur WhatsApp"
+          style={{
+            position: 'absolute',
+            right: 12,
+            bottom: 12,
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: 'rgba(0,98,51,0.08)',
+            color: 'var(--color-primary)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid rgba(0,98,51,0.12)',
+            cursor: 'pointer',
+          }}
+        >
+          <Share2 size={17} />
+        </button>
 
         {/* Teams vs Score */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 12, alignItems: 'center' }}>
@@ -113,7 +143,7 @@ function MatchCard({ match }: { match: Match }) {
 
         {/* Footer */}
         {match.statut === 'a_venir' && (
-          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'center', paddingRight: 40 }}>
             <span className="btn btn-primary btn-sm" style={{ pointerEvents: 'none' }}>
               🎯 Pronostiquer
             </span>

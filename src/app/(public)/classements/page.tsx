@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Classements – NavéStats',
@@ -109,22 +110,24 @@ export default async function ClassementsPage() {
                       {realIndex === 0 && (
                         <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', fontSize: '1.4rem' }}>👑</div>
                       )}
-                      <div style={{
-                        width: 44, height: 44, borderRadius: '50%',
-                        background: medals.bg,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        margin: '0 auto 8px',
-                        fontSize: '1.3rem',
-                        boxShadow: medals.shadow,
-                      }}>
-                        {u.avatar_url
-                          ? <img src={u.avatar_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                          : ['🥇', '🥈', '🥉'][realIndex]
-                        }
-                      </div>
-                      <div style={{ fontWeight: 700, fontSize: '0.75rem', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
-                        {u.username}
-                      </div>
+                      <Link href={`/profil/${u.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} className="ranking-user-link">
+                        <div style={{
+                          width: 44, height: 44, borderRadius: '50%',
+                          background: medals.bg,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          margin: '0 auto 8px',
+                          fontSize: '1.3rem',
+                          boxShadow: medals.shadow,
+                        }}>
+                          {u.avatar_url
+                            ? <img src={u.avatar_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                            : ['🥇', '🥈', '🥉'][realIndex]
+                          }
+                        </div>
+                        <div style={{ fontWeight: 700, fontSize: '0.75rem', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }} className="user-link">
+                          {u.username}
+                        </div>
+                      </Link>
                       <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1.1rem', color: 'var(--color-primary)' }}>
                         {u.points}
                         <span style={{ fontSize: '0.65rem', fontWeight: 500, color: 'var(--color-text-muted)', marginLeft: 2 }}>pts</span>
@@ -161,17 +164,19 @@ export default async function ClassementsPage() {
                       color: 'var(--color-text-muted)', flexShrink: 0,
                     }}>{i + 1}</div>
 
-                    <div className="avatar" style={{ width: 32, height: 32, fontSize: '0.75rem', flexShrink: 0 }}>
-                      {u.avatar_url
-                        ? <img src={u.avatar_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                        : u.username.charAt(0).toUpperCase()
-                      }
-                    </div>
+                    <Link href={`/profil/${u.id}`} style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0, textDecoration: 'none', color: 'inherit' }} className="ranking-user-link">
+                      <div className="avatar" style={{ width: 32, height: 32, fontSize: '0.75rem', flexShrink: 0 }}>
+                        {u.avatar_url
+                          ? <img src={u.avatar_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                          : u.username.charAt(0).toUpperCase()
+                        }
+                      </div>
 
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 600, fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.username}</div>
-                      {u.quartier && <div style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)' }}>{u.quartier}</div>}
-                    </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 600, fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} className="user-link">{u.username}</div>
+                        {u.quartier && <div style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)' }}>{u.quartier}</div>}
+                      </div>
+                    </Link>
 
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '0.95rem', color: 'var(--color-primary)' }}>{u.points}</div>
@@ -296,6 +301,10 @@ export default async function ClassementsPage() {
         <style>{`
           @media (min-width: 1024px) {
             .classements-grid { grid-template-columns: 3fr 2fr !important; }
+          }
+          .ranking-user-link:hover .user-link {
+            text-decoration: underline;
+            color: var(--color-primary-light);
           }
         `}</style>
       </div>
