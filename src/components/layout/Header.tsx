@@ -1,0 +1,301 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import type { Database } from '@/types/database.types'
+import NotificationBell from '@/components/shared/NotificationBell'
+
+type Profile = Database['public']['Tables']['profiles']['Row']
+
+const navLinks = [
+  { href: '/', label: 'Accueil', icon: '🏠' },
+  { href: '/matchs', label: 'Matchs', icon: '⚽' },
+  { href: '/classements', label: 'Classements', icon: '🏆' },
+  { href: '/statistiques', label: 'Statistiques', icon: '📊' },
+  { href: '/communaute', label: 'Communauté', icon: '💬' },
+]
+
+export default function Header() {
+  const pathname = usePathname()
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [isDark, setIsDark] = useState(false)
+  const supabase = createClient() as any
+
+  useEffect(() => {
+    supabase.auth.getUser().then((res: any) => {
+      const user = res.data?.user
+      if (user) {
+        supabase.from('profiles').select('*').eq('id', user.id).single()
+          .then((resProfile: any) => setProfile(resProfile.data))
+      }
+    })
+  }, [])
+
+  // Dark mode init from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('navestats-theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const dark = saved === 'dark' || (!saved && prefersDark)
+    setIsDark(dark)
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
+  }, [])
+
+  const toggleDark = () => {
+    const next = !isDark
+    setIsDark(next)
+    document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light')
+    localStorage.setItem('navestats-theme', next ? 'dark' : 'light')
+  }
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    window.location.href = '/'
+  }
+
+  return (
+    <header
+      id="main-header"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        background: isDark ? 'rgba(10,15,13,0.95)' : 'rgba(255,255,255,0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid var(--color-border)',
+        height: 'var(--nav-height)',
+        boxShadow: 'var(--shadow-sm)',
+        transition: 'background 0.3s ease',
+      }}
+    >
+      <div className="container-app" style={{ display: 'flex', alignItems: 'center', height: '100%', gap: 16 }}>
+        {/* Logo */}
+        <Link href="/" style={{ textDecoration: 'none', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img
+              src="/logo.png"
+              alt="NavéStats Logo"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 8,
+                objectFit: 'cover',
+                flexShrink: 0,
+              }}
+            />
+            <div>
+              <div style={{
+                fontFamily: 'var(--font-outfit)',
+                fontWeight: 800,
+                fontSize: '1.1rem',
+                color: 'var(--color-primary)',
+                letterSpacing: '-0.02em',
+                lineHeight: 1,
+              }}>NavéStats</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', letterSpacing: '0.05em', fontWeight: 500 }}>KHOMBOLE</div>
+            </div>
+          </div>
+        </Link>
+
+        {/* Partnership Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ width: 1, height: 22, background: 'var(--color-border)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <img
+              src="/oncav-logo.png"
+              alt="ONCAV Zone 6"
+              style={{ width: 28, height: 28, objectFit: 'contain' }}
+            />
+            <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.1 }} className="hidden-mobile">
+              Zone 6<br />Khombole
+            </span>
+          </div>
+        </div>
+
+        <nav style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+          padding: 4,
+          borderRadius: 'var(--radius-full)',
+          margin: '0 auto',
+        }}
+          className="hidden-mobile">
+          {navLinks.map(link => {
+            const isActive = pathname === link.href
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '8px 18px',
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: '0.85rem',
+                  fontWeight: isActive ? 700 : 500,
+                  color: isActive ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                  background: isActive ? (isDark ? 'rgba(255,255,255,0.1)' : 'white') : 'transparent',
+                  boxShadow: isActive ? 'var(--shadow-sm)' : 'none',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s ease',
+                  fontFamily: 'var(--font-outfit)',
+                }}
+              >
+                <span>{link.icon}</span>
+                <span>{link.label}</span>
+              </Link>
+            )
+          })}
+        </nav>
+
+        {/* Right actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, marginLeft: 'auto' }}>
+
+          {/* Dark Mode Toggle */}
+          <button
+            id="dark-mode-toggle"
+            onClick={toggleDark}
+            aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
+            title={isDark ? 'Mode clair' : 'Mode sombre'}
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 'var(--radius-full)',
+              border: '1.5px solid var(--color-border)',
+              background: 'transparent',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.1rem',
+              transition: 'all 0.25s ease',
+              color: 'var(--color-text-primary)',
+            }}
+            onMouseOver={e => (e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)')}
+            onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
+          >
+            {isDark ? '☀️' : '🌙'}
+          </button>
+
+          {profile ? (
+            <>
+              <NotificationBell userId={profile.id} />
+              <div style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '6px 12px 6px 6px',
+                    borderRadius: 'var(--radius-full)',
+                    border: '1px solid var(--color-border)',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  aria-label="Menu utilisateur"
+                  id="user-menu-btn"
+                >
+                  <div className="avatar" style={{ width: 32, height: 32, fontSize: '0.8rem' }}>
+                    {profile.avatar_url
+                      ? <img src={profile.avatar_url} alt={profile.username} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                      : profile.username.charAt(0).toUpperCase()
+                    }
+                  </div>
+                  <span style={{ fontSize: '0.875rem', fontWeight: 600, maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {profile.username}
+                  </span>
+                  <div style={{
+                    width: 20,
+                    height: 20,
+                    background: 'var(--gradient-gold)',
+                    borderRadius: 'var(--radius-full)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.65rem',
+                    fontWeight: 700,
+                    color: '#5a3800',
+                  }}>
+                    {profile.points}
+                  </div>
+                </button>
+                {menuOpen && (
+                  <div id="user-dropdown" style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    minWidth: 200,
+                    background: 'var(--color-surface-card)',
+                    borderRadius: 'var(--radius-lg)',
+                    border: '1px solid var(--color-border)',
+                    boxShadow: 'var(--shadow-lg)',
+                    padding: 8,
+                    zIndex: 200,
+                    animation: 'fadeInUp 0.15s ease',
+                  }}>
+                    <Link href={`/profil/${profile.id}`} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-text-primary)', transition: 'background 0.15s' }}
+                      onClick={() => setMenuOpen(false)}
+                      onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.05)')}
+                      onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <span>👤</span> <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Mon Profil</span>
+                    </Link>
+                    <Link href="/pronostics" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-text-primary)', transition: 'background 0.15s' }}
+                      onClick={() => setMenuOpen(false)}
+                      onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.05)')}
+                      onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <span>📊</span> <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Mes Pronostics</span>
+                    </Link>
+                    {profile.is_admin && (
+                      <Link href="/admin" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-primary)', transition: 'background 0.15s' }}
+                        onClick={() => setMenuOpen(false)}
+                        onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.05)')}
+                        onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <span>🛡️</span> <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Admin</span>
+                      </Link>
+                    )}
+                    <div style={{ height: 1, background: 'var(--color-border)', margin: '6px 0' }} />
+                    <button onClick={handleSignOut} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', color: 'var(--color-red)', background: 'transparent', border: 'none', cursor: 'pointer', width: '100%', fontSize: '0.875rem', fontWeight: 500, transition: 'background 0.15s' }}
+                      onMouseOver={e => (e.currentTarget.style.background = 'rgba(232,0,45,0.05)')}
+                      onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <span>🚪</span> <span>Déconnexion</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <Link href="/auth/login" className="btn btn-outline btn-sm" style={{ textDecoration: 'none' }}>
+                Connexion
+              </Link>
+              <Link href="/auth/register" className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+                S'inscrire
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Menu overlay */}
+      <style>{`
+        @media (min-width: 768px) { .hidden-mobile { display: flex !important; } }
+        @media (max-width: 767px) { .hidden-mobile { display: none !important; } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
+    </header>
+  )
+}
