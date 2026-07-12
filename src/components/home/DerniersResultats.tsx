@@ -30,14 +30,18 @@ export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
                 <span style={{ fontSize: '0.875rem', fontWeight: isWinA ? 700 : 400, color: isWinA ? 'var(--color-primary)' : 'var(--color-text-secondary)', textAlign: 'right' }}>
                   {match.equipe_a.nom}
                 </span>
-                <div style={{
-                  width: 28, height: 28, borderRadius: 6,
-                  background: `linear-gradient(135deg, ${match.equipe_a.couleur_principale}, ${match.equipe_a.couleur_secondaire})`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '0.65rem', fontWeight: 800, color: 'white', flexShrink: 0,
-                }}>
-                  {match.equipe_a.sigle}
-                </div>
+                {match.equipe_a.logo_url ? (
+                  <img src={match.equipe_a.logo_url} alt={match.equipe_a.nom} style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }} />
+                ) : (
+                  <div style={{
+                    width: 28, height: 28, borderRadius: 6,
+                    background: `linear-gradient(135deg, ${match.equipe_a.couleur_principale || '#006233'}, ${match.equipe_a.couleur_secondaire || '#FBBF00'})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.65rem', fontWeight: 800, color: 'white', flexShrink: 0,
+                  }}>
+                    {match.equipe_a.sigle || match.equipe_a.nom.charAt(0)}
+                  </div>
+                )}
               </div>
 
               <div style={{ textAlign: 'center' }}>
@@ -50,14 +54,18 @@ export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{
-                  width: 28, height: 28, borderRadius: 6,
-                  background: `linear-gradient(135deg, ${match.equipe_b.couleur_principale}, ${match.equipe_b.couleur_secondaire})`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '0.65rem', fontWeight: 800, color: 'white', flexShrink: 0,
-                }}>
-                  {match.equipe_b.sigle}
-                </div>
+                {match.equipe_b.logo_url ? (
+                  <img src={match.equipe_b.logo_url} alt={match.equipe_b.nom} style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }} />
+                ) : (
+                  <div style={{
+                    width: 28, height: 28, borderRadius: 6,
+                    background: `linear-gradient(135deg, ${match.equipe_b.couleur_principale || '#006233'}, ${match.equipe_b.couleur_secondaire || '#FBBF00'})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.65rem', fontWeight: 800, color: 'white', flexShrink: 0,
+                  }}>
+                    {match.equipe_b.sigle || match.equipe_b.nom.charAt(0)}
+                  </div>
+                )}
                 <span style={{ fontSize: '0.875rem', fontWeight: isWinB ? 700 : 400, color: isWinB ? 'var(--color-primary)' : 'var(--color-text-secondary)' }}>
                   {match.equipe_b.nom}
                 </span>

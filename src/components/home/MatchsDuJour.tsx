@@ -9,11 +9,27 @@ type Match = Database['public']['Tables']['matchs']['Row'] & {
 }
 
 function TeamLogo({ equipe, size = 48 }: { equipe: Database['public']['Tables']['equipes']['Row']; size?: number }) {
+  if (equipe.logo_url) {
+    return (
+      <img
+        src={equipe.logo_url}
+        alt={equipe.nom}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: 'var(--radius-md)',
+          objectFit: 'cover',
+          flexShrink: 0,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        }}
+      />
+    )
+  }
   return (
     <div style={{
       width: size, height: size,
       borderRadius: 'var(--radius-md)',
-      background: `linear-gradient(135deg, ${equipe.couleur_principale}, ${equipe.couleur_secondaire})`,
+      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#006233'}, ${equipe.couleur_secondaire || '#FBBF00'})`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: size * 0.4,
       fontWeight: 800,
