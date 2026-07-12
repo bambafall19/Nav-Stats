@@ -36,7 +36,7 @@ export default async function StatistiquesPage() {
 
   const { data: rawButeurs } = await supabase
     .from('joueurs')
-    .select('*, equipe:equipes(nom, couleur_principale, couleur_secondaire, sigle)')
+    .select('*, equipe:equipes(nom, couleur_principale, couleur_secondaire, sigle, logo_url)')
     .order('buts', { ascending: false })
     .gt('buts', 0)
     .limit(10)
@@ -93,13 +93,18 @@ export default async function StatistiquesPage() {
                   </td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{
-                        width: 32, height: 32, borderRadius: 8,
-                        background: `linear-gradient(135deg, ${eq.couleur_principale}, ${eq.couleur_secondaire})`,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '0.65rem', fontWeight: 800, color: 'white', flexShrink: 0,
-                        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                      }}>{eq.sigle}</div>
+                      {eq.logo_url ? (
+                        <img src={eq.logo_url} alt={eq.nom} style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} />
+                      ) : (
+                        <div style={{
+                          width: 32, height: 32, borderRadius: 8,
+                          background: `linear-gradient(135deg, ${eq.couleur_principale || '#006233'}, ${eq.couleur_secondaire || '#FBBF00'})`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: '0.65rem', fontWeight: 800, color: 'white', flexShrink: 0,
+                        }}>
+                          {eq.sigle || eq.nom.charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--color-text-primary)' }}>{eq.nom}</div>
                         <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{eq.asc_nom}</div>
@@ -166,29 +171,45 @@ export default async function StatistiquesPage() {
                   </div>
                 ) : topButeurs.map((j, i) => (
                   <div key={j.id} style={{
-                    padding: '14px 20px',
+                    padding: '12px 16px',
                     borderBottom: i < topButeurs.length - 1 ? '1px solid var(--color-border)' : 'none',
                     display: 'flex', alignItems: 'center', gap: 12,
+                    transition: 'background 0.15s',
                   }}>
+                    {/* Rank badge */}
                     <div style={{
                       width: 28, height: 28, borderRadius: 'var(--radius-full)',
                       background: i === 0 ? 'linear-gradient(135deg,#FFD700,#FFA500)' : i === 1 ? 'linear-gradient(135deg,#C0C0C0,#A0A0A0)' : i === 2 ? 'linear-gradient(135deg,#CD7F32,#A0522D)' : 'var(--color-surface)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '0.7rem', fontWeight: 700,
+                      fontSize: i < 3 ? '0.85rem' : '0.7rem', fontWeight: 700,
                       color: i < 3 ? (i === 1 ? '#2a2a2a' : i === 2 ? 'white' : '#5a3800') : 'var(--color-text-secondary)',
                       flexShrink: 0,
-                    }}>{i + 1}</div>
+                      boxShadow: i < 3 ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
+                    }}>{i < 3 ? ['🥇','🥈','🥉'][i] : i + 1}</div>
 
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{j.prenom} {j.nom}</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
-                        {(j.equipe as any)?.nom}
-                      </div>
+                    {/* Team mini-logo */}
+                    {(j.equipe as any)?.logo_url ? (
+                      <img src={(j.equipe as any).logo_url} alt={(j.equipe as any).nom} style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }} />
+                    ) : (
+                      <div style={{
+                        width: 32, height: 32, borderRadius: 6,
+                        background: `linear-gradient(135deg, ${(j.equipe as any)?.couleur_principale || '#006233'}, ${(j.equipe as any)?.couleur_secondaire || '#FBBF00'})`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '0.6rem', fontWeight: 800, color: 'white', flexShrink: 0,
+                      }}>{(j.equipe as any)?.sigle || '?'}</div>
+                    )}
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{j.prenom} {j.nom}</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: 1 }}>{(j.equipe as any)?.nom}</div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--color-primary)' }}>{j.buts}</span>
-                      <span style={{ fontSize: '0.8rem' }}>⚽</span>
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 4,
+                      background: 'rgba(0,98,51,0.08)', borderRadius: 8, padding: '4px 10px',
+                    }}>
+                      <span style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1.15rem', color: 'var(--color-primary)' }}>{j.buts}</span>
+                      <span style={{ fontSize: '0.85rem' }}>⚽</span>
                     </div>
                   </div>
                 ))}
@@ -205,12 +226,16 @@ export default async function StatistiquesPage() {
                   return (
                     <div key={eq.id} className="card" style={{ padding: 20 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                        <div style={{
-                          width: 48, height: 48, borderRadius: 'var(--radius-md)',
-                          background: `linear-gradient(135deg, ${eq.couleur_principale}, ${eq.couleur_secondaire})`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.9rem', fontWeight: 800, color: 'white', flexShrink: 0,
-                        }}>{eq.sigle}</div>
+                        {eq.logo_url ? (
+                          <img src={eq.logo_url} alt={eq.nom} style={{ width: 48, height: 48, borderRadius: 'var(--radius-md)', objectFit: 'cover', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
+                        ) : (
+                          <div style={{
+                            width: 48, height: 48, borderRadius: 'var(--radius-md)',
+                            background: `linear-gradient(135deg, ${eq.couleur_principale || '#006233'}, ${eq.couleur_secondaire || '#FBBF00'})`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '0.9rem', fontWeight: 800, color: 'white', flexShrink: 0,
+                          }}>{eq.sigle}</div>
+                        )}
                         <div>
                           <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{eq.nom}</div>
                           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{eq.asc_nom} · Poule {eq.poule}</div>

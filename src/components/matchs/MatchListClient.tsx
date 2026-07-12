@@ -44,72 +44,75 @@ const EXEMPTE_MAP: Record<number, { nom: string; sigle: string }> = {
   5: { nom: 'Maag Daan', sigle: 'MD' },
 }
 
+const POULE_COLORS: Record<string, string> = {
+  A: '#006233',
+  B: '#1E40AF',
+  C: '#B91C1C',
+}
+
+function TeamBadge({ equipe, size = 52 }: { equipe: Team; size?: number }) {
+  if (equipe.logo_url) {
+    return (
+      <img
+        src={equipe.logo_url}
+        alt={equipe.nom}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: 12,
+          objectFit: 'cover',
+          flexShrink: 0,
+          boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+        }}
+      />
+    )
+  }
+  return (
+    <div style={{
+      width: size, height: size,
+      borderRadius: 12,
+      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#006233'}, ${equipe.couleur_secondaire || '#FBBF00'})`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: size * 0.38,
+      fontWeight: 800,
+      color: 'white',
+      flexShrink: 0,
+      boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
+      fontFamily: 'var(--font-outfit)',
+    }}>
+      {equipe.sigle || equipe.nom.charAt(0)}
+    </div>
+  )
+}
+
 export default function MatchListClient({ initialMatchs }: Props) {
   const [selectedJournee, setSelectedJournee] = useState<number>(1)
 
   const matchesByJournee = initialMatchs.filter(m => m.journee === selectedJournee)
 
-  // Group matches by date inside the selected journée
   const matchesByDate: Record<string, Match[]> = {}
   matchesByJournee.forEach(m => {
-    if (!matchesByDate[m.date_match]) {
-      matchesByDate[m.date_match] = []
-    }
+    if (!matchesByDate[m.date_match]) matchesByDate[m.date_match] = []
     matchesByDate[m.date_match].push(m)
   })
-
-  // Sort dates
   const sortedDates = Object.keys(matchesByDate).sort()
-
   const journees = [1, 2, 3, 4, 5]
-
-  function TeamBadge({ equipe, size = 42 }: { equipe: Team; size?: number }) {
-    if (equipe.logo_url) {
-      return (
-        <img
-          src={equipe.logo_url}
-          alt={equipe.nom}
-          style={{
-            width: size,
-            height: size,
-            borderRadius: 10,
-            objectFit: 'cover',
-            flexShrink: 0,
-            boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
-          }}
-        />
-      )
-    }
-    return (
-      <div style={{
-        width: size, height: size,
-        borderRadius: 10,
-        background: `linear-gradient(135deg, ${equipe.couleur_principale}, ${equipe.couleur_secondaire})`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: size * 0.42,
-        fontWeight: 800,
-        color: 'white',
-        flexShrink: 0,
-        boxShadow: '0 4px 10px rgba(0,0,0,0.12)',
-        fontFamily: 'var(--font-outfit)',
-      }}>
-        {equipe.sigle}
-      </div>
-    )
-  }
 
   return (
     <div style={{ maxWidth: 720, margin: '0 auto' }}>
-      {/* Tab Selector */}
+      {/* Journée Tab Pills */}
       <div style={{
         display: 'flex',
         gap: 6,
         padding: 6,
-        background: 'rgba(0,0,0,0.03)',
-        borderRadius: 18,
+        background: 'var(--color-surface-card)',
+        borderRadius: 20,
         marginBottom: 24,
         overflowX: 'auto',
         WebkitOverflowScrolling: 'touch',
+        border: '1px solid var(--color-border)',
+        boxShadow: 'var(--shadow-sm)',
+        scrollbarWidth: 'none',
       }}>
         {journees.map(j => (
           <button
@@ -117,50 +120,50 @@ export default function MatchListClient({ initialMatchs }: Props) {
             onClick={() => setSelectedJournee(j)}
             style={{
               flex: 1,
-              padding: '12px 20px',
+              padding: '11px 16px',
               border: 'none',
               background: selectedJournee === j ? 'var(--gradient-green)' : 'transparent',
               color: selectedJournee === j ? 'white' : 'var(--color-text-secondary)',
               borderRadius: 14,
-              fontSize: '0.875rem',
+              fontSize: '0.82rem',
               fontWeight: 700,
               cursor: 'pointer',
               boxShadow: selectedJournee === j ? 'var(--shadow-green)' : 'none',
               transition: 'all 0.25s ease',
               whiteSpace: 'nowrap',
-              minWidth: 110,
+              minWidth: 90,
               fontFamily: 'var(--font-outfit)',
+              letterSpacing: '-0.01em',
             }}
           >
-            🗓️ Journée {j}
+            J{j}
           </button>
         ))}
       </div>
 
-      {/* Exemption Banner */}
+      {/* Exempted Team Banner */}
       {EXEMPTE_MAP[selectedJournee] && (
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 12,
-          padding: '14px 20px',
-          background: 'rgba(251,191,0,0.08)',
-          border: '1px dashed rgba(251,191,0,0.4)',
-          borderRadius: 16,
-          marginBottom: 28,
-          fontSize: '0.85rem',
-          color: '#826000',
-          fontWeight: 600,
-          boxShadow: '0 2px 8px rgba(251,191,0,0.02)',
+          gap: 10,
+          padding: '12px 18px',
+          background: 'rgba(251,191,0,0.07)',
+          border: '1px dashed rgba(251,191,0,0.45)',
+          borderRadius: 14,
+          marginBottom: 24,
+          fontSize: '0.82rem',
+          color: 'var(--color-text-secondary)',
+          fontWeight: 500,
         }}>
-          <span style={{ fontSize: '1.2rem' }}>📢</span>
+          <span style={{ fontSize: '1.1rem' }}>📢</span>
           <span>
-            Exempté de match ce tour-ci (Poule A) : <strong style={{ color: 'var(--color-primary)' }}>ASC {EXEMPTE_MAP[selectedJournee].nom}</strong>
+            Exempté ce tour : <strong style={{ color: '#D97706' }}>ASC {EXEMPTE_MAP[selectedJournee].nom}</strong>
           </span>
         </div>
       )}
 
-      {/* Calendar Header or Magal pause indicator */}
+      {/* Magal Pause */}
       {selectedJournee === 4 && (
         <div style={{
           display: 'flex',
@@ -169,219 +172,199 @@ export default function MatchListClient({ initialMatchs }: Props) {
           gap: 6,
           padding: '20px',
           background: 'rgba(0,98,51,0.05)',
-          border: '1px solid rgba(0,98,51,0.15)',
+          border: '1px solid rgba(0,98,51,0.12)',
           borderRadius: 16,
-          marginBottom: 28,
+          marginBottom: 24,
           textAlign: 'center',
-          boxShadow: '0 4px 12px rgba(0,98,51,0.02)',
         }}>
-          <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-primary)', fontFamily: 'var(--font-outfit)' }}>🕌 Pause Magal</span>
-          <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', maxWidth: 440, lineHeight: 1.4 }}>
-            Le calendrier observe une pause officielle pour le Grand Magal de Touba. Les matchs reprennent le 03/08/2026.
+          <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--color-primary)', fontFamily: 'var(--font-outfit)' }}>
+            🕌 Pause Magal de Touba
+          </span>
+          <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', maxWidth: 380, lineHeight: 1.5 }}>
+            Le calendrier observe une pause officielle. Les matchs reprennent le <strong>03/08/2026</strong>.
           </span>
         </div>
       )}
 
-      {/* Matches Grid */}
+      {/* Match Cards */}
       {sortedDates.length === 0 ? (
-        <div className="card" style={{ padding: 60, textAlign: 'center', borderRadius: 20 }}>
-          <div style={{ fontSize: '3.5rem', marginBottom: 16 }}>⚽</div>
-          <h3 style={{ fontFamily: 'var(--font-outfit)', marginBottom: 8 }}>Aucun match programmé</h3>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Revenez bientôt pour la mise à jour officielle !</p>
+        <div style={{
+          background: 'var(--color-surface-card)',
+          border: '1px solid var(--color-border)',
+          borderRadius: 20,
+          padding: '60px 20px',
+          textAlign: 'center',
+        }}>
+          <div style={{ fontSize: '3rem', marginBottom: 12 }}>⚽</div>
+          <h3 style={{ fontFamily: 'var(--font-outfit)', marginBottom: 6, fontSize: '1.1rem' }}>Aucun match programmé</h3>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Revenez bientôt pour le calendrier officiel.</p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {sortedDates.map(date => {
             const matches = matchesByDate[date]
-            const formattedDate = new Date(date).toLocaleDateString('fr-FR', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })
+            const d = new Date(date)
+            const day = d.toLocaleDateString('fr-FR', { weekday: 'long' })
+            const dayNum = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
 
             return (
               <div key={date}>
-                {/* Clean Date Header Chip */}
-                <div style={{ marginBottom: 16 }}>
-                  <span style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    color: 'var(--color-primary)',
-                    background: 'rgba(0,98,51,0.06)',
-                    padding: '6px 16px',
-                    borderRadius: 30,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    fontFamily: 'var(--font-outfit)',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
+                {/* Date Header */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                    background: 'var(--gradient-green)',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: 'var(--shadow-green)',
                   }}>
-                    <span>📅</span> {formattedDate}
-                  </span>
+                    <span style={{ fontSize: '0.6rem', fontWeight: 700, color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1 }}>{day.slice(0, 3)}</span>
+                    <span style={{ fontSize: '1rem', fontWeight: 900, color: 'white', lineHeight: 1.1 }}>{d.getDate()}</span>
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-text-primary)', fontFamily: 'var(--font-outfit)', textTransform: 'capitalize' }}>{day} {dayNum}</div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>{matches.length} rencontre{matches.length > 1 ? 's' : ''}</div>
+                  </div>
+                  <div style={{ flex: 1, height: 1, background: 'var(--color-border)', marginLeft: 4 }} />
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {/* Match List */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {matches.map(m => {
                     const isDone = m.statut === 'termine'
                     const isLive = m.statut === 'en_cours'
                     const isWinA = isDone && (m.score_a ?? 0) > (m.score_b ?? 0)
                     const isWinB = isDone && (m.score_b ?? 0) > (m.score_a ?? 0)
-
-                    // Color code strip for the Poule
-                    const pouleColor = m.equipe_a.poule === 'A' ? '#006233' : m.equipe_a.poule === 'B' ? '#1E40AF' : '#B91C1C'
+                    const poule = m.equipe_a.poule || 'A'
+                    const pouleColor = POULE_COLORS[poule] || '#006233'
 
                     return (
-                      <Link key={m.id} href={`/matchs/${m.id}`} style={{ textDecoration: 'none' }}>
-                        <div className="match-card" style={{
-                          display: 'grid',
-                          gridTemplateColumns: '1fr auto 1fr',
-                          gap: 16,
-                          alignItems: 'center',
-                          padding: '20px 24px',
-                          borderRadius: 20,
-                          position: 'relative',
+                      <Link key={m.id} href={`/matchs/${m.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+                        <div style={{
+                          background: 'var(--color-surface-card)',
+                          border: '1px solid var(--color-border)',
+                          borderRadius: 16,
                           overflow: 'hidden',
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.02)',
-                          border: '1px solid rgba(0,0,0,0.04)',
-                          background: 'white',
-                          transition: 'all 0.25s ease',
-                        }}>
-                          {/* Side Group Color Strip */}
+                          boxShadow: 'var(--shadow-sm)',
+                          transition: 'transform 0.2s, box-shadow 0.2s',
+                        }}
+                          onMouseEnter={e => {
+                            (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'
+                            ;(e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)'
+                          }}
+                          onMouseLeave={e => {
+                            (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
+                            ;(e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)'
+                          }}
+                        >
+                          {/* Top strip: Poule label + status badge */}
                           <div style={{
-                            position: 'absolute',
-                            left: 0, top: 0, bottom: 0,
-                            width: 6,
-                            background: pouleColor,
-                          }} />
-
-                          {/* Equipe A */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 14, justifyContent: 'flex-end', minWidth: 0 }}>
-                            <span style={{
-                              fontWeight: isWinA ? 800 : 600,
-                              fontSize: '0.95rem',
-                              color: isWinA ? 'var(--color-primary)' : 'var(--color-text-primary)',
-                              textAlign: 'right',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              fontFamily: 'var(--font-outfit)',
-                            }}>
-                              {m.equipe_a.nom}
-                            </span>
-                            <TeamBadge equipe={m.equipe_a} />
-                          </div>
-
-                          {/* Center Scoreboard Score / Time Box */}
-                          <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            minWidth: 100,
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            padding: '8px 16px',
+                            borderBottom: '1px solid var(--color-border)',
+                            background: 'var(--color-surface-elevated)',
                           }}>
-                            {/* Group Tag */}
                             <span style={{
-                              fontSize: '0.65rem',
-                              fontWeight: 800,
+                              fontSize: '0.68rem', fontWeight: 800,
                               color: pouleColor,
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.02em',
-                              marginBottom: 6,
+                              background: `${pouleColor}15`,
+                              padding: '3px 10px', borderRadius: 20,
+                              textTransform: 'uppercase', letterSpacing: '0.04em',
                             }}>
-                              Poule {m.equipe_a.poule}
+                              Poule {poule}
                             </span>
 
-                            {/* Stadium scoreboard styling */}
-                            <div style={{
-                              background: isLive ? 'rgba(239,68,68,0.08)' : 'rgba(0,0,0,0.03)',
-                              border: isLive ? '1.5px solid rgba(239,68,68,0.3)' : '1px solid rgba(0,0,0,0.05)',
-                              borderRadius: 12,
-                              padding: '8px 16px',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              minWidth: 84,
-                              boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.02)',
-                            }}>
-                              {isDone || isLive ? (
-                                <>
-                                  {isLive && (
-                                    <span style={{
-                                      fontSize: '0.6rem',
-                                      fontWeight: 800,
-                                      color: '#EF4444',
-                                      animation: 'pulse 1.5s infinite',
-                                      letterSpacing: '0.05em',
-                                      marginBottom: 2,
-                                    }}>LIVE</span>
-                                  )}
-                                  <span style={{
-                                    fontFamily: 'var(--font-outfit)',
-                                    fontWeight: 900,
-                                    fontSize: '1.25rem',
-                                    color: isLive ? '#EF4444' : 'var(--color-text-primary)',
-                                    letterSpacing: '-0.02em',
-                                    lineHeight: 1.1,
-                                  }}>
-                                    {m.score_a} — {m.score_b}
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <span style={{
-                                    fontFamily: 'var(--font-outfit)',
-                                    fontWeight: 800,
-                                    fontSize: '1.1rem',
-                                    color: 'var(--color-primary)',
-                                    lineHeight: 1.1,
-                                  }}>
-                                    {m.heure_match?.slice(0,5)}
-                                  </span>
-                                  <span style={{
-                                    fontSize: '0.6rem',
-                                    color: 'var(--color-text-muted)',
-                                    fontWeight: 600,
-                                    marginTop: 2,
-                                  }}>
-                                    {m.heure_match === '16:00' ? '1ère heure' : '2ème heure'}
-                                  </span>
-                                </>
-                              )}
-                            </div>
-                            
-                            {isDone && (
+                            {isLive ? (
                               <span style={{
-                                fontSize: '0.6rem',
-                                color: 'var(--color-text-muted)',
-                                fontWeight: 700,
-                                textTransform: 'uppercase',
-                                marginTop: 6,
-                                letterSpacing: '0.02em',
+                                fontSize: '0.68rem', fontWeight: 800, color: '#EF4444',
+                                background: 'rgba(239,68,68,0.08)', padding: '3px 10px',
+                                borderRadius: 20, display: 'flex', alignItems: 'center', gap: 5,
                               }}>
-                                Terminé
+                                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#EF4444', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
+                                EN DIRECT
+                              </span>
+                            ) : isDone ? (
+                              <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-text-muted)', background: 'var(--color-surface)', padding: '3px 10px', borderRadius: 20 }}>
+                                ✓ Terminé
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-primary)', background: 'rgba(0,98,51,0.07)', padding: '3px 10px', borderRadius: 20 }}>
+                                ⏰ {m.heure_match?.slice(0, 5)}
                               </span>
                             )}
                           </div>
 
-                          {/* Equipe B */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-                            <TeamBadge equipe={m.equipe_b} />
-                            <span style={{
-                              fontWeight: isWinB ? 800 : 600,
-                              fontSize: '0.95rem',
-                              color: isWinB ? 'var(--color-primary)' : 'var(--color-text-primary)',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              fontFamily: 'var(--font-outfit)',
-                            }}>
-                              {m.equipe_b.nom}
-                            </span>
+                          {/* Match Body */}
+                          <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto 1fr',
+                            gap: 8,
+                            alignItems: 'center',
+                            padding: '16px 16px',
+                          }}>
+                            {/* Équipe A */}
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                              <TeamBadge equipe={m.equipe_a} size={52} />
+                              <span style={{
+                                fontSize: '0.78rem', fontWeight: isWinA ? 800 : 600,
+                                color: isWinA ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                                textAlign: 'center', lineHeight: 1.2,
+                                maxWidth: 90, overflow: 'hidden',
+                              }}>
+                                {m.equipe_a.nom}
+                              </span>
+                            </div>
+
+                            {/* Center: Score or VS */}
+                            <div style={{ textAlign: 'center', padding: '0 8px' }}>
+                              {isDone || isLive ? (
+                                <div style={{
+                                  fontFamily: 'var(--font-outfit)',
+                                  fontWeight: 900,
+                                  fontSize: '1.5rem',
+                                  letterSpacing: '-0.03em',
+                                  color: isLive ? '#EF4444' : 'var(--color-text-primary)',
+                                  lineHeight: 1,
+                                }}>
+                                  {m.score_a} <span style={{ opacity: 0.4, fontSize: '1rem' }}>–</span> {m.score_b}
+                                </div>
+                              ) : (
+                                <div>
+                                  <div style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--color-text-muted)', fontFamily: 'var(--font-outfit)' }}>VS</div>
+                                  <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: 2 }}>📍 {m.stade?.split(' ')[0]}</div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Équipe B */}
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                              <TeamBadge equipe={m.equipe_b} size={52} />
+                              <span style={{
+                                fontSize: '0.78rem', fontWeight: isWinB ? 800 : 600,
+                                color: isWinB ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                                textAlign: 'center', lineHeight: 1.2,
+                                maxWidth: 90, overflow: 'hidden',
+                              }}>
+                                {m.equipe_b.nom}
+                              </span>
+                            </div>
                           </div>
+
+                          {/* Bottom: Pronostiquer CTA (if upcoming) */}
+                          {m.statut === 'a_venir' && (
+                            <div style={{
+                              borderTop: '1px solid var(--color-border)',
+                              padding: '10px 16px',
+                              display: 'flex',
+                              justifyContent: 'center',
+                            }}>
+                              <span style={{
+                                fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-primary)',
+                                display: 'flex', alignItems: 'center', gap: 6,
+                              }}>
+                                🎯 Pronostiquer ce match →
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </Link>
                     )
