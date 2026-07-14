@@ -1,0 +1,135 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #00A651 0%, #006233 40%, #003d1a 100%);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  position: relative;
+  overflow: hidden;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bgBlobTop {
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  filter: blur(60px);
+  animation: float 6s ease-in-out infinite;
+}
+
+.bgBlobBottom {
+  position: absolute;
+  bottom: -30%;
+  left: -15%;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  filter: blur(50px);
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(20px);
+  }
+}
+
+.header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 14px;
+  }
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 5;
+  /* Helps on mobile when the keyboard appears */
+  min-height: 0;
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 14px;
+  }
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  width: 100%;
+  max-width: clamp(320px, 92vw, 380px);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: clamp(20px, 4vw, 32px) clamp(16px, 3.5vw, 24px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), inset 1px 1px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: slideUp 0.8s ease-out 0.1s backwards;
+}
+
+.h2 {
+  font-family: var(--font-outfit);
+  font-weight: 800;
+  font-size: clamp(1.25rem, 5vw, 1.5rem);
+  color: #1a1a2e;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.pSub {
+  color: #666;
+  font-size: clamp(0.8rem, 3.6vw, 0.85rem);
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-height: 700px) {
+  .main {
+    justify-content: flex-start;
+    padding-top: 10px;
+  }
+  .brand {
+    margin-bottom: 22px;
+  }
+}
+

@@ -39,6 +39,9 @@ export const metadata: Metadata = {
     locale: "fr_FR",
   },
   manifest: "/manifest.json",
+  verification: {
+    google: "rIn2jCO3ijj7ERy1CEzbX57druczxj1ZbLv52lwcx88",
+  },
 };
 
 export const viewport: Viewport = {

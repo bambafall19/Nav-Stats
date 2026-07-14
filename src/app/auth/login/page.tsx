@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import styles from './login.module.css'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -57,47 +58,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #00A651 0%, #006233 40%, #003d1a 100%)',
-      display: 'flex',
-      flexDirection: 'column',
-      fontFamily: 'var(--font-outfit), system-ui, sans-serif',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
+    <div className={styles.page} style={{ position: 'relative', overflow: 'hidden', WebkitTextSizeAdjust: '100%' }}>
       {/* Animated background elements */}
-      <div style={{
-        position: 'absolute',
-        top: '-40%',
-        right: '-10%',
-        width: '500px',
-        height: '500px',
-        borderRadius: '50%',
-        background: 'rgba(255, 255, 255, 0.05)',
-        filter: 'blur(60px)',
-        animation: 'float 6s ease-in-out infinite',
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '-30%',
-        left: '-15%',
-        width: '400px',
-        height: '400px',
-        borderRadius: '50%',
-        background: 'rgba(255, 255, 255, 0.03)',
-        filter: 'blur(50px)',
-        animation: 'float 8s ease-in-out infinite reverse',
-      }} />
+      <div className={styles.bgBlobTop} />
+      <div className={styles.bgBlobBottom} />
 
       {/* Header */}
-      <div style={{
-        padding: '20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        zIndex: 10,
-      }}>
+      <div className={styles.header}>
+
         <Link href="/" style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           width: 40, height: 40, borderRadius: '50%',
@@ -128,15 +96,8 @@ export default function LoginPage() {
       </div>
 
       {/* Main content - Centered */}
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px',
-        zIndex: 5,
-      }}>
+      <div className={styles.main}>
+
         {/* Logo and branding */}
         <div style={{
           display: 'flex',
@@ -183,19 +144,10 @@ export default function LoginPage() {
         </div>
 
         {/* Main card */}
-        <div style={{
-          width: '100%',
-          maxWidth: 380,
-          background: 'rgba(255, 255, 255, 0.92)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '24px',
-          padding: '32px 24px',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), inset 1px 1px 0 rgba(255,255,255,0.5)',
-          border: '1px solid rgba(255,255,255,0.3)',
-          animation: 'slideUp 0.8s ease-out 0.1s backwards',
-        }}>
-        {/* Form container to control width and layout */}
-        <div style={{ width: '100%' }}
+        <div className={styles.card}>
+          {/* Form container to control width and layout */}
+
+        <div style={{ width: '100%' }}>
           {/* Title */}
           <div style={{ marginBottom: 28, textAlign: 'center' }}>
             <h2 style={{

@@ -1,10 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import HeroSection from '@/components/home/HeroSection'
 import MatchsDuJour from '@/components/home/MatchsDuJour'
-import ClassementTop from '@/components/home/ClassementTop'
 import DerniersResultats from '@/components/home/DerniersResultats'
 import Actualites from '@/components/home/Actualites'
 import TopPronostiqueurs from '@/components/home/TopPronostiqueurs'
+import MonEspace from '@/components/home/MonEspace'
 import ScrollReveal from '@/components/shared/ScrollReveal'
 import type { Metadata } from 'next'
 
@@ -62,6 +62,51 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
     .limit(4)
 
+  // === Mon Espace (si connecté) ===
+  let userProfile: any = null
+  let recentPronostics: any[] = []
+  let pronosticsToMake = 0
+
+  if (user) {
+    // Profil utilisateur
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url, points, rang, quartier, total_pronostics, pronostics_corrects')
+      .eq('id', user.id)
+      .single()
+    userProfile = profileData
+
+    // Pronostics récents
+    const { data: pronosData } = await supabase
+      .from('pronostics')
+      .select(`
+        id, est_correct, score_exact, points_gagnes, resultat_predit,
+        match:matchs(id, statut, score_a, score_b,
+          equipe_a:equipes!matchs_equipe_a_id_fkey(nom, sigle),
+          equipe_b:equipes!matchs_equipe_b_id_fkey(nom, sigle)
+        )
+      `)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(5)
+    recentPronostics = (pronosData || []) as any[]
+
+    // Matchs à venir sans pronostic de cet utilisateur
+    const { data: upcomingMatchs } = await supabase
+      .from('matchs')
+      .select('id')
+      .eq('statut', 'a_venir')
+      .gte('date_match', today)
+
+    const { data: userPronosIds } = await supabase
+      .from('pronostics')
+      .select('match_id')
+      .eq('user_id', user.id)
+
+    const pronosMatchIds = new Set((userPronosIds || []).map((p: any) => p.match_id))
+    pronosticsToMake = (upcomingMatchs || []).filter((m: any) => !pronosMatchIds.has(m.id)).length
+  }
+
   const displayMatchs = (matchsDuJour && matchsDuJour.length > 0) ? matchsDuJour : (prochainsMatchs || [])
   const isToday = matchsDuJour && matchsDuJour.length > 0
 
@@ -71,37 +116,81 @@ export default async function HomePage() {
       <HeroSection matchCount={displayMatchs.length} userCount={totalPronostiqueurs || 0} isAuthenticated={!!user} />
 
       <div className="container-app" style={{ paddingTop: 32 }}>
-        <section className="home-action-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
-          {[
-            { href: '/matchs', icon: '🎯', label: 'Pronostiquer', detail: 'Choisir un match' },
-            { href: '/statistiques', icon: '📊', label: 'Poules', detail: 'Classements ASC' },
-            { href: '/classements', icon: '🏆', label: 'Top fans', detail: 'Rang général' },
-            { href: '/communaute', icon: '💬', label: 'Communauté', detail: 'Discussions' },
-          ].map(action => (
-            <a key={action.href} href={action.href} className="home-action-card" style={{
-              textDecoration: 'none',
-              background: 'var(--color-surface-card)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 14,
-              padding: 16,
-              boxShadow: 'var(--shadow-sm)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              minWidth: 0,
-            }}>
-              <span style={{ width: 38, height: 38, borderRadius: 12, background: 'rgba(0,98,51,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{action.icon}</span>
-              <span style={{ minWidth: 0 }}>
-                <strong style={{ display: 'block', color: 'var(--color-text-primary)', fontFamily: 'var(--font-outfit)', fontSize: '0.9rem', lineHeight: 1.1 }}>{action.label}</strong>
-                <small style={{ color: 'var(--color-text-muted)', fontSize: '0.72rem' }}>{action.detail}</small>
-              </span>
-            </a>
-          ))}
-        </section>
+
+        {/* === Mon Espace (utilisateur connecté) === */}
+        {user && userProfile && (
+          <ScrollReveal direction="up" delay={0}>
+            <MonEspace
+              profile={userProfile}
+              recentPronostics={recentPronostics}
+              pronosticsToMake={pronosticsToMake}
+            />
+          </ScrollReveal>
+        )}
+
+        {/* Raccourcis rapides (non connecté ou connecté) */}
+        {!user && (
+          <section className="home-action-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
+            {[
+              { href: '/matchs', icon: '🎯', label: 'Pronostiquer', detail: 'Choisir un match' },
+              { href: '/statistiques', icon: '📊', label: 'Poules', detail: 'Classements ASC' },
+              { href: '/classements', icon: '🏆', label: 'Top fans', detail: 'Rang général' },
+              { href: '/communaute', icon: '💬', label: 'Communauté', detail: 'Discussions' },
+            ].map(action => (
+              <a key={action.href} href={action.href} className="home-action-card" style={{
+                textDecoration: 'none',
+                background: 'var(--color-surface-card)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 14,
+                padding: 16,
+                boxShadow: 'var(--shadow-sm)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                minWidth: 0,
+              }}>
+                <span style={{ width: 38, height: 38, borderRadius: 12, background: 'rgba(0,98,51,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{action.icon}</span>
+                <span style={{ minWidth: 0 }}>
+                  <strong style={{ display: 'block', color: 'var(--color-text-primary)', fontFamily: 'var(--font-outfit)', fontSize: '0.9rem', lineHeight: 1.1 }}>{action.label}</strong>
+                  <small style={{ color: 'var(--color-text-muted)', fontSize: '0.72rem' }}>{action.detail}</small>
+                </span>
+              </a>
+            ))}
+          </section>
+        )}
+
+        {/* Raccourcis rapides connecté */}
+        {user && (
+          <section className="home-action-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
+            {[
+              { href: '/matchs', icon: '⚽', label: 'Matchs', detail: 'Pronostiquer' },
+              { href: '/classements', icon: '🏆', label: 'Classements', detail: 'Voir mon rang' },
+              { href: '/statistiques', icon: '📊', label: 'Poules', detail: 'Stats ASC' },
+              { href: '/communaute', icon: '💬', label: 'Communauté', detail: 'Discussions' },
+            ].map(action => (
+              <a key={action.href} href={action.href} className="home-action-card" style={{
+                textDecoration: 'none',
+                background: 'var(--color-surface-card)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 14,
+                padding: 16,
+                boxShadow: 'var(--shadow-sm)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                minWidth: 0,
+              }}>
+                <span style={{ width: 38, height: 38, borderRadius: 12, background: 'rgba(0,98,51,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{action.icon}</span>
+                <span style={{ minWidth: 0 }}>
+                  <strong style={{ display: 'block', color: 'var(--color-text-primary)', fontFamily: 'var(--font-outfit)', fontSize: '0.9rem', lineHeight: 1.1 }}>{action.label}</strong>
+                  <small style={{ color: 'var(--color-text-muted)', fontSize: '0.72rem' }}>{action.detail}</small>
+                </span>
+              </a>
+            ))}
+          </section>
+        )}
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 32 }}>
-
-          {/* Main content grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr)', gap: 32 }}>
 
             {/* Matchs du jour / Prochains matchs */}
