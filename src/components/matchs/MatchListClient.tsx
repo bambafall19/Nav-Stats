@@ -57,7 +57,7 @@ const POULE_COLORS: Record<string, string> = {
 function TeamBadge({ equipe, size = 52 }: { equipe: Team; size?: number }) {
   if (equipe.logo_url) {
     return (
-      <Image
+      <img
         src={equipe.logo_url}
         alt={equipe.nom}
         width={size}

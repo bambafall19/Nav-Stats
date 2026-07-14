@@ -119,7 +119,6 @@ export default function Header() {
         </div>
 
         <nav style={{
-          display: 'flex',
           alignItems: 'center',
           gap: 2,
           background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
@@ -321,8 +320,9 @@ export default function Header() {
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
           gap: 2px;
-          padding: 6px 8px;
+          padding: 4px 2px;
           border-radius: 12px;
           text-decoration: none;
           color: var(--color-text-muted);
@@ -331,8 +331,9 @@ export default function Header() {
           font-family: var(--font-outfit);
           letter-spacing: 0.01em;
           transition: all 0.18s ease;
-          min-width: 52px;
+          flex: 1;
           text-align: center;
+          max-width: 64px;
         }
         .mobile-nav-link.active {
           color: var(--color-primary);
