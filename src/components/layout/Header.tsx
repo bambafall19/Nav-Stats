@@ -292,103 +292,12 @@ export default function Header() {
 
       {/* Mobile Menu overlay */}
       <style>{`
-        @media (min-width: 768px) { .hidden-mobile { display: flex !important; } }
-        @media (max-width: 767px) { .hidden-mobile { display: none !important; } }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* ── Mobile Bottom Navigation ── */
-        .mobile-bottom-nav {
-          display: none;
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          z-index: 99;
-          background: var(--color-surface-card);
-          border-top: 1px solid var(--color-border);
-          padding: 6px 4px env(safe-area-inset-bottom, 6px);
-          box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-        }
-        .mobile-bottom-nav-inner {
-          display: flex;
-          align-items: center;
-          justify-content: space-around;
-          max-width: 480px;
-          margin: 0 auto;
-        }
-        .mobile-nav-link {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 2px;
-          padding: 4px 2px;
-          border-radius: 12px;
-          text-decoration: none;
-          color: var(--color-text-muted);
-          font-size: 0.58rem;
-          font-weight: 600;
-          font-family: var(--font-outfit);
-          letter-spacing: 0.01em;
-          transition: all 0.18s ease;
-          flex: 1;
-          text-align: center;
-          max-width: 64px;
-        }
-        .mobile-nav-link.active {
-          color: var(--color-primary);
-          background: rgba(0, 98, 51, 0.08);
-        }
-        .mobile-nav-link .nav-icon {
-          font-size: 1.25rem;
-          line-height: 1;
-          display: block;
-        }
-        .mobile-nav-link.active .nav-icon {
-          transform: scale(1.12);
-        }
         @media (max-width: 767px) {
-          .mobile-bottom-nav { display: block; }
-          body { padding-bottom: 68px; }
+          .hidden-mobile { display: none !important; }
           .oncav-label { display: none; }
         }
-        @media (min-width: 768px) {
-          .mobile-bottom-nav { display: none !important; }
-        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
-
-      {/* ── Mobile Bottom Navigation Bar ── */}
-      <nav className="mobile-bottom-nav" aria-label="Navigation mobile">
-        <div className="mobile-bottom-nav-inner">
-          {navLinks.map(link => {
-            const isActive = pathname === link.href
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`mobile-nav-link${isActive ? ' active' : ''}`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <span className="nav-icon">{link.icon}</span>
-                <span>{link.label}</span>
-              </Link>
-            )
-          })}
-          {profile && (
-            <Link
-              href={`/profil/${profile.id}`}
-              className={`mobile-nav-link${pathname.startsWith('/profil') ? ' active' : ''}`}
-            >
-              <span className="nav-icon">
-                {profile.avatar_url
-                  ? <img src={profile.avatar_url} alt="" style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }} />
-                  : '👤'}
-              </span>
-              <span>Profil</span>
-            </Link>
-          )}
-        </div>
-      </nav>
     </header>
   )
 }

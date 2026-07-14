@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import PronosticsClient from '@/components/pronostics/PronosticsClient'
+import MonEspace from '@/components/home/MonEspace'
 
 export const metadata: Metadata = {
   title: 'Mes pronostics – NavéStats',
@@ -49,6 +50,24 @@ export default async function MesPronosticsPage() {
 
   const pronostics = (rawPronostics || []) as any[]
 
+  // Fetch profile for MonEspace
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id, username, full_name, avatar_url, points, rang, quartier, total_pronostics, pronostics_corrects')
+    .eq('id', user.id)
+    .single()
+
+  // Calculate pronosticsToMake
+  const today = new Date().toISOString().split('T')[0]
+  const { data: upcomingMatchs } = await supabase
+    .from('matchs')
+    .select('id')
+    .eq('statut', 'a_venir')
+    .gte('date_match', today)
+
+  const pronosMatchIds = new Set(pronostics.map(p => p.match_id))
+  const pronosticsToMake = (upcomingMatchs || []).filter(m => !pronosMatchIds.has(m.id)).length
+
   const total = pronostics.length
   const corrects = pronostics.filter(p => p.est_correct === true).length
   const scoresExact = pronostics.filter(p => p.score_exact).length
@@ -58,11 +77,16 @@ export default async function MesPronosticsPage() {
 
   return (
     <div className="page-content">
-      <div className="container-app">
-        <div style={{ marginBottom: 28 }}>
-          <h1 className="section-title" style={{ fontSize: '2rem', marginBottom: 4 }}>🎯 Mes pronostics</h1>
-          <p className="section-subtitle">Vos choix, résultats et points gagnés pendant le tournoi.</p>
-        </div>
+      <div className="container-app" style={{ paddingTop: 28 }}>
+        
+        {profile && (
+          <MonEspace 
+            profile={profile}
+            recentPronostics={pronostics.slice(0, 5)}
+            pronosticsToMake={pronosticsToMake}
+          />
+        )}
+
 
         <PronosticsClient
           pronostics={pronostics}

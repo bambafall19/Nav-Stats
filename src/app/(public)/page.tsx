@@ -4,7 +4,7 @@ import MatchsDuJour from '@/components/home/MatchsDuJour'
 import DerniersResultats from '@/components/home/DerniersResultats'
 import Actualites from '@/components/home/Actualites'
 import TopPronostiqueurs from '@/components/home/TopPronostiqueurs'
-import MonEspace from '@/components/home/MonEspace'
+
 import ScrollReveal from '@/components/shared/ScrollReveal'
 import type { Metadata } from 'next'
 
@@ -62,50 +62,7 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
     .limit(4)
 
-  // === Mon Espace (si connecté) ===
-  let userProfile: any = null
-  let recentPronostics: any[] = []
-  let pronosticsToMake = 0
 
-  if (user) {
-    // Profil utilisateur
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('id, username, full_name, avatar_url, points, rang, quartier, total_pronostics, pronostics_corrects')
-      .eq('id', user.id)
-      .single()
-    userProfile = profileData
-
-    // Pronostics récents
-    const { data: pronosData } = await supabase
-      .from('pronostics')
-      .select(`
-        id, est_correct, score_exact, points_gagnes, resultat_predit,
-        match:matchs(id, statut, score_a, score_b,
-          equipe_a:equipes!matchs_equipe_a_id_fkey(nom, sigle),
-          equipe_b:equipes!matchs_equipe_b_id_fkey(nom, sigle)
-        )
-      `)
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(5)
-    recentPronostics = (pronosData || []) as any[]
-
-    // Matchs à venir sans pronostic de cet utilisateur
-    const { data: upcomingMatchs } = await supabase
-      .from('matchs')
-      .select('id')
-      .eq('statut', 'a_venir')
-      .gte('date_match', today)
-
-    const { data: userPronosIds } = await supabase
-      .from('pronostics')
-      .select('match_id')
-      .eq('user_id', user.id)
-
-    const pronosMatchIds = new Set((userPronosIds || []).map((p: any) => p.match_id))
-    pronosticsToMake = (upcomingMatchs || []).filter((m: any) => !pronosMatchIds.has(m.id)).length
-  }
 
   const displayMatchs = (matchsDuJour && matchsDuJour.length > 0) ? matchsDuJour : (prochainsMatchs || [])
   const isToday = matchsDuJour && matchsDuJour.length > 0
@@ -116,17 +73,6 @@ export default async function HomePage() {
       <HeroSection matchCount={displayMatchs.length} userCount={totalPronostiqueurs || 0} isAuthenticated={!!user} />
 
       <div className="container-app" style={{ paddingTop: 32 }}>
-
-        {/* === Mon Espace (utilisateur connecté) === */}
-        {user && userProfile && (
-          <ScrollReveal direction="up" delay={0}>
-            <MonEspace
-              profile={userProfile}
-              recentPronostics={recentPronostics}
-              pronosticsToMake={pronosticsToMake}
-            />
-          </ScrollReveal>
-        )}
 
         {/* Raccourcis rapides (non connecté ou connecté) */}
         {!user && (
