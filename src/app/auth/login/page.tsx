@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -14,6 +14,30 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isDark, setIsDark] = useState(false)
+
+  // Dark mode init from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('navestats-theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const dark = saved === 'dark' || (!saved && prefersDark)
+    setIsDark(dark)
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
+  }, [])
+
+  const toggleDark = () => {
+    const next = !isDark
+    setIsDark(next)
+    document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light')
+    localStorage.setItem('navestats-theme', next ? 'dark' : 'light')
+  }
+
+  // Password reset modal state
+  const [showResetModal, setShowResetModal] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetLoading, setResetLoading] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
+  const [resetError, setResetError] = useState('')
 
   function isPhoneNumber(val: string) {
     const clean = val.replace(/[\s\-\+\(\)]/g, '')
@@ -57,448 +81,273 @@ export default function LoginPage() {
     }
   }
 
+  async function handleResetPassword(e: React.FormEvent) {
+    e.preventDefault()
+    setResetLoading(true); setResetError(''); setResetSent(false)
+
+    let targetEmail = resetEmail.trim()
+    if (isPhoneNumber(targetEmail)) {
+      targetEmail = buildPhoneEmail(targetEmail)
+    }
+
+    const { error: err } = await supabase.auth.resetPasswordForEmail(targetEmail, {
+      redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+    })
+
+    if (err) {
+      setResetError(
+        err.message.toLowerCase().includes('rate limit')
+          ? "Trop de tentatives. Patientez quelques minutes puis réessayez."
+          : err.message
+      )
+      setResetLoading(false)
+      return
+    }
+
+    setResetSent(true)
+    setResetLoading(false)
+  }
+
+  function openResetModal() {
+    setShowResetModal(true)
+    setResetEmail('')
+    setResetSent(false)
+    setResetError('')
+  }
+
+  function closeResetModal() {
+    setShowResetModal(false)
+    setResetEmail('')
+    setResetSent(false)
+    setResetError('')
+  }
+
   return (
-    <div className={styles.page} style={{ position: 'relative', overflow: 'hidden', WebkitTextSizeAdjust: '100%' }}>
+    <div className={styles.page}>
       {/* Animated background elements */}
       <div className={styles.bgBlobTop} />
       <div className={styles.bgBlobBottom} />
 
       {/* Header */}
       <div className={styles.header}>
-
-        <Link href="/" style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          width: 40, height: 40, borderRadius: '50%',
-          background: 'rgba(255,255,255,0.15)', border: '1.5px solid rgba(255,255,255,0.25)',
-          color: 'white', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 700,
-          backdropFilter: 'blur(10px)',
-          transition: 'all 0.3s ease',
-        }} onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'rgba(255,255,255,0.25)';
-          e.currentTarget.style.transform = 'scale(1.05)';
-        }} onMouseLeave={(e) => {
-          e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
-          e.currentTarget.style.transform = 'scale(1)';
-        }}>
-          ‹
-        </Link>
-        
-        <Link href="/auth/register" style={{
-          background: 'rgba(255,255,255,0.95)', color: '#006233',
-          padding: '10px 18px', borderRadius: 'var(--radius-full)',
-          fontSize: '0.8rem', fontWeight: 700, textDecoration: 'none',
-          boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-          transition: 'all 0.3s ease',
-          backdropFilter: 'blur(10px)',
-        }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Link href="/" className={styles.backButton}>
+            ‹
+          </Link>
+          <button
+            onClick={toggleDark}
+            className={styles.themeToggle}
+            aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
+            title={isDark ? 'Mode clair' : 'Mode sombre'}
+          >
+            {isDark ? '☀️' : '🌙'}
+          </button>
+        </div>
+        <Link href="/auth/register" className={styles.registerLink}>
           S'inscrire
         </Link>
       </div>
 
       {/* Main content - Centered */}
       <div className={styles.main}>
-
         {/* Logo and branding */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          marginBottom: 40,
-          animation: 'slideUp 0.6s ease-out',
-        }}>
-          <div style={{
-            width: 70,
-            height: 70,
-            background: 'rgba(255,255,255,0.95)',
-            borderRadius: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 16,
-            boxShadow: '0 16px 40px rgba(0,0,0,0.15)',
-            animation: 'pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
-          }}>
-            <img src="/logo.png" alt="NavéStats Logo" style={{ width: 50, height: 50 }} />
+        <div className={styles.brand}>
+          <div className={styles.logoContainer}>
+            <img src="/logo.png" alt="NavéStats Logo" className={styles.logo} />
           </div>
-          <h1 style={{
-            fontFamily: 'var(--font-outfit)',
-            fontWeight: 800,
-            fontSize: '2rem',
-            color: 'white',
-            letterSpacing: '-0.02em',
-            margin: 0,
-            marginBottom: 8,
-            textAlign: 'center',
-          }}>
-            NavéStats
-          </h1>
-          <p style={{
-            color: 'rgba(255,255,255,0.85)',
-            fontSize: '0.9rem',
-            fontWeight: 500,
-            margin: 0,
-            textAlign: 'center',
-          }}>
-            Pronostique • Domine • Partage
-          </p>
+          <h1 className={styles.brandTitle}>NavéStats</h1>
+          <p className={styles.brandSubtitle}>Pronostique • Domine • Partage</p>
         </div>
 
         {/* Main card */}
         <div className={styles.card}>
-          {/* Form container to control width and layout */}
-
-        <div style={{ width: '100%' }}>
-          {/* Title */}
-          <div style={{ marginBottom: 28, textAlign: 'center' }}>
-            <h2 style={{
-              fontFamily: 'var(--font-outfit)',
-              fontWeight: 800,
-              fontSize: '1.5rem',
-              color: '#1a1a2e',
-              marginBottom: 8,
-              letterSpacing: '-0.01em',
-            }}>
-              Bon retour ! 👋
-            </h2>
-            <p style={{
-              color: '#666',
-              fontSize: '0.85rem',
-              lineHeight: 1.5,
-              margin: 0,
-            }}>
-              Connecte-toi pour partager tes pronostics
-            </p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column' }}>
-            
-            {/* Identifier field */}
-            <div style={{
-              marginBottom: 16,
-              animation: 'slideUp 0.8s ease-out 0.2s backwards',
-            }}>
-              <label style={{
-                fontSize: '0.7rem',
-                color: '#666',
-                fontWeight: 700,
-                display: 'block',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                marginBottom: 8,
-              }}>
-                Téléphone ou Email
-              </label>
-              <input
-                id="identifier-input"
-                type="text"
-                value={identifier}
-                onChange={e => setIdentifier(e.target.value)}
-                placeholder="771234567 ou email@..."
-                required
-                autoComplete="username"
-                style={{
-                  border: '2px solid #e0e0e0',
-                  outline: 'none',
-                  background: '#f8f9fb',
-                  width: '100%',
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  color: '#1a1a2e',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  fontFamily: 'var(--font-outfit)',
-                  transition: 'all 0.3s ease',
-                  boxSizing: 'border-box',
-                }} onFocus={(e) => {
-                  e.currentTarget.style.borderColor = '#00A651';
-                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0, 166, 81, 0.1)';
-                  e.currentTarget.style.background = 'white';
-                }} onBlur={(e) => {
-                  e.currentTarget.style.borderColor = '#e0e0e0';
-                  e.currentTarget.style.boxShadow = 'none';
-                  e.currentTarget.style.background = '#f8f9fb';
-                }} />
+          <div className={styles.formContainer}>
+            {/* Title */}
+            <div className={styles.sectionTitle}>
+              <h2>Bon retour ! 👋</h2>
+              <p>Connecte-toi pour partager tes pronostics</p>
             </div>
 
-            {/* Password field */}
-            <div style={{
-              marginBottom: 18,
-              animation: 'slideUp 0.8s ease-out 0.3s backwards',
-            }}>
-              <label style={{
-                fontSize: '0.7rem',
-                color: '#666',
-                fontWeight: 700,
-                display: 'block',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                marginBottom: 8,
-              }}>
-                Mot de passe
-              </label>
-              <div style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-              }}>
+            {/* Form */}
+            <form onSubmit={handleLogin} className={styles.form}>
+              {/* Identifier field */}
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel} htmlFor="identifier-input">
+                  Téléphone ou Email
+                </label>
                 <input
-                  id="password-input"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  id="identifier-input"
+                  type="text"
+                  value={identifier}
+                  onChange={e => setIdentifier(e.target.value)}
+                  placeholder="771234567 ou email@..."
                   required
-                  autoComplete="current-password"
-                  style={{
-                    border: '2px solid #e0e0e0',
-                    outline: 'none',
-                    background: '#f8f9fb',
-                    width: '100%',
-                    fontSize: '0.95rem',
-                    fontWeight: 500,
-                    color: '#1a1a2e',
-                    padding: '12px 14px',
-                    paddingRight: '40px',
-                    borderRadius: '12px',
-                    fontFamily: 'var(--font-outfit)',
-                    transition: 'all 0.3s ease',
-                    boxSizing: 'border-box',
-                  }} onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#00A651';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0, 166, 81, 0.1)';
-                    e.currentTarget.style.background = 'white';
-                  }} onBlur={(e) => {
-                    e.currentTarget.style.borderColor = '#e0e0e0';
-                    e.currentTarget.style.boxShadow = 'none';
-                    e.currentTarget.style.background = '#f8f9fb';
-                  }} />
+                  autoComplete="username"
+                  className={styles.input}
+                />
+              </div>
+
+              {/* Password field */}
+              <div className={styles.fieldGroupPassword}>
+                <label className={styles.fieldLabel} htmlFor="password-input">
+                  Mot de passe
+                </label>
+                <div className={styles.passwordWrapper}>
+                  <input
+                    id="password-input"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    autoComplete="current-password"
+                    className={styles.inputPassword}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className={styles.passwordToggle}
+                    aria-label={showPassword ? 'Cacher le mot de passe' : 'Afficher le mot de passe'}
+                  >
+                    {showPassword ? '👁️' : '🙈'}
+                  </button>
+                </div>
+              </div>
+
+              {error && (
+                <div className={styles.errorMessage}>
+                  <span className={styles.errorIcon}>⚠️</span>
+                  {error}
+                </div>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                id="login-btn"
+                className={`${styles.submitButton} ${loading ? styles.submitButtonDisabled : styles.submitButtonActive}`}
+              >
+                {loading ? '⏳ Connexion...' : '🚀 Se connecter'}
+              </button>
+
+              {/* Forgot link */}
+              <div className={styles.fieldGroupForgot}>
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{
-                    position: 'absolute',
-                    right: 12,
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '1.1rem',
-                    padding: '0',
-                    color: '#999',
-                    transition: 'color 0.2s ease',
-                  }} onMouseEnter={(e) => e.currentTarget.style.color = '#00A651'} onMouseLeave={(e) => e.currentTarget.style.color = '#999'} >
-                  {showPassword ? '👁️' : '🙈'}
+                  onClick={openResetModal}
+                  className={styles.forgotLink}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-outfit)' }}
+                >
+                  Mot de passe oublié ?
                 </button>
               </div>
-            </div>
 
-            {error && (
-              <div style={{
-                padding: '12px 14px',
-                background: 'linear-gradient(135deg, rgba(232,0,45,0.08) 0%, rgba(232,0,45,0.04) 100%)',
-                border: '1.5px solid #ff6b6b',
-                borderRadius: 12,
-                color: '#e82828',
-                fontSize: '0.8rem',
-                marginBottom: 16,
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                animation: 'slideUp 0.4s ease-out',
-              }}>
-                <span style={{ fontSize: '1rem' }}>⚠️</span>
-                {error}
+              {/* Social Divider */}
+              <div className={styles.divider}>
+                <div className={styles.dividerLine} />
+                <span className={styles.dividerText}>Ou continuer avec</span>
+                <div className={styles.dividerLine} />
               </div>
-            )}
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              id="login-btn"
-              style={{
-                width: '100%',
-                padding: '13px 16px',
-                borderRadius: '12px',
-                background: loading ? '#ccc' : 'linear-gradient(135deg, #00A651 0%, #008c3f 100%)',
-                color: 'white',
-                border: 'none',
-                fontWeight: 700,
-                fontSize: '0.95rem',
-                fontFamily: 'var(--font-outfit)',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                boxShadow: '0 8px 20px rgba(0, 166, 81, 0.25)',
-                marginBottom: 14,
-                transition: 'all 0.3s ease',
-                animation: 'slideUp 0.8s ease-out 0.4s backwards',
-              }} onMouseEnter={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 12px 28px rgba(0, 166, 81, 0.35)';
-                }
-              }} onMouseLeave={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 166, 81, 0.25)';
-                }
-              }} >
-              {loading ? '⏳ Connexion...' : '🚀 Se connecter'}
-            </button>
-
-            {/* Forgot link */}
-            <div style={{
-              textAlign: 'center',
-              marginBottom: 20,
-              animation: 'slideUp 0.8s ease-out 0.5s backwards',
-            }}>
-              <Link href="#" style={{
-                color: '#00A651',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                textDecoration: 'none',
-                transition: 'color 0.2s ease',
-              }} onMouseEnter={(e) => e.currentTarget.style.color = '#006233'} onMouseLeave={(e) => e.currentTarget.style.color = '#00A651'} >
-                Mot de passe oublié ?
-              </Link>
-            </div>
-
-            {/* Social Divider */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              marginBottom: 18,
-              animation: 'slideUp 0.8s ease-out 0.6s backwards',
-            }}>
-              <div style={{ flex: 1, height: '1px', background: '#ddd' }} />
-              <span style={{
-                fontSize: '0.65rem',
-                color: '#999',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-              }}>Ou continuer avec</span>
-              <div style={{ flex: 1, height: '1px', background: '#ddd' }} />
-            </div>
-
-            {/* Social buttons */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 10,
-              animation: 'slideUp 0.8s ease-out 0.7s backwards',
-            }}>
-              <button
-                type="button"
-                onClick={() => handleOAuth('google')}
-                disabled={loading}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  padding: '11px',
-                  borderRadius: '12px',
-                  background: '#f5f5f5',
-                  border: '1.5px solid #e0e0e0',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  color: '#1a1a2e',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontFamily: 'var(--font-outfit)',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#fff';
-                  e.currentTarget.style.borderColor = '#00A651';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 166, 81, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#f5f5f5';
-                  e.currentTarget.style.borderColor = '#e0e0e0';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                <img src="https://www.google.com/favicon.ico" alt="G" style={{ width: 16, height: 16 }} />
-                Google
-              </button>
-              <button
-                type="button"
-                onClick={() => handleOAuth('facebook')}
-                disabled={loading}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  padding: '11px',
-                  borderRadius: '12px',
-                  background: '#f5f5f5',
-                  border: '1.5px solid #e0e0e0',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  color: '#1a1a2e',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontFamily: 'var(--font-outfit)',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#fff';
-                  e.currentTarget.style.borderColor = '#00A651';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 166, 81, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#f5f5f5';
-                  e.currentTarget.style.borderColor = '#e0e0e0';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                <span style={{ fontWeight: 700 }}>f</span>
-                Facebook
-              </button>
-            </div>
-          </form>
-        </div>
+              {/* Social buttons */}
+              <div className={styles.socialGrid}>
+                <button
+                  type="button"
+                  onClick={() => handleOAuth('google')}
+                  disabled={loading}
+                  className={styles.socialButton}
+                >
+                  <img
+                    src="https://www.google.com/favicon.ico"
+                    alt="G"
+                    className={styles.socialIcon}
+                  />
+                  Google
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleOAuth('facebook')}
+                  disabled={loading}
+                  className={styles.socialButton}
+                >
+                  <span className={styles.socialIconFb}>f</span>
+                  Facebook
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
 
-      {/* CSS Animations */}
-      <style>{`
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(20px);
-          }
-        }
-        
-        @keyframes pop {
-          0% {
-            transform: scale(0.5);
-            opacity: 0;
-          }
-          70% {
-            transform: scale(1.1);
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-      `}</style>
+      {/* Password Reset Modal */}
+      {showResetModal && (
+        <div className={styles.modalOverlay} onClick={closeResetModal}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            {!resetSent ? (
+              <>
+                <h3 className={styles.modalTitle}>🔑 Mot de passe oublié</h3>
+                <p className={styles.modalSubtitle}>
+                  Saisis ton email ou ton numéro de téléphone pour recevoir un lien de réinitialisation.
+                </p>
+
+                <form onSubmit={handleResetPassword}>
+                  <input
+                    type="text"
+                    value={resetEmail}
+                    onChange={e => setResetEmail(e.target.value)}
+                    placeholder="771234567 ou email@..."
+                    required
+                    autoComplete="email"
+                    className={styles.modalInput}
+                  />
+
+                  {resetError && (
+                    <div className={styles.errorMessage} style={{ marginBottom: 16 }}>
+                      <span className={styles.errorIcon}>⚠️</span>
+                      {resetError}
+                    </div>
+                  )}
+
+                  <div className={styles.modalActions}>
+                    <button
+                      type="button"
+                      onClick={closeResetModal}
+                      className={styles.modalCancelButton}
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={resetLoading}
+                      className={styles.modalSubmitButton}
+                    >
+                      {resetLoading ? '⏳ Envoi...' : '📩 Envoyer le lien'}
+                    </button>
+                  </div>
+                </form>
+              </>
+            ) : (
+              <div className={styles.modalSuccess}>
+                <div className={styles.modalSuccessIcon}>✅</div>
+                <h3 className={styles.modalSuccessTitle}>Email envoyé !</h3>
+                <p className={styles.modalSuccessText}>
+                  Un lien de réinitialisation a été envoyé. Vérifie ta boîte de réception (et tes spams).
+                </p>
+                <button
+                  type="button"
+                  onClick={closeResetModal}
+                  className={styles.modalSubmitButton}
+                  style={{ width: '100%' }}
+                >
+                  Compris 👍
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

@@ -8,6 +8,7 @@ import HeadToHead from '@/components/matchs/HeadToHead'
 import SharePronostic from '@/components/pronostics/SharePronostic'
 import PushNotifButton from '@/components/shared/PushNotifButton'
 import FormeRecente from '@/components/shared/FormeRecente'
+import CountdownTimer from '@/components/shared/CountdownTimer'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -165,9 +166,15 @@ export default async function MatchDetailPage({ params }: Props) {
             {isLive && <span className="status-live" style={{ display: 'inline-flex' }}>EN DIRECT</span>}
             {isDone && <span className="badge badge-gray" style={{ fontSize: '0.8rem' }}>Match Terminé</span>}
             {isAvenir && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', background: 'rgba(255,255,255,0.2)', borderRadius: 'var(--radius-full)', color: 'white', fontSize: '0.8rem', fontWeight: 600 }}>
-                📅 {new Date(match.date_match).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} à {match.heure_match?.slice(0,5)}
-              </span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', background: 'rgba(255,255,255,0.2)', borderRadius: 'var(--radius-full)', color: 'white', fontSize: '0.8rem', fontWeight: 600 }}>
+                  📅 {new Date(match.date_match).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} à {match.heure_match?.slice(0,5)}
+                </span>
+                <CountdownTimer
+                  targetDate={match.date_match}
+                  targetTime={match.heure_match || '00:00'}
+                />
+              </div>
             )}
           </div>
 

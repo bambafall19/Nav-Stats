@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Share2 } from 'lucide-react'
 import FilterButton from '@/components/shared/FilterButton'
+import CountdownTimer from '@/components/shared/CountdownTimer'
 import { MATCH_STATUS_LABELS } from '@/lib/constants/matchStatus'
 
 interface Team {
@@ -390,9 +391,15 @@ export default function MatchListClient({ initialMatchs }: Props) {
                                 ✓ Terminé
                               </span>
                             ) : (
-                              <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-primary)', background: 'rgba(0,98,51,0.07)', padding: '3px 10px', borderRadius: 20 }}>
-                                ⏰ {m.heure_match?.slice(0, 5)}
-                              </span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <CountdownTimer
+                                  targetDate={m.date_match}
+                                  targetTime={m.heure_match || '00:00'}
+                                />
+                                <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-primary)', background: 'rgba(0,98,51,0.07)', padding: '3px 10px', borderRadius: 20 }}>
+                                  ⏰ {m.heure_match?.slice(0, 5)}
+                                </span>
+                              </div>
                             )}
                           </div>
 
