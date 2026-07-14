@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Outfit, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import PWAInstallBanner from "@/components/shared/PWAInstallBanner";
+import OfflineIndicator from "@/components/shared/OfflineIndicator";
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
 
 const inter = Inter({
@@ -61,6 +62,7 @@ export default function RootLayout({
         <ErrorBoundary>
           {children}
           <PWAInstallBanner />
+          <OfflineIndicator />
         </ErrorBoundary>
       </body>
     </html>

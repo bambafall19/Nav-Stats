@@ -1,49 +1,89 @@
-// NavéStats – Service Worker (PWA Push Notifications)
-// public/sw.js
-
+// NavéStats Service Worker - Offline support
 const CACHE_NAME = 'navestats-v1'
+const STATIC_CACHE = 'navestats-static-v1'
+const DYNAMIC_CACHE = 'navestats-dynamic-v1'
 
-// Install event
+const STATIC_URLS = [
+  '/',
+  '/matchs',
+  '/classements',
+  '/statistiques',
+  '/communaute',
+  '/manifest.json',
+  '/logo.png',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+]
+
+// Install - cache static assets
 self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(STATIC_CACHE).then((cache) => {
+      return cache.addAll(STATIC_URLS).catch(() => {
+        // Some URLs might fail, that's ok
+        console.log('Static cache partially loaded')
+      })
+    })
+  )
   self.skipWaiting()
 })
 
-// Activate event
+// Activate - clean old caches
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim())
-})
-
-// Push event – display notification from push server
-self.addEventListener('push', (event) => {
-  let data = { title: '⚽ NavéStats', body: 'Un match commence bientôt à Khombole !' }
-  try { data = event.data.json() } catch (e) {}
-
   event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: '/logo.png',
-      badge: '/favicon.png',
-      vibrate: [200, 100, 200],
-      tag: 'navestats-match',
-      renotify: true,
-      data: { url: data.url || '/matchs' },
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys
+          .filter((key) => key !== STATIC_CACHE && key !== DYNAMIC_CACHE)
+          .map((key) => caches.delete(key))
+      )
     })
   )
+  self.clients.claim()
 })
 
-// Notification click – open the app
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close()
-  const url = event.notification.data?.url || '/matchs'
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      for (const client of clientList) {
-        if (client.url.includes(self.location.origin) && 'focus' in client) {
-          client.navigate(url)
-          return client.focus()
-        }
-      }
-      if (clients.openWindow) return clients.openWindow(url)
-    })
+// Fetch - network first, cache fallback for pages; cache first for static
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url)
+  
+  // Skip non-GET and external requests
+  if (event.request.method !== 'GET') return
+  if (!url.origin.includes('navestats')) return
+
+  // API requests - network only
+  if (url.pathname.includes('/api/') || url.hostname.includes('supabase')) {
+    return
+  }
+
+  // Static assets - cache first
+  if (
+    url.pathname.match(/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?)$/) ||
+    url.pathname.startsWith('/_next/static/')
+  ) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        return cached || fetch(event.request).then((response) => {
+          const clone = response.clone()
+          caches.open(DYNAMIC_CACHE).then((cache) => cache.put(event.request, clone))
+          return response
+        })
+      })
+    )
+    return
+  }
+
+  // Pages - network first, fallback to cache
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        const clone = response.clone()
+        caches.open(DYNAMIC_CACHE).then((cache) => cache.put(event.request, clone))
+        return response
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cached) => {
+          return cached || caches.match('/')
+        })
+      })
   )
 })
