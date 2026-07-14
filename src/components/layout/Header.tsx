@@ -74,13 +74,14 @@ export default function Header() {
         transition: 'background 0.3s ease',
       }}
     >
-      <div className="container-app" style={{ display: 'flex', alignItems: 'center', height: '100%', gap: 16 }}>
+      <div className="container-app header-shell" style={{ display: 'flex', alignItems: 'center', height: '100%', gap: 16 }}>
         {/* Logo */}
-        <Link href="/" style={{ textDecoration: 'none', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Link href="/" className="brand-link" style={{ textDecoration: 'none', flexShrink: 0 }}>
+          <div className="brand-mark" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <img
               src="/logo.png"
               alt="NavéStats Logo"
+              className="brand-logo"
               style={{
                 width: 38,
                 height: 38,
@@ -104,12 +105,13 @@ export default function Header() {
         </Link>
 
         {/* Partnership Logo — visible on all sizes, compact on mobile */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="zone-partner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ width: 1, height: 22, background: 'var(--color-border)', flexShrink: 0 }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <img
               src="/oncav-logo.png"
               alt="ONCAV Zone 6"
+              className="zone-logo"
               style={{ width: 28, height: 28, objectFit: 'contain', flexShrink: 0 }}
             />
             <span className="oncav-label" style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.1 }}>
@@ -158,7 +160,7 @@ export default function Header() {
         </nav>
 
         {/* Right actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, marginLeft: 'auto' }}>
+        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, marginLeft: 'auto' }}>
 
           {/* Dark Mode Toggle */}
           <button
@@ -283,7 +285,7 @@ export default function Header() {
               <LinkButton href="/auth/login" variant="secondary" size="sm">
                 🔑 Connexion
               </LinkButton>
-              <LinkButton href="/auth/register" variant="primary" size="sm">
+              <LinkButton href="/auth/register" variant="primary" size="sm" className="register-link">
                 ✨ S'inscrire
               </LinkButton>
             </>
@@ -294,8 +296,8 @@ export default function Header() {
       {/* Mobile Menu overlay */}
       <style>{`
         @media (max-width: 767px) {
-          .oncav-label { display: none; }
           .desktop-nav { display: none !important; }
+          .hidden-mobile { display: none !important; }
         }
         @media (min-width: 768px) {
           .desktop-nav { display: flex !important; align-items: center; }

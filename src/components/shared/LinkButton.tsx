@@ -47,11 +47,13 @@ export default function LinkButton({
   children,
   variant = 'primary',
   size = 'md',
+  className,
   onClick,
 }: LinkButtonProps) {
   return (
     <Link
       href={href}
+      className={className}
       onClick={onClick}
       style={{
         display: 'inline-flex',
