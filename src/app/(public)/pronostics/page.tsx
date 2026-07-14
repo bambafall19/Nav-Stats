@@ -66,7 +66,8 @@ export default async function MesPronosticsPage() {
     .gte('date_match', today)
 
   const pronosMatchIds = new Set(pronostics.map(p => p.match_id))
-  const pronosticsToMake = (upcomingMatchs || []).filter(m => !pronosMatchIds.has(m.id)).length
+  const upcomingMatchRows = (upcomingMatchs || []) as { id: string }[]
+  const pronosticsToMake = upcomingMatchRows.filter(m => !pronosMatchIds.has(m.id)).length
 
   const total = pronostics.length
   const corrects = pronostics.filter(p => p.est_correct === true).length

@@ -573,6 +573,20 @@
   }
   @media (min-width: 768px) { .page-content { padding-bottom: 40px; } }
 
+  @media (max-width: 767px), (hover: none) and (pointer: coarse) {
+    #main-header {
+      display: none !important;
+    }
+
+    .page-content {
+      padding-top: 24px;
+    }
+
+    .mobile-bottom-nav:not(#mobile-bottom-nav) {
+      display: none !important;
+    }
+  }
+
   @media (max-width: 640px) {
     .container-app {
       padding: 0 14px;
