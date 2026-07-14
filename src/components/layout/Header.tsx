@@ -119,14 +119,13 @@ export default function Header() {
         </div>
 
         <nav style={{
-          alignItems: 'center',
           gap: 2,
           background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
           padding: 4,
           borderRadius: 'var(--radius-full)',
           margin: '0 auto',
         }}
-          className="hidden-mobile">
+          className="hidden md:flex items-center">
           {navLinks.map(link => {
             const isActive = pathname === link.href
             return (
@@ -293,7 +292,6 @@ export default function Header() {
       {/* Mobile Menu overlay */}
       <style>{`
         @media (max-width: 767px) {
-          .hidden-mobile { display: none !important; }
           .oncav-label { display: none; }
         }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
