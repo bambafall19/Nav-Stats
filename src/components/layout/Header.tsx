@@ -118,14 +118,16 @@ export default function Header() {
           </div>
         </div>
 
+        {/* Desktop-only nav — hidden on mobile */}
         <nav style={{
+          display: 'none',
           gap: 2,
           background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
           padding: 4,
           borderRadius: 'var(--radius-full)',
           margin: '0 auto',
         }}
-          className="hidden md:flex items-center">
+          className="desktop-nav">
           {navLinks.map(link => {
             const isActive = pathname === link.href
             return (
@@ -293,6 +295,10 @@ export default function Header() {
       <style>{`
         @media (max-width: 767px) {
           .oncav-label { display: none; }
+          .desktop-nav { display: none !important; }
+        }
+        @media (min-width: 768px) {
+          .desktop-nav { display: flex !important; align-items: center; }
         }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
