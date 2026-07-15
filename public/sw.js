@@ -42,6 +42,76 @@ self.addEventListener('activate', (event) => {
   self.clients.claim()
 })
 
+// Push - handle incoming push notifications
+self.addEventListener('push', (event) => {
+  let data = {
+    title: 'NavéStats',
+    body: 'Vous avez une nouvelle notification',
+    icon: '/icons/icon-192.png',
+    badge: '/icons/icon-192.png',
+    tag: 'navestats-notification',
+    requireInteraction: true,
+    actions: [
+      { action: 'open', title: 'Ouvrir' },
+      { action: 'close', title: 'Fermer' }
+    ]
+  }
+
+  try {
+    if (event.data) {
+      const payload = event.data.json()
+      data = { ...data, ...payload }
+    }
+  } catch (error) {
+    console.error('Erreur parsing push data:', error)
+  }
+
+  const options = {
+    body: data.body,
+    icon: data.icon,
+    badge: data.badge,
+    tag: data.tag,
+    requireInteraction: data.requireInteraction,
+    actions: data.actions,
+    data: {
+      url: data.url || '/',
+      type: data.type,
+      matchId: data.matchId
+    }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options).then(() => {
+      return self.registration.getNotifications().then((notifications) => {
+        // Keep notification visible until user interacts
+        console.log('Notification affichée')
+      })
+    })
+  )
+})
+
+// Notification click - open app
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+
+  const urlToOpen = event.notification.data?.url || '/'
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      // If a window is already open, focus it
+      for (const client of clientList) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          return client.focus()
+        }
+      }
+      // Otherwise open a new window
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(urlToOpen)
+      }
+    })
+  )
+})
+
 // Fetch - network first, cache fallback for pages; cache first for static
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
