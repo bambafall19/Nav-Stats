@@ -16,6 +16,13 @@ CREATE INDEX IF NOT EXISTS idx_push_subscriptions_endpoint ON push_subscriptions
 -- Enable Row Level Security
 ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view their own subscriptions" ON push_subscriptions;
+DROP POLICY IF EXISTS "Users can insert their own subscriptions" ON push_subscriptions;
+DROP POLICY IF EXISTS "Users can update their own subscriptions" ON push_subscriptions;
+DROP POLICY IF EXISTS "Users can delete their own subscriptions" ON push_subscriptions;
+DROP POLICY IF EXISTS "Admins can view all subscriptions" ON push_subscriptions;
+
 -- Policy: Users can view their own subscriptions
 CREATE POLICY "Users can view their own subscriptions"
   ON push_subscriptions FOR SELECT
