@@ -33,9 +33,23 @@ export async function POST(request: Request) {
       .from('profiles')
       .select('id') as { data: { id: string }[] | null, error: any }
 
-    if (usersError || !users) {
-      return NextResponse.json({ error: 'Erreur récupération utilisateurs' }, { status: 500 })
+    if (usersError) {
+      console.error('Erreur récupération utilisateurs:', usersError)
+      return NextResponse.json({ 
+        error: 'Erreur récupération utilisateurs',
+        details: usersError.message 
+      }, { status: 500 })
     }
+
+    if (!users || users.length === 0) {
+      console.warn('Aucun utilisateur trouvé dans la base de données')
+      return NextResponse.json({ 
+        error: 'Aucun utilisateur trouvé',
+        count: 0 
+      }, { status: 404 })
+    }
+
+    console.log(`Nombre d'utilisateurs trouvés: ${users.length}`)
 
     // Créer les notifications pour chaque utilisateur
     const notifications = users.map(u => ({
