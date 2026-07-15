@@ -152,6 +152,8 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated = f
           lineHeight: 1.6,
           animation: mounted ? 'fadeInUp 0.6s 0.2s ease both' : 'none',
         }}>
+          <strong style={{ color: 'white' }}>Bonjour</strong> 👋
+          <br />
           La première plateforme communautaire de pronostics et statistiques des Navétanes de Khombole.
           Gagne des points, débloque des badges et grimpe dans le classement !
         </p>

@@ -201,7 +201,7 @@ export default async function ClassementsPage() {
                   {/* Desktop table view */}
                   <div className="desktop-table-only">
                     <div className="table-scroll">
-                      <table className="data-table">
+                      <table className="data-table" style={{ fontSize: '0.82rem' }}>
                         <thead>
                           <tr>
                             <th style={{ width: 36, textAlign: 'center' }}>#</th>

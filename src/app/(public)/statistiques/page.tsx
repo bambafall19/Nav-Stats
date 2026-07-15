@@ -118,58 +118,62 @@ function StandingsTable({ pouleTeams, color, bg }: { pouleTeams: Team[]; color: 
         </div>
       </div>
 
-      <div className="mobile-table-cards" style={{ background: bg }}>
+      <div className="mobile-table-cards mobile-standings-wrap" style={{ background: bg }}>
         {pouleTeams.length === 0 ? (
-          <div style={{ padding: 20, textAlign: 'center', color: 'var(--color-text-muted)' }}>Aucune équipe dans cette poule</div>
-        ) : pouleTeams.map((eq, i) => {
-          const diff = eq.buts_marques - eq.buts_encaisses
-          const isQualifie = eq.poule === 'A' ? i < 2 : i < 3
-          return (
-            <div key={eq.id} style={{
-              background: 'var(--color-surface-card)', border: '1px solid var(--color-border)',
-              borderLeft: isQualifie ? '4px solid #00A651' : '4px solid transparent',
-              borderRadius: 12, padding: 12,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 32, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-                  <span style={{ fontWeight: 800, color: isQualifie ? '#00A651' : 'var(--color-text-muted)', fontSize: '0.9rem' }}>{i + 1}</span>
-                  {isQualifie && <span title="Qualifié" style={{ width: 6, height: 6, borderRadius: '50%', background: '#00A651' }} />}
-                </div>
-                {eq.logo_url ? (
-                  <img src={eq.logo_url} alt={eq.nom} style={{ width: 38, height: 38, borderRadius: 9, objectFit: 'cover', flexShrink: 0, boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }} />
-                ) : (
-                  <div style={{
-                    width: 38, height: 38, borderRadius: 9,
-                    background: `linear-gradient(135deg, ${eq.couleur_principale || '#006233'}, ${eq.couleur_secondaire || '#FBBF00'})`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '0.68rem', fontWeight: 800, color: 'white', flexShrink: 0,
-                  }}>{eq.sigle || eq.nom.charAt(0)}</div>
-                )}
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--color-text-primary)', lineHeight: 1.15 }}>{eq.nom}</div>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', lineHeight: 1.25 }}>{eq.asc_nom}</div>
-                </div>
-              </div>
-              <div className="mobile-stat-grid">
-                {[
-                  { label: 'MJ', value: eq.matchs_joues, c: 'var(--color-text-secondary)' },
-                  { label: 'V', value: eq.victoires, c: 'var(--color-primary)' },
-                  { label: 'N', value: eq.nuls, c: '#D97706' },
-                  { label: 'D', value: eq.defaites, c: 'var(--color-red)' },
-                  { label: 'BP', value: eq.buts_marques, c: 'var(--color-text-secondary)' },
-                  { label: 'BC', value: eq.buts_encaisses, c: 'var(--color-text-secondary)' },
-                  { label: 'Diff', value: diff > 0 ? `+${diff}` : diff, c: diff > 0 ? 'var(--color-primary)' : diff < 0 ? 'var(--color-red)' : 'var(--color-text-secondary)' },
-                  { label: 'Pts', value: eq.points_classement, c: color },
-                ].map(s => (
-                  <div key={s.label} className="mobile-stat-cell">
-                    <span className="mobile-stat-label">{s.label}</span>
-                    <span className="mobile-stat-value" style={{ color: s.c }}>{s.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )
-        })}
+          <div className="mobile-standings-empty">Aucune équipe dans cette poule</div>
+        ) : (
+          <table className="mobile-standings-table" aria-label="Classement de la poule">
+            <colgroup>
+              <col className="mobile-col-rank" />
+              <col />
+              <col className="mobile-col-stat" />
+              <col className="mobile-col-diff" />
+              <col className="mobile-col-points" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col" aria-label="Position">#</th>
+                <th scope="col">Équipe</th>
+                <th scope="col">MJ</th>
+                <th scope="col">Diff</th>
+                <th scope="col" style={{ color }}>Pts</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pouleTeams.map((eq, i) => {
+                const diff = eq.buts_marques - eq.buts_encaisses
+                const isQualifie = eq.poule === 'A' ? i < 2 : i < 3
+
+                return (
+                  <tr key={eq.id} className={isQualifie ? 'is-qualified' : undefined}>
+                    <td className="mobile-rank-cell">
+                      <span style={{ color: isQualifie ? '#00A651' : 'var(--color-text-muted)' }}>{i + 1}</span>
+                      {isQualifie && <span className="qualification-dot" title="Qualifié" aria-label="Qualifié" />}
+                    </td>
+                    <th scope="row" className="mobile-team-cell">
+                      {eq.logo_url ? (
+                        <img src={eq.logo_url} alt="" className="mobile-team-logo" />
+                      ) : (
+                        <span
+                          className="mobile-team-logo mobile-team-logo-fallback"
+                          style={{ background: `linear-gradient(135deg, ${eq.couleur_principale || '#006233'}, ${eq.couleur_secondaire || '#FBBF00'})` }}
+                        >
+                          {eq.sigle || eq.nom.charAt(0)}
+                        </span>
+                      )}
+                      <span className="mobile-team-name">{eq.nom}</span>
+                    </th>
+                    <td>{eq.matchs_joues}</td>
+                    <td className={diff > 0 ? 'positive' : diff < 0 ? 'negative' : undefined}>
+                      {diff > 0 ? `+${diff}` : diff}
+                    </td>
+                    <td className="mobile-points-cell" style={{ color }}>{eq.points_classement}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )
@@ -557,6 +561,128 @@ export default async function StatistiquesPage() {
           }
           @media (max-width: 560px) {
             .stats-highlight-grid { grid-template-columns: 1fr; }
+          }
+          @media (max-width: 640px) {
+            .mobile-standings-wrap {
+              display: block;
+              padding: 0;
+              overflow: hidden;
+            }
+            .mobile-standings-table {
+              width: 100%;
+              border-spacing: 0;
+              border-collapse: separate;
+              table-layout: fixed;
+              background: var(--color-surface-card);
+            }
+            .mobile-standings-table .mobile-col-rank { width: 38px; }
+            .mobile-standings-table .mobile-col-stat { width: 39px; }
+            .mobile-standings-table .mobile-col-diff { width: 46px; }
+            .mobile-standings-table .mobile-col-points { width: 43px; }
+            .mobile-standings-table thead th {
+              height: 36px;
+              padding: 0 4px;
+              border-bottom: 1px solid var(--color-border);
+              color: var(--color-text-muted);
+              font-family: var(--font-outfit);
+              font-size: 0.62rem;
+              font-weight: 800;
+              letter-spacing: 0.04em;
+              text-align: center;
+              text-transform: uppercase;
+            }
+            .mobile-standings-table thead th:nth-child(2) {
+              padding-left: 7px;
+              text-align: left;
+            }
+            .mobile-standings-table tbody td,
+            .mobile-standings-table tbody th {
+              height: 54px;
+              padding: 6px 4px;
+              border-bottom: 1px solid var(--color-border);
+              background: var(--color-surface-card);
+              font-family: var(--font-mono), monospace;
+              font-size: 0.8rem;
+              font-weight: 700;
+              text-align: center;
+              vertical-align: middle;
+            }
+            .mobile-standings-table tbody tr:last-child td,
+            .mobile-standings-table tbody tr:last-child th {
+              border-bottom: 0;
+            }
+            .mobile-standings-table tbody tr.is-qualified td,
+            .mobile-standings-table tbody tr.is-qualified th {
+              background: rgba(0, 166, 81, 0.025);
+            }
+            .mobile-standings-table .mobile-rank-cell {
+              padding-left: 7px;
+              box-shadow: inset 3px 0 transparent;
+              font-family: var(--font-outfit);
+              font-size: 0.82rem;
+              font-weight: 900;
+              white-space: nowrap;
+            }
+            .mobile-standings-table tr.is-qualified .mobile-rank-cell {
+              box-shadow: inset 3px 0 #00A651;
+            }
+            .qualification-dot {
+              display: inline-block;
+              width: 5px;
+              height: 5px;
+              margin-left: 3px;
+              border-radius: 50%;
+              background: #00A651;
+              vertical-align: middle;
+            }
+            .mobile-standings-table .mobile-team-cell {
+              padding-left: 7px;
+              overflow: hidden;
+              font-family: var(--font-outfit);
+              text-align: left;
+              white-space: nowrap;
+            }
+            .mobile-team-logo {
+              display: inline-flex;
+              width: 30px;
+              height: 30px;
+              margin-right: 7px;
+              border-radius: 7px;
+              object-fit: cover;
+              box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+              vertical-align: middle;
+            }
+            .mobile-team-logo-fallback {
+              align-items: center;
+              justify-content: center;
+              color: white;
+              font-size: 0.52rem;
+              font-weight: 900;
+            }
+            .mobile-team-name {
+              display: inline-block;
+              max-width: calc(100% - 41px);
+              overflow: hidden;
+              color: var(--color-text-primary);
+              font-size: 0.79rem;
+              font-weight: 800;
+              line-height: 1.1;
+              text-overflow: ellipsis;
+              vertical-align: middle;
+            }
+            .mobile-standings-table .positive { color: var(--color-primary); }
+            .mobile-standings-table .negative { color: var(--color-red); }
+            .mobile-standings-table .mobile-points-cell {
+              font-family: var(--font-outfit);
+              font-size: 0.95rem;
+              font-weight: 900;
+            }
+            .mobile-standings-empty {
+              padding: 24px 16px;
+              color: var(--color-text-muted);
+              font-size: 0.82rem;
+              text-align: center;
+            }
           }
         `}</style>
       </div>

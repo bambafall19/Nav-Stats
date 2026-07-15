@@ -85,7 +85,7 @@ export async function POST(request: Request) {
     }
 
     // Also send real web push notifications when VAPID is configured
-    let push = {
+    const push = {
       sent: 0,
       failed: 0,
       total: 0,
