@@ -84,24 +84,47 @@ export default function PushNotificationManager() {
       
       if (user) {
         console.log('Enregistrement dans Supabase...')
+        const subJson = sub.toJSON()
         const { data, error } = await (supabase as any)
           .from('push_subscriptions')
-          .insert({
-            user_id: user.id,
-            subscription: sub.toJSON(),
-            subscription_endpoint: sub.endpoint,
-            user_agent: navigator.userAgent
-          })
+          .upsert(
+            {
+              user_id: user.id,
+              subscription: subJson,
+              subscription_endpoint: sub.endpoint,
+              user_agent: navigator.userAgent,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'subscription_endpoint' }
+          )
           .select()
-        
+
         if (error) {
-          console.error('Erreur Supabase:', error)
-          alert('Erreur lors de l\'enregistrement: ' + error.message)
+          // Fallback if unique constraint not yet applied on endpoint
+          console.error('Erreur upsert Supabase:', error)
+          const insert = await (supabase as any)
+            .from('push_subscriptions')
+            .insert({
+              user_id: user.id,
+              subscription: subJson,
+              subscription_endpoint: sub.endpoint,
+              user_agent: navigator.userAgent,
+            })
+            .select()
+          if (insert.error) {
+            console.error('Erreur Supabase:', insert.error)
+            alert('Erreur lors de l\'enregistrement: ' + insert.error.message)
+            return
+          }
+          console.log('Subscription enregistrée (insert):', insert.data)
         } else {
           console.log('Subscription enregistrée:', data)
         }
+      } else {
+        alert('Connectez-vous pour recevoir les notifications sur tous vos appareils.')
+        return
       }
-      
+
       alert('Notifications activées avec succès !')
     } catch (error: any) {
       console.error('Erreur subscription push:', error)

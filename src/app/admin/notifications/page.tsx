@@ -48,45 +48,40 @@ export default function AdminNotificationsPage() {
     setMessage(null)
 
     try {
-      // Get all users
-      const { data: users } = await supabase
-        .from('profiles')
-        .select('id')
+      // In-app notifications + web push (same API)
+      const res = await fetch('/api/notifications/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          titre: notifTitle,
+          message: notifMessage,
+          type: notifType,
+          lien: notifLien || null,
+        }),
+      })
 
-      if (!users || users.length === 0) {
-        setMessage({ type: 'error', text: 'Aucun utilisateur trouvé' })
-        setSending(false)
-        return
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.details || data.error || 'Échec envoi notification')
       }
 
-      // Create notification for all users
-      const notifications = users.map((u: any) => ({
-        user_id: u.id,
-        titre: notifTitle,
-        message: notifMessage,
-        type: notifType,
-        lien: notifLien || null,
-      }))
+      const pushPart =
+        data.push?.skipped
+          ? ' (push non configuré — ajoutez les clés VAPID)'
+          : data.push
+            ? ` · ${data.push.sent}/${data.push.total} push envoyés`
+            : ''
 
-      const { error } = await supabase
-        .from('notifications')
-        .insert(notifications as any)
-
-      if (error) throw error
-
-      setMessage({ 
-        type: 'success', 
-        text: `Notification envoyée à ${users.length} utilisateurs !` 
+      setMessage({
+        type: 'success',
+        text: `Notification envoyée à ${data.count} utilisateurs${pushPart}`,
       })
-      
-      // Reset form
+
       setNotifTitle('')
       setNotifMessage('')
       setNotifType('annonce')
       setNotifLien('')
       setShowForm(false)
-      
-      // Refresh list
       fetchNotifications()
     } catch (e) {
       setMessage({

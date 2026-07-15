@@ -1,95 +1,198 @@
 import { NextRequest, NextResponse } from 'next/server'
-import webpush from 'web-push'
+import { createClient } from '@/lib/supabase/server'
+import {
+  isVapidConfigured,
+  normalizeSubscription,
+  sendWebPushToSubscriptions,
+  type StoredPushSubscription,
+} from '@/lib/push/webpush'
 
-interface PushSubscription {
-  endpoint: string
-  keys: {
-    p256dh: string
-    auth: string
+async function requireAdmin() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: NextResponse.json({ error: 'Non autorisé' }, { status: 401 }) }
   }
+
+  const { data: profile } = (await supabase
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', user.id)
+    .single()) as { data: { is_admin: boolean } | null }
+
+  if (!profile?.is_admin) {
+    return { error: NextResponse.json({ error: 'Accès refusé' }, { status: 403 }) }
+  }
+
+  return { supabase, user }
 }
 
-// Configure VAPID only at runtime, inside handlers
-const configureVapid = () => {
-  try {
-    const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-    const privateKey = process.env.VAPID_PRIVATE_KEY
-    
-    if (publicKey && privateKey) {
-      webpush.setVapidDetails(
-        'mailto:contact@navestats.site',
-        publicKey,
-        privateKey
-      )
-      return true
-    }
-  } catch (error) {
-    console.warn('VAPID non configuré:', error)
-  }
-  return false
-}
-
+/**
+ * POST — save a push subscription for the current user
+ */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { subscription, userId } = body as { subscription: PushSubscription; userId: string }
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-    if (!subscription || !userId) {
-      return NextResponse.json({ error: 'Subscription et userId requis' }, { status: 400 })
+    if (!user) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    // Store subscription in database
-    // TODO: Implement database storage
-    return NextResponse.json({ success: true, message: 'Subscription enregistrée' })
+    const body = await request.json()
+    const subscription = normalizeSubscription(body.subscription ?? body)
+
+    if (!subscription) {
+      return NextResponse.json(
+        { error: 'Subscription invalide (endpoint + keys requis)' },
+        { status: 400 }
+      )
+    }
+
+    const userAgent =
+      typeof body.userAgent === 'string'
+        ? body.userAgent
+        : request.headers.get('user-agent')
+
+    const { data, error } = await (supabase as any)
+      .from('push_subscriptions')
+      .upsert(
+        {
+          user_id: user.id,
+          subscription,
+          subscription_endpoint: subscription.endpoint,
+          user_agent: userAgent,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'subscription_endpoint' }
+      )
+      .select()
+
+    if (error) {
+      console.error('Erreur enregistrement push subscription:', error)
+      return NextResponse.json(
+        { error: 'Échec enregistrement', details: error.message },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Subscription enregistrée',
+      data,
+    })
   } catch (error) {
     console.error('Erreur enregistrement push:', error)
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 }
 
+/**
+ * PUT — send a web push to all (or selected) subscribers (admin only)
+ */
 export async function PUT(request: NextRequest) {
   try {
+    const auth = await requireAdmin()
+    if ('error' in auth && auth.error) return auth.error
+    const { supabase } = auth as {
+      supabase: Awaited<ReturnType<typeof createClient>>
+    }
+
     const body = await request.json()
-    const { titre, message, type, matchId, userIds } = body
+    const { titre, message, type, matchId, lien, userIds } = body as {
+      titre?: string
+      message?: string
+      type?: string
+      matchId?: string
+      lien?: string
+      userIds?: string[]
+    }
 
     if (!titre || !message) {
-      return NextResponse.json({ error: 'Titre et message requis' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Titre et message requis' },
+        { status: 400 }
+      )
     }
 
-    // Configure VAPID at runtime
-    const vapidConfigured = configureVapid()
-    
-    if (!vapidConfigured) {
-      return NextResponse.json({ 
-        error: 'VAPID non configuré. Ajoutez les clés dans Vercel.',
-        partialSuccess: true
-      }, { status: 200 })
+    if (!isVapidConfigured()) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            'VAPID non configuré. Ajoutez NEXT_PUBLIC_VAPID_PUBLIC_KEY et VAPID_PRIVATE_KEY (Vercel / .env.local).',
+          sent: 0,
+          total: 0,
+        },
+        { status: 503 }
+      )
     }
 
-    // Get subscriptions from database
-    // TODO: Fetch from push_subscriptions table
-    const subscriptions: PushSubscription[] = []
+    let query = (supabase as any)
+      .from('push_subscriptions')
+      .select('subscription, subscription_endpoint, user_id')
 
-    // Send notifications
-    const results = await Promise.allSettled(
-      subscriptions.map(async (sub) => {
-        try {
-          await webpush.sendNotification(sub, JSON.stringify({
-            titre,
-            message,
-            type,
-            matchId
-          }))
-        } catch (error) {
-          console.error('Erreur envoi notification:', error)
-        }
+    if (Array.isArray(userIds) && userIds.length > 0) {
+      query = query.in('user_id', userIds)
+    }
+
+    const { data: rows, error: fetchError } = await query
+
+    if (fetchError) {
+      console.error('Erreur lecture push_subscriptions:', fetchError)
+      return NextResponse.json(
+        {
+          error: 'Impossible de lire les abonnements push',
+          details: fetchError.message,
+        },
+        { status: 500 }
+      )
+    }
+
+    const subscriptions: StoredPushSubscription[] = []
+    for (const row of rows || []) {
+      const sub = normalizeSubscription(row.subscription)
+      if (sub) subscriptions.push(sub)
+    }
+
+    if (subscriptions.length === 0) {
+      return NextResponse.json({
+        success: true,
+        sent: 0,
+        failed: 0,
+        total: 0,
+        message: 'Aucun abonnement push enregistré',
       })
-    )
+    }
 
-    return NextResponse.json({ 
-      success: true, 
-      sent: results.filter(r => r.status === 'fulfilled').length,
-      total: subscriptions.length
+    const url = lien || (matchId ? `/matchs/${matchId}` : '/')
+    const result = await sendWebPushToSubscriptions(subscriptions, {
+      title: titre,
+      body: message,
+      type,
+      matchId,
+      url,
+    })
+
+    // Remove expired subscriptions
+    if (result.staleEndpoints.length > 0) {
+      await (supabase as any)
+        .from('push_subscriptions')
+        .delete()
+        .in('subscription_endpoint', result.staleEndpoints)
+    }
+
+    return NextResponse.json({
+      success: true,
+      sent: result.sent,
+      failed: result.failed,
+      total: subscriptions.length,
+      cleaned: result.staleEndpoints.length,
     })
   } catch (error) {
     console.error('Erreur envoi push:', error)
@@ -98,8 +201,8 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function GET() {
-  return NextResponse.json({ 
+  return NextResponse.json({
     status: 'ok',
-    vapid: !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && !!process.env.VAPID_PRIVATE_KEY
+    vapid: isVapidConfigured(),
   })
 }

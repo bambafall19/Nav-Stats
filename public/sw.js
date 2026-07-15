@@ -60,7 +60,14 @@ self.addEventListener('push', (event) => {
   try {
     if (event.data) {
       const payload = event.data.json()
-      data = { ...data, ...payload }
+      // Support both FR (titre/message) and EN (title/body) field names
+      data = {
+        ...data,
+        ...payload,
+        title: payload.title || payload.titre || data.title,
+        body: payload.body || payload.message || data.body,
+        url: payload.url || (payload.matchId ? `/matchs/${payload.matchId}` : data.url || '/'),
+      }
     }
   } catch (error) {
     console.error('Erreur parsing push data:', error)
@@ -68,25 +75,23 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    icon: data.icon,
-    badge: data.badge,
-    tag: data.tag,
-    requireInteraction: data.requireInteraction,
-    actions: data.actions,
+    icon: data.icon || '/icons/icon-192.png',
+    badge: data.badge || '/icons/icon-192.png',
+    tag: data.tag || 'navestats-notification',
+    requireInteraction: data.requireInteraction !== false,
+    actions: data.actions || [
+      { action: 'open', title: 'Ouvrir' },
+      { action: 'close', title: 'Fermer' },
+    ],
     data: {
       url: data.url || '/',
       type: data.type,
-      matchId: data.matchId
-    }
+      matchId: data.matchId,
+    },
   }
 
   event.waitUntil(
-    self.registration.showNotification(data.title, options).then(() => {
-      return self.registration.getNotifications().then((notifications) => {
-        // Keep notification visible until user interacts
-        console.log('Notification affichée')
-      })
-    })
+    self.registration.showNotification(data.title || 'NavéStats', options)
   )
 })
 
@@ -94,17 +99,20 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
 
+  if (event.action === 'close') {
+    return
+  }
+
   const urlToOpen = event.notification.data?.url || '/'
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // If a window is already open, focus it
       for (const client of clientList) {
         if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.navigate?.(urlToOpen)
           return client.focus()
         }
       }
-      // Otherwise open a new window
       if (self.clients.openWindow) {
         return self.clients.openWindow(urlToOpen)
       }

@@ -9,6 +9,10 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
+-- One row per browser endpoint (required for upsert on re-subscribe)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_push_subscriptions_endpoint_unique
+  ON push_subscriptions(subscription_endpoint);
+
 -- Create index for better performance
 CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user_id ON push_subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_push_subscriptions_endpoint ON push_subscriptions(subscription_endpoint);
@@ -46,6 +50,18 @@ CREATE POLICY "Users can delete their own subscriptions"
 -- Policy: Admins can view all subscriptions
 CREATE POLICY "Admins can view all subscriptions"
   ON push_subscriptions FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE profiles.id = auth.uid()
+      AND profiles.is_admin = true
+    )
+  );
+
+-- Policy: Admins can delete any subscription (cleanup of expired endpoints)
+DROP POLICY IF EXISTS "Admins can delete any subscription" ON push_subscriptions;
+CREATE POLICY "Admins can delete any subscription"
+  ON push_subscriptions FOR DELETE
   USING (
     EXISTS (
       SELECT 1 FROM profiles
