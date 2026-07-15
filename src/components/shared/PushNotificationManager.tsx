@@ -8,6 +8,15 @@ export default function PushNotificationManager() {
   const [subscription, setSubscription] = useState<PushSubscription | null>(null)
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [permission, setPermission] = useState<NotificationPermission>('default')
+  const [dismissed, setDismissed] = useState(false)
+
+  useEffect(() => {
+    // Check if user already dismissed the popup
+    const dismissedStorage = typeof window !== 'undefined' && localStorage.getItem('push_dismissed')
+    if (dismissedStorage === 'true') {
+      setDismissed(true)
+    }
+  }, [])
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window) {
@@ -125,6 +134,10 @@ export default function PushNotificationManager() {
         return
       }
 
+      // Dismiss popup and save to localStorage
+      localStorage.setItem('push_dismissed', 'true')
+      setDismissed(true)
+      
       alert('Notifications activées avec succès !')
     } catch (error: any) {
       console.error('Erreur subscription push:', error)
@@ -164,7 +177,10 @@ export default function PushNotificationManager() {
     return null
   }
 
-  // Only show on pages that are not the main classements page
+  // Don't show if dismissed, already subscribed, or on classements page
+  if (dismissed) {
+    return null
+  }
   if (typeof window !== 'undefined' && window.location.pathname === '/classements') {
     return null
   }
@@ -205,9 +221,19 @@ export default function PushNotificationManager() {
           <button
             onClick={subscribeToPush}
             className="btn btn-primary btn-sm"
-            style={{ width: '100%', justifyContent: 'center' }}
+            style={{ width: '100%', justifyContent: 'center', marginBottom: 8 }}
           >
             Activer 🔔
+          </button>
+          <button
+            onClick={() => {
+              localStorage.setItem('push_dismissed', 'true')
+              setDismissed(true)
+            }}
+            className="btn btn-ghost btn-sm"
+            style={{ width: '100%', justifyContent: 'center', fontSize: '0.75rem' }}
+          >
+            Plus tard
           </button>
         </div>
       ) : (

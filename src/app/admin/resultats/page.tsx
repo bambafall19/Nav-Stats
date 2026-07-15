@@ -41,7 +41,55 @@ export default function AdminResultats() {
       .eq('id', selected.id)
 
     if (!error) {
-      setSuccess(`Résultat validé : ${selected.equipe_a.nom} ${scoreA} – ${scoreB} ${selected.equipe_b.nom}`)
+      // Update team standings
+      try {
+        const scoreAInt = parseInt(scoreA) || 0
+        const scoreBInt = parseInt(scoreB) || 0
+
+        // Determine result: win/loss/draw
+        let resultA = '', resultB = ''
+        if (scoreAInt > scoreBInt) { resultA = 'victoire'; resultB = 'defaite' }
+        else if (scoreAInt < scoreBInt) { resultA = 'defaite'; resultB = 'victoire' }
+        else { resultA = 'nul'; resultB = 'nul' }
+
+        // Direct stats update: fetch current stats and modify
+        const { data: eqA } = await supabase.from('equipes').select('*').eq('id', selected.equipe_a_id).single()
+        const { data: eqB } = await supabase.from('equipes').select('*').eq('id', selected.equipe_b_id).single()
+        
+        if (eqA) {
+          const updateA: any = { 
+            matchs_joues: (eqA.matchs_joues || 0) + 1,
+            buts_pour: (eqA.buts_pour || 0) + scoreAInt,
+            buts_contre: (eqA.buts_contre || 0) + scoreBInt,
+          }
+          if (resultA === 'victoire') updateA.victoires = (eqA.victoires || 0) + 1
+          else if (resultA === 'nul') updateA.nuls = (eqA.nuls || 0) + 1
+          else updateA.defaites = (eqA.defaites || 0) + 1
+          updateA.points = (updateA.victoires || 0) * 3 + (updateA.nuls || 0)
+
+          await supabase.from('equipes').update(updateA).eq('id', selected.equipe_a_id)
+        }
+
+        if (eqB) {
+          const updateB: any = { 
+            matchs_joues: (eqB.matchs_joues || 0) + 1,
+            buts_pour: (eqB.buts_pour || 0) + scoreBInt,
+            buts_contre: (eqB.buts_contre || 0) + scoreAInt,
+          }
+          if (resultB === 'victoire') updateB.victoires = (eqB.victoires || 0) + 1
+          else if (resultB === 'nul') updateB.nuls = (eqB.nuls || 0) + 1
+          else updateB.defaites = (eqB.defaites || 0) + 1
+          updateB.points = (updateB.victoires || 0) * 3 + (updateB.nuls || 0)
+
+          await supabase.from('equipes').update(updateB).eq('id', selected.equipe_b_id)
+        }
+
+        setSuccess(`Résultat validé : ${selected.equipe_a.nom} ${scoreA} – ${scoreB} ${selected.equipe_b.nom} — Classement mis à jour !`)
+      } catch (statsError) {
+        console.error('Erreur mise à jour stats:', statsError)
+        setSuccess(`Résultat validé : ${selected.equipe_a.nom} ${scoreA} – ${scoreB} ${selected.equipe_b.nom}`)
+      }
+      
       setSelected(null); setScoreA(''); setScoreB('')
       // Refresh
       const { data } = await supabase

@@ -72,6 +72,13 @@ export default async function ClassementsPage() {
     .map(([asc, v]) => ({ asc, ...v }))
     .sort((a, b) => b.points - a.points)
 
+  // Classement Équipes – fetch all teams ordered by points
+  const { data: rawEquipes } = await supabase
+    .from('equipes')
+    .select('*')
+    .order('points', { ascending: false })
+  const equipesRanked = (rawEquipes || []) as any[]
+
   const medalStyle = (i: number) => {
     if (i === 0) return { bg: 'linear-gradient(135deg,#FFD700,#FFA500)', color: '#5a3800', shadow: '0 4px 12px rgba(255,165,0,0.4)' }
     if (i === 1) return { bg: 'linear-gradient(135deg,#E8E8E8,#B0B0B0)', color: '#2a2a2a', shadow: '0 4px 12px rgba(150,150,150,0.3)' }
@@ -144,6 +151,93 @@ export default async function ClassementsPage() {
                   <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)' }}>Live</div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== Classement Équipes ===== */}
+        <div>
+          <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1.1rem', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            ⚽ Classement Équipes
+          </h2>
+          <div style={{
+            background: 'var(--color-surface-card)',
+            border: '1px solid var(--color-border)',
+            borderRadius: 16,
+            overflow: 'hidden',
+            boxShadow: 'var(--shadow-sm)',
+          }}>
+            <div className="table-scroll">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: 40, textAlign: 'center' }}>#</th>
+                    <th>Équipe</th>
+                    <th style={{ textAlign: 'center' }}>MJ</th>
+                    <th style={{ textAlign: 'center' }}>V</th>
+                    <th style={{ textAlign: 'center' }}>N</th>
+                    <th style={{ textAlign: 'center' }}>D</th>
+                    <th style={{ textAlign: 'center' }}>BP</th>
+                    <th style={{ textAlign: 'center' }}>BC</th>
+                    <th style={{ textAlign: 'center' }}>Diff</th>
+                    <th style={{ textAlign: 'center', fontWeight: 800 }}>Pts</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {equipesRanked.length === 0 ? (
+                    <tr>
+                      <td colSpan={10} style={{ textAlign: 'center', padding: 40, color: 'var(--color-text-muted)' }}>
+                        Aucune donnée équipe disponible
+                      </td>
+                    </tr>
+                  ) : equipesRanked.map((eq, i) => (
+                    <tr key={eq.id} style={{
+                      background: i < 3 ? 'rgba(0,166,81,0.03)' : 'transparent',
+                      borderLeft: i === 0 ? '3px solid #FFD700' : i === 1 ? '3px solid #C0C0C0' : i === 2 ? '3px solid #CD7F32' : '3px solid transparent',
+                    }}>
+                      <td style={{ textAlign: 'center', fontWeight: 800, fontSize: '0.85rem' }}>
+                        {i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          {eq.logo_url ? (
+                            <img src={eq.logo_url} alt={eq.nom} style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} />
+                          ) : (
+                            <div style={{
+                              width: 28, height: 28, borderRadius: 6,
+                              background: 'var(--gradient-green)',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: '0.6rem', fontWeight: 800, color: 'white',
+                            }}>
+                              {eq.nom?.charAt(0) || '?'}
+                            </div>
+                          )}
+                          <div>
+                            <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{eq.nom}</div>
+                            <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{eq.asc_nom || eq.groupe || ''}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style={{ textAlign: 'center', fontWeight: 600 }}>{eq.matchs_joues || 0}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#006233' }}>{eq.victoires || 0}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#D97706' }}>{eq.nuls || 0}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#E8002D' }}>{eq.defaites || 0}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600 }}>{eq.buts_pour || 0}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600 }}>{eq.buts_contre || 0}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 800 }}>
+                        <span style={{
+                          color: ((eq.buts_pour || 0) - (eq.buts_contre || 0)) > 0 ? '#006233' : ((eq.buts_pour || 0) - (eq.buts_contre || 0)) < 0 ? '#E8002D' : 'var(--color-text-muted)'
+                        }}>
+                          {((eq.buts_pour || 0) - (eq.buts_contre || 0)) > 0 ? '+' : ''}{(eq.buts_pour || 0) - (eq.buts_contre || 0)}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
+                        {((eq.victoires || 0) * 3) + (eq.nuls || 0)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
