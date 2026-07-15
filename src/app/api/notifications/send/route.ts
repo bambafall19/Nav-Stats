@@ -52,7 +52,11 @@ export async function POST(request: Request) {
 
     if (notifError) {
       console.error('Erreur insertion notifications:', notifError)
-      return NextResponse.json({ error: 'Échec envoi notifications' }, { status: 500 })
+      console.error('Détails erreur:', JSON.stringify(notifError, null, 2))
+      return NextResponse.json({ 
+        error: 'Échec envoi notifications',
+        details: notifError.message 
+      }, { status: 500 })
     }
 
     return NextResponse.json({ 
