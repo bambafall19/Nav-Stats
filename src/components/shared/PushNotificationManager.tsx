@@ -30,11 +30,14 @@ export default function PushNotificationManager() {
 
   const subscribeToPush = async () => {
     try {
+      console.log('Début abonnement push...')
       const reg = await navigator.serviceWorker.ready
+      console.log('Service Worker prêt:', reg)
       
       // Demander la permission
       const permission = await Notification.requestPermission()
       setPermission(permission)
+      console.log('Permission:', permission)
       
       if (permission !== 'granted') {
         alert('Vous devez autoriser les notifications pour recevoir les alertes')
@@ -43,6 +46,8 @@ export default function PushNotificationManager() {
 
       // Convertir la clé VAPID en Uint8Array
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+      console.log('Clé VAPID publique:', vapidPublicKey ? 'Présente' : 'Manquante')
+      
       if (!vapidPublicKey) {
         alert('Les notifications ne sont pas configurées. Contactez l\'administrateur.')
         return
@@ -55,10 +60,12 @@ export default function PushNotificationManager() {
       )
 
       // Créer la subscription
+      console.log('Création subscription...')
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: vapidKey
       })
+      console.log('Subscription créée:', sub)
 
       setSubscription(sub)
       setIsSubscribed(true)
@@ -66,17 +73,32 @@ export default function PushNotificationManager() {
       // Enregistrer la subscription dans la base de données
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
+      console.log('Utilisateur connecté:', user?.id || 'Non connecté')
       
       if (user) {
-        await (supabase as any).from('push_subscriptions').insert({
-          user_id: user.id,
-          subscription: sub.toJSON(),
-          subscription_endpoint: sub.endpoint,
-          user_agent: navigator.userAgent
-        })
+        console.log('Enregistrement dans Supabase...')
+        const { data, error } = await (supabase as any)
+          .from('push_subscriptions')
+          .insert({
+            user_id: user.id,
+            subscription: sub.toJSON(),
+            subscription_endpoint: sub.endpoint,
+            user_agent: navigator.userAgent
+          })
+          .select()
+        
+        if (error) {
+          console.error('Erreur Supabase:', error)
+          alert('Erreur lors de l\'enregistrement: ' + error.message)
+        } else {
+          console.log('Subscription enregistrée:', data)
+        }
       }
-    } catch (error) {
+      
+      alert('Notifications activées avec succès !')
+    } catch (error: any) {
       console.error('Erreur subscription push:', error)
+      alert('Erreur: ' + (error.message || 'Unknown error'))
     }
   }
 
