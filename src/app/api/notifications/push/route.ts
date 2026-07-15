@@ -6,10 +6,14 @@ const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY!
 
 if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
+  // Convert to URL-safe base64 (replace + with -, / with _, remove = padding)
+  const publicKey = VAPID_PUBLIC_KEY.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+  const privateKey = VAPID_PRIVATE_KEY.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+  
   webpush.setVapidDetails(
     'mailto:contact@navestats.site',
-    VAPID_PUBLIC_KEY,
-    VAPID_PRIVATE_KEY
+    publicKey,
+    privateKey
   )
 }
 
