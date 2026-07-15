@@ -76,8 +76,17 @@ export default async function ClassementsPage() {
   const { data: rawEquipes } = await supabase
     .from('equipes')
     .select('*')
-    .order('points', { ascending: false })
+    .order('points_classement', { ascending: false })
   const equipesRanked = (rawEquipes || []) as any[]
+
+  // Group by groupe (poule) if available
+  const groupes = [...new Set(equipesRanked.map((e: any) => e.groupe || 'Général'))].sort()
+  const equipesParGroupe: Record<string, any[]> = {}
+  for (const eq of equipesRanked) {
+    const g = eq.groupe || 'Général'
+    if (!equipesParGroupe[g]) equipesParGroupe[g] = []
+    equipesParGroupe[g].push(eq)
+  }
 
   const medalStyle = (i: number) => {
     if (i === 0) return { bg: 'linear-gradient(135deg,#FFD700,#FFA500)', color: '#5a3800', shadow: '0 4px 12px rgba(255,165,0,0.4)' }
@@ -160,85 +169,174 @@ export default async function ClassementsPage() {
           <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1.1rem', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
             ⚽ Classement Équipes
           </h2>
-          <div style={{
-            background: 'var(--color-surface-card)',
-            border: '1px solid var(--color-border)',
-            borderRadius: 16,
-            overflow: 'hidden',
-            boxShadow: 'var(--shadow-sm)',
-          }}>
-            <div className="table-scroll">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th style={{ width: 40, textAlign: 'center' }}>#</th>
-                    <th>Équipe</th>
-                    <th style={{ textAlign: 'center' }}>MJ</th>
-                    <th style={{ textAlign: 'center' }}>V</th>
-                    <th style={{ textAlign: 'center' }}>N</th>
-                    <th style={{ textAlign: 'center' }}>D</th>
-                    <th style={{ textAlign: 'center' }}>BP</th>
-                    <th style={{ textAlign: 'center' }}>BC</th>
-                    <th style={{ textAlign: 'center' }}>Diff</th>
-                    <th style={{ textAlign: 'center', fontWeight: 800 }}>Pts</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {equipesRanked.length === 0 ? (
-                    <tr>
-                      <td colSpan={10} style={{ textAlign: 'center', padding: 40, color: 'var(--color-text-muted)' }}>
-                        Aucune donnée équipe disponible
-                      </td>
-                    </tr>
-                  ) : equipesRanked.map((eq, i) => (
-                    <tr key={eq.id} style={{
-                      background: i < 3 ? 'rgba(0,166,81,0.03)' : 'transparent',
-                      borderLeft: i === 0 ? '3px solid #FFD700' : i === 1 ? '3px solid #C0C0C0' : i === 2 ? '3px solid #CD7F32' : '3px solid transparent',
-                    }}>
-                      <td style={{ textAlign: 'center', fontWeight: 800, fontSize: '0.85rem' }}>
-                        {i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          {eq.logo_url ? (
-                            <img src={eq.logo_url} alt={eq.nom} style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} />
-                          ) : (
-                            <div style={{
-                              width: 28, height: 28, borderRadius: 6,
-                              background: 'var(--gradient-green)',
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              fontSize: '0.6rem', fontWeight: 800, color: 'white',
+          <div style={{ display: 'grid', gap: 24 }}>
+            {groupes.map((groupe) => {
+              const eqs = equipesParGroupe[groupe]
+              if (!eqs || eqs.length === 0) return null
+              return (
+                <div key={groupe} style={{
+                  background: 'var(--color-surface-card)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 16,
+                  overflow: 'hidden',
+                  boxShadow: 'var(--shadow-sm)',
+                }}>
+                  <div style={{
+                    padding: '14px 20px',
+                    background: 'rgba(0,166,81,0.06)',
+                    borderBottom: '1px solid var(--color-border)',
+                    fontWeight: 800,
+                    fontFamily: 'var(--font-outfit)',
+                    fontSize: '0.9rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
+                  }}>
+                    {groupe === 'Général' ? '🏆 Classement Général' : `🏆 Poule ${groupe}`}
+                    <span style={{ fontSize: '0.7rem', fontWeight: 500, color: 'var(--color-text-muted)', marginLeft: 'auto' }}>
+                      {eqs.length} équipes
+                    </span>
+                  </div>
+
+                  {/* Desktop table view */}
+                  <div className="desktop-table-only">
+                    <div className="table-scroll">
+                      <table className="data-table">
+                        <thead>
+                          <tr>
+                            <th style={{ width: 36, textAlign: 'center' }}>#</th>
+                            <th>Équipe</th>
+                            <th style={{ textAlign: 'center' }}>MJ</th>
+                            <th style={{ textAlign: 'center' }}>V</th>
+                            <th style={{ textAlign: 'center' }}>N</th>
+                            <th style={{ textAlign: 'center' }}>D</th>
+                            <th style={{ textAlign: 'center' }}>BP</th>
+                            <th style={{ textAlign: 'center' }}>BC</th>
+                            <th style={{ textAlign: 'center' }}>Diff</th>
+                            <th style={{ textAlign: 'center', fontWeight: 800 }}>Pts</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {eqs.map((eq: any, i: number) => (
+                            <tr key={eq.id} style={{
+                              background: i < 3 ? 'rgba(0,166,81,0.03)' : 'transparent',
+                              borderLeft: i === 0 ? '3px solid #FFD700' : i === 1 ? '3px solid #C0C0C0' : i === 2 ? '3px solid #CD7F32' : '3px solid transparent',
                             }}>
-                              {eq.nom?.charAt(0) || '?'}
+                              <td style={{ textAlign: 'center', fontWeight: 800, fontSize: '0.85rem' }}>
+                                {i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}
+                              </td>
+                              <td>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                  {eq.logo_url ? (
+                                    <img src={eq.logo_url} alt={eq.nom} style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} />
+                                  ) : (
+                                    <div style={{
+                                      width: 28, height: 28, borderRadius: 6,
+                                      background: 'var(--gradient-green)',
+                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                      fontSize: '0.6rem', fontWeight: 800, color: 'white',
+                                    }}>
+                                      {eq.nom?.charAt(0) || '?'}
+                                    </div>
+                                  )}
+                                  <div>
+                                    <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{eq.nom}</div>
+                                    <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{eq.quartier || eq.asc_nom || ''}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style={{ textAlign: 'center', fontWeight: 600 }}>{eq.matchs_joues || 0}</td>
+                              <td style={{ textAlign: 'center', fontWeight: 600, color: '#006233' }}>{eq.victoires || 0}</td>
+                              <td style={{ textAlign: 'center', fontWeight: 600, color: '#D97706' }}>{eq.nuls || 0}</td>
+                              <td style={{ textAlign: 'center', fontWeight: 600, color: '#E8002D' }}>{eq.defaites || 0}</td>
+                              <td style={{ textAlign: 'center', fontWeight: 600 }}>{eq.buts_marques || 0}</td>
+                              <td style={{ textAlign: 'center', fontWeight: 600 }}>{eq.buts_encaisses || 0}</td>
+                              <td style={{ textAlign: 'center', fontWeight: 800 }}>
+                                <span style={{
+                                  color: ((eq.buts_marques || 0) - (eq.buts_encaisses || 0)) > 0 ? '#006233' : ((eq.buts_marques || 0) - (eq.buts_encaisses || 0)) < 0 ? '#E8002D' : 'var(--color-text-muted)'
+                                }}>
+                                  {((eq.buts_marques || 0) - (eq.buts_encaisses || 0)) > 0 ? '+' : ''}{(eq.buts_marques || 0) - (eq.buts_encaisses || 0)}
+                                </span>
+                              </td>
+                              <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
+                                {eq.points_classement || 0}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Mobile card view */}
+                  <div className="mobile-table-cards">
+                    {eqs.map((eq: any, i: number) => (
+                      <div key={eq.id} style={{
+                        background: 'var(--color-surface)',
+                        borderRadius: 12,
+                        padding: 12,
+                        border: i < 3 ? `1.5px solid ${['#FFD700','#C0C0C0','#CD7F32'][i]}` : '1px solid var(--color-border)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{
+                            width: 32, height: 32, borderRadius: 8,
+                            background: i < 3 ? ['linear-gradient(135deg,#FFD700,#FFA500)','linear-gradient(135deg,#E8E8E8,#B0B0B0)','linear-gradient(135deg,#CD7F32,#9A5E20)'][i] : 'var(--gradient-green)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '0.7rem', fontWeight: 900, color: 'white', flexShrink: 0,
+                          }}>
+                            {i < 3 ? ['🥇','🥈','🥉'][i] : i+1}
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontWeight: 700, fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{eq.nom}</div>
+                            <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>
+                              {eq.quartier || eq.asc_nom || ''}
                             </div>
-                          )}
-                          <div>
-                            <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{eq.nom}</div>
-                            <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{eq.asc_nom || eq.groupe || ''}</div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1.1rem', color: 'var(--color-primary)' }}>
+                              {eq.points_classement || 0}
+                            </div>
+                            <div style={{ fontSize: '0.6rem', color: 'var(--color-text-muted)' }}>pts</div>
                           </div>
                         </div>
-                      </td>
-                      <td style={{ textAlign: 'center', fontWeight: 600 }}>{eq.matchs_joues || 0}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#006233' }}>{eq.victoires || 0}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#D97706' }}>{eq.nuls || 0}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#E8002D' }}>{eq.defaites || 0}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600 }}>{eq.buts_pour || 0}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600 }}>{eq.buts_contre || 0}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 800 }}>
-                        <span style={{
-                          color: ((eq.buts_pour || 0) - (eq.buts_contre || 0)) > 0 ? '#006233' : ((eq.buts_pour || 0) - (eq.buts_contre || 0)) < 0 ? '#E8002D' : 'var(--color-text-muted)'
-                        }}>
-                          {((eq.buts_pour || 0) - (eq.buts_contre || 0)) > 0 ? '+' : ''}{(eq.buts_pour || 0) - (eq.buts_contre || 0)}
-                        </span>
-                      </td>
-                      <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
-                        {((eq.victoires || 0) * 3) + (eq.nuls || 0)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        <div className="mobile-stat-grid">
+                          <div className="mobile-stat-cell">
+                            <span className="mobile-stat-label">MJ</span>
+                            <span className="mobile-stat-value">{eq.matchs_joues || 0}</span>
+                          </div>
+                          <div className="mobile-stat-cell">
+                            <span className="mobile-stat-label" style={{ color: '#006233' }}>V</span>
+                            <span className="mobile-stat-value" style={{ color: '#006233' }}>{eq.victoires || 0}</span>
+                          </div>
+                          <div className="mobile-stat-cell">
+                            <span className="mobile-stat-label" style={{ color: '#D97706' }}>N</span>
+                            <span className="mobile-stat-value" style={{ color: '#D97706' }}>{eq.nuls || 0}</span>
+                          </div>
+                          <div className="mobile-stat-cell">
+                            <span className="mobile-stat-label" style={{ color: '#E8002D' }}>D</span>
+                            <span className="mobile-stat-value" style={{ color: '#E8002D' }}>{eq.defaites || 0}</span>
+                          </div>
+                          <div className="mobile-stat-cell">
+                            <span className="mobile-stat-label">BP:BC</span>
+                            <span className="mobile-stat-value">{eq.buts_marques || 0}:{eq.buts_encaisses || 0}</span>
+                          </div>
+                          <div className="mobile-stat-cell">
+                            <span className="mobile-stat-label">Diff</span>
+                            <span className="mobile-stat-value" style={{
+                              color: ((eq.buts_marques || 0) - (eq.buts_encaisses || 0)) > 0 ? '#006233' : ((eq.buts_marques || 0) - (eq.buts_encaisses || 0)) < 0 ? '#E8002D' : 'var(--color-text-muted)'
+                            }}>
+                              {((eq.buts_marques || 0) - (eq.buts_encaisses || 0)) > 0 ? '+' : ''}{(eq.buts_marques || 0) - (eq.buts_encaisses || 0)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
 

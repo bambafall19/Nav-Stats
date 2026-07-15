@@ -59,13 +59,13 @@ export default function AdminResultats() {
         if (eqA) {
           const updateA: any = { 
             matchs_joues: (eqA.matchs_joues || 0) + 1,
-            buts_pour: (eqA.buts_pour || 0) + scoreAInt,
-            buts_contre: (eqA.buts_contre || 0) + scoreBInt,
+            buts_marques: (eqA.buts_marques || 0) + scoreAInt,
+            buts_encaisses: (eqA.buts_encaisses || 0) + scoreBInt,
           }
           if (resultA === 'victoire') updateA.victoires = (eqA.victoires || 0) + 1
           else if (resultA === 'nul') updateA.nuls = (eqA.nuls || 0) + 1
           else updateA.defaites = (eqA.defaites || 0) + 1
-          updateA.points = (updateA.victoires || 0) * 3 + (updateA.nuls || 0)
+          updateA.points_classement = (updateA.victoires || 0) * 3 + (updateA.nuls || 0)
 
           await supabase.from('equipes').update(updateA).eq('id', selected.equipe_a_id)
         }
@@ -73,13 +73,13 @@ export default function AdminResultats() {
         if (eqB) {
           const updateB: any = { 
             matchs_joues: (eqB.matchs_joues || 0) + 1,
-            buts_pour: (eqB.buts_pour || 0) + scoreBInt,
-            buts_contre: (eqB.buts_contre || 0) + scoreAInt,
+            buts_marques: (eqB.buts_marques || 0) + scoreBInt,
+            buts_encaisses: (eqB.buts_encaisses || 0) + scoreAInt,
           }
           if (resultB === 'victoire') updateB.victoires = (eqB.victoires || 0) + 1
           else if (resultB === 'nul') updateB.nuls = (eqB.nuls || 0) + 1
           else updateB.defaites = (eqB.defaites || 0) + 1
-          updateB.points = (updateB.victoires || 0) * 3 + (updateB.nuls || 0)
+          updateB.points_classement = (updateB.victoires || 0) * 3 + (updateB.nuls || 0)
 
           await supabase.from('equipes').update(updateB).eq('id', selected.equipe_b_id)
         }
