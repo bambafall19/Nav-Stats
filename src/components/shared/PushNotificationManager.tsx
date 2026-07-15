@@ -41,10 +41,23 @@ export default function PushNotificationManager() {
         return
       }
 
-      // Créer la subscription (vous pouvez ajouter les clés VAPID ici)
+      // Convertir la clé VAPID en Uint8Array
+      const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+      if (!vapidPublicKey) {
+        alert('Les notifications ne sont pas configurées. Contactez l\'administrateur.')
+        return
+      }
+
+      const vapidKey = new Uint8Array(
+        atob(vapidPublicKey.replace(/-/g, '+').replace(/_/g, '/'))
+          .split('')
+          .map(char => char.charCodeAt(0))
+      )
+
+      // Créer la subscription
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+        applicationServerKey: vapidKey
       })
 
       setSubscription(sub)
