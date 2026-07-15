@@ -3,8 +3,54 @@ import MatchListClient from '@/components/matchs/MatchListClient'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Matchs & Calendrier – NavéStats',
-  description: 'Tous les matchs des Navétanes de Khombole. Consultez le calendrier officiel, le tirage des poules et pronostiquez avant le coup d\'envoi.',
+  title: 'Calendrier des Matchs – Navétanes Khombole 2026 | NavéStats',
+  description: 'Consultez tous les matchs des Navétanes de Khombole. Calendrier officiel, scores en direct, et pronostics pour la saison 2026. 17 équipes en compétition.',
+  openGraph: {
+    title: 'Calendrier des Matchs – Navétanes Khombole 2026',
+    description: 'Suivez tous les matchs des Navétanes de Khombole en temps réel. Pronostiquez et gagnez des points !',
+    url: 'https://navestats.site/matchs',
+    siteName: 'NavéStats',
+    images: [
+      {
+        url: 'https://navestats.site/og-matchs.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'NavéStats - Calendrier des Matchs',
+      },
+    ],
+    type: 'website',
+    locale: 'fr_FR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Calendrier des Matchs – Navétanes Khombole',
+    description: 'Suivez les matchs des Navétanes de Khombole en temps réel sur NavéStats',
+    images: ['https://navestats.site/og-matchs.jpg'],
+  },
+}
+
+export const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsEvent',
+  name: 'Navétanes de Khombole 2026',
+  description: 'Championnat de football des Navétanes Zone 6 de Khombole',
+  startDate: '2026-07-01',
+  endDate: '2026-09-30',
+  location: {
+    '@type': 'Place',
+    name: 'Stade de Khombole',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Khombole',
+      addressCountry: 'SN',
+    },
+  },
+  organizer: {
+    '@type': 'Organization',
+    name: 'NavéStats',
+    url: 'https://navestats.site',
+  },
+  sport: 'Football',
 }
 
 export default async function MatchsPage() {
@@ -21,6 +67,12 @@ export default async function MatchsPage() {
 
   return (
     <div className="page-content">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <div className="container-app">
         <div style={{ marginBottom: 32 }}>
           <h1 className="section-title" style={{ fontSize: '2.2rem', marginBottom: 4, fontFamily: 'var(--font-outfit)' }}>

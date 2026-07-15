@@ -3,6 +3,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import PronosticForm from '@/components/pronostics/PronosticForm'
 import AIEstimation from '@/components/shared/AIEstimation'
+import MatchAIAnalyst from '@/components/shared/MatchAIAnalyst'
 import CommentSection from '@/components/communaute/CommentSection'
 import HeadToHead from '@/components/matchs/HeadToHead'
 import SharePronostic from '@/components/pronostics/SharePronostic'
@@ -301,6 +302,14 @@ export default async function MatchDetailPage({ params }: Props) {
             pctNul={pctNul}
             pctB={pctB}
             totalProno={totalProno}
+          />
+
+          {/* Analyste IA public — stats match + Grok */}
+          <MatchAIAnalyst
+            matchId={match.id}
+            equipeANom={equipeA.nom}
+            equipeBNom={equipeB.nom}
+            statut={match.statut}
           />
 
           {/* Statistiques équipes */}

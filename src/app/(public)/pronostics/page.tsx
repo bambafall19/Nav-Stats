@@ -5,8 +5,30 @@ import PronosticsClient from '@/components/pronostics/PronosticsClient'
 import MonEspace from '@/components/home/MonEspace'
 
 export const metadata: Metadata = {
-  title: 'Mes pronostics – NavéStats',
-  description: 'Suivez vos pronostics, vos points et vos performances sur NavéStats.',
+  title: 'Mes Pronostics – Navétanes Khombole 2026 | NavéStats',
+  description: 'Suivez vos pronostics, vos points et vos performances. Consultez vos scores exacts et votre historique de prédictions sur les matchs des Navétanes de Khombole.',
+  openGraph: {
+    title: 'Mes Pronostics – Navétanes Khombole',
+    description: 'Suivez vos pronostics et performances sur NavéStats',
+    url: 'https://navestats.site/pronostics',
+    siteName: 'NavéStats',
+    images: [
+      {
+        url: 'https://navestats.site/og-pronostics.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'NavéStats - Mes Pronostics',
+      },
+    ],
+    type: 'website',
+    locale: 'fr_FR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Mes Pronostics – Navétanes Khombole',
+    description: 'Suivez vos pronostics et vos performances',
+    images: ['https://navestats.site/og-pronostics.jpg'],
+  },
 }
 
 export default async function MesPronosticsPage() {

@@ -2,8 +2,30 @@ import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Statistiques & Classements – NavéStats',
-  description: 'Classement officiel des Poules A, B, C et statistiques des joueurs des Navétanes de Khombole',
+  title: 'Poules & Statistiques – Navétanes Khombole 2026 | NavéStats',
+  description: 'Classements officiels des Poules A, B, C, statistiques des joueurs, top buteurs et performances des équipes des Navétanes de Khombole saison 2026.',
+  openGraph: {
+    title: 'Poules & Statistiques – Navétanes Khombole 2026',
+    description: 'Consultez les classements des poules et statistiques des équipes et joueurs',
+    url: 'https://navestats.site/statistiques',
+    siteName: 'NavéStats',
+    images: [
+      {
+        url: 'https://navestats.site/og-statistiques.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'NavéStats - Poules & Statistiques',
+      },
+    ],
+    type: 'website',
+    locale: 'fr_FR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Poules & Statistiques – Navétanes Khombole',
+    description: 'Classements et statistiques des Navétanes de Khombole',
+    images: ['https://navestats.site/og-statistiques.jpg'],
+  },
 }
 
 interface Team {

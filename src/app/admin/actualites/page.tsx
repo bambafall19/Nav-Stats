@@ -44,6 +44,12 @@ export default function AdminActualitesPage() {
   const [showForm, setShowForm] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [aiLoading, setAiLoading] = useState(false)
+  const [notifLoading, setNotifLoading] = useState(false)
+  const [showNotifForm, setShowNotifForm] = useState(false)
+  const [notifTitle, setNotifTitle] = useState('')
+  const [notifMessage, setNotifMessage] = useState('')
+  const [notifType, setNotifType] = useState<'match' | 'annonce'>('match')
 
   const fetchData = async () => {
     setLoading(true)
@@ -126,14 +132,108 @@ export default function AdminActualitesPage() {
     setShowForm(false)
   }
 
+  /** Génère titre + contenu via Navé Agent (Grok). */
+  const generateWithAI = async () => {
+    setAiLoading(true)
+    setMessage(null)
+    try {
+      const prompt = form.titre.trim()
+        ? `Rédige une actualité NavéStats pour la catégorie "${form.categorie}".\nSujet / angle : ${form.titre}\n${form.contenu ? `Notes : ${form.contenu}` : ''}\n\nRéponds EXACTEMENT dans ce format (sans markdown) :\nTITRE: ...\nCATEGORIE: ${form.categorie}\nCONTENU:\n...`
+        : `Rédige une actualité NavéStats pertinente à partir des données live (prochains matchs ou derniers résultats).\nCatégorie souhaitée : ${form.categorie}\n\nRéponds EXACTEMENT dans ce format (sans markdown) :\nTITRE: ...\nCATEGORIE: ${form.categorie}\nCONTENU:\n...`
+
+      const res = await fetch('/api/ai/agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mode: 'actualite',
+          includeLiveData: true,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erreur Agent IA')
+
+      const text = String(data.reply || '')
+      const titreMatch = text.match(/TITRE:\s*(.+)/i)
+      const contenuMatch = text.match(/CONTENU:\s*([\s\S]+)/i)
+      const catMatch = text.match(/CATEGORIE:\s*(actualite|annonce|resultat|classement)/i)
+
+      setForm((prev) => ({
+        ...prev,
+        titre: titreMatch?.[1]?.trim() || prev.titre,
+        contenu: (contenuMatch?.[1]?.trim() || text).trim(),
+        categorie: (catMatch?.[1]?.toLowerCase() as typeof prev.categorie) || prev.categorie,
+      }))
+      setMessage({ type: 'success', text: 'Brouillon généré par l’Agent IA — relis avant de publier.' })
+    } catch (e) {
+      setMessage({
+        type: 'error',
+        text: e instanceof Error ? e.message : 'Échec génération IA',
+      })
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
   const filteredArticles = annonces.filter(a =>
     a.titre.toLowerCase().includes(search.toLowerCase()) ||
     a.contenu.toLowerCase().includes(search.toLowerCase())
   )
 
+  const sendMatchNotification = async () => {
+    setNotifLoading(true)
+    setMessage(null)
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const { data: matchs } = await supabase
+        .from('matchs')
+        .select('id, equipe_a:equipes!matchs_equipe_a_id_fkey(nom), equipe_b:equipes!matchs_equipe_b_id_fkey(nom), heure_match')
+        .eq('date_match', today)
+        .in('statut', ['a_venir', 'en_cours'])
+        .order('heure_match')
+
+      const matchsData = (matchs || []) as any[]
+      if (matchsData.length === 0) {
+        setMessage({ type: 'error', text: 'Aucun match prévu aujourd\'hui.' })
+        setNotifLoading(false)
+        return
+      }
+
+      // Envoyer une notification pour chaque match via l'API
+      const promises = matchsData.map(async (match) => {
+        const response = await fetch('/api/notifications/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            titre: `⚽ Match aujourd'hui à ${match.heure_match?.slice(0, 5)}`,
+            message: `${match.equipe_a?.nom} vs ${match.equipe_b?.nom}`,
+            type: 'match',
+            matchId: match.id
+          })
+        })
+        return response.json()
+      })
+
+      const results = await Promise.all(promises)
+      const successCount = results.filter(r => r.success).length
+
+      setMessage({ 
+        type: 'success', 
+        text: `Notifications envoyées avec succès pour ${successCount}/${matchsData.length} match(s) !` 
+      })
+    } catch (e) {
+      setMessage({
+        type: 'error',
+        text: e instanceof Error ? e.message : 'Échec envoi notifications',
+      })
+    } finally {
+      setNotifLoading(false)
+    }
+  }
+
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h1 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
             📢 Publier une Annonce / Actualité
@@ -142,13 +242,23 @@ export default function AdminActualitesPage() {
             Communiquez les informations officielles sur les tournois, les classements et les résultats
           </p>
         </div>
-        <button
-          onClick={() => { resetForm(); setShowForm(true) }}
-          className="btn btn-primary"
-          style={{ display: 'flex', alignItems: 'center', gap: 8 }}
-        >
-          ➕ Nouvelle Annonce
-        </button>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button
+            onClick={sendMatchNotification}
+            disabled={notifLoading}
+            className="btn btn-primary"
+            style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+          >
+            {notifLoading ? '⏳ Envoi...' : '🔔 Notifier les matchs du jour'}
+          </button>
+          <button
+            onClick={() => { resetForm(); setShowForm(true) }}
+            className="btn btn-primary"
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--gradient-gold)', color: '#1a0a00' }}
+          >
+            ➕ Nouvelle Annonce
+          </button>
+        </div>
       </div>
 
       {message && (
@@ -229,8 +339,31 @@ export default function AdminActualitesPage() {
               </div>
 
               <div>
-                <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-secondary)', display: 'block', marginBottom: 6 }}>Contenu du communiqué *</label>
-                <textarea required rows={6} value={form.contenu} onChange={e => setForm({ ...form, contenu: e.target.value })} placeholder="Saisissez le texte ici..." style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', fontFamily: 'inherit' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-secondary)' }}>Contenu du communiqué *</label>
+                  <button
+                    type="button"
+                    onClick={generateWithAI}
+                    disabled={aiLoading}
+                    style={{
+                      border: '1px solid rgba(0,98,51,0.25)',
+                      background: 'rgba(0,98,51,0.08)',
+                      color: 'var(--color-primary)',
+                      borderRadius: 8,
+                      padding: '6px 10px',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      cursor: aiLoading ? 'wait' : 'pointer',
+                    }}
+                  >
+                    {aiLoading ? '⏳ Génération…' : '🤖 Générer avec l’Agent IA'}
+                  </button>
+                </div>
+                <textarea required rows={6} value={form.contenu} onChange={e => setForm({ ...form, contenu: e.target.value })} placeholder="Saisissez le texte ici, ou laisse l’Agent IA le rédiger…" style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', fontFamily: 'inherit' }} />
+                <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginTop: 6 }}>
+                  Astuce : tape un sujet dans le titre puis clique « Générer ». Relie l’Agent complet dans{' '}
+                  <a href="/admin/agent" style={{ color: 'var(--color-primary)', fontWeight: 700 }}>Admin → Agent IA</a>.
+                </p>
               </div>
 
               <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>

@@ -4,8 +4,30 @@ import Link from 'next/link'
 import CommunityReactionButton from '@/components/communaute/CommunityReactionButton'
 
 export const metadata: Metadata = {
-  title: 'Communauté – NavéStats',
-  description: 'Rejoignez la communauté NavéStats, commentez, réagissez et votez pour l\'homme du match',
+  title: 'Communauté – Navétanes Khombole 2026 | NavéStats',
+  description: 'Rejoignez la communauté NavéStats. Commentez les matchs, réagissez et votez pour l\'homme du match des Navétanes de Khombole.',
+  openGraph: {
+    title: 'Communauté – Navétanes Khombole 2026',
+    description: 'Discussions, commentaires et votes. Rejoignez la communauté des pronostiqueurs !',
+    url: 'https://navestats.site/communaute',
+    siteName: 'NavéStats',
+    images: [
+      {
+        url: 'https://navestats.site/og-communaute.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'NavéStats - Communauté',
+      },
+    ],
+    type: 'website',
+    locale: 'fr_FR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Communauté – Navétanes Khombole',
+    description: 'Rejoignez les discussions de la communauté NavéStats',
+    images: ['https://navestats.site/og-communaute.jpg'],
+  },
 }
 
 export default async function CommunautePage() {

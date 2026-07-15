@@ -3,8 +3,30 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Classements – NavéStats',
-  description: 'Classement général, hebdomadaire, par quartier et par ASC des pronostiqueurs Navétanes Khombole',
+  title: 'Classements Pronostiqueurs – Navétanes Khombole 2026 | NavéStats',
+  description: 'Classement général des pronostiqueurs, par quartier et par ASC. Découvrez qui sont les meilleurs pronostiqueurs des Navétanes de Khombole cette saison 2026.',
+  openGraph: {
+    title: 'Classements Pronostiqueurs – Navétanes Khombole 2026',
+    description: 'Classement général, par quartier et par ASC des pronostiqueurs. Qui sera le champion cette saison ?',
+    url: 'https://navestats.site/classements',
+    siteName: 'NavéStats',
+    images: [
+      {
+        url: 'https://navestats.site/og-classements.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'NavéStats - Classements Pronostiqueurs',
+      },
+    ],
+    type: 'website',
+    locale: 'fr_FR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Classements – Navétanes Khombole',
+    description: 'Découvrez le classement des meilleurs pronostiqueurs des Navétanes de Khombole',
+    images: ['https://navestats.site/og-classements.jpg'],
+  },
 }
 
 export default async function ClassementsPage() {

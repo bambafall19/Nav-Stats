@@ -9,8 +9,62 @@ import ScrollReveal from '@/components/shared/ScrollReveal'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'NavéStats – Pronostics Navétanes Khombole | Accueil',
-  description: 'Suivez les Navétanes de Khombole en temps réel. Pronostiquiez les matchs, gagnez des points et grimpez dans le classement communautaire !',
+  title: 'NavéStats – Pronostics & Statistiques Navétanes Khombole 2026',
+  description: 'La première plateforme communautaire de pronostics et statistiques des Navétanes de Khombole. Pronostiquez les matchs, gagnez des points et grimpez dans le classement. 17 équipes, scores en direct.',
+  openGraph: {
+    title: 'NavéStats – Pronostics Navétanes Khombole 2026',
+    description: 'Plateforme communautaire de pronostics et statistiques. Rejoignez des milliers de pronostiqueurs !',
+    url: 'https://navestats.site',
+    siteName: 'NavéStats',
+    images: [
+      {
+        url: 'https://navestats.site/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'NavéStats - Pronostics Navétanes Khombole',
+      },
+    ],
+    type: 'website',
+    locale: 'fr_FR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NavéStats – Pronostics Navétanes Khombole',
+    description: 'Rejoignez la communauté NavéStats et pronostiquez les matchs des Navétanes de Khombole',
+    images: ['https://navestats.site/og-image.jpg'],
+  },
+}
+
+export const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'NavéStats',
+  description: 'Plateforme communautaire de pronostics et statistiques des Navétanes de Khombole',
+  url: 'https://navestats.site',
+  potentialMatch: {
+    '@type': 'SportsEvent',
+    name: 'Navétanes de Khombole 2026',
+    sport: 'Football',
+    location: {
+      '@type': 'Place',
+      name: 'Stade de Khombole',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Khombole',
+        addressCountry: 'SN',
+      },
+    },
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'NavéStats',
+    url: 'https://navestats.site',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://navestats.site/logo.png',
+    },
+  },
+  inLanguage: 'fr-FR',
 }
 
 export default async function HomePage() {
@@ -69,6 +123,12 @@ export default async function HomePage() {
 
   return (
     <div className="page-content">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Hero */}
       <HeroSection matchCount={displayMatchs.length} userCount={totalPronostiqueurs || 0} isAuthenticated={!!user} />
 
