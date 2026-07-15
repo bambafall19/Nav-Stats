@@ -164,48 +164,69 @@ export default function PushNotificationManager() {
     return null
   }
 
+  // Only show on pages that are not the main classements page
+  if (typeof window !== 'undefined' && window.location.pathname === '/classements') {
+    return null
+  }
+
   return (
     <div className="push-notification-manager" style={{
       position: 'fixed',
-      bottom: 20,
+      bottom: 100,
       right: 20,
-      zIndex: 1000,
+      zIndex: 999,
       maxWidth: 320
     }}>
       {!isSubscribed ? (
         <div style={{
           background: 'white',
           padding: 16,
-          borderRadius: 12,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          border: '1px solid var(--color-border)'
+          borderRadius: 16,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+          border: '1px solid var(--color-border)',
+          backdropFilter: 'blur(12px)',
         }}>
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '0.9rem', fontWeight: 700 }}>
-            🔔 Activer les notifications
-          </h4>
-          <p style={{ margin: '0 0 12px 0', fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-            Recevez les alertes de match en temps réel
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 12,
+              background: 'linear-gradient(135deg, #006233, #00A651)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.2rem', flexShrink: 0
+            }}>🔔</div>
+            <div>
+              <h4 style={{ fontSize: '0.85rem', fontWeight: 700, margin: 0 }}>
+                Notifications push
+              </h4>
+              <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: '2px 0 0 0' }}>
+                Alertes matchs en temps réel
+              </p>
+            </div>
+          </div>
           <button
             onClick={subscribeToPush}
-            className="btn btn-primary"
-            style={{ width: '100%', fontSize: '0.85rem' }}
+            className="btn btn-primary btn-sm"
+            style={{ width: '100%', justifyContent: 'center' }}
           >
-            Activer
+            Activer 🔔
           </button>
         </div>
       ) : (
         <div style={{
-          background: 'rgba(0,166,81,0.1)',
-          padding: 12,
-          borderRadius: 12,
+          background: 'white',
+          padding: '10px 16px',
+          borderRadius: 100,
+          boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
           border: '1px solid rgba(0,166,81,0.2)',
           display: 'flex',
           alignItems: 'center',
-          gap: 8
-        }}>
-          <span style={{ fontSize: '1.2rem' }}>✅</span>
-          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-primary)' }}>
+          gap: 8,
+          cursor: 'pointer'
+        }}
+        onClick={unsubscribeFromPush}
+        title="Désactiver les notifications"
+        >
+          <span style={{ fontSize: '1rem' }}>✅</span>
+          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-primary)' }}>
             Notifications actives
           </span>
         </div>

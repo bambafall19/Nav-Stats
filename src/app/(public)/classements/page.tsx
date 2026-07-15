@@ -87,21 +87,65 @@ export default async function ClassementsPage() {
       <div className="container-app">
         {/* Hero Header */}
         <div style={{
-          background: 'var(--gradient-hero)',
+          background: 'linear-gradient(135deg, #004d27 0%, #006233 50%, #008a44 100%)',
           borderRadius: 24,
-          padding: 'clamp(24px, 5vw, 40px)',
+          padding: 'clamp(28px, 6vw, 48px) clamp(20px, 4vw, 40px)',
           marginBottom: 32,
-          textAlign: 'center',
           position: 'relative',
           overflow: 'hidden',
         }}>
-          <div style={{ position: 'absolute', top: -30, right: -30, fontSize: 120, opacity: 0.05 }}>🏆</div>
-          <h1 style={{ color: 'white', fontSize: 'clamp(1.6rem, 5vw, 2.2rem)', fontFamily: 'var(--font-outfit)', fontWeight: 900, marginBottom: 6 }}>
-            🏆 Classements
-          </h1>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.9rem' }}>
-            {classementGeneral.length} pronostiqueurs · Général · Quartier · ASC
-          </p>
+          {/* Background decoration */}
+          <div style={{ position: 'absolute', top: -40, right: -20, fontSize: 140, opacity: 0.04 }}>🏆</div>
+          <div style={{ position: 'absolute', bottom: -30, left: -30, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.03)' }} />
+          <div style={{ position: 'absolute', top: 20, left: '30%', width: 80, height: 80, borderRadius: '50%', background: 'rgba(251,191,0,0.06)' }} />
+          
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                  <div style={{
+                    width: 48, height: 48, borderRadius: 16,
+                    background: 'rgba(255,255,255,0.15)',
+                    backdropFilter: 'blur(8px)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.5rem'
+                  }}>🏆</div>
+                  <div>
+                    <h1 style={{ color: 'white', fontSize: 'clamp(1.4rem, 4vw, 2rem)', fontFamily: 'var(--font-outfit)', fontWeight: 900, margin: 0, lineHeight: 1.1 }}>
+                      Classements
+                    </h1>
+                    <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.8rem', margin: '4px 0 0 0' }}>
+                      Saison Navétanes 2026
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div style={{
+                background: 'rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: 12,
+                padding: '12px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 16
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'white', fontFamily: 'var(--font-outfit)' }}>{classementGeneral.length}</div>
+                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)' }}>Pronostiqueurs</div>
+                </div>
+                <div style={{ width: 1, height: 30, background: 'rgba(255,255,255,0.15)' }} />
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#FBBF00', fontFamily: 'var(--font-outfit)' }}>3</div>
+                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)' }}>Classements</div>
+                </div>
+                <div style={{ width: 1, height: 30, background: 'rgba(255,255,255,0.15)' }} />
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#FF6B6B', fontFamily: 'var(--font-outfit)' }}>⚡</div>
+                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)' }}>Live</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div style={{ display: 'grid', gap: 32 }} className="classements-grid">
