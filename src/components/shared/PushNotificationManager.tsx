@@ -13,7 +13,14 @@ export default function PushNotificationManager() {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window) {
       setIsSupported(true)
       setPermission(Notification.permission)
-      checkSubscription()
+      
+      // Enregistrer le Service Worker
+      navigator.serviceWorker.register('/sw.js').then((reg) => {
+        console.log('Service Worker enregistré:', reg)
+        return checkSubscription()
+      }).catch((error) => {
+        console.error('Erreur enregistrement Service Worker:', error)
+      })
     }
   }, [])
 
