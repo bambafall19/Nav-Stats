@@ -2,14 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, CalendarDays, Trophy, BarChart2, MessageSquare } from 'lucide-react'
+import { Home, CalendarDays, Trophy, BarChart2, MessageSquare, User } from 'lucide-react'
 
 const mobileNavLinks = [
   { href: '/', label: 'Accueil', icon: <Home size={22} /> },
   { href: '/matchs', label: 'Matchs', icon: <CalendarDays size={22} /> },
   { href: '/classements', label: 'Classement', icon: <Trophy size={22} /> },
   { href: '/statistiques', label: 'Stats', icon: <BarChart2 size={22} /> },
-  { href: '/communaute', label: 'Comm.', icon: <MessageSquare size={22} /> },
+  { href: '/profil', label: 'Profil', icon: <User size={22} /> },
 ]
 
 export default function MobileBottomNav() {
@@ -39,7 +39,7 @@ export default function MobileBottomNav() {
       className="mobile-only"
     >
       {mobileNavLinks.map(link => {
-        const isActive = pathname === link.href
+        const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
 
         return (
           <Link
