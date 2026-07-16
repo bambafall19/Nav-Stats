@@ -11,6 +11,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   if (!profile?.is_admin) redirect('/')
 
+  const adminLinks = [
+    { href: '/admin', icon: '📊', label: 'Tableau de bord' },
+    { href: '/admin/agent', icon: '🤖', label: 'Agent IA' },
+    { href: '/admin/equipes', icon: '🛡️', label: 'Équipes' },
+    { href: '/admin/joueurs', icon: '👤', label: 'Joueurs' },
+    { href: '/admin/matchs', icon: '⚽', label: 'Matchs' },
+    { href: '/admin/classements', icon: '🏆', label: 'Classements' },
+    { href: '/admin/resultats', icon: '✅', label: 'Résultats' },
+    { href: '/admin/utilisateurs', icon: '👥', label: 'Utilisateurs' },
+    { href: '/admin/actualites', icon: '📰', label: 'Actualités' },
+    { href: '/admin/notifications', icon: '🔔', label: 'Notifications' },
+  ]
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--color-surface)' }}>
       {/* Admin Sidebar */}
@@ -52,17 +65,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
         {/* Nav */}
         <nav style={{ flex: 1, padding: 16, overflowY: 'auto' }}>
-          {[
-            { href: '/admin', icon: '📊', label: 'Tableau de bord' },
-            { href: '/admin/agent', icon: '🤖', label: 'Agent IA' },
-            { href: '/admin/equipes', icon: '🛡️', label: 'Équipes' },
-            { href: '/admin/joueurs', icon: '👤', label: 'Joueurs' },
-            { href: '/admin/matchs', icon: '⚽', label: 'Matchs' },
-            { href: '/admin/resultats', icon: '✅', label: 'Résultats' },
-            { href: '/admin/utilisateurs', icon: '👥', label: 'Utilisateurs' },
-            { href: '/admin/actualites', icon: '📰', label: 'Actualités' },
-            { href: '/admin/notifications', icon: '🔔', label: 'Notifications' },
-          ].map(link => (
+          {adminLinks.map(link => (
             <a key={link.href} href={link.href} className="admin-nav-link" style={{
               display: 'flex', alignItems: 'center', gap: 10,
               padding: '10px 14px', borderRadius: 'var(--radius-md)',
