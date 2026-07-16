@@ -11,12 +11,12 @@ interface Equipe {
   sigle: string | null
   poule: Poule
   points_classement: number
-  joues: number
+  matchs_joues: number
   victoires: number
   nuls: number
   defaites: number
   buts_marques: number
-  buts_encaissees: number
+  buts_encaisses: number
   couleur_principale: string
   couleur_secondaire: string
 }
@@ -38,13 +38,12 @@ export default function AdminClassementsPage() {
       .order('points_classement', { ascending: false })
     
     if (!error) {
-      // Sort by points, then goal difference
       const sorted = (data || []).sort((a: Equipe, b: Equipe) => {
         if (b.points_classement !== a.points_classement) {
           return b.points_classement - a.points_classement
         }
-        const diffA = a.buts_marques - a.buts_encaissees
-        const diffB = b.buts_marques - b.buts_encaissees
+        const diffA = (a.buts_marques || 0) - (a.buts_encaisses || 0)
+        const diffB = (b.buts_marques || 0) - (b.buts_encaisses || 0)
         return diffB - diffA
       })
       setEquipes(sorted)
@@ -74,12 +73,12 @@ export default function AdminClassementsPage() {
       .from('equipes')
       .update({
         points_classement: values.points_classement ?? equipe.points_classement,
-        joues: values.joues ?? equipe.joues,
+        matchs_joues: values.matchs_joues ?? equipe.matchs_joues,
         victoires: values.victoires ?? equipe.victoires,
         nuls: values.nuls ?? equipe.nuls,
         defaites: values.defaites ?? equipe.defaites,
         buts_marques: values.buts_marques ?? equipe.buts_marques,
-        buts_encaissees: values.buts_encaissees ?? equipe.buts_encaissees,
+        buts_encaisses: values.buts_encaisses ?? equipe.buts_encaisses,
       })
       .eq('id', equipe.id)
 
@@ -145,7 +144,7 @@ export default function AdminClassementsPage() {
             <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
               <th>#</th>
               <th style={{ width: 200 }}>Équipe</th>
-              <th>J</th>
+              <th>MJ</th>
               <th>V</th>
               <th>N</th>
               <th>D</th>
@@ -158,9 +157,9 @@ export default function AdminClassementsPage() {
           </thead>
           <tbody>
             {equipes.map((eq, index) => {
-              const diff = (editValues[eq.id]?.buts_marques ?? eq.buts_marques) - (editValues[eq.id]?.buts_encaissees ?? eq.buts_encaissees)
-              const points = (editValues[eq.id]?.points_classement ?? eq.points_classement)
-              const joues = editValues[eq.id]?.joues ?? eq.joues
+              const diff = (editValues[eq.id]?.buts_marques ?? eq.buts_marques ?? 0) - (editValues[eq.id]?.buts_encaisses ?? eq.buts_encaisses ?? 0)
+              const points = editValues[eq.id]?.points_classement ?? eq.points_classement ?? 0
+              const mj = editValues[eq.id]?.matchs_joues ?? eq.matchs_joues ?? 0
               
               return (
                 <tr key={eq.id}>
@@ -181,15 +180,15 @@ export default function AdminClassementsPage() {
                   <td>
                     <input
                       type="number" min="0"
-                      value={editValues[eq.id]?.joues ?? joues}
-                      onChange={e => handleInputChange(eq.id, 'joues', parseInt(e.target.value) || 0)}
+                      value={mj}
+                      onChange={e => handleInputChange(eq.id, 'matchs_joues', parseInt(e.target.value) || 0)}
                       style={{ width: 50, padding: '4px 6px', border: '1px solid var(--color-border)', borderRadius: 6, textAlign: 'center' }}
                     />
                   </td>
                   <td>
                     <input
                       type="number" min="0"
-                      value={editValues[eq.id]?.victoires ?? eq.victoires}
+                      value={editValues[eq.id]?.victoires ?? eq.victoires ?? 0}
                       onChange={e => handleInputChange(eq.id, 'victoires', parseInt(e.target.value) || 0)}
                       style={{ width: 40, padding: '4px 6px', border: '1px solid var(--color-border)', borderRadius: 6, textAlign: 'center' }}
                     />
@@ -197,7 +196,7 @@ export default function AdminClassementsPage() {
                   <td>
                     <input
                       type="number" min="0"
-                      value={editValues[eq.id]?.nuls ?? eq.nuls}
+                      value={editValues[eq.id]?.nuls ?? eq.nuls ?? 0}
                       onChange={e => handleInputChange(eq.id, 'nuls', parseInt(e.target.value) || 0)}
                       style={{ width: 40, padding: '4px 6px', border: '1px solid var(--color-border)', borderRadius: 6, textAlign: 'center' }}
                     />
@@ -205,7 +204,7 @@ export default function AdminClassementsPage() {
                   <td>
                     <input
                       type="number" min="0"
-                      value={editValues[eq.id]?.defaites ?? eq.defaites}
+                      value={editValues[eq.id]?.defaites ?? eq.defaites ?? 0}
                       onChange={e => handleInputChange(eq.id, 'defaites', parseInt(e.target.value) || 0)}
                       style={{ width: 40, padding: '4px 6px', border: '1px solid var(--color-border)', borderRadius: 6, textAlign: 'center' }}
                     />
@@ -213,7 +212,7 @@ export default function AdminClassementsPage() {
                   <td>
                     <input
                       type="number" min="0"
-                      value={editValues[eq.id]?.buts_marques ?? eq.buts_marques}
+                      value={editValues[eq.id]?.buts_marques ?? eq.buts_marques ?? 0}
                       onChange={e => handleInputChange(eq.id, 'buts_marques', parseInt(e.target.value) || 0)}
                       style={{ width: 40, padding: '4px 6px', border: '1px solid var(--color-border)', borderRadius: 6, textAlign: 'center' }}
                     />
@@ -221,15 +220,22 @@ export default function AdminClassementsPage() {
                   <td>
                     <input
                       type="number" min="0"
-                      value={editValues[eq.id]?.buts_encaissees ?? eq.buts_encaissees}
-                      onChange={e => handleInputChange(eq.id, 'buts_encaissees', parseInt(e.target.value) || 0)}
+                      value={editValues[eq.id]?.buts_encaisses ?? eq.buts_encaisses ?? 0}
+                      onChange={e => handleInputChange(eq.id, 'buts_encaisses', parseInt(e.target.value) || 0)}
                       style={{ width: 40, padding: '4px 6px', border: '1px solid var(--color-border)', borderRadius: 6, textAlign: 'center' }}
                     />
                   </td>
                   <td style={{ fontWeight: 600, color: diff > 0 ? 'var(--color-primary)' : diff < 0 ? 'var(--color-red)' : 'var(--color-text-muted)' }}>
                     {diff > 0 ? '+' : ''}{diff}
                   </td>
-                  <td style={{ fontWeight: 800 }}>{points}</td>
+                  <td>
+                    <input
+                      type="number" min="0"
+                      value={points}
+                      onChange={e => handleInputChange(eq.id, 'points_classement', parseInt(e.target.value) || 0)}
+                      style={{ width: 50, padding: '4px 6px', border: '1px solid var(--color-border)', borderRadius: 6, textAlign: 'center', fontWeight: 700 }}
+                    />
+                  </td>
                   <td>
                     <button
                       onClick={() => handleSave(eq)}
