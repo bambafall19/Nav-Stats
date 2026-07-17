@@ -13,7 +13,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const adminLinks = [
     { href: '/admin', icon: '📊', label: 'Tableau de bord' },
-    { href: '/admin/agent', icon: '🤖', label: 'Agent IA' },
     { href: '/admin/equipes', icon: '🛡️', label: 'Équipes' },
     { href: '/admin/joueurs', icon: '👤', label: 'Joueurs' },
     { href: '/admin/matchs', icon: '⚽', label: 'Matchs' },
