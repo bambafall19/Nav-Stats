@@ -25,10 +25,10 @@ export default function PushNotificationManager() {
       
       // Enregistrer le Service Worker
       navigator.serviceWorker.register('/sw.js').then((reg) => {
-        console.log('Service Worker enregistré:', reg)
+        console.log('Service Worker enregistré')
         return checkSubscription()
-      }).catch((error) => {
-        console.error('Erreur enregistrement Service Worker:', error)
+      }).catch(() => {
+        console.error('Erreur enregistrement Service Worker')
       })
     }
   }, [])
@@ -39,21 +39,16 @@ export default function PushNotificationManager() {
       const sub = await reg.pushManager.getSubscription()
       setSubscription(sub)
       setIsSubscribed(!!sub)
-    } catch (error) {
-      console.error('Erreur vérification subscription:', error)
+    } catch {
+      console.error('Erreur vérification subscription')
     }
   }
 
   const subscribeToPush = async () => {
     try {
-      console.log('Début abonnement push...')
       const reg = await navigator.serviceWorker.ready
-      console.log('Service Worker prêt:', reg)
-      
-      // Demander la permission
       const permission = await Notification.requestPermission()
       setPermission(permission)
-      console.log('Permission:', permission)
       
       if (permission !== 'granted') {
         alert('Vous devez autoriser les notifications pour recevoir les alertes')
@@ -62,7 +57,6 @@ export default function PushNotificationManager() {
 
       // Convertir la clé VAPID en Uint8Array
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-      console.log('Clé VAPID publique:', vapidPublicKey ? 'Présente' : 'Manquante')
       
       if (!vapidPublicKey) {
         alert('Les notifications ne sont pas configurées. Contactez l\'administrateur.')
@@ -76,25 +70,20 @@ export default function PushNotificationManager() {
       )
 
       // Créer la subscription
-      console.log('Création subscription...')
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: vapidKey
       })
-      console.log('Subscription créée:', sub)
 
       setSubscription(sub)
       setIsSubscribed(true)
 
-      // Enregistrer la subscription dans la base de données
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
-      console.log('Utilisateur connecté:', user?.id || 'Non connecté')
       
       if (user) {
-        console.log('Enregistrement dans Supabase...')
         const subJson = sub.toJSON()
-        const { data, error } = await (supabase as any)
+        const { error } = await (supabase as any)
           .from('push_subscriptions')
           .upsert(
             {
@@ -109,8 +98,6 @@ export default function PushNotificationManager() {
           .select()
 
         if (error) {
-          // Fallback if unique constraint not yet applied on endpoint
-          console.error('Erreur upsert Supabase:', error)
           const insert = await (supabase as any)
             .from('push_subscriptions')
             .insert({
@@ -121,13 +108,10 @@ export default function PushNotificationManager() {
             })
             .select()
           if (insert.error) {
-            console.error('Erreur Supabase:', insert.error)
-            alert('Erreur lors de l\'enregistrement: ' + insert.error.message)
+            console.error('Erreur Supabase enregistrement subscription')
+            alert('Erreur lors de l\'enregistrement')
             return
           }
-          console.log('Subscription enregistrée (insert):', insert.data)
-        } else {
-          console.log('Subscription enregistrée:', data)
         }
       } else {
         alert('Connectez-vous pour recevoir les notifications sur tous vos appareils.')
@@ -139,9 +123,9 @@ export default function PushNotificationManager() {
       setDismissed(true)
       
       alert('Notifications activées avec succès !')
-    } catch (error: any) {
-      console.error('Erreur subscription push:', error)
-      alert('Erreur: ' + (error.message || 'Unknown error'))
+    } catch {
+      console.error('Erreur subscription push')
+      alert('Erreur lors de l\'activation des notifications. Veuillez réessayer.')
     }
   }
 
@@ -167,8 +151,8 @@ export default function PushNotificationManager() {
             .eq('subscription_endpoint', sub.endpoint)
         }
       }
-    } catch (error) {
-      console.error('Erreur unsubscribe push:', error)
+    } catch {
+      console.error('Erreur unsubscribe push')
     }
   }
 

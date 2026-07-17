@@ -74,9 +74,9 @@ export async function POST(request: NextRequest) {
       .select()
 
     if (error) {
-      console.error('Erreur enregistrement push subscription:', error)
+      console.error('Erreur enregistrement push subscription:', String(error.message).replace(/[\r\n]/g, ' '))
       return NextResponse.json(
-        { error: 'Échec enregistrement', details: error.message },
+        { error: 'Échec enregistrement' },
         { status: 500 }
       )
     }
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       data,
     })
   } catch (error) {
-    console.error('Erreur enregistrement push:', error)
+    console.error('Erreur enregistrement push:', error instanceof Error ? error.message.replace(/[\r\n]/g, ' ') : 'Unknown error')
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 }
@@ -144,12 +144,9 @@ export async function PUT(request: NextRequest) {
     const { data: rows, error: fetchError } = await query
 
     if (fetchError) {
-      console.error('Erreur lecture push_subscriptions:', fetchError)
+      console.error('Erreur lecture push_subscriptions:', String(fetchError.message).replace(/[\r\n]/g, ' '))
       return NextResponse.json(
-        {
-          error: 'Impossible de lire les abonnements push',
-          details: fetchError.message,
-        },
+        { error: 'Impossible de lire les abonnements push' },
         { status: 500 }
       )
     }
@@ -195,7 +192,7 @@ export async function PUT(request: NextRequest) {
       cleaned: result.staleEndpoints.length,
     })
   } catch (error) {
-    console.error('Erreur envoi push:', error)
+    console.error('Erreur envoi push:', error instanceof Error ? error.message.replace(/[\r\n]/g, ' ') : 'Unknown error')
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 }

@@ -22,7 +22,8 @@ export default class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error) {
-    console.error('ErrorBoundary caught:', error)
+    const safeMessage = String(error.message).replace(/[\r\n]/g, ' ').substring(0, 200)
+    console.error('ErrorBoundary caught:', safeMessage)
   }
 
   render() {

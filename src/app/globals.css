@@ -56,24 +56,6 @@
     --nav-height: 72px;
   }
 
-  /* ===== DARK THEME (Premium Forest & Gold) ===== */
-  [data-theme="dark"] {
-    --color-surface: #040906; /* Forest Charcoal Dark */
-    --color-surface-card: #0c1410; /* Forest Dark Card */
-    --color-surface-elevated: #14231b; /* Forest Elevated */
-    --color-surface-overlay: rgba(4, 9, 6, 0.9);
-
-    --color-text-primary: #f0f7f3; /* Minty White */
-    --color-text-secondary: #a6c0b0; /* Sage secondary */
-    --color-text-muted: #677f71; /* Sage muted */
-
-    --color-border: rgba(0, 166, 81, 0.16);
-    --color-border-focus: var(--color-primary-light);
-
-    --gradient-hero: linear-gradient(135deg, #021f10 0%, #004d27 40%, #006233 80%, #9e7d0a 100%);
-    --gradient-card: linear-gradient(135deg, rgba(0, 166, 81, 0.1) 0%, rgba(251, 191, 0, 0.05) 100%);
-  }
-
   * {
     box-sizing: border-box;
     margin: 0;
@@ -584,10 +566,6 @@
       background: rgba(255, 255, 255, 0.94) !important;
       border-bottom: 1px solid rgba(0, 98, 51, 0.1) !important;
       box-shadow: 0 8px 22px rgba(16, 24, 32, 0.07) !important;
-    }
-
-    [data-theme="dark"] #main-header {
-      background: rgba(4, 9, 6, 0.94) !important;
     }
 
     .page-content {

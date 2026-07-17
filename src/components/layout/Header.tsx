@@ -22,7 +22,6 @@ export default function Header() {
   const pathname = usePathname()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [isDark, setIsDark] = useState(false)
   const supabase = createClient() as any
 
   useEffect(() => {
@@ -35,21 +34,11 @@ export default function Header() {
     })
   }, [])
 
-  // Dark mode init from localStorage
+  // Forcer le thème clair
   useEffect(() => {
-    const saved = localStorage.getItem('navestats-theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const dark = saved === 'dark' || (!saved && prefersDark)
-    setIsDark(dark)
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
+    document.documentElement.removeAttribute('data-theme')
+    localStorage.removeItem('navestats-theme')
   }, [])
-
-  const toggleDark = () => {
-    const next = !isDark
-    setIsDark(next)
-    document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light')
-    localStorage.setItem('navestats-theme', next ? 'dark' : 'light')
-  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -124,7 +113,7 @@ export default function Header() {
         <nav style={{
           display: 'none',
           gap: 2,
-          background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+          background: 'rgba(0,0,0,0.04)',
           padding: 4,
           borderRadius: 'var(--radius-full)',
           margin: '0 auto',
@@ -145,7 +134,7 @@ export default function Header() {
                   fontSize: '0.85rem',
                   fontWeight: isActive ? 700 : 500,
                   color: isActive ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                  background: isActive ? (isDark ? 'rgba(255,255,255,0.1)' : 'white') : 'transparent',
+                  background: isActive ? 'white' : 'transparent',
                   boxShadow: isActive ? 'var(--shadow-sm)' : 'none',
                   textDecoration: 'none',
                   transition: 'all 0.2s ease',
@@ -162,35 +151,7 @@ export default function Header() {
         {/* Right actions */}
         <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, marginLeft: 'auto' }}>
 
-          {/* Dark Mode Toggle */}
-          <button
-            id="dark-mode-toggle"
-            onClick={toggleDark}
-            aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
-            title={isDark ? 'Mode clair' : 'Mode sombre'}
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 'var(--radius-full)',
-              border: '1.5px solid var(--color-border)',
-              background: 'transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.1rem',
-              transition: 'all 0.25s ease',
-              color: 'var(--color-text-primary)',
-            }}
-            onMouseOver={e => (e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)')}
-            onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
-          >
-            {isDark ? '☀️' : '🌙'}
-          </button>
-
-          {profile ? (
-            <>
-              <NotificationBell userId={profile.id} />
+          {/* Notification Bell */}
               <div style={{ position: 'relative' }}>
                 <button
                   onClick={() => setMenuOpen(!menuOpen)}
