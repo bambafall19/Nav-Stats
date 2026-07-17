@@ -345,9 +345,60 @@
   }
 
   /* --- Rank Badge --- */
-  .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); color: #5a3800; }
-  .rank-2 { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); color: #2a2a2a; }
-  .rank-3 { background: linear-gradient(135deg, #CD7F32, #A0522D); color: white; }
+  .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); color: #5a3800; box-shadow: 0 4px 12px rgba(255,180,0,0.4); }
+  .rank-2 { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); color: #2a2a2a; box-shadow: 0 4px 12px rgba(160,160,160,0.4); }
+  .rank-3 { background: linear-gradient(135deg, #CD7F32, #A0522D); color: white; box-shadow: 0 4px 12px rgba(160,80,30,0.4); }
+
+  /* --- Skeleton Loader --- */
+  .skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% auto;
+    animation: shimmer 1.4s linear infinite;
+    border-radius: var(--radius-md);
+  }
+
+  /* --- Score Badge --- */
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #006233, #00A651);
+    color: white;
+    font-family: var(--font-outfit);
+    font-weight: 900;
+    border-radius: var(--radius-md);
+    padding: 6px 14px;
+    font-size: 1.6rem;
+    letter-spacing: -0.03em;
+    box-shadow: 0 4px 14px rgba(0,98,51,0.3);
+  }
+
+  /* --- Top 3 podium --- */
+  .podium-card {
+    background: var(--color-surface-card);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    padding: 20px 16px;
+    text-align: center;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .podium-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+  .podium-card.first {
+    border-color: rgba(255,180,0,0.4);
+    background: linear-gradient(160deg, #fffbeb 0%, #ffffff 100%);
+  }
+  .podium-card.first::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+  }
 
   /* --- AI Estimation Card --- */
   .ai-card {

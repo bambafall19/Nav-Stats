@@ -114,13 +114,20 @@ function MatchCard({ match }: { match: Match }) {
           <div style={{ textAlign: 'center', minWidth: 80 }}>
             {isDone || isLive ? (
               <div style={{
-                fontSize: '1.8rem',
-                fontWeight: 900,
-                fontFamily: 'var(--font-outfit)',
-                letterSpacing: '-0.03em',
-                color: 'var(--color-text-primary)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                background: isLive ? 'rgba(232,0,45,0.08)' : 'rgba(0,98,51,0.08)',
+                borderRadius: 'var(--radius-md)',
+                padding: '6px 12px',
               }}>
-                {match.score_a ?? 0} — {match.score_b ?? 0}
+                <span style={{ fontSize: '1.8rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', letterSpacing: '-0.03em', color: 'var(--color-text-primary)' }}>
+                  {match.score_a ?? 0}
+                </span>
+                <span style={{ color: 'var(--color-text-muted)', fontWeight: 700, fontSize: '1.2rem' }}>–</span>
+                <span style={{ fontSize: '1.8rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', letterSpacing: '-0.03em', color: 'var(--color-text-primary)' }}>
+                  {match.score_b ?? 0}
+                </span>
               </div>
             ) : (
               <>
@@ -181,8 +188,10 @@ export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isT
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
-          {matchs.map(match => (
-            <MatchCard key={match.id} match={match} />
+          {matchs.map((match, i) => (
+            <div key={match.id} style={{ animation: `fadeInUp 0.4s ${i * 0.07}s ease both` }}>
+              <MatchCard match={match} />
+            </div>
           ))}
         </div>
       )}
