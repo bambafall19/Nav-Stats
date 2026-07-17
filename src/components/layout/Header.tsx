@@ -71,13 +71,7 @@ export default function Header() {
               src="/logo.png"
               alt="NavéStats Logo"
               className="brand-logo"
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 8,
-                objectFit: 'cover',
-                flexShrink: 0,
-              }}
+              style={{ width: 38, height: 38, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }}
             />
             <div>
               <div style={{
@@ -93,7 +87,7 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Partnership Logo — visible on all sizes, compact on mobile */}
+        {/* Partnership Logo */}
         <div className="zone-partner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ width: 1, height: 22, background: 'var(--color-border)', flexShrink: 0 }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -109,7 +103,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Desktop-only nav — hidden on mobile */}
+        {/* Desktop nav */}
         <nav style={{
           display: 'none',
           gap: 2,
@@ -117,8 +111,7 @@ export default function Header() {
           padding: 4,
           borderRadius: 'var(--radius-full)',
           margin: '0 auto',
-        }}
-          className="desktop-nav">
+        }} className="desktop-nav">
           {navLinks.map(link => {
             const isActive = pathname === link.href
             return (
@@ -150,8 +143,9 @@ export default function Header() {
 
         {/* Right actions */}
         <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, marginLeft: 'auto' }}>
-
-          {/* Notification Bell */}
+          {profile ? (
+            <>
+              <NotificationBell userId={profile.id} />
               <div style={{ position: 'relative' }}>
                 <button
                   onClick={() => setMenuOpen(!menuOpen)}
@@ -179,20 +173,16 @@ export default function Header() {
                     {profile.username}
                   </span>
                   <div style={{
-                    width: 20,
-                    height: 20,
+                    width: 20, height: 20,
                     background: 'var(--gradient-gold)',
                     borderRadius: 'var(--radius-full)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.65rem',
-                    fontWeight: 700,
-                    color: '#5a3800',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.65rem', fontWeight: 700, color: '#5a3800',
                   }}>
                     {profile.points}
                   </div>
                 </button>
+
                 {menuOpen && (
                   <div id="user-dropdown" style={{
                     position: 'absolute',
@@ -207,14 +197,16 @@ export default function Header() {
                     zIndex: 200,
                     animation: 'fadeInUp 0.15s ease',
                   }}>
-                    <Link href={`/profil/${profile.id}`} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-text-primary)', transition: 'background 0.15s' }}
+                    <Link href={`/profil/${profile.id}`}
+                      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-text-primary)', transition: 'background 0.15s' }}
                       onClick={() => setMenuOpen(false)}
                       onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.05)')}
                       onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
                     >
                       <span>👤</span> <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Mon Profil</span>
                     </Link>
-                    <Link href="/pronostics" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-text-primary)', transition: 'background 0.15s' }}
+                    <Link href="/pronostics"
+                      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-text-primary)', transition: 'background 0.15s' }}
                       onClick={() => setMenuOpen(false)}
                       onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.05)')}
                       onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
@@ -222,7 +214,8 @@ export default function Header() {
                       <span>📊</span> <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Mes Pronostics</span>
                     </Link>
                     {profile.is_admin && (
-                      <Link href="/admin" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-primary)', transition: 'background 0.15s' }}
+                      <Link href="/admin"
+                        style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-primary)', transition: 'background 0.15s' }}
                         onClick={() => setMenuOpen(false)}
                         onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.05)')}
                         onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
@@ -231,7 +224,8 @@ export default function Header() {
                       </Link>
                     )}
                     <div style={{ height: 1, background: 'var(--color-border)', margin: '6px 0' }} />
-                    <button onClick={handleSignOut} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', color: 'var(--color-red)', background: 'transparent', border: 'none', cursor: 'pointer', width: '100%', fontSize: '0.875rem', fontWeight: 500, transition: 'background 0.15s' }}
+                    <button onClick={handleSignOut}
+                      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', color: 'var(--color-red)', background: 'transparent', border: 'none', cursor: 'pointer', width: '100%', fontSize: '0.875rem', fontWeight: 500, transition: 'background 0.15s' }}
                       onMouseOver={e => (e.currentTarget.style.background = 'rgba(232,0,45,0.05)')}
                       onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
                     >
@@ -254,7 +248,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu overlay */}
       <style>{`
         @media (max-width: 767px) {
           .desktop-nav { display: none !important; }
