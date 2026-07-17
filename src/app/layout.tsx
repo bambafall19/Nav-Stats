@@ -5,6 +5,9 @@ import PWAInstallBanner from "@/components/shared/PWAInstallBanner";
 import OfflineIndicator from "@/components/shared/OfflineIndicator";
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import PushNotificationManager from "@/components/shared/PushNotificationManager";
+import GoogleAnalytics from "@/components/shared/GoogleAnalytics";
+import GoogleTagManager from "@/components/shared/GoogleTagManager";
+import GoogleTagManagerNoScript from "@/components/shared/GoogleTagManagerNoScript";
 import { ToastProvider } from "@/components/shared/Toast";
 import { PageTransitionLayout } from "@/components/shared/PageTransition";
 import { MatchNotificationService } from "@/components/shared/MatchNotificationService";
@@ -63,8 +66,11 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${inter.variable} ${outfit.variable} ${robotoMono.variable}`} suppressHydrationWarning>
       <head>
+        <GoogleTagManager />
+        <GoogleAnalytics />
       </head>
       <body className="font-inter antialiased bg-surface text-text-primary">
+        <GoogleTagManagerNoScript />
         <ToastProvider>
           <ErrorBoundary>
             <MatchNotificationService />
