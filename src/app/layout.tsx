@@ -8,6 +8,8 @@ import PushNotificationManager from "@/components/shared/PushNotificationManager
 import GoogleAnalytics from "@/components/shared/GoogleAnalytics";
 import GoogleTagManager from "@/components/shared/GoogleTagManager";
 import GoogleTagManagerNoScript from "@/components/shared/GoogleTagManagerNoScript";
+import { ToastProvider } from "@/components/shared/Toast";
+import { PageTransitionLayout } from "@/components/shared/PageTransition";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -68,12 +70,16 @@ export default function RootLayout({
       </head>
       <body className="font-inter antialiased bg-surface text-text-primary">
         <GoogleTagManagerNoScript />
-        <ErrorBoundary>
-          {children}
-          <PWAInstallBanner />
-          <OfflineIndicator />
-          <PushNotificationManager />
-        </ErrorBoundary>
+        <ToastProvider>
+          <ErrorBoundary>
+            <PageTransitionLayout>
+              {children}
+            </PageTransitionLayout>
+            <PWAInstallBanner />
+            <OfflineIndicator />
+            <PushNotificationManager />
+          </ErrorBoundary>
+        </ToastProvider>
       </body>
     </html>
   );
