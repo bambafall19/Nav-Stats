@@ -5,6 +5,7 @@ import PWAInstallBanner from "@/components/shared/PWAInstallBanner";
 import OfflineIndicator from "@/components/shared/OfflineIndicator";
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import PushNotificationManager from "@/components/shared/PushNotificationManager";
+import GoogleAnalytics from "@/components/shared/GoogleAnalytics";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -59,6 +60,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={`${inter.variable} ${outfit.variable} ${robotoMono.variable}`} suppressHydrationWarning>
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body className="font-inter antialiased bg-surface text-text-primary">
         <ErrorBoundary>
           {children}

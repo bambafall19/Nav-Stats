@@ -146,7 +146,7 @@ export default function Header() {
           {profile ? (
             <>
               <NotificationBell userId={profile.id} />
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative' }} className="desktop-user-menu">
                 <button
                   onClick={() => setMenuOpen(!menuOpen)}
                   style={{
@@ -252,6 +252,7 @@ export default function Header() {
         @media (max-width: 767px) {
           .desktop-nav { display: none !important; }
           .hidden-mobile { display: none !important; }
+          .desktop-user-menu { display: none !important; }
         }
         @media (min-width: 768px) {
           .desktop-nav { display: flex !important; align-items: center; }
