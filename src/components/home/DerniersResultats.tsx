@@ -5,13 +5,6 @@ type Match = Database['public']['Tables']['matchs']['Row'] & {
   equipe_b: Database['public']['Tables']['equipes']['Row']
 }
 
-import type { Database } from '@/types/database.types'
-
-type Match = Database['public']['Tables']['matchs']['Row'] & {
-  equipe_a: Database['public']['Tables']['equipes']['Row']
-  equipe_b: Database['public']['Tables']['equipes']['Row']
-}
-
 export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
   return (
     <div>
@@ -55,12 +48,9 @@ export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
 
               <div style={{ textAlign: 'center' }}>
                 <div style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
                   background: isDraw ? 'rgba(100,116,139,0.08)' : 'rgba(0,98,51,0.08)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '4px 10px',
+                  borderRadius: 'var(--radius-md)', padding: '4px 10px',
                 }}>
                   <span style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '-0.02em', color: 'var(--color-text-primary)' }}>
                     {match.score_a}
