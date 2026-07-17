@@ -10,6 +10,7 @@ import GoogleTagManager from "@/components/shared/GoogleTagManager";
 import GoogleTagManagerNoScript from "@/components/shared/GoogleTagManagerNoScript";
 import { ToastProvider } from "@/components/shared/Toast";
 import { PageTransitionLayout } from "@/components/shared/PageTransition";
+import { MatchNotificationService } from "@/components/shared/MatchNotificationService";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -72,6 +73,7 @@ export default function RootLayout({
         <GoogleTagManagerNoScript />
         <ToastProvider>
           <ErrorBoundary>
+            <MatchNotificationService />
             <PageTransitionLayout>
               {children}
             </PageTransitionLayout>
