@@ -5,6 +5,13 @@ type Match = Database['public']['Tables']['matchs']['Row'] & {
   equipe_b: Database['public']['Tables']['equipes']['Row']
 }
 
+import type { Database } from '@/types/database.types'
+
+type Match = Database['public']['Tables']['matchs']['Row'] & {
+  equipe_a: Database['public']['Tables']['equipes']['Row']
+  equipe_b: Database['public']['Tables']['equipes']['Row']
+}
+
 export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
   return (
     <div>
@@ -19,18 +26,14 @@ export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
           const matchDate = new Date(match.date_match)
 
           return (
-            <div key={match.id} style={{
+            <div key={match.id} className="resultat-row" style={{
               padding: '16px 20px',
               borderBottom: i < matchs.length - 1 ? '1px solid var(--color-border)' : 'none',
               display: 'grid',
               gridTemplateColumns: '1fr auto 1fr',
               gap: 12,
               alignItems: 'center',
-              transition: 'background 0.15s',
-            }}
-              onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.025)')}
-              onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
-            >
+            }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
                 <span style={{ fontSize: '0.875rem', fontWeight: isWinA ? 700 : 400, color: isWinA ? 'var(--color-primary)' : 'var(--color-text-secondary)', textAlign: 'right' }}>
                   {match.equipe_a.nom}
@@ -55,7 +58,7 @@ export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
-                  background: isDraw ? 'rgba(100,116,139,0.08)' : isWinA ? 'rgba(0,98,51,0.08)' : 'rgba(0,98,51,0.08)',
+                  background: isDraw ? 'rgba(100,116,139,0.08)' : 'rgba(0,98,51,0.08)',
                   borderRadius: 'var(--radius-md)',
                   padding: '4px 10px',
                 }}>
@@ -94,6 +97,7 @@ export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
           )
         })}
       </div>
+      <style>{`.resultat-row:hover { background: rgba(0,98,51,0.025); }`}</style>
     </div>
   )
 }
