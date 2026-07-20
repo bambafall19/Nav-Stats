@@ -3,59 +3,30 @@
 -- Supprime TOUS les doublons et garde une seule équipe par nom
 -- ========================================
 
--- ÉTAPE 1: Identifier et supprimer les doublons
--- Pour chaque nom en double, garder seulement l'équipe avec l'ID le plus ancien
+-- ÉTAPE 1: Supprimer les doublons en gardant le premier créé
+-- POULE A
+DELETE FROM equipes a
+USING equipes b
+WHERE a.id > b.id 
+  AND LOWER(TRIM(a.nom)) = LOWER(TRIM(b.nom))
+  AND a.poule = 'A'
+  AND b.poule = 'A';
 
--- POULE A - Supprimer les doublons
-DELETE FROM equipes e1
-WHERE e1.id NOT IN (
-  SELECT MIN(e2.id)
-  FROM equipes e2
-  WHERE LOWER(TRIM(e2.nom)) IN (
-    SELECT LOWER(TRIM(nom))
-    FROM equipes
-    WHERE poule = 'A'
-    GROUP BY LOWER(TRIM(nom))
-    HAVING COUNT(*) >= 1
-  )
-  AND e2.poule = 'A'
-  GROUP BY LOWER(TRIM(e2.nom))
-)
-AND e1.poule = 'A';
+-- POULE B
+DELETE FROM equipes a
+USING equipes b
+WHERE a.id > b.id 
+  AND LOWER(TRIM(a.nom)) = LOWER(TRIM(b.nom))
+  AND a.poule = 'B'
+  AND b.poule = 'B';
 
--- POULE B - Supprimer les doublons
-DELETE FROM equipes e1
-WHERE e1.id NOT IN (
-  SELECT MIN(e2.id)
-  FROM equipes e2
-  WHERE LOWER(TRIM(e2.nom)) IN (
-    SELECT LOWER(TRIM(nom))
-    FROM equipes
-    WHERE poule = 'B'
-    GROUP BY LOWER(TRIM(nom))
-    HAVING COUNT(*) >= 1
-  )
-  AND e2.poule = 'B'
-  GROUP BY LOWER(TRIM(e2.nom))
-)
-AND e1.poule = 'B';
-
--- POULE C - Supprimer les doublons
-DELETE FROM equipes e1
-WHERE e1.id NOT IN (
-  SELECT MIN(e2.id)
-  FROM equipes e2
-  WHERE LOWER(TRIM(e2.nom)) IN (
-    SELECT LOWER(TRIM(nom))
-    FROM equipes
-    WHERE poule = 'C'
-    GROUP BY LOWER(TRIM(nom))
-    HAVING COUNT(*) >= 1
-  )
-  AND e2.poule = 'C'
-  GROUP BY LOWER(TRIM(e2.nom))
-)
-AND e1.poule = 'C';
+-- POULE C
+DELETE FROM equipes a
+USING equipes b
+WHERE a.id > b.id 
+  AND LOWER(TRIM(a.nom)) = LOWER(TRIM(b.nom))
+  AND a.poule = 'C'
+  AND b.poule = 'C';
 
 -- ÉTAPE 2: Normaliser tous les noms d'équipes
 -- POULE A
