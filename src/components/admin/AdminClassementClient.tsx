@@ -27,6 +27,8 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
   const [saving, setSaving] = useState<string | null>(null)
   const [saved, setSaved] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [draggedId, setDraggedId] = useState<string | null>(null)
+  const [dragOverId, setDragOverId] = useState<string | null>(null)
   const supabase = createClient()
 
   const handleChange = (id: string, field: keyof Equipe, value: string) => {
@@ -63,6 +65,63 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
     }
   }
 
+  const handleDelete = async (id: string, nom: string) => {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer l'équipe "${nom}" du classement ?`)) {
+      return
+    }
+
+    setSaving(id)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any).from('equipes').delete().eq('id', id)
+
+    setSaving(null)
+    if (!error) {
+      setEquipes(prev => prev.filter(e => e.id !== id))
+      setSaved(id)
+      setTimeout(() => setSaved(null), 2000)
+    }
+  }
+
+  // Drag and drop handlers
+  const handleDragStart = (id: string) => {
+    setDraggedId(id)
+  }
+
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault()
+    setDragOverId(id)
+  }
+
+  const handleDrop = (targetId: string) => {
+    if (!draggedId || draggedId === targetId) {
+      setDraggedId(null)
+      setDragOverId(null)
+      return
+    }
+
+    setEquipes(prev => {
+      const newEquipes = [...prev]
+      const draggedIndex = newEquipes.findIndex(eq => eq.id === draggedId)
+      const targetIndex = newEquipes.findIndex(eq => eq.id === targetId)
+
+      if (draggedIndex === -1 || targetIndex === -1) return prev
+
+      // Swap positions
+      const [removed] = newEquipes.splice(draggedIndex, 1)
+      newEquipes.splice(targetIndex, 0, removed)
+
+      return newEquipes
+    })
+
+    setDraggedId(null)
+    setDragOverId(null)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedId(null)
+    setDragOverId(null)
+  }
+
   const filtered = equipes.filter(eq =>
     eq.nom.toLowerCase().includes(search.toLowerCase()) ||
     (eq.poule || '').toLowerCase().includes(search.toLowerCase())
@@ -89,7 +148,7 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
           {filtered.length} équipe(s)
         </span>
         <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', background: 'rgba(0,98,51,0.08)', padding: '6px 12px', borderRadius: 8 }}>
-          💡 Les points sont recalculés automatiquement (V×3 + N×1)
+          💡 Glissez-déposez les équipes pour réorganiser • Les points sont recalculés (V×3 + N×1)
         </div>
       </div>
 
@@ -125,17 +184,17 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
                   <thead>
                     <tr style={{ background: '#f8fafc', borderBottom: '2px solid var(--color-border)' }}>
-                      <th style={thStyle}>#</th>
-                      <th style={{ ...thStyle, textAlign: 'left' }}>Équipe</th>
-                      <th style={thStyle} title="Points">Pts</th>
-                      <th style={thStyle} title="Matchs joués">J</th>
-                      <th style={thStyle} title="Victoires">G</th>
-                      <th style={thStyle} title="Nuls">N</th>
-                      <th style={thStyle} title="Défaites">P</th>
-                      <th style={thStyle} title="Buts marqués">Bp</th>
-                      <th style={thStyle} title="Buts concédés">Bc</th>
-                      <th style={thStyle} title="Différence de buts">+/-</th>
-                      <th style={thStyle}>Action</th>
+                      <th style={{ ...thStyle, width: 60 }}>#</th>
+                      <th style={{ ...thStyle, textAlign: 'left', minWidth: 180 }}>Équipe</th>
+                      <th style={thStyle}>MJ</th>
+                      <th style={thStyle}>V</th>
+                      <th style={thStyle}>N</th>
+                      <th style={thStyle}>D</th>
+                      <th style={thStyle}>BP</th>
+                      <th style={thStyle}>BC</th>
+                      <th style={thStyle}>Diff</th>
+                      <th style={thStyle}>Pts</th>
+                      <th style={{ ...thStyle, width: 100 }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -144,39 +203,48 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                       const diff = (eq.buts_marques || 0) - (eq.buts_encaisses || 0)
                       const isSaving = saving === eq.id
                       const isSaved = saved === eq.id
+                      const isDragging = draggedId === eq.id
+                      const isDragOver = dragOverId === eq.id
+
                       return (
                         <tr
                           key={eq.id}
+                          draggable
+                          onDragStart={() => handleDragStart(eq.id)}
+                          onDragOver={(e) => handleDragOver(e, eq.id)}
+                          onDrop={() => handleDrop(eq.id)}
+                          onDragEnd={handleDragEnd}
                           style={{
                             borderBottom: '1px solid var(--color-border)',
-                            background: idx % 2 === 0 ? 'white' : '#fafafa',
-                            transition: 'background 0.15s',
+                            background: isDragging ? 'rgba(0,98,51,0.05)' : isDragOver ? 'rgba(0,98,51,0.08)' : idx % 2 === 0 ? 'white' : '#fafafa',
+                            transition: 'all 0.15s',
+                            cursor: 'grab',
+                            opacity: isDragging ? 0.6 : 1,
+                            transform: isDragOver ? 'scale(1.01)' : 'scale(1)',
                           }}
                         >
                           <td style={{ ...tdStyle, fontWeight: 800, color: idx < 2 ? '#006233' : 'var(--color-text-muted)' }}>
                             {idx + 1}
                           </td>
-                          <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 700, minWidth: 140 }}>
+                          <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 700, minWidth: 180 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <div style={{ fontSize: '0.9rem' }}>⋮⋮</div>
                               {eq.logo_url
                                 ? <img src={eq.logo_url} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }} />
                                 : <div style={{ width: 28, height: 28, borderRadius: 6, background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', flexShrink: 0 }}>⚽</div>
                               }
-                              <span style={{ fontSize: '0.82rem' }}>{eq.nom}</span>
+                              <div>
+                                <div style={{ fontSize: '0.82rem', fontWeight: 600 }}>{eq.nom}</div>
+                                {eq.sigle && <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>{eq.sigle}</div>}
+                              </div>
                             </div>
                           </td>
-                          <td style={{ ...tdStyle, fontWeight: 900, color: '#006233', fontSize: '0.95rem' }}>{pts}</td>
-                          {(['matchs_joues', 'victoires', 'nuls', 'defaites', 'buts_marques', 'buts_encaisses'] as const).map(field => (
-                            <td key={field} style={tdStyle}>
-                              <input
-                                type="number"
-                                min={0}
-                                value={eq[field] || 0}
-                                onChange={e => handleChange(eq.id, field, e.target.value)}
-                                style={inputStyle}
-                              />
-                            </td>
-                          ))}
+                          <td style={tdStyle}>{eq.matchs_joues}</td>
+                          <td style={tdStyle}>{eq.victoires}</td>
+                          <td style={tdStyle}>{eq.nuls}</td>
+                          <td style={tdStyle}>{eq.defaites}</td>
+                          <td style={tdStyle}>{eq.buts_marques}</td>
+                          <td style={tdStyle}>{eq.buts_encaisses}</td>
                           <td style={{
                             ...tdStyle,
                             fontWeight: 700,
@@ -184,19 +252,33 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                           }}>
                             {diff > 0 ? `+${diff}` : diff}
                           </td>
-                          <td style={tdStyle}>
+                          <td style={{ ...tdStyle, fontWeight: 900, color: '#006233', fontSize: '0.95rem' }}>{pts}</td>
+                          <td style={{ ...tdStyle, display: 'flex', gap: 6, justifyContent: 'center' }}>
                             <button
                               onClick={() => handleSave(eq)}
                               disabled={isSaving}
                               style={{
-                                padding: '5px 12px', borderRadius: 8, border: 'none',
+                                padding: '6px 10px', borderRadius: 8, border: 'none',
                                 background: isSaved ? '#16a34a' : '#006233',
-                                color: 'white', fontWeight: 700, fontSize: '0.75rem',
+                                color: 'white', fontWeight: 600, fontSize: '0.75rem',
                                 cursor: isSaving ? 'wait' : 'pointer',
                                 transition: 'all 0.2s', whiteSpace: 'nowrap',
                               }}
                             >
-                              {isSaving ? '⏳' : isSaved ? '✅ Sauvé' : '💾 Sauvegarder'}
+                              {isSaving ? '⏳' : isSaved ? '✅' : '💾'}
+                            </button>
+                            <button
+                              onClick={() => handleDelete(eq.id, eq.nom)}
+                              disabled={isSaving}
+                              style={{
+                                padding: '6px 10px', borderRadius: 8, border: 'none',
+                                background: '#dc2626',
+                                color: 'white', fontWeight: 600, fontSize: '0.75rem',
+                                cursor: isSaving ? 'not-allowed' : 'pointer',
+                                transition: 'all 0.2s', whiteSpace: 'nowrap',
+                              }}
+                            >
+                              🗑️
                             </button>
                           </td>
                         </tr>
@@ -216,14 +298,14 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
               <tr style={{ background: '#f8fafc', borderBottom: '2px solid var(--color-border)' }}>
                 <th style={thStyle}>#</th>
                 <th style={{ ...thStyle, textAlign: 'left' }}>Équipe</th>
-                <th style={thStyle}>Pts</th>
-                <th style={thStyle}>J</th>
-                <th style={thStyle}>G</th>
+                <th style={thStyle}>MJ</th>
+                <th style={thStyle}>V</th>
                 <th style={thStyle}>N</th>
-                <th style={thStyle}>P</th>
-                <th style={thStyle}>Bp</th>
-                <th style={thStyle}>Bc</th>
-                <th style={thStyle}>+/-</th>
+                <th style={thStyle}>D</th>
+                <th style={thStyle}>BP</th>
+                <th style={thStyle}>BC</th>
+                <th style={thStyle}>Diff</th>
+                <th style={thStyle}>Pts</th>
                 <th style={thStyle}>Action</th>
               </tr>
             </thead>
@@ -235,11 +317,30 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                   const diff = (eq.buts_marques || 0) - (eq.buts_encaisses || 0)
                   const isSaving = saving === eq.id
                   const isSaved = saved === eq.id
+                  const isDragging = draggedId === eq.id
+                  const isDragOver = dragOverId === eq.id
+
                   return (
-                    <tr key={eq.id} style={{ borderBottom: '1px solid var(--color-border)', background: idx % 2 === 0 ? 'white' : '#fafafa' }}>
+                    <tr
+                      key={eq.id}
+                      draggable
+                      onDragStart={() => handleDragStart(eq.id)}
+                      onDragOver={(e) => handleDragOver(e, eq.id)}
+                      onDrop={() => handleDrop(eq.id)}
+                      onDragEnd={handleDragEnd}
+                      style={{
+                        borderBottom: '1px solid var(--color-border)',
+                        background: isDragging ? 'rgba(0,98,51,0.05)' : isDragOver ? 'rgba(0,98,51,0.08)' : idx % 2 === 0 ? 'white' : '#fafafa',
+                        transition: 'all 0.15s',
+                        cursor: 'grab',
+                        opacity: isDragging ? 0.6 : 1,
+                        transform: isDragOver ? 'scale(1.01)' : 'scale(1)',
+                      }}
+                    >
                       <td style={{ ...tdStyle, fontWeight: 800, color: idx < 2 ? '#006233' : 'var(--color-text-muted)' }}>{idx + 1}</td>
-                      <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 700, minWidth: 140 }}>
+                      <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 700, minWidth: 180 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ fontSize: '0.9rem' }}>⋮⋮</div>
                           {eq.logo_url
                             ? <img src={eq.logo_url} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} />
                             : <div style={{ width: 28, height: 28, borderRadius: 6, background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>⚽</div>
@@ -247,24 +348,32 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                           {eq.nom}
                         </div>
                       </td>
-                      <td style={{ ...tdStyle, fontWeight: 900, color: '#006233' }}>{pts}</td>
-                      {(['matchs_joues', 'victoires', 'nuls', 'defaites', 'buts_marques', 'buts_encaisses'] as const).map(field => (
-                        <td key={field} style={tdStyle}>
-                          <input type="number" min={0} value={eq[field] || 0} onChange={e => handleChange(eq.id, field, e.target.value)} style={inputStyle} />
-                        </td>
-                      ))}
+                      <td style={tdStyle}>{eq.matchs_joues}</td>
+                      <td style={tdStyle}>{eq.victoires}</td>
+                      <td style={tdStyle}>{eq.nuls}</td>
+                      <td style={tdStyle}>{eq.defaites}</td>
+                      <td style={tdStyle}>{eq.buts_marques}</td>
+                      <td style={tdStyle}>{eq.buts_encaisses}</td>
                       <td style={{ ...tdStyle, fontWeight: 700, color: diff > 0 ? '#16a34a' : diff < 0 ? '#dc2626' : 'var(--color-text-muted)' }}>
                         {diff > 0 ? `+${diff}` : diff}
                       </td>
-                      <td style={tdStyle}>
-                        <button
-                          onClick={() => handleSave(eq)}
-                          disabled={isSaving}
-                          style={{ padding: '5px 12px', borderRadius: 8, border: 'none', background: isSaved ? '#16a34a' : '#006233', color: 'white', fontWeight: 700, fontSize: '0.75rem', cursor: isSaving ? 'wait' : 'pointer' }}
-                        >
-                          {isSaving ? '⏳' : isSaved ? '✅ Sauvé' : '💾 Sauvegarder'}
-                        </button>
-                      </td>
+                      <td style={{ ...tdStyle, fontWeight: 900, color: '#006233' }}>{pts}</td>
+                          <td style={{ ...tdStyle, display: 'flex', gap: 6, justifyContent: 'center' }}>
+                            <button
+                              onClick={() => handleSave(eq)}
+                              disabled={isSaving}
+                              style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: isSaved ? '#16a34a' : '#006233', color: 'white', fontWeight: 600, fontSize: '0.75rem', cursor: isSaving ? 'wait' : 'pointer' }}
+                            >
+                              {isSaving ? '⏳' : isSaved ? '✅' : '💾'}
+                            </button>
+                            <button
+                              onClick={() => handleDelete(eq.id, eq.nom)}
+                              disabled={isSaving}
+                              style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: '#dc2626', color: 'white', fontWeight: 600, fontSize: '0.75rem', cursor: isSaving ? 'not-allowed' : 'pointer' }}
+                            >
+                              🗑️
+                            </button>
+                          </td>
                     </tr>
                   )
                 })}
