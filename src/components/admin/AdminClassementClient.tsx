@@ -41,8 +41,6 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
 
   const handleSave = async (eq: Equipe) => {
     setSaving(eq.id)
-    const diffButsNets = (eq.buts_marques || 0) - (eq.buts_encaisses || 0)
-    // Recalculer les points : 3 par victoire, 1 par nul
     const calculatedPoints = (eq.victoires * 3) + (eq.nuls * 1)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,7 +56,6 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
 
     setSaving(null)
     if (!error) {
-      // Mettre à jour les points calculés localement aussi
       setEquipes(prev => prev.map(e => e.id === eq.id ? { ...e, points_classement: calculatedPoints } : e))
       setSaved(eq.id)
       setTimeout(() => setSaved(null), 2000)
@@ -82,17 +79,25 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
     }
   }
 
-  // Drag and drop handlers
-  const handleDragStart = (id: string) => {
+  // Drag and drop handlers - AMÉLIORÉ
+  const handleDragStart = (e: React.DragEvent, id: string) => {
     setDraggedId(id)
+    e.dataTransfer.effectAllowed = 'move'
+    // Masquer l'élément pendant le drag
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '0.4'
+    }
   }
 
   const handleDragOver = (e: React.DragEvent, id: string) => {
     e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
     setDragOverId(id)
   }
 
-  const handleDrop = (targetId: string) => {
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault()
+    
     if (!draggedId || draggedId === targetId) {
       setDraggedId(null)
       setDragOverId(null)
@@ -106,10 +111,15 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
 
       if (draggedIndex === -1 || targetIndex === -1) return prev
 
-      // Swap positions
+      // Supprimer l'élément déplacé
       const [removed] = newEquipes.splice(draggedIndex, 1)
+      // Insérer à la nouvelle position
       newEquipes.splice(targetIndex, 0, removed)
 
+      // Sauvegarder automatiquement la nouvelle position
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(supabase as any).from('equipes').update({ ordre: targetIndex }).eq('id', targetId)
+      
       return newEquipes
     })
 
@@ -117,7 +127,11 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
     setDragOverId(null)
   }
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (e: React.DragEvent) => {
+    // Réafficher l'élément
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '1'
+    }
     setDraggedId(null)
     setDragOverId(null)
   }
@@ -148,7 +162,7 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
           {filtered.length} équipe(s)
         </span>
         <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', background: 'rgba(0,98,51,0.08)', padding: '6px 12px', borderRadius: 8 }}>
-          💡 Glissez-déposez les équipes pour réorganiser • Les points sont recalculés (V×3 + N×1)
+          💡 Glissez-déposez les équipes pour réorganiser
         </div>
       </div>
 
@@ -194,7 +208,7 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                       <th style={thStyle}>BC</th>
                       <th style={thStyle}>Diff</th>
                       <th style={thStyle}>Pts</th>
-                      <th style={{ ...thStyle, width: 100 }}>Action</th>
+                      <th style={{ ...thStyle, width: 120 }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -210,16 +224,16 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                         <tr
                           key={eq.id}
                           draggable
-                          onDragStart={() => handleDragStart(eq.id)}
+                          onDragStart={(e) => handleDragStart(e, eq.id)}
                           onDragOver={(e) => handleDragOver(e, eq.id)}
-                          onDrop={() => handleDrop(eq.id)}
+                          onDrop={(e) => handleDrop(e, eq.id)}
                           onDragEnd={handleDragEnd}
                           style={{
                             borderBottom: '1px solid var(--color-border)',
                             background: isDragging ? 'rgba(0,98,51,0.05)' : isDragOver ? 'rgba(0,98,51,0.08)' : idx % 2 === 0 ? 'white' : '#fafafa',
                             transition: 'all 0.15s',
                             cursor: 'grab',
-                            opacity: isDragging ? 0.6 : 1,
+                            opacity: isDragging ? 0.4 : 1,
                             transform: isDragOver ? 'scale(1.01)' : 'scale(1)',
                           }}
                         >
@@ -228,7 +242,7 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                           </td>
                           <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 700, minWidth: 180 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <div style={{ fontSize: '0.9rem' }}>⋮⋮</div>
+                              <div style={{ fontSize: '0.9rem', cursor: 'grab' }}>⋮⋮</div>
                               {eq.logo_url
                                 ? <img src={eq.logo_url} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }} />
                                 : <div style={{ width: 28, height: 28, borderRadius: 6, background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', flexShrink: 0 }}>⚽</div>
@@ -239,12 +253,12 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                               </div>
                             </div>
                           </td>
-                          <td style={tdStyle}>{eq.matchs_joues}</td>
-                          <td style={tdStyle}>{eq.victoires}</td>
-                          <td style={tdStyle}>{eq.nuls}</td>
-                          <td style={tdStyle}>{eq.defaites}</td>
-                          <td style={tdStyle}>{eq.buts_marques}</td>
-                          <td style={tdStyle}>{eq.buts_encaisses}</td>
+                          <td style={{ ...tdStyle, width: 50 }}>{eq.matchs_joues}</td>
+                          <td style={{ ...tdStyle, width: 50 }}>{eq.victoires}</td>
+                          <td style={{ ...tdStyle, width: 50 }}>{eq.nuls}</td>
+                          <td style={{ ...tdStyle, width: 50 }}>{eq.defaites}</td>
+                          <td style={{ ...tdStyle, width: 50 }}>{eq.buts_marques}</td>
+                          <td style={{ ...tdStyle, width: 50 }}>{eq.buts_encaisses}</td>
                           <td style={{
                             ...tdStyle,
                             fontWeight: 700,
@@ -253,7 +267,7 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                             {diff > 0 ? `+${diff}` : diff}
                           </td>
                           <td style={{ ...tdStyle, fontWeight: 900, color: '#006233', fontSize: '0.95rem' }}>{pts}</td>
-                          <td style={{ ...tdStyle, display: 'flex', gap: 6, justifyContent: 'center' }}>
+                          <td style={{ ...tdStyle, display: 'flex', gap: 6, justifyContent: 'center', width: 120 }}>
                             <button
                               onClick={() => handleSave(eq)}
                               disabled={isSaving}
@@ -324,16 +338,16 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                     <tr
                       key={eq.id}
                       draggable
-                      onDragStart={() => handleDragStart(eq.id)}
+                      onDragStart={(e) => handleDragStart(e, eq.id)}
                       onDragOver={(e) => handleDragOver(e, eq.id)}
-                      onDrop={() => handleDrop(eq.id)}
+                      onDrop={(e) => handleDrop(e, eq.id)}
                       onDragEnd={handleDragEnd}
                       style={{
                         borderBottom: '1px solid var(--color-border)',
                         background: isDragging ? 'rgba(0,98,51,0.05)' : isDragOver ? 'rgba(0,98,51,0.08)' : idx % 2 === 0 ? 'white' : '#fafafa',
                         transition: 'all 0.15s',
                         cursor: 'grab',
-                        opacity: isDragging ? 0.6 : 1,
+                        opacity: isDragging ? 0.4 : 1,
                         transform: isDragOver ? 'scale(1.01)' : 'scale(1)',
                       }}
                     >
@@ -358,22 +372,22 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                         {diff > 0 ? `+${diff}` : diff}
                       </td>
                       <td style={{ ...tdStyle, fontWeight: 900, color: '#006233' }}>{pts}</td>
-                          <td style={{ ...tdStyle, display: 'flex', gap: 6, justifyContent: 'center' }}>
-                            <button
-                              onClick={() => handleSave(eq)}
-                              disabled={isSaving}
-                              style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: isSaved ? '#16a34a' : '#006233', color: 'white', fontWeight: 600, fontSize: '0.75rem', cursor: isSaving ? 'wait' : 'pointer' }}
-                            >
-                              {isSaving ? '⏳' : isSaved ? '✅' : '💾'}
-                            </button>
-                            <button
-                              onClick={() => handleDelete(eq.id, eq.nom)}
-                              disabled={isSaving}
-                              style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: '#dc2626', color: 'white', fontWeight: 600, fontSize: '0.75rem', cursor: isSaving ? 'not-allowed' : 'pointer' }}
-                            >
-                              🗑️
-                            </button>
-                          </td>
+                      <td style={{ ...tdStyle, display: 'flex', gap: 6, justifyContent: 'center' }}>
+                        <button
+                          onClick={() => handleSave(eq)}
+                          disabled={isSaving}
+                          style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: isSaved ? '#16a34a' : '#006233', color: 'white', fontWeight: 600, fontSize: '0.75rem', cursor: isSaving ? 'wait' : 'pointer' }}
+                        >
+                          {isSaving ? '⏳' : isSaved ? '✅' : '💾'}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(eq.id, eq.nom)}
+                          disabled={isSaving}
+                          style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: '#dc2626', color: 'white', fontWeight: 600, fontSize: '0.75rem', cursor: isSaving ? 'not-allowed' : 'pointer' }}
+                        >
+                          🗑️
+                        </button>
+                      </td>
                     </tr>
                   )
                 })}
