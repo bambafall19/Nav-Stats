@@ -9,7 +9,7 @@ import HeadToHead from '@/components/matchs/HeadToHead'
 import SharePronostic from '@/components/pronostics/SharePronostic'
 import PushNotifButton from '@/components/shared/PushNotifButton'
 import FormeRecente from '@/components/shared/FormeRecente'
-import CountdownTimer from '@/components/shared/CountdownTimer'
+import { MatchHeroClient } from '@/components/matchs/MatchHeroClient'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -23,6 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .single()
 
   if (!match) return { title: 'Match – NavéStats' }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const m = match as any
   return {
     title: `${m.equipe_a?.nom} vs ${m.equipe_b?.nom} – NavéStats`,
@@ -63,6 +64,7 @@ export default async function MatchDetailPage({ params }: Props) {
     .eq('id', id)
     .single()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const match = matchRaw as any
 
   if (!match) {
@@ -77,6 +79,7 @@ export default async function MatchDetailPage({ params }: Props) {
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const m = match as any
   const equipeA = m.equipe_a
   const equipeB = m.equipe_b
@@ -85,7 +88,7 @@ export default async function MatchDetailPage({ params }: Props) {
   const { data: joueursA } = await supabase.from('joueurs').select('*').eq('equipe_id', equipeA.id).order('buts', { ascending: false })
   const { data: joueursB } = await supabase.from('joueurs').select('*').eq('equipe_id', equipeB.id).order('buts', { ascending: false })
 
-  // Mon pronostic si connecté
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let monPronostic: any = null
   if (user) {
     const { data } = await supabase.from('pronostics').select('*').eq('match_id', id).eq('user_id', user.id).single()
@@ -126,6 +129,7 @@ export default async function MatchDetailPage({ params }: Props) {
     .select('resultat_predit')
     .eq('match_id', id)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pronosticsCounts = (rawPronoCounts || []) as any[]
 
   const totalProno = pronosticsCounts?.length || 0
@@ -134,8 +138,6 @@ export default async function MatchDetailPage({ params }: Props) {
   const pctB = totalProno > 0 ? Math.round(((pronosticsCounts?.filter(p => p.resultat_predit === 'equipe_b').length || 0) / totalProno) * 100) : null
 
   const isAvenir = match.statut === 'a_venir'
-  const isDone = match.statut === 'termine'
-  const isLive = match.statut === 'en_cours'
 
   return (
     <div className="page-content">
@@ -151,132 +153,8 @@ export default async function MatchDetailPage({ params }: Props) {
           </span>
         </div>
 
-        {/* Match Hero Card */}
-        <div style={{
-          background: 'var(--gradient-hero)',
-          borderRadius: 'var(--radius-xl)',
-          padding: 'clamp(24px, 4vw, 48px)',
-          marginBottom: 32,
-          position: 'relative',
-          overflow: 'hidden',
-        }}>
-          <div style={{ position: 'absolute', inset: 0, opacity: 0.05, backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'white\' fill-opacity=\'1\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M30 30m-8 0a8 8 0 1 0 16 0a8 8 0 1 0-16 0\'/%3E%3C/g%3E%3C/svg%3E")' }} />
-
-          {/* Status */}
-          <div style={{ textAlign: 'center', marginBottom: 20 }}>
-            {isLive && <span className="status-live" style={{ display: 'inline-flex' }}>EN DIRECT</span>}
-            {isDone && <span className="badge badge-gray" style={{ fontSize: '0.8rem' }}>Match Terminé</span>}
-            {isAvenir && (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', background: 'rgba(255,255,255,0.2)', borderRadius: 'var(--radius-full)', color: 'white', fontSize: '0.8rem', fontWeight: 600 }}>
-                  📅 {new Date(match.date_match).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} à {match.heure_match?.slice(0,5)}
-                </span>
-                <CountdownTimer
-                  targetDate={match.date_match}
-                  targetTime={match.heure_match || '00:00'}
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Teams & Score */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 16, alignItems: 'center' }}>
-            {/* Team A */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-              {equipeA.logo_url ? (
-                <img
-                  src={equipeA.logo_url}
-                  alt={equipeA.nom}
-                  style={{
-                    width: 72,
-                    height: 72,
-                    borderRadius: 'var(--radius-lg)',
-                    objectFit: 'cover',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-                  }}
-                />
-              ) : (
-                <div style={{
-                  width: 72, height: 72,
-                  borderRadius: 'var(--radius-lg)',
-                  background: `linear-gradient(135deg, ${equipeA.couleur_principale}, ${equipeA.couleur_secondaire})`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.5rem', fontWeight: 900, color: 'white',
-                  fontFamily: 'var(--font-outfit)',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-                }}>
-                  {equipeA.sigle || equipeA.nom.charAt(0)}
-                </div>
-              )}
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: 'clamp(0.9rem, 3vw, 1.2rem)', color: 'white', lineHeight: 1.2 }}>
-                  {equipeA.nom}
-                </div>
-                {equipeA.asc_nom && (
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', marginTop: 4 }}>{equipeA.asc_nom}</div>
-                )}
-              </div>
-            </div>
-
-            {/* Score / VS */}
-            <div style={{ textAlign: 'center', minWidth: 100 }}>
-              {isDone || isLive ? (
-                <div style={{ fontFamily: 'var(--font-outfit)', fontSize: 'clamp(2.5rem, 8vw, 3.5rem)', fontWeight: 900, color: 'white', letterSpacing: '-0.04em', lineHeight: 1 }}>
-                  {match.score_a} — {match.score_b}
-                </div>
-              ) : (
-                <div>
-                  <div style={{ fontFamily: 'var(--font-outfit)', fontSize: '2rem', fontWeight: 900, color: 'rgba(255,255,255,0.9)', letterSpacing: '-0.02em' }}>VS</div>
-                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', marginTop: 8 }}>
-                    📍 {match.stade}
-                  </div>
-                  {match.arbitre && (
-                    <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>
-                      🟡 Arb. {match.arbitre}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Team B */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-              {equipeB.logo_url ? (
-                <img
-                  src={equipeB.logo_url}
-                  alt={equipeB.nom}
-                  style={{
-                    width: 72,
-                    height: 72,
-                    borderRadius: 'var(--radius-lg)',
-                    objectFit: 'cover',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-                  }}
-                />
-              ) : (
-                <div style={{
-                  width: 72, height: 72,
-                  borderRadius: 'var(--radius-lg)',
-                  background: `linear-gradient(135deg, ${equipeB.couleur_principale}, ${equipeB.couleur_secondaire})`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.5rem', fontWeight: 900, color: 'white',
-                  fontFamily: 'var(--font-outfit)',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-                }}>
-                  {equipeB.sigle || equipeB.nom.charAt(0)}
-                </div>
-              )}
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: 'clamp(0.9rem, 3vw, 1.2rem)', color: 'white', lineHeight: 1.2 }}>
-                  {equipeB.nom}
-                </div>
-                {equipeB.asc_nom && (
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', marginTop: 4 }}>{equipeB.asc_nom}</div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Match Hero Card en temps réel */}
+        <MatchHeroClient initialMatch={m} />
 
         {/* Content grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }} className="detail-grid">
@@ -326,6 +204,7 @@ export default async function MatchDetailPage({ params }: Props) {
                   </div>
                   
                   {/* Pastilles V/N/D */}
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   <FormeRecente teamId={eq.id} lastMatchs={(recent || []) as any[]} />
 
                   <FormeBar
@@ -358,6 +237,7 @@ export default async function MatchDetailPage({ params }: Props) {
           </div>
 
           {/* Historique confrontations */}
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           <HeadToHead
             matchs={(h2hMatchs || []) as any}
             equipeAId={equipeA.id}

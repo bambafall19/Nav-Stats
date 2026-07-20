@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import PWAInstallBanner from "@/components/shared/PWAInstallBanner";
 import OfflineIndicator from "@/components/shared/OfflineIndicator";
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
-import PushNotificationManager from "@/components/shared/PushNotificationManager";
+import { FCMProvider } from "@/components/shared/FCMProvider";
 import GoogleAnalytics from "@/components/shared/GoogleAnalytics";
 import GoogleTagManager from "@/components/shared/GoogleTagManager";
 import GoogleTagManagerNoScript from "@/components/shared/GoogleTagManagerNoScript";
@@ -80,7 +80,7 @@ export default function RootLayout({
             </PageTransitionLayout>
             <PWAInstallBanner />
             <OfflineIndicator />
-            <PushNotificationManager />
+            <FCMProvider />
           </ErrorBoundary>
         </ToastProvider>
         <Analytics />
