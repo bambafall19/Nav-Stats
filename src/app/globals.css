@@ -81,8 +81,8 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-outfit), system-ui, sans-serif;
-    font-weight: 700;
-    line-height: 1.2;
+    font-weight: 600;
+    line-height: 1.25;
     color: var(--color-text-primary);
   }
 
@@ -130,7 +130,7 @@
     padding: 10px 24px;
     border-radius: var(--radius-full);
     font-family: var(--font-outfit), sans-serif;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -306,7 +306,7 @@
   .section-title {
     font-family: var(--font-outfit), sans-serif;
     font-size: 1.5rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--color-text-primary);
     letter-spacing: -0.02em;
   }
@@ -339,7 +339,7 @@
   /* --- Stat Number --- */
   .stat-number {
     font-family: var(--font-mono), monospace;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: -0.02em;
     color: var(--color-primary);
   }

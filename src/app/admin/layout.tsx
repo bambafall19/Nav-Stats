@@ -13,7 +13,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const adminLinks = [
     { href: '/admin', icon: '📊', label: 'Tableau de bord' },
-    { href: '/admin/dashboard', icon: '📈', label: 'Dashboard V2' },
     { href: '/admin/equipes', icon: '🛡️', label: 'Équipes' },
     { href: '/admin/joueurs', icon: '👤', label: 'Joueurs' },
     { href: '/admin/matchs', icon: '⚽', label: 'Matchs' },
@@ -40,25 +39,26 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       }} className="admin-sidebar">
         {/* Logo */}
         <div style={{
-          padding: '24px 20px',
+          padding: '20px 16px',
           borderBottom: '1px solid var(--color-border)',
-          background: 'var(--gradient-hero)',
+          background: 'linear-gradient(135deg, #006233 0%, #004d27 100%)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <img
-              src="/logo.png"
-              alt="NavéStats Logo"
+              src="/oncav-logo.png"
+              alt="ONCAV Logo"
               style={{
-                width: 32,
-                height: 32,
-                borderRadius: 6,
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
                 objectFit: 'cover',
                 flexShrink: 0,
+                background: 'white',
               }}
             />
             <div>
-              <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, color: 'white', fontSize: '1.1rem' }}>NavéStats</div>
-              <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>Admin Panel</div>
+              <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 700, color: 'white', fontSize: '1rem' }}>NavéStats</div>
+              <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.75)', fontWeight: 400 }}>Zone 6 Khombole</div>
             </div>
           </div>
         </div>
@@ -68,13 +68,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           {adminLinks.map(link => (
             <a key={link.href} href={link.href} className="admin-nav-link" style={{
               display: 'flex', alignItems: 'center', gap: 10,
-              padding: '10px 14px', borderRadius: 'var(--radius-md)',
-              textDecoration: 'none', color: 'var(--color-text-secondary)',
-              marginBottom: 4, fontSize: '0.875rem', fontWeight: 500,
-              transition: 'all 0.2s',
+              padding: '10px 12px', borderRadius: 10,
+              textDecoration: 'none', color: '#374151',
+              marginBottom: 2, fontSize: '0.85rem', fontWeight: 500,
+              transition: 'all 0.15s',
             }}
             >
-              <span style={{ fontSize: '1rem', width: 20, textAlign: 'center' }}>{link.icon}</span>
+              <span style={{ fontSize: '0.95rem', width: 18, textAlign: 'center' }}>{link.icon}</span>
               {link.label}
             </a>
           ))}
@@ -95,8 +95,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
       <style>{`
         .admin-nav-link:hover {
-          background: rgba(0, 98, 51, 0.07) !important;
-          color: var(--color-primary) !important;
+          background: rgba(0, 98, 51, 0.06) !important;
+          color: #006233 !important;
         }
         .admin-back-link:hover {
           background: rgba(0, 98, 51, 0.07) !important;
