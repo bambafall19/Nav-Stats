@@ -200,13 +200,13 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                     <tr style={{ background: '#f8fafc', borderBottom: '2px solid var(--color-border)' }}>
                       <th style={{ ...thStyle, width: 60 }}>#</th>
                       <th style={{ ...thStyle, textAlign: 'left', minWidth: 180 }}>Équipe</th>
-                      <th style={thStyle}>MJ</th>
-                      <th style={thStyle}>V</th>
+                      <th style={thStyle}>J</th>
+                      <th style={thStyle}>G</th>
                       <th style={thStyle}>N</th>
-                      <th style={thStyle}>D</th>
-                      <th style={thStyle}>BP</th>
-                      <th style={thStyle}>BC</th>
-                      <th style={thStyle}>Diff</th>
+                      <th style={thStyle}>P</th>
+                      <th style={thStyle}>Bp</th>
+                      <th style={thStyle}>Bc</th>
+                      <th style={thStyle}>+/-</th>
                       <th style={thStyle}>Pts</th>
                       <th style={{ ...thStyle, width: 120 }}>Action</th>
                     </tr>
