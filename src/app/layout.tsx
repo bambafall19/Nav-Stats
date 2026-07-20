@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Outfit, Roboto_Mono } from "next/font/google";
+// Note: Aeonik is a commercial font, using Outfit as fallback for headings
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import PWAInstallBanner from "@/components/shared/PWAInstallBanner";

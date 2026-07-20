@@ -80,7 +80,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-outfit), system-ui, sans-serif;
+    font-family: var(--font-aeonik), 'Aeonik', system-ui, sans-serif;
     font-weight: 600;
     line-height: 1.25;
     color: var(--color-text-primary);
@@ -311,6 +311,7 @@
     letter-spacing: -0.02em;
   }
   .section-subtitle {
+    font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
     font-size: 0.9rem;
     color: var(--color-text-secondary);
     margin-top: 4px;
