@@ -7,7 +7,6 @@ import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
 import LinkButton from '@/components/shared/LinkButton'
-import ThemeToggle from '@/components/shared/ThemeToggle'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -35,12 +34,6 @@ export default function Header() {
     })
   }, [])
 
-  // Forcer le thème sombre
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', 'dark')
-    localStorage.setItem('navestats-theme', 'dark')
-  }, [])
-
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     window.location.href = '/'
@@ -55,13 +48,12 @@ export default function Header() {
         left: 0,
         right: 0,
         zIndex: 100,
-        background: 'rgba(10, 15, 13, 0.92)',
+        background: 'rgba(255, 255, 255, 0.96)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid var(--color-border)',
         height: 'var(--nav-height)',
-        boxShadow: 'var(--shadow-md)',
-        transition: 'background 0.3s ease',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)',
       }}
     >
       <div className="container-app header-shell" style={{ display: 'flex', alignItems: 'center', height: '100%', gap: 16 }}>
@@ -105,11 +97,6 @@ export default function Header() {
               Zone 6<br />Khombole
             </span>
           </div>
-        </div>
-
-        {/* Theme Toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', marginRight: 8 }} className="desktop-user-menu">
-          <ThemeToggle />
         </div>
 
         {/* Desktop nav */}

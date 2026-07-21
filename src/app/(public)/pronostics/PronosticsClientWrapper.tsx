@@ -1,3 +1,4 @@
+
 'use client'
 
 import PronosticsClient from '@/components/pronostics/PronosticsClient'
