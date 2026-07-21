@@ -1,422 +1,267 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 
-const STADIUM_IMAGES = [
-  '/stadium/stadium1.jpg',
-  '/stadium/stadium2.jpg',
-  '/stadium/stadium3.jpg',
-  '/stadium/stadium4.jpg',
-]
+interface HeroSectionProps {
+  matchCount: number
+  userCount: number
+  isAuthenticated: boolean
+}
 
-export default function HeroSection({ matchCount, userCount, isAuthenticated = false }: { matchCount: number; userCount: number; isAuthenticated?: boolean }) {
-  const [mounted, setMounted] = useState(false)
+export default function HeroSection({ matchCount, userCount, isAuthenticated }: HeroSectionProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
+  
+  const slides = [
+    {
+      title: "Bienvenue sur NavéStats",
+      subtitle: "La plateforme de pronostics des Navétanes de Khombole",
+      cta: "Commencer maintenant",
+      href: "/matchs",
+      emoji: "⚽",
+      gradient: "linear-gradient(135deg, #006233 0%, #00A651 50%, #39FF14 100%)"
+    },
+    {
+      title: "Pronostiquez les matchs",
+      subtitle: `+${matchCount} matchs à venir · Gagnez des points`,
+      cta: "Voir les matchs",
+      href: "/matchs",
+      emoji: "🎯",
+      gradient: "linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%)"
+    },
+    {
+      title: "Rejoignez la communauté",
+      subtitle: `+${userCount} pronostiqueurs actifs`,
+      cta: "Créer un compte",
+      href: "/auth/register",
+      emoji: "👥",
+      gradient: "linear-gradient(135deg, #B91C1C 0%, #E8002D 100%)"
+    }
+  ]
 
   useEffect(() => {
-    setMounted(true)
-    const isMobile = window.matchMedia('(max-width: 640px)').matches
-    if (!isMobile) {
-      const interval = setInterval(() => {
-        setCurrentSlide(prev => (prev + 1) % STADIUM_IMAGES.length)
-      }, 5000)
-      return () => clearInterval(interval)
-    }
-  }, [])
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [slides.length])
 
   return (
-    <section
-      id="hero-section"
-      className="hero-section"
-      style={{
-        position: 'relative',
-        overflow: 'hidden',
-        minHeight: 'calc(100svh - var(--nav-height))',
-        padding: '92px 0 42px',
-        display: 'flex',
-        alignItems: 'center',
-      }}
-    >
-      {/* Dark gradient background with subtle grid pattern */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'linear-gradient(135deg, #0a0f0d 0%, #111916 40%, #1c2722 100%)',
-        zIndex: 0,
-      }}>
-        {/* Grid pattern overlay */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `linear-gradient(rgba(57,255,20,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(57,255,20,0.03) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px',
-          opacity: 0.5,
-        }} />
+    <section className="hero-section" style={{ position: 'relative', overflow: 'hidden', minHeight: '520px', display: 'flex', alignItems: 'center' }}>
+      {/* Background Image with Overlay */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+        <Image
+          src="/stadium/stadium1.jpg"
+          alt="Stade de football"
+          fill
+          priority
+          className="hero-bg-image"
+          style={{ objectFit: 'cover', filter: 'brightness(0.3)' }}
+        />
+        <div style={{ position: 'absolute', inset: 0, background: slides[currentSlide].gradient, opacity: 0.85, mixBlendMode: 'multiply' }} />
       </div>
 
-      <div className="container-app hero-inner" style={{ position: 'relative', zIndex: 2 }}>
-        <div className="hero-copy">
-          <div className="hero-eyebrow" style={{ animation: mounted ? 'fadeInUp 0.45s ease both' : 'none' }}>
-            <img src="/oncav-logo.png" alt="" />
-            <span>Zone 6 Khombole · Navétanes 2026</span>
-          </div>
+      {/* Content */}
+      <div className="container-app" style={{ position: 'relative', zIndex: 2, padding: '60px 0' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}
+        >
+          {/* Badge */}
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '8px 20px',
+              background: 'rgba(255,255,255,0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: 'var(--radius-full)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              marginBottom: 24,
+              color: 'white',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+            }}
+          >
+            <span style={{ fontSize: '1.2rem' }}>🏆</span>
+            <span>Navétanes de Khombole 2026</span>
+          </motion.div>
 
-          <h1 style={{ animation: mounted ? 'fadeInUp 0.55s 0.06s ease both' : 'none' }}>
-            NavéStats
-          </h1>
+          {/* Main Title */}
+          <motion.h1
+            key={currentSlide}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            style={{
+              fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+              fontWeight: 900,
+              color: 'white',
+              marginBottom: 16,
+              lineHeight: 1.1,
+              textShadow: '0 4px 20px rgba(0,0,0,0.3)',
+              fontFamily: 'var(--font-outfit)',
+              letterSpacing: '-0.03em',
+            }}
+          >
+            {slides[currentSlide].emoji} {slides[currentSlide].title}
+          </motion.h1>
 
-          <p className="hero-lead" style={{ animation: mounted ? 'fadeInUp 0.55s 0.12s ease both' : 'none' }}>
-            Pronostics, résultats et classements des ASC de Khombole dans une expérience simple, rapide et pensée mobile.
-          </p>
+          {/* Subtitle */}
+          <motion.p
+            key={`subtitle-${currentSlide}`}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            style={{
+              fontSize: 'clamp(1rem, 2.5vw, 1.35rem)',
+              color: 'rgba(255,255,255,0.9)',
+              marginBottom: 32,
+              maxWidth: 600,
+              margin: '0 auto 32px',
+              lineHeight: 1.6,
+            }}
+          >
+            {slides[currentSlide].subtitle}
+          </motion.p>
 
-          <div className="hero-actions" style={{ animation: mounted ? 'fadeInUp 0.55s 0.18s ease both' : 'none' }}>
-            <Link href={isAuthenticated ? '/matchs' : '/auth/register'} className="hero-primary">
-              Pronostiquer maintenant
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}
+          >
+            <Link
+              href={slides[currentSlide].href}
+              style={{
+                padding: '16px 40px',
+                background: 'white',
+                color: '#006233',
+                borderRadius: 'var(--radius-full)',
+                textDecoration: 'none',
+                fontWeight: 700,
+                fontSize: '1.05rem',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                transition: 'all 0.3s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-3px)'
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.3)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.2)'
+              }}
+            >
+              {slides[currentSlide].cta}
+              <span>→</span>
             </Link>
-            <Link href="/matchs" className="hero-secondary">
-              Voir les matchs
-            </Link>
-          </div>
 
-          <div className="hero-stats" style={{ animation: mounted ? 'fadeInUp 0.55s 0.24s ease both' : 'none' }}>
+            {!isAuthenticated && (
+              <Link
+                href="/auth/login"
+                style={{
+                  padding: '16px 40px',
+                  background: 'transparent',
+                  color: 'white',
+                  border: '2px solid rgba(255,255,255,0.4)',
+                  borderRadius: 'var(--radius-full)',
+                  textDecoration: 'none',
+                  fontWeight: 600,
+                  fontSize: '1.05rem',
+                  transition: 'all 0.3s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.1)'
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)'
+                }}
+              >
+                Se connecter
+              </Link>
+            )}
+          </motion.div>
+
+          {/* Stats Row */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            style={{
+              display: 'flex',
+              gap: 32,
+              justifyContent: 'center',
+              marginTop: 48,
+              flexWrap: 'wrap',
+            }}
+          >
             {[
-              { label: 'Matchs', value: matchCount || '—' },
-              { label: 'Équipes', value: '17' },
-              { label: 'Joueurs', value: userCount || '—' },
-            ].map(stat => (
-              <div key={stat.label}>
-                <strong>{stat.value}</strong>
-                <span>{stat.label}</span>
+              { label: 'Matchs', value: matchCount, icon: '⚽' },
+              { label: 'Pronostiqueurs', value: userCount, icon: '👥' },
+              { label: 'Équipes', value: '17', icon: '🏆' },
+            ].map((stat, i) => (
+              <div key={i} style={{ textAlign: 'center', color: 'white' }}>
+                <div style={{ fontSize: '2rem', marginBottom: 4 }}>{stat.icon}</div>
+                <div style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 900, fontFamily: 'var(--font-outfit)' }}>
+                  {stat.value}
+                </div>
+                <div style={{ fontSize: '0.85rem', opacity: 0.8, fontWeight: 500 }}>{stat.label}</div>
               </div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="hero-side" aria-label="Aperçu des actions NavéStats" style={{ animation: mounted ? 'fadeInUp 0.55s 0.2s ease both' : 'none' }}>
-          <div className="live-chip">
-            <span />
-            Matchs à suivre
-          </div>
-          <div className="side-score">
-            <span>1</span>
-            <small>N</small>
-            <span>2</span>
-          </div>
-          <p>Pronostic rapide en 3 choix, classement actualisé et notifications de match.</p>
-          <Link href="/classements">Voir le classement</Link>
-        </div>
-      </div>
-
-      {mounted && (
-        <div className="hero-dots" aria-label="Changer l'image de couverture">
-          {STADIUM_IMAGES.map((_, i) => (
+        {/* Slide Indicators */}
+        <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8, zIndex: 3 }}>
+          {slides.map((_, i) => (
             <button
               key={i}
-              type="button"
               onClick={() => setCurrentSlide(i)}
-              aria-label={`Image ${i + 1}`}
-              aria-current={i === currentSlide ? 'true' : undefined}
+              style={{
+                width: i === currentSlide ? 32 : 8,
+                height: 8,
+                borderRadius: 'var(--radius-full)',
+                background: i === currentSlide ? 'white' : 'rgba(255,255,255,0.4)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                padding: 0,
+              }}
+              aria-label={`Slide ${i + 1}`}
             />
           ))}
         </div>
-      )}
+      </div>
 
       <style>{`
-        .hero-inner {
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-          gap: clamp(28px, 6vw, 80px);
-          align-items: center;
+        .hero-section {
+          position: relative;
         }
-
-        .hero-copy {
-          max-width: 720px;
+        .hero-bg-image {
+          user-select: none;
+          -webkit-user-drag: none;
         }
-
-        .hero-eyebrow {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          padding: 8px 12px;
-          margin-bottom: 22px;
-          border: 1px solid rgba(255,255,255,0.22);
-          border-radius: 8px;
-          background: rgba(255,255,255,0.13);
-          color: rgba(255,255,255,0.86);
-          font-size: 0.78rem;
-          font-weight: 850;
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          backdrop-filter: blur(14px);
-        }
-
-        .hero-eyebrow img {
-          width: 26px;
-          height: 26px;
-          object-fit: contain;
-        }
-
-        .hero-copy h1 {
-          margin: 0;
-          font-size: clamp(4rem, 10vw, 8.5rem);
-          line-height: 0.86;
-          font-weight: 950;
-          letter-spacing: 0;
-          color: white;
-        }
-
-        .hero-lead {
-          max-width: 620px;
-          margin: 26px 0 0;
-          color: rgba(255,255,255,0.84);
-          font-size: clamp(1.04rem, 2vw, 1.28rem);
-          line-height: 1.6;
-          font-weight: 520;
-        }
-
-        .hero-actions {
-          display: flex;
-          gap: 12px;
-          margin-top: 32px;
-          flex-wrap: wrap;
-        }
-
-        .hero-primary,
-        .hero-secondary,
-        .hero-side a {
-          min-height: 48px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 8px;
-          padding: 0 18px;
-          font-weight: 900;
-          text-decoration: none;
-          transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-        }
-
-        .hero-primary {
-          background: var(--gradient-green);
-          color: #0a0f0d;
-          box-shadow: var(--shadow-neon);
-        }
-
-        .hero-secondary {
-          color: white;
-          border: 1.5px solid rgba(255,255,255,0.35);
-          background: rgba(255,255,255,0.12);
-          backdrop-filter: blur(14px);
-        }
-
-        .hero-primary:hover,
-        .hero-secondary:hover,
-        .hero-side a:hover {
-          transform: translateY(-1px);
-        }
-
-        .hero-stats {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 140px));
-          gap: 10px;
-          margin-top: 34px;
-        }
-
-        .hero-stats div {
-          padding: 12px 14px;
-          border-left: 2px solid var(--color-accent);
-          background: rgba(255,255,255,0.08);
-        }
-
-        .hero-stats strong,
-        .hero-stats span {
-          display: block;
-        }
-
-        .hero-stats strong {
-          color: white;
-          font-size: 1.6rem;
-          line-height: 1;
-          font-weight: 950;
-        }
-
-        .hero-stats span {
-          margin-top: 4px;
-          color: rgba(255,255,255,0.66);
-          font-size: 0.72rem;
-          font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-        }
-
-        .hero-side {
-          padding: 22px;
-          border: 1px solid rgba(255,255,255,0.22);
-          border-radius: 10px;
-          background: rgba(255,255,255,0.12);
-          color: white;
-          backdrop-filter: blur(18px);
-          box-shadow: 0 24px 70px rgba(0,0,0,0.22);
-        }
-
-        .live-chip {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 7px 10px;
-          border-radius: 999px;
-          color: rgba(255,255,255,0.86);
-          background: rgba(255,255,255,0.12);
-          font-size: 0.76rem;
-          font-weight: 850;
-        }
-
-        .live-chip span {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: var(--color-red-light);
-          box-shadow: 0 0 0 6px rgba(232,0,45,0.16);
-        }
-
-        .side-score {
-          display: grid;
-          grid-template-columns: 1fr auto 1fr;
-          align-items: center;
-          gap: 14px;
-          margin: 28px 0 18px;
-        }
-
-        .side-score span,
-        .side-score small {
-          min-height: 58px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 8px;
-          background: white;
-          color: var(--color-primary);
-          font-size: 1.5rem;
-          font-weight: 950;
-        }
-
-        .side-score small {
-          width: 48px;
-          background: var(--color-accent);
-          color: #2b1d00;
-        }
-
-        .hero-side p {
-          margin: 0 0 20px;
-          color: rgba(255,255,255,0.76);
-          line-height: 1.55;
-          font-size: 0.92rem;
-        }
-
-        .hero-side a {
-          width: 100%;
-          background: rgba(255,255,255,0.94);
-          color: var(--color-primary);
-        }
-
-        .hero-dots {
-          position: absolute;
-          left: 50%;
-          bottom: 16px;
-          transform: translateX(-50%);
-          z-index: 4;
-          display: flex;
-          gap: 8px;
-        }
-
-        .hero-dots button {
-          width: 44px;
-          height: 44px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 0;
-          background: transparent;
-          cursor: pointer;
-        }
-
-        .hero-dots button::after {
-          content: '';
-          width: 20px;
-          height: 4px;
-          border-radius: 99px;
-          background: rgba(255,255,255,0.34);
-          transition: width 0.25s ease, background 0.25s ease;
-        }
-
-        .hero-dots button[aria-current="true"]::after {
-          width: 32px;
-          background: var(--color-accent);
-        }
-
-        @media (max-width: 860px) {
-          .hero-section {
-            min-height: calc(100svh - var(--nav-height)) !important;
-            padding: 76px 0 84px !important;
-            align-items: flex-start !important;
-          }
-
-          .hero-inner {
-            grid-template-columns: 1fr;
-            gap: 22px;
-          }
-
-          .hero-side {
-            display: none;
-          }
-
-          .hero-copy h1 {
-            font-size: clamp(4rem, 18vw, 5.6rem);
-          }
-
-          .hero-lead {
-            max-width: 360px;
-            margin-top: 18px;
-            font-size: 1rem;
-          }
-
-          .hero-actions {
-            margin-top: 26px;
-          }
-
-          .hero-primary,
-          .hero-secondary {
-            width: 100%;
-          }
-
-          .hero-stats {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            margin-top: 24px;
-          }
-
-          .hero-stats div {
-            padding: 10px 8px;
-          }
-
-          .hero-stats strong {
-            font-size: 1.18rem;
-          }
-
-          .hero-stats span {
-            font-size: 0.62rem;
-          }
-        }
-
         @media (max-width: 640px) {
-          .hero-eyebrow {
-            max-width: 100%;
-            padding: 7px 10px;
-            font-size: 0.66rem;
-          }
-
-          .hero-eyebrow img {
-            width: 22px;
-            height: 22px;
+          .hero-section {
+            min-height: 480px !important;
           }
         }
       `}</style>
