@@ -16,10 +16,13 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated = f
 
   useEffect(() => {
     setMounted(true)
-    const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % STADIUM_IMAGES.length)
-    }, 5000)
-    return () => clearInterval(interval)
+    const isMobile = window.matchMedia('(max-width: 640px)').matches
+    if (!isMobile) {
+      const interval = setInterval(() => {
+        setCurrentSlide(prev => (prev + 1) % STADIUM_IMAGES.length)
+      }, 5000)
+      return () => clearInterval(interval)
+    }
   }, [])
 
   return (
@@ -35,21 +38,22 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated = f
         alignItems: 'center',
       }}
     >
-      {STADIUM_IMAGES.map((img, i) => (
-        <div
-          key={img}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `linear-gradient(90deg, rgba(0,24,12,0.94) 0%, rgba(0,60,30,0.82) 45%, rgba(0,30,15,0.42) 100%), url("${img}")`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: mounted && i === currentSlide ? 1 : 0,
-            transition: 'opacity 1.4s ease',
-            zIndex: 0,
-          }}
-        />
-      ))}
+      {/* Dark gradient background with subtle grid pattern */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(135deg, #0a0f0d 0%, #111916 40%, #1c2722 100%)',
+        zIndex: 0,
+      }}>
+        {/* Grid pattern overlay */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `linear-gradient(rgba(57,255,20,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(57,255,20,0.03) 1px, transparent 1px)`,
+          backgroundSize: '50px 50px',
+          opacity: 0.5,
+        }} />
+      </div>
 
       <div className="container-app hero-inner" style={{ position: 'relative', zIndex: 2 }}>
         <div className="hero-copy">
@@ -193,9 +197,9 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated = f
         }
 
         .hero-primary {
-          background: var(--gradient-gold);
-          color: #2b1d00;
-          box-shadow: 0 16px 32px rgba(251,191,0,0.22);
+          background: var(--gradient-green);
+          color: #0a0f0d;
+          box-shadow: var(--shadow-neon);
         }
 
         .hero-secondary {

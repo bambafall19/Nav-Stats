@@ -173,20 +173,16 @@ export function ClassementsClient({
                   </div>
 
                   {isEquipes && item?.logo_url ? (
-                    <img src={item.logo_url} alt="" style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }} />
+                    <img src={item.logo_url} alt="" className="mobile-team-logo" />
                   ) : !isEquipes && item?.avatar_url ? (
-                    <img src={item.avatar_url} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                    <img src={item.avatar_url} alt="" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
                   ) : (
-                    <div style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: isEquipes ? 6 : '50%',
-                      background: 'var(--color-surface)',
+                    <div className="mobile-team-logo-fallback" style={{
+                      background: 'var(--gradient-green)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '0.8rem',
-                      flexShrink: 0,
+                      color: '#0a0f0d',
                     }}>
                       {isEquipes ? '⚽' : '👤'}
                     </div>
@@ -202,7 +198,7 @@ export function ClassementsClient({
                   </div>
 
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--color-primary)' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--color-primary)', fontFamily: 'var(--font-outfit)' }}>
                       {isEquipes ? item?.points_classement : item?.points}
                     </div>
                     <div style={{ fontSize: '0.7rem', color: pct >= 60 ? 'var(--color-primary)' : 'var(--color-text-muted)', fontWeight: 600 }}>

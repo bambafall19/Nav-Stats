@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import PronosticsClientWrapper from './PronosticsClientWrapper'
 import type { Metadata } from 'next'
-import PronosticsClient from '@/components/pronostics/PronosticsClient'
 import MonEspace from '@/components/home/MonEspace'
 
 export const metadata: Metadata = {
@@ -30,6 +30,8 @@ export const metadata: Metadata = {
     images: ['https://navestats.site/og-pronostics.jpg'],
   },
 }
+
+export const dynamic = 'force-dynamic'
 
 export default async function MesPronosticsPage() {
   const supabase = await createClient()
@@ -111,7 +113,7 @@ export default async function MesPronosticsPage() {
         )}
 
 
-        <PronosticsClient
+        <PronosticsClientWrapper
           pronostics={pronostics}
           totalPoints={totalPoints}
           corrects={corrects}

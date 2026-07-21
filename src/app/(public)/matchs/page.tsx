@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import MatchListClient from '@/components/matchs/MatchListClient'
+import MatchsClientWrapper from './MatchsClientWrapper'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -28,6 +28,8 @@ export const metadata: Metadata = {
     images: ['https://navestats.site/og-matchs.jpg'],
   },
 }
+
+export const dynamic = 'force-dynamic'
 
 export const jsonLd = {
   '@context': 'https://schema.org',
@@ -83,7 +85,7 @@ export default async function MatchsPage() {
           </p>
         </div>
 
-        <MatchListClient initialMatchs={matchs} />
+        <MatchsClientWrapper initialMatchs={matchs} />
       </div>
     </div>
   )

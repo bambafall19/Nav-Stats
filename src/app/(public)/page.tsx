@@ -1,11 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import HeroSection from '@/components/home/HeroSection'
-import MatchsDuJour from '@/components/home/MatchsDuJour'
-import DerniersResultats from '@/components/home/DerniersResultats'
-import Actualites from '@/components/home/Actualites'
-import TopPronostiqueurs from '@/components/home/TopPronostiqueurs'
-
-import ScrollReveal from '@/components/shared/ScrollReveal'
+import HomeClient from './HomeClient'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -67,6 +61,8 @@ export const jsonLd = {
   inLanguage: 'fr-FR',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -108,6 +104,21 @@ export default async function HomePage() {
     .from('profiles')
     .select('*', { count: 'exact', head: true })
 
+  // Stats globales pour le dashboard
+  const { count: totalMatchs } = await supabase
+    .from('matchs')
+    .select('*', { count: 'exact', head: true })
+
+  const { count: totalPronostics } = await supabase
+    .from('pronostics')
+    .select('*', { count: 'exact', head: true })
+
+  const { data: pointsData } = await supabase
+    .from('pronostics')
+    .select('points_gagnes')
+
+  const totalPoints = (pointsData as Array<{ points_gagnes: number | null }> | null)?.reduce((sum, p) => sum + (p.points_gagnes || 0), 0) || 0
+
   // Actualités
   const { data: actualites } = await supabase
     .from('actualites')
@@ -116,141 +127,28 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
     .limit(4)
 
-
-
   const displayMatchs = (matchsDuJour && matchsDuJour.length > 0) ? matchsDuJour : (prochainsMatchs || [])
   const isToday = matchsDuJour && matchsDuJour.length > 0
 
   return (
-    <div className="page-content">
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
-      {/* Hero */}
-      <HeroSection matchCount={displayMatchs.length} userCount={totalPronostiqueurs || 0} isAuthenticated={!!user} />
-
-      <div className="container-app" style={{ paddingTop: 32 }}>
-
-        {/* Raccourcis rapides (non connecté ou connecté) */}
-        {!user && (
-          <section className="home-action-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
-            {[
-              { href: '/matchs', icon: '🎯', label: 'Pronostiquer', detail: 'Choisir un match' },
-              { href: '/statistiques', icon: '📊', label: 'Poules', detail: 'Classements ASC' },
-              { href: '/classements', icon: '🏆', label: 'Top fans', detail: 'Rang général' },
-              { href: '/communaute', icon: '💬', label: 'Communauté', detail: 'Discussions' },
-            ].map(action => (
-              <a key={action.href} href={action.href} className="home-action-card" style={{
-                textDecoration: 'none',
-                background: 'var(--color-surface-card)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 14,
-                padding: 16,
-                boxShadow: 'var(--shadow-sm)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                minWidth: 0,
-              }}>
-                <span style={{ width: 38, height: 38, borderRadius: 12, background: 'rgba(0,98,51,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{action.icon}</span>
-                <span style={{ minWidth: 0 }}>
-                  <strong style={{ display: 'block', color: 'var(--color-text-primary)', fontFamily: 'var(--font-outfit)', fontSize: '0.9rem', lineHeight: 1.1 }}>{action.label}</strong>
-                  <small style={{ color: 'var(--color-text-muted)', fontSize: '0.72rem' }}>{action.detail}</small>
-                </span>
-              </a>
-            ))}
-          </section>
-        )}
-
-        {/* Raccourcis rapides connecté */}
-        {user && (
-          <section className="home-action-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
-            {[
-              { href: '/matchs', icon: '⚽', label: 'Matchs', detail: 'Pronostiquer' },
-              { href: '/classements', icon: '🏆', label: 'Classements', detail: 'Voir mon rang' },
-              { href: '/statistiques', icon: '📊', label: 'Poules', detail: 'Stats ASC' },
-              { href: '/communaute', icon: '💬', label: 'Communauté', detail: 'Discussions' },
-            ].map(action => (
-              <a key={action.href} href={action.href} className="home-action-card" style={{
-                textDecoration: 'none',
-                background: 'var(--color-surface-card)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 14,
-                padding: 16,
-                boxShadow: 'var(--shadow-sm)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                minWidth: 0,
-              }}>
-                <span style={{ width: 38, height: 38, borderRadius: 12, background: 'rgba(0,98,51,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{action.icon}</span>
-                <span style={{ minWidth: 0 }}>
-                  <strong style={{ display: 'block', color: 'var(--color-text-primary)', fontFamily: 'var(--font-outfit)', fontSize: '0.9rem', lineHeight: 1.1 }}>{action.label}</strong>
-                  <small style={{ color: 'var(--color-text-muted)', fontSize: '0.72rem' }}>{action.detail}</small>
-                </span>
-              </a>
-            ))}
-          </section>
-        )}
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 32 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr)', gap: 32 }}>
-
-            {/* Matchs du jour / Prochains matchs */}
-            <section id="matchs-section">
-              <ScrollReveal direction="up" delay={0}>
-                <MatchsDuJour matchs={displayMatchs as any} isToday={isToday || false} />
-              </ScrollReveal>
-            </section>
-
-            <div style={{ display: 'grid', gap: 32 }} className="sidebar-grid">
-              {/* Classement Top 10 */}
-              <section id="classement-section">
-                <ScrollReveal direction="up" delay={80}>
-                  <TopPronostiqueurs users={topPronostiqueurs || []} />
-                </ScrollReveal>
-              </section>
-
-              {/* Derniers résultats */}
-              {derniersResultats && derniersResultats.length > 0 && (
-                <section id="resultats-section">
-                  <ScrollReveal direction="up" delay={160}>
-                    <DerniersResultats matchs={derniersResultats as any} />
-                  </ScrollReveal>
-                </section>
-              )}
-
-              {/* Actualités */}
-              {actualites && actualites.length > 0 && (
-                <section id="actualites-section">
-                  <ScrollReveal direction="up" delay={240}>
-                    <Actualites actualites={actualites as any} />
-                  </ScrollReveal>
-                </section>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <style>{`
-        @media (min-width: 1024px) {
-          .sidebar-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-        }
-        @media (max-width: 760px) {
-          .home-action-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-          }
-          .home-action-card {
-            padding: 12px !important;
-          }
-        }
-      `}</style>
-    </div>
+    <HomeClient
+      matchCount={displayMatchs.length}
+      userCount={totalPronostiqueurs || 0}
+      isAuthenticated={!!user}
+      displayMatchs={displayMatchs}
+      isToday={isToday || false}
+      topPronostiqueurs={(topPronostiqueurs as any[])?.slice(0, 5).map(u => ({
+        username: u.username,
+        points: u.points,
+        accuracy: u.total_pronostics > 0 ? Math.round((u.pronostics_corrects / u.total_pronostics) * 100) : 0,
+        avatar_url: u.avatar_url,
+      }))}
+      statsGlobales={{
+        totalPronostics: totalPronostics || 0,
+        totalUtilisateurs: totalPronostiqueurs || 0,
+        totalMatchs: totalMatchs || 0,
+        totalPoints: totalPoints,
+      }}
+    />
   )
 }

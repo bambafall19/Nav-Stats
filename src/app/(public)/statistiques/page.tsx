@@ -179,6 +179,8 @@ function StandingsTable({ pouleTeams, color, bg }: { pouleTeams: Team[]; color: 
   )
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function StatistiquesPage() {
   const supabase = await createClient()
 

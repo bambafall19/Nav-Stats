@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
+import ThemeToggle from '@/components/shared/ThemeToggle'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -50,11 +51,17 @@ export default function MobileBottomNav() {
 
   const closeMenu = () => setMenuOpen(false)
 
+  const centerNavItems = [
+    { href: '/matchs', icon: '⚽', label: 'Matchs', ariaLabel: 'Matchs' },
+  ]
+
   const menuItems = [
     { label: 'Mon Profil', icon: '👤', href: `/profil/${profile?.id}`, color: 'var(--color-text-primary)' },
     { label: 'Mes Pronostics', icon: '📊', href: '/pronostics', color: 'var(--color-text-primary)' },
     ...(profile?.is_admin ? [{ label: 'Admin', icon: '🛡️', href: '/admin', color: 'var(--color-primary)' }] : []),
   ]
+
+  const [showThemeMenu, setShowThemeMenu] = useState(false)
 
   return (
     <>
@@ -77,24 +84,72 @@ export default function MobileBottomNav() {
         id="mobile-bottom-nav"
         style={{
           position: 'fixed',
-          bottom: 12,
-          left: 12,
-          right: 12,
-          height: 60,
-          background: 'rgba(255, 255, 255, 0.92)',
+          bottom: 10,
+          left: 10,
+          right: 10,
+          height: 56,
+          background: 'rgba(10, 15, 13, 0.92)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(0, 98, 51, 0.1)',
-          borderRadius: 20,
+          border: '1px solid var(--color-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-around',
-          padding: '0 8px',
-          zIndex: 99,
-          boxShadow: '0 8px 24px rgba(0, 98, 51, 0.12)',
+          padding: '0 6px',
+          zIndex: 999,
+          borderRadius: 16,
+          boxShadow: 'var(--shadow-md)',
         }}
       >
-        {mobileNavLinks.map(link => {
+        {/* Left items */}
+        {mobileNavLinks.slice(0, 2).map(link => {
+          const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              onMouseEnter={() => setHoveredItem(link.href)}
+              onMouseLeave={() => setHoveredItem(null)}
+              className="instagram-nav-item"
+              style={{
+                color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
+              }}
+              aria-label={link.label}
+            >
+              <span className="nav-icon">{link.icon}</span>
+              <span>{link.label}</span>
+            </Link>
+          )
+        })}
+
+        {/* Center FAB - Pronostiquer */}
+        <Link
+          href="/matchs"
+          style={{
+            width: 48,
+            height: 48,
+            borderRadius: '50%',
+            background: 'var(--gradient-green)',
+            color: '#0a0f0d',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.5rem',
+            fontWeight: 900,
+            textDecoration: 'none',
+            boxShadow: 'var(--shadow-neon)',
+            transition: 'transform 0.2s ease',
+            marginTop: -20,
+          }}
+          onMouseEnter={() => setHoveredItem('center')}
+          onMouseLeave={() => setHoveredItem(null)}
+          aria-label="Pronostiquer"
+        >
+          ⚽
+        </Link>
+
+        {/* Right items */}
+        {mobileNavLinks.slice(3).map(link => {
           const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
           const isProfileLink = link.href === '/profil'
 
@@ -105,48 +160,23 @@ export default function MobileBottomNav() {
                   onClick={() => setMenuOpen(!menuOpen)}
                   onMouseEnter={() => setHoveredItem('profile')}
                   onMouseLeave={() => setHoveredItem(null)}
+                  className="instagram-nav-item"
                   style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 2,
-                    padding: '6px 10px',
-                    borderRadius: 14,
-                    background: isActive ? 'linear-gradient(135deg, #006233, #00A651)' : 'transparent',
-                    color: isActive ? 'white' : 'var(--color-text-secondary)',
-                    minHeight: 44,
-                    minWidth: 44,
-                    fontSize: '1.2rem',
+                    color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
+                    background: 'transparent',
                     border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    position: 'relative',
+                    padding: 0,
                   }}
                   aria-label="Menu profil"
                   aria-expanded={menuOpen}
                 >
-                  <span>{link.icon}</span>
-                  <span style={{
-                    fontSize: '0.6rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.02em',
-                    opacity: isActive ? 1 : 0.7,
-                  }}>
-                    {link.label}
-                  </span>
-                  {menuOpen && (
-                    <span style={{
-                      position: 'absolute',
-                      top: -8,
-                      right: -8,
-                      width: 8,
-                      height: 8,
-                      background: 'var(--color-primary)',
-                      borderRadius: '50%',
-                      animation: 'pulse 1.5s ease-in-out infinite',
-                    }} />
-                  )}
+                  <div className="instagram-profile-btn">
+                    {profile.avatar_url
+                      ? <img src={profile.avatar_url} alt={profile.username} />
+                      : profile.username.charAt(0).toUpperCase()
+                    }
+                  </div>
+                  <span>Profil</span>
                 </button>
 
                 {menuOpen && (

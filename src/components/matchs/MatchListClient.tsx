@@ -63,6 +63,7 @@ function TeamBadge({ equipe, size = 52 }: { equipe: Team; size?: number }) {
         alt={equipe.nom}
         width={size}
         height={size}
+        className="match-team-logo"
         style={{
           borderRadius: 12,
           objectFit: 'cover',
@@ -73,14 +74,13 @@ function TeamBadge({ equipe, size = 52 }: { equipe: Team; size?: number }) {
     )
   }
   return (
-    <div style={{
+    <div className="match-team-logo-fallback" style={{
       width: size, height: size,
       borderRadius: 12,
-      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#006233'}, ${equipe.couleur_secondaire || '#FBBF00'})`,
+      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#39FF14'}, ${equipe.couleur_secondaire || '#00ff88'})`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: size * 0.38,
       fontWeight: 800,
-      color: 'white',
+      color: '#0a0f0d',
       flexShrink: 0,
       boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
       fontFamily: 'var(--font-outfit)',

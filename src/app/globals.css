@@ -1,49 +1,54 @@
 @import "tailwindcss";
 
 /* =========================================================
-   NavéStats – Design System
-   Thème clair inspiré FIFA 2026 + Sénégal
+   NavéStats – Design System v2
+   Football App Modern - Dark Theme
    ========================================================= */
 
 @layer base {
   :root {
-    /* Colors */
-    --color-primary: #006233;
-    --color-primary-light: #00A651;
-    --color-primary-dark: #004d27;
-    --color-accent: #FBBF00;
+    /* Colors - Dark Football Theme */
+    --color-primary: #39FF14;
+    --color-primary-light: #00ff88;
+    --color-primary-dark: #1a5f0a;
+    --color-accent: #FFD700;
     --color-accent-dark: #D4A000;
-    --color-red: #E8002D;
-    --color-red-light: #FF1744;
+    --color-red: #FF3B3B;
+    --color-red-light: #FF6B6B;
 
-    /* Surfaces */
+    /* Surfaces - Dark */
+    --color-bg-primary: #0a0f0d;
+    --color-bg-secondary: #111916;
     --color-surface: #EEF3F1;
-    --color-surface-card: #FFFFFF;
-    --color-surface-elevated: #FFFFFF;
-    --color-surface-overlay: rgba(255, 255, 255, 0.92);
+    --color-surface-card: #161f1a;
+    --color-surface-elevated: #1c2722;
+    --color-surface-overlay: rgba(22, 31, 26, 0.92);
 
-    /* Text */
-    --color-text-primary: #101820;
-    --color-text-secondary: #4A5B52;
-    --color-text-muted: #8A9A91;
-    --color-text-on-primary: #FFFFFF;
+    /* Text - Dark */
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #b8c4bf;
+    --color-text-muted: #6b7c75;
+    --color-text-on-primary: #0a0f0d;
 
     /* Border */
-    --color-border: #DCE6E1;
-    --color-border-focus: #006233;
+    --color-border: rgba(57, 255, 20, 0.15);
+    --color-border-subtle: rgba(255, 255, 255, 0.06);
+    --color-border-focus: #39FF14;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, #004d27 0%, #006233 40%, #00A651 70%, #FBBF00 100%);
-    --gradient-card: linear-gradient(135deg, rgba(0,98,51,0.06) 0%, rgba(251,191,0,0.06) 100%);
-    --gradient-gold: linear-gradient(135deg, #FBBF00, #D4A000);
-    --gradient-green: linear-gradient(135deg, #006233, #00A651);
+    --gradient-hero: linear-gradient(135deg, #0a0f0d 0%, #111916 40%, #1c2722 70%, #39FF14 100%);
+    --gradient-card: linear-gradient(135deg, rgba(57,255,20,0.06) 0%, rgba(0,255,136,0.06) 100%);
+    --gradient-gold: linear-gradient(135deg, #FFD700, #D4A000);
+    --gradient-green: linear-gradient(135deg, #39FF14, #00ff88);
+    --gradient-dark: linear-gradient(135deg, #0a0f0d, #1c2722);
 
     /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(16,24,32,0.05), 0 1px 1px rgba(16,24,32,0.03);
-    --shadow-md: 0 10px 28px rgba(16,24,32,0.08);
-    --shadow-lg: 0 18px 54px rgba(16,24,32,0.14);
-    --shadow-green: 0 10px 28px rgba(0,98,51,0.22);
-    --shadow-gold: 0 4px 20px rgba(251,191,0,0.35);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3), 0 1px 1px rgba(0,0,0,0.2);
+    --shadow-md: 0 10px 28px rgba(0,0,0,0.4);
+    --shadow-lg: 0 18px 54px rgba(0,0,0,0.5);
+    --shadow-green: 0 10px 28px rgba(57,255,20,0.3);
+    --shadow-gold: 0 4px 20px rgba(255,215,0,0.35);
+    --shadow-neon: 0 0 20px rgba(57,255,20,0.5), 0 0 40px rgba(57,255,20,0.3);
 
     /* Radius */
     --radius-sm: 6px;
@@ -70,8 +75,7 @@
   body {
     overflow-x: hidden;
     font-family: var(--font-inter), system-ui, sans-serif;
-    background:
-      linear-gradient(180deg, rgba(255,255,255,0.84) 0%, rgba(238,243,241,0.96) 32%, var(--color-surface) 100%);
+    background: var(--color-bg-primary);
     color: var(--color-text-primary);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
@@ -84,6 +88,7 @@
     font-weight: 600;
     line-height: 1.25;
     color: var(--color-text-primary);
+    letter-spacing: -0.02em;
   }
 
   /* Custom scrollbar */
@@ -105,11 +110,12 @@
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--color-border);
     overflow: hidden;
-    transition: box-shadow 0.25s ease, transform 0.25s ease, background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: all 0.25s ease;
   }
   .card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+    box-shadow: var(--shadow-green);
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
   }
 
   .card-glass {
@@ -145,13 +151,14 @@
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, #006233, #00A651);
-    color: white;
-    box-shadow: 0 4px 14px rgba(0, 98, 51, 0.25);
+    background: var(--gradient-green);
+    color: #0a0f0d;
+    box-shadow: var(--shadow-green);
+    font-weight: 700;
   }
   .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(0, 98, 51, 0.35);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-neon);
   }
   .btn-primary:active { transform: translateY(0); }
 
@@ -166,13 +173,14 @@
   }
 
   .btn-outline {
-    background: white;
+    background: transparent;
     color: var(--color-primary);
     border: 2px solid var(--color-primary);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    box-shadow: 0 0 10px rgba(57,255,20,0.2);
   }
   .btn-outline:hover {
-    background: rgba(0,98,51,0.04);
+    background: rgba(57,255,20,0.1);
+    box-shadow: var(--shadow-green);
   }
 
   .btn-ghost {
@@ -526,6 +534,71 @@
     background: rgba(0,98,51,0.08);
   }
 
+  /* Instagram-like bottom nav */
+  .instagram-nav {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 50px;
+    background: #ffffff;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 6px;
+    z-index: 999;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  }
+
+  .instagram-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    flex: 1;
+    height: 100%;
+    text-decoration: none;
+    color: var(--color-text-muted);
+    font-size: 0.65rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
+    min-width: 44px;
+  }
+
+  .instagram-nav-item.active {
+    color: #000000;
+  }
+
+  .instagram-nav-item .nav-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .instagram-profile-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid #000000;
+    overflow: hidden;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #000000;
+  }
+
+  .instagram-profile-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
   /* --- Table --- */
   .data-table {
     width: 100%;
@@ -706,6 +779,13 @@
       border-radius: 20px !important;
       box-shadow: 0 16px 36px rgba(16, 24, 32, 0.12) !important;
     }
+
+    .home-action-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+    .home-action-card {
+      padding: 12px !important;
+    }
   }
 
   @media (max-width: 640px) {
@@ -761,6 +841,31 @@
       font-weight: 800;
       color: var(--color-text-primary);
       overflow-wrap: anywhere;
+    }
+
+    /* Fix logos overflow mobile */
+    .mobile-team-logo {
+      width: 28px !important;
+      height: 28px !important;
+      border-radius: 6px !important;
+      object-fit: cover !important;
+      flex-shrink: 0 !important;
+    }
+
+    .mobile-team-logo-fallback {
+      width: 28px !important;
+      height: 28px !important;
+      border-radius: 6px !important;
+      flex-shrink: 0 !important;
+      font-size: 0.7rem !important;
+    }
+
+    .match-team-logo {
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 8px !important;
+      object-fit: cover !important;
+      flex-shrink: 0 !important;
     }
   }
 

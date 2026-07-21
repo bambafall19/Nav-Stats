@@ -1,12 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ClassementsClient } from '@/components/classements/ClassementsClient'
+import ClassementsClientWrapper from './ClassementsClientWrapper'
 
 export const metadata: Metadata = {
   title: 'Classements – NavéStats',
   description: 'Classement des pronostiqueurs, équipes et ASC des Navétanes de Khombole',
 }
+
+export const dynamic = 'force-dynamic'
 
 export default async function ClassementsPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -124,7 +126,7 @@ export default async function ClassementsPage() {
   }
 
   return (
-    <ClassementsClient
+    <ClassementsClientWrapper
       classementGeneral={classementGeneral}
       classementQuartier={classementQuartier}
       classementASC={classementASC}

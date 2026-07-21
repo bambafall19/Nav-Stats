@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
 import LinkButton from '@/components/shared/LinkButton'
+import ThemeToggle from '@/components/shared/ThemeToggle'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -34,10 +35,10 @@ export default function Header() {
     })
   }, [])
 
-  // Forcer le thème clair
+  // Forcer le thème sombre
   useEffect(() => {
-    document.documentElement.removeAttribute('data-theme')
-    localStorage.removeItem('navestats-theme')
+    document.documentElement.setAttribute('data-theme', 'dark')
+    localStorage.setItem('navestats-theme', 'dark')
   }, [])
 
   const handleSignOut = async () => {
@@ -54,12 +55,12 @@ export default function Header() {
         left: 0,
         right: 0,
         zIndex: 100,
-        background: 'var(--color-surface-overlay)',
+        background: 'rgba(10, 15, 13, 0.92)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid var(--color-border)',
         height: 'var(--nav-height)',
-        boxShadow: 'var(--shadow-sm)',
+        boxShadow: 'var(--shadow-md)',
         transition: 'background 0.3s ease',
       }}
     >
@@ -67,22 +68,25 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="brand-link" style={{ textDecoration: 'none', flexShrink: 0 }}>
           <div className="brand-mark" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <img
-              src="/logo.png"
-              alt="NavéStats Logo"
-              className="brand-logo"
-              style={{ width: 38, height: 38, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }}
-            />
+            <div style={{
+              width: 38, height: 38, borderRadius: 10,
+              background: 'var(--gradient-green)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: 'var(--shadow-green)',
+              flexShrink: 0,
+            }}>
+              <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0a0f0d' }}>N</span>
+            </div>
             <div>
               <div style={{
                 fontFamily: 'var(--font-outfit)',
                 fontWeight: 800,
                 fontSize: '1.1rem',
-                color: 'var(--color-primary)',
+                color: 'var(--color-text-primary)',
                 letterSpacing: '-0.02em',
                 lineHeight: 1,
               }}>NavéStats</div>
-              <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', letterSpacing: '0.05em', fontWeight: 500 }}>KHOMBOLE</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--color-primary)', letterSpacing: '0.08em', fontWeight: 700 }}>KHOMBOLE 2026</div>
             </div>
           </div>
         </Link>
@@ -101,6 +105,11 @@ export default function Header() {
               Zone 6<br />Khombole
             </span>
           </div>
+        </div>
+
+        {/* Theme Toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', marginRight: 8 }} className="desktop-user-menu">
+          <ThemeToggle />
         </div>
 
         {/* Desktop nav */}

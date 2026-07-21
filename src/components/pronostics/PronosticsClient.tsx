@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { triggerConfetti } from '@/lib/confetti'
 
 type PronosticWithMatch = {
   id: string
@@ -52,6 +54,7 @@ function matchResult(match: PronosticWithMatch['match']) {
 
 export default function PronosticsClient({ pronostics, totalPoints, corrects, scoresExact, pending, accuracy }: Props) {
   const [activeTab, setActiveTab] = useState<'tous' | 'a_venir' | 'termines'>('tous')
+  const [celebratedIds, setCelebratedIds] = useState<Set<string>>(new Set())
 
   const filtered = pronostics.filter(p => {
     if (activeTab === 'a_venir') return p.match?.statut === 'a_venir' || p.match?.statut === 'en_cours'
@@ -65,6 +68,15 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
     { id: 'termines' as const, label: 'Terminés', count: pronostics.filter(p => p.match?.statut === 'termine').length },
   ]
 
+  useEffect(() => {
+    pronostics.forEach(p => {
+      if (p.est_correct === true && !celebratedIds.has(p.id)) {
+        setCelebratedIds(prev => new Set(prev).add(p.id))
+        triggerConfetti()
+      }
+    })
+  }, [pronostics])
+
   return (
     <>
       {/* Stats Grid */}
@@ -76,18 +88,31 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
           { label: 'Scores exacts', value: scoresExact, icon: '✅', color: '#1D4ED8', bg: 'rgba(29,78,216,0.1)' },
           { label: 'En attente', value: pending, icon: '⏳', color: '#64748B', bg: 'rgba(100,116,139,0.1)' },
         ].map(stat => (
-          <article key={stat.label} className="card" style={{ padding: 18, display: 'flex', gap: 14, alignItems: 'center' }}>
+          <motion.article
+            key={stat.label}
+            className="card"
+            style={{ padding: 18, display: 'flex', gap: 14, alignItems: 'center' }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
             <div style={{ width: 46, height: 46, borderRadius: 14, background: stat.bg, color: stat.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', flexShrink: 0 }}>{stat.icon}</div>
             <div>
               <strong style={{ display: 'block', fontFamily: 'var(--font-outfit)', fontSize: '1.6rem', lineHeight: 1, color: stat.color }}>{stat.value}</strong>
               <span style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', fontWeight: 700 }}>{stat.label}</span>
             </div>
-          </article>
+          </motion.article>
         ))}
       </section>
 
       {/* Scoring rules */}
-      <section className="card" style={{ padding: 22, marginBottom: 24 }}>
+      <motion.section
+        className="card"
+        style={{ padding: 22, marginBottom: 24 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <h2 style={{ fontSize: '1rem', marginBottom: 14, fontFamily: 'var(--font-outfit)', fontWeight: 800 }}>🏅 Comment gagner des points ?</h2>
         <div className="rules-grid">
           {[
@@ -102,7 +127,7 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
             </div>
           ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 18, background: 'var(--color-surface)', padding: 4, borderRadius: 'var(--radius-full)' }}>
@@ -136,7 +161,12 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
 
       {/* Prediction Cards */}
       {filtered.length === 0 ? (
-        <div className="card" style={{ padding: 44, textAlign: 'center' }}>
+        <motion.div
+          className="card"
+          style={{ padding: 44, textAlign: 'center' }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
           <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>⚽</div>
           <h2 style={{ fontSize: '1.2rem', marginBottom: 8 }}>
             {activeTab === 'a_venir' ? 'Aucun pronostic à venir' : activeTab === 'termines' ? 'Aucun pronostic terminé' : 'Aucun pronostic pour le moment'}
@@ -145,10 +175,10 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
             {activeTab === 'tous' ? 'Choisissez un match à venir et lancez-vous.' : 'Ils apparaîtront ici quand vous en aurez.'}
           </p>
           <Link href="/matchs" className="btn btn-primary">Voir les matchs</Link>
-        </div>
+        </motion.div>
       ) : (
         <div style={{ display: 'grid', gap: 14 }}>
-          {filtered.map(pronostic => {
+          {filtered.map((pronostic, idx) => {
             const match = pronostic.match
             const isDone = match?.statut === 'termine'
             const isLive = match?.statut === 'en_cours'
@@ -160,7 +190,13 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
             const statusIcon = isDone ? (isCorrect ? '✅' : '❌') : isLive ? '🔴' : '⏳'
 
             return (
-              <div key={pronostic.id} className="card prono-card">
+              <motion.div
+                key={pronostic.id}
+                className="card prono-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: idx * 0.05 }}
+              >
                 {/* Header: match info + badge */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -243,7 +279,7 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
                 <Link href={match ? `/matchs/${match.id}` : '/matchs'} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>
                   Voir le match →
                 </Link>
-              </div>
+              </motion.div>
             )
           })}
         </div>
