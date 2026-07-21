@@ -37,8 +37,7 @@ export default function MobileOnboarding() {
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768
-    const onboarded = localStorage.getItem('navestats-onboarded')
-    if (isMobile && !onboarded) {
+    if (isMobile) {
       setShow(true)
     }
   }, [])
@@ -46,7 +45,6 @@ export default function MobileOnboarding() {
   const handleDismiss = () => {
     setFadeOut(true)
     setTimeout(() => {
-      localStorage.setItem('navestats-onboarded', 'true')
       setShow(false)
     }, 400)
   }

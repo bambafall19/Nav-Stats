@@ -47,7 +47,7 @@ export default function HomeClient({
         </ScrollReveal>
 
         {/* Comment ça marche - Feature cards */}
-        <section style={{ marginBottom: 56 }}>
+        <section style={{ marginBottom: 56 }} className="hide-mobile">
           <ScrollReveal direction="up" delay={0}>
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
               <h2 style={{
@@ -305,7 +305,10 @@ export default function HomeClient({
             grid-template-columns: 1fr 1fr !important;
           }
         }
-        @media (max-width: 760px) {
+        @media (max-width: 767px) {
+          .hide-mobile {
+            display: none !important;
+          }
           .home-action-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
           }
