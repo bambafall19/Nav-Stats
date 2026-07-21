@@ -27,20 +27,21 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated = f
       id="hero-section"
       className="hero-section"
       style={{
-        padding: '100px 0 80px',
         position: 'relative',
         overflow: 'hidden',
-        minHeight: 520,
+        minHeight: 'calc(100svh - var(--nav-height))',
+        padding: '92px 0 42px',
+        display: 'flex',
+        alignItems: 'center',
       }}
     >
-      {/* Slideshow backgrounds */}
       {STADIUM_IMAGES.map((img, i) => (
         <div
           key={img}
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: `linear-gradient(to bottom, rgba(0,60,30,0.82), rgba(0,30,15,0.96)), url("${img}")`,
+            backgroundImage: `linear-gradient(90deg, rgba(0,24,12,0.94) 0%, rgba(0,60,30,0.82) 45%, rgba(0,30,15,0.42) 100%), url("${img}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             opacity: mounted && i === currentSlide ? 1 : 0,
@@ -50,166 +51,368 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated = f
         />
       ))}
 
-      {/* Slide dots */}
+      <div className="container-app hero-inner" style={{ position: 'relative', zIndex: 2 }}>
+        <div className="hero-copy">
+          <div className="hero-eyebrow" style={{ animation: mounted ? 'fadeInUp 0.45s ease both' : 'none' }}>
+            <img src="/oncav-logo.png" alt="" />
+            <span>Zone 6 Khombole · Navétanes 2026</span>
+          </div>
+
+          <h1 style={{ animation: mounted ? 'fadeInUp 0.55s 0.06s ease both' : 'none' }}>
+            NavéStats
+          </h1>
+
+          <p className="hero-lead" style={{ animation: mounted ? 'fadeInUp 0.55s 0.12s ease both' : 'none' }}>
+            Pronostics, résultats et classements des ASC de Khombole dans une expérience simple, rapide et pensée mobile.
+          </p>
+
+          <div className="hero-actions" style={{ animation: mounted ? 'fadeInUp 0.55s 0.18s ease both' : 'none' }}>
+            <Link href={isAuthenticated ? '/matchs' : '/auth/register'} className="hero-primary">
+              Pronostiquer maintenant
+            </Link>
+            <Link href="/matchs" className="hero-secondary">
+              Voir les matchs
+            </Link>
+          </div>
+
+          <div className="hero-stats" style={{ animation: mounted ? 'fadeInUp 0.55s 0.24s ease both' : 'none' }}>
+            {[
+              { label: 'Matchs', value: matchCount || '—' },
+              { label: 'Équipes', value: '17' },
+              { label: 'Joueurs', value: userCount || '—' },
+            ].map(stat => (
+              <div key={stat.label}>
+                <strong>{stat.value}</strong>
+                <span>{stat.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="hero-side" aria-label="Aperçu des actions NavéStats" style={{ animation: mounted ? 'fadeInUp 0.55s 0.2s ease both' : 'none' }}>
+          <div className="live-chip">
+            <span />
+            Matchs à suivre
+          </div>
+          <div className="side-score">
+            <span>1</span>
+            <small>N</small>
+            <span>2</span>
+          </div>
+          <p>Pronostic rapide en 3 choix, classement actualisé et notifications de match.</p>
+          <Link href="/classements">Voir le classement</Link>
+        </div>
+      </div>
+
       {mounted && (
-        <div style={{
-          position: 'absolute',
-          bottom: 20,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          gap: 8,
-          zIndex: 5,
-        }}>
+        <div className="hero-dots" aria-label="Changer l'image de couverture">
           {STADIUM_IMAGES.map((_, i) => (
             <button
               key={i}
+              type="button"
               onClick={() => setCurrentSlide(i)}
-              aria-label={`Slide ${i + 1}`}
-              style={{
-                width: i === currentSlide ? 24 : 12,
-                height: 12,
-                borderRadius: 'var(--radius-full)',
-                background: i === currentSlide ? 'var(--color-accent)' : 'rgba(255,255,255,0.4)',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'all 0.4s ease',
-                padding: 0,
-                minHeight: '44px',
-                minWidth: '44px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              aria-label={`Image ${i + 1}`}
+              aria-current={i === currentSlide ? 'true' : undefined}
             />
           ))}
         </div>
       )}
 
-      {/* Floating balls */}
-      {mounted && (
-        <>
-          {[
-            { top: '15%', left: '8%', size: 40, delay: '0s' },
-            { top: '70%', left: '5%', size: 28, delay: '1s' },
-            { top: '20%', right: '10%', size: 50, delay: '0.5s' },
-            { top: '65%', right: '8%', size: 32, delay: '1.5s' },
-          ].map((ball, i) => (
-            <div key={i} className="animate-float" style={{
-              position: 'absolute',
-              ...ball,
-              width: ball.size,
-              height: ball.size,
-              fontSize: ball.size * 0.7,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              animationDelay: ball.delay,
-              opacity: 0.45,
-              zIndex: 1,
-            }}>⚽</div>
-          ))}
-        </>
-      )}
-
-      <div className="container-app" style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
-        {/* Badge */}
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 8,
-          background: 'rgba(255,255,255,0.15)',
-          border: '1px solid rgba(255,255,255,0.3)',
-          borderRadius: 'var(--radius-full)',
-          padding: '6px 16px',
-          marginBottom: 24,
-          animation: mounted ? 'fadeInUp 0.5s ease' : 'none',
-        }}>
-          <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.9)', fontWeight: 600, letterSpacing: '0.08em' }}>
-            🇸🇳 NAVÉTANES KHOMBOLE 2026
-          </span>
-        </div>
-
-        {/* Title */}
-        <h1 style={{
-          fontFamily: 'var(--font-outfit)',
-          fontSize: 'clamp(2rem, 6vw, 3.5rem)',
-          fontWeight: 900,
-          color: 'white',
-          letterSpacing: '-0.03em',
-          lineHeight: 1.1,
-          marginBottom: 16,
-          animation: mounted ? 'fadeInUp 0.6s 0.1s ease both' : 'none',
-        }}>
-          Pronostique.{' '}
-          <span style={{ color: 'var(--color-accent)' }}>Analyse.</span>
-          <br />Domine le classement.
-        </h1>
-
-        <p style={{
-          fontSize: 'clamp(1rem, 2.5vw, 1.15rem)',
-          color: 'rgba(255,255,255,0.85)',
-          maxWidth: 560,
-          margin: '0 auto 32px',
-          lineHeight: 1.6,
-          animation: mounted ? 'fadeInUp 0.6s 0.2s ease both' : 'none',
-        }}>
-          <strong style={{ color: 'white' }}>Bonjour</strong> 👋
-          <br />
-          La première plateforme communautaire de pronostics et statistiques des Navétanes de Khombole.
-          Gagne des points, débloque des badges et grimpe dans le classement !
-        </p>
-
-        {/* Stats band */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 'clamp(16px, 4vw, 48px)',
-          marginBottom: 36,
-          animation: mounted ? 'fadeInUp 0.6s 0.3s ease both' : 'none',
-          flexWrap: 'wrap',
-        }}>
-          {[
-            { label: "Matchs à suivre", value: matchCount, icon: '⚽' },
-            { label: 'Équipes', value: '17', icon: '🛡️' },
-            { label: 'Pronostiqueurs', value: userCount || '—', icon: '👥' },
-          ].map(stat => (
-            <div key={stat.label} style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white', fontFamily: 'var(--font-outfit)', letterSpacing: '-0.03em', lineHeight: 1 }}>
-                {stat.icon} {stat.value}
-              </div>
-              <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', marginTop: 4, fontWeight: 500 }}>
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA Buttons */}
-        <div style={{
-          display: 'flex',
-          gap: 12,
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-          animation: mounted ? 'fadeInUp 0.6s 0.4s ease both' : 'none',
-        }}>
-          <Link href={isAuthenticated ? '/matchs' : '/auth/register'} className="btn btn-accent btn-lg" style={{ textDecoration: 'none' }}>
-            Pronostiquer
-          </Link>
-          <Link href="/matchs" className="btn btn-lg" style={{
-            textDecoration: 'none',
-            background: 'rgba(255,255,255,0.15)',
-            color: 'white',
-            border: '1.5px solid rgba(255,255,255,0.4)',
-            backdropFilter: 'blur(10px)',
-          }}>
-            Voir les matchs
-          </Link>
-        </div>
-      </div>
       <style>{`
-        @media (max-width: 640px) {
+        .hero-inner {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+          gap: clamp(28px, 6vw, 80px);
+          align-items: center;
+        }
+
+        .hero-copy {
+          max-width: 720px;
+        }
+
+        .hero-eyebrow {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 8px 12px;
+          margin-bottom: 22px;
+          border: 1px solid rgba(255,255,255,0.22);
+          border-radius: 8px;
+          background: rgba(255,255,255,0.13);
+          color: rgba(255,255,255,0.86);
+          font-size: 0.78rem;
+          font-weight: 850;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          backdrop-filter: blur(14px);
+        }
+
+        .hero-eyebrow img {
+          width: 26px;
+          height: 26px;
+          object-fit: contain;
+        }
+
+        .hero-copy h1 {
+          margin: 0;
+          font-size: clamp(4rem, 10vw, 8.5rem);
+          line-height: 0.86;
+          font-weight: 950;
+          letter-spacing: 0;
+          color: white;
+        }
+
+        .hero-lead {
+          max-width: 620px;
+          margin: 26px 0 0;
+          color: rgba(255,255,255,0.84);
+          font-size: clamp(1.04rem, 2vw, 1.28rem);
+          line-height: 1.6;
+          font-weight: 520;
+        }
+
+        .hero-actions {
+          display: flex;
+          gap: 12px;
+          margin-top: 32px;
+          flex-wrap: wrap;
+        }
+
+        .hero-primary,
+        .hero-secondary,
+        .hero-side a {
+          min-height: 48px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 8px;
+          padding: 0 18px;
+          font-weight: 900;
+          text-decoration: none;
+          transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .hero-primary {
+          background: var(--gradient-gold);
+          color: #2b1d00;
+          box-shadow: 0 16px 32px rgba(251,191,0,0.22);
+        }
+
+        .hero-secondary {
+          color: white;
+          border: 1.5px solid rgba(255,255,255,0.35);
+          background: rgba(255,255,255,0.12);
+          backdrop-filter: blur(14px);
+        }
+
+        .hero-primary:hover,
+        .hero-secondary:hover,
+        .hero-side a:hover {
+          transform: translateY(-1px);
+        }
+
+        .hero-stats {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 140px));
+          gap: 10px;
+          margin-top: 34px;
+        }
+
+        .hero-stats div {
+          padding: 12px 14px;
+          border-left: 2px solid var(--color-accent);
+          background: rgba(255,255,255,0.08);
+        }
+
+        .hero-stats strong,
+        .hero-stats span {
+          display: block;
+        }
+
+        .hero-stats strong {
+          color: white;
+          font-size: 1.6rem;
+          line-height: 1;
+          font-weight: 950;
+        }
+
+        .hero-stats span {
+          margin-top: 4px;
+          color: rgba(255,255,255,0.66);
+          font-size: 0.72rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+        }
+
+        .hero-side {
+          padding: 22px;
+          border: 1px solid rgba(255,255,255,0.22);
+          border-radius: 10px;
+          background: rgba(255,255,255,0.12);
+          color: white;
+          backdrop-filter: blur(18px);
+          box-shadow: 0 24px 70px rgba(0,0,0,0.22);
+        }
+
+        .live-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 7px 10px;
+          border-radius: 999px;
+          color: rgba(255,255,255,0.86);
+          background: rgba(255,255,255,0.12);
+          font-size: 0.76rem;
+          font-weight: 850;
+        }
+
+        .live-chip span {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: var(--color-red-light);
+          box-shadow: 0 0 0 6px rgba(232,0,45,0.16);
+        }
+
+        .side-score {
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
+          align-items: center;
+          gap: 14px;
+          margin: 28px 0 18px;
+        }
+
+        .side-score span,
+        .side-score small {
+          min-height: 58px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 8px;
+          background: white;
+          color: var(--color-primary);
+          font-size: 1.5rem;
+          font-weight: 950;
+        }
+
+        .side-score small {
+          width: 48px;
+          background: var(--color-accent);
+          color: #2b1d00;
+        }
+
+        .hero-side p {
+          margin: 0 0 20px;
+          color: rgba(255,255,255,0.76);
+          line-height: 1.55;
+          font-size: 0.92rem;
+        }
+
+        .hero-side a {
+          width: 100%;
+          background: rgba(255,255,255,0.94);
+          color: var(--color-primary);
+        }
+
+        .hero-dots {
+          position: absolute;
+          left: 50%;
+          bottom: 16px;
+          transform: translateX(-50%);
+          z-index: 4;
+          display: flex;
+          gap: 8px;
+        }
+
+        .hero-dots button {
+          width: 44px;
+          height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 0;
+          background: transparent;
+          cursor: pointer;
+        }
+
+        .hero-dots button::after {
+          content: '';
+          width: 20px;
+          height: 4px;
+          border-radius: 99px;
+          background: rgba(255,255,255,0.34);
+          transition: width 0.25s ease, background 0.25s ease;
+        }
+
+        .hero-dots button[aria-current="true"]::after {
+          width: 32px;
+          background: var(--color-accent);
+        }
+
+        @media (max-width: 860px) {
           .hero-section {
-            min-height: 440px !important;
-            padding: 72px 0 56px !important;
+            min-height: calc(100svh - var(--nav-height)) !important;
+            padding: 76px 0 84px !important;
+            align-items: flex-start !important;
+          }
+
+          .hero-inner {
+            grid-template-columns: 1fr;
+            gap: 22px;
+          }
+
+          .hero-side {
+            display: none;
+          }
+
+          .hero-copy h1 {
+            font-size: clamp(4rem, 18vw, 5.6rem);
+          }
+
+          .hero-lead {
+            max-width: 360px;
+            margin-top: 18px;
+            font-size: 1rem;
+          }
+
+          .hero-actions {
+            margin-top: 26px;
+          }
+
+          .hero-primary,
+          .hero-secondary {
+            width: 100%;
+          }
+
+          .hero-stats {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin-top: 24px;
+          }
+
+          .hero-stats div {
+            padding: 10px 8px;
+          }
+
+          .hero-stats strong {
+            font-size: 1.18rem;
+          }
+
+          .hero-stats span {
+            font-size: 0.62rem;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .hero-eyebrow {
+            max-width: 100%;
+            padding: 7px 10px;
+            font-size: 0.66rem;
+          }
+
+          .hero-eyebrow img {
+            width: 22px;
+            height: 22px;
           }
         }
       `}</style>
