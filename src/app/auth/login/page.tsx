@@ -124,10 +124,6 @@ export default function LoginPage() {
 
   return (
     <div className={styles.page}>
-      {/* Animated background elements */}
-      <div className={styles.bgBlobTop} />
-      <div className={styles.bgBlobBottom} />
-
       {/* Header */}
       <div className={styles.header}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -148,27 +144,49 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      {/* Main content - Centered */}
       <div className={styles.main}>
-        {/* Logo and branding */}
-        <div className={styles.brand}>
-          <div className={styles.logoContainer}>
-            <img src="/logo.png" alt="NavéStats Logo" className={styles.logo} />
-          </div>
-          <h1 className={styles.brandTitle}>NavéStats</h1>
-          <p className={styles.brandSubtitle}>Pronostique • Domine • Partage</p>
-        </div>
-
-        {/* Main card */}
-        <div className={styles.card}>
-          <div className={styles.formContainer}>
-            {/* Title */}
-            <div className={styles.sectionTitle}>
-              <h2>Bon retour ! 👋</h2>
-              <p>Connecte-toi pour partager tes pronostics</p>
+        <div className={styles.authShell}>
+          <section className={styles.heroPanel} aria-label="Présentation NavéStats">
+            <div className={styles.partnerBadge}>
+              <img src="/oncav-logo.png" alt="ONCAV Zone 6" />
+              <span>Zone 6 Khombole</span>
             </div>
 
-            {/* Form */}
+            <div className={styles.heroContent}>
+              <div className={styles.logoContainer}>
+                <img src="/logo.png" alt="NavéStats Logo" className={styles.logo} />
+              </div>
+              <p className={styles.kicker}>Navétanes 2026</p>
+              <h1 className={styles.brandTitle}>Connecte-toi à NavéStats</h1>
+              <p className={styles.brandSubtitle}>
+                Retrouve tes pronostics, suis ton classement et reste dans le rythme des matchs de Khombole.
+              </p>
+            </div>
+
+            <div className={styles.insightGrid} aria-label="Aperçu rapide">
+              <div>
+                <strong>1X2</strong>
+                <span>Pronostics rapides</span>
+              </div>
+              <div>
+                <strong>Live</strong>
+                <span>Matchs à suivre</span>
+              </div>
+              <div>
+                <strong>Top</strong>
+                <span>Classement joueurs</span>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.card} aria-label="Connexion">
+            <div className={styles.formContainer}>
+              <div className={styles.sectionTitle}>
+                <p>Bon retour</p>
+                <h2>Connexion</h2>
+                <span>Entre ton téléphone ou ton email pour continuer.</span>
+              </div>
+
             <form onSubmit={handleLogin} className={styles.form}>
               {/* Identifier field */}
               <div className={styles.fieldGroup}>
@@ -276,7 +294,8 @@ export default function LoginPage() {
                 </button>
               </div>
             </form>
-          </div>
+            </div>
+          </section>
         </div>
       </div>
 
