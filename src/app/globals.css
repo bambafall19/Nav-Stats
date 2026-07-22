@@ -412,6 +412,25 @@
       font-size: 0.7rem !important;
     }
 
+    /* Logo animation à l'ouverture */
+    .brand-logo-animated {
+      animation: logoAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes logoAppear {
+      0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-10deg);
+      }
+      50% {
+        transform: scale(1.15) rotate(3deg);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+    }
+
     /* --- Top 3 podium --- */
   .podium-card {
     background: var(--color-surface-card);

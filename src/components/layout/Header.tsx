@@ -60,14 +60,24 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="brand-link" style={{ textDecoration: 'none', flexShrink: 0 }}>
           <div className="brand-mark" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
+            <div className="brand-logo-animated" style={{
               width: 38, height: 38, borderRadius: 10,
               background: 'var(--gradient-green)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: 'var(--shadow-green)',
               flexShrink: 0,
+              overflow: 'hidden',
             }}>
-              <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0a0f0d' }}>N</span>
+              <img
+                src="/logo.png"
+                alt="NavéStats"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: 10,
+                }}
+              />
             </div>
             <div>
               <div style={{
