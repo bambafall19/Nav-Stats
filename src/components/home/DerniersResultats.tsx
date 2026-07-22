@@ -32,9 +32,9 @@ export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
                   {match.equipe_a.nom}
                 </span>
                 {match.equipe_a.logo_url ? (
-                  <img src={match.equipe_a.logo_url} alt={match.equipe_a.nom} style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0, boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} />
+                  <img src={match.equipe_a.logo_url} alt={match.equipe_a.nom} className="match-team-logo" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0, boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} />
                 ) : (
-                  <div style={{
+                  <div className="match-team-logo-fallback" style={{
                     width: 32, height: 32, borderRadius: 8,
                     background: `linear-gradient(135deg, ${match.equipe_a.couleur_principale || '#006233'}, ${match.equipe_a.couleur_secondaire || '#FBBF00'})`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -67,9 +67,9 @@ export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {match.equipe_b.logo_url ? (
-                  <img src={match.equipe_b.logo_url} alt={match.equipe_b.nom} style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0, boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} />
+                  <img src={match.equipe_b.logo_url} alt={match.equipe_b.nom} className="match-team-logo" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0, boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} />
                 ) : (
-                  <div style={{
+                  <div className="match-team-logo-fallback" style={{
                     width: 32, height: 32, borderRadius: 8,
                     background: `linear-gradient(135deg, ${match.equipe_b.couleur_principale || '#006233'}, ${match.equipe_b.couleur_secondaire || '#FBBF00'})`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',

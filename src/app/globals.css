@@ -380,7 +380,39 @@
     box-shadow: 0 4px 14px rgba(0,98,51,0.3);
   }
 
-  /* --- Top 3 podium --- */
+    /* Team logos responsive */
+    .match-team-logo {
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 8px !important;
+      object-fit: cover !important;
+      flex-shrink: 0 !important;
+    }
+
+    .match-team-logo-fallback {
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 8px !important;
+      flex-shrink: 0 !important;
+    }
+
+    .mobile-team-logo {
+      width: 28px !important;
+      height: 28px !important;
+      border-radius: 6px !important;
+      object-fit: cover !important;
+      flex-shrink: 0 !important;
+    }
+
+    .mobile-team-logo-fallback {
+      width: 28px !important;
+      height: 28px !important;
+      border-radius: 6px !important;
+      flex-shrink: 0 !important;
+      font-size: 0.7rem !important;
+    }
+
+    /* --- Top 3 podium --- */
   .podium-card {
     background: var(--color-surface-card);
     border-radius: var(--radius-xl);
@@ -862,6 +894,13 @@
       height: 36px !important;
       border-radius: 8px !important;
       object-fit: cover !important;
+      flex-shrink: 0 !important;
+    }
+
+    .match-team-logo-fallback {
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 8px !important;
       flex-shrink: 0 !important;
     }
   }

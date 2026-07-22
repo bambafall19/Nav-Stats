@@ -9,15 +9,17 @@ type Match = Database['public']['Tables']['matchs']['Row'] & {
   equipe_b: Database['public']['Tables']['equipes']['Row']
 }
 
-function TeamLogo({ equipe, size = 48 }: { equipe: Database['public']['Tables']['equipes']['Row']; size?: number }) {
+function TeamLogo({ equipe, size = 48, className }: { equipe: Database['public']['Tables']['equipes']['Row']; size?: number; className?: string }) {
+  const hasMobileClass = className?.includes('match-team-logo') || className?.includes('mobile-team-logo')
   if (equipe.logo_url) {
     return (
       <img
         src={equipe.logo_url}
         alt={equipe.nom}
+        className={className}
         style={{
-          width: size,
-          height: size,
+          width: hasMobileClass ? undefined : size,
+          height: hasMobileClass ? undefined : size,
           borderRadius: 'var(--radius-md)',
           objectFit: 'cover',
           flexShrink: 0,
@@ -27,19 +29,23 @@ function TeamLogo({ equipe, size = 48 }: { equipe: Database['public']['Tables'][
     )
   }
   return (
-    <div style={{
-      width: size, height: size,
-      borderRadius: 'var(--radius-md)',
-      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#006233'}, ${equipe.couleur_secondaire || '#FBBF00'})`,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: size * 0.4,
-      fontWeight: 800,
-      color: 'white',
-      fontFamily: 'var(--font-outfit)',
-      textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-      flexShrink: 0,
-      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-    }}>
+    <div
+      className={className}
+      style={{
+        width: hasMobileClass ? undefined : size,
+        height: hasMobileClass ? undefined : size,
+        borderRadius: 'var(--radius-md)',
+        background: `linear-gradient(135deg, ${equipe.couleur_principale || '#006233'}, ${equipe.couleur_secondaire || '#FBBF00'})`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: hasMobileClass ? undefined : size * 0.4,
+        fontWeight: 800,
+        color: 'white',
+        fontFamily: 'var(--font-outfit)',
+        textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+        flexShrink: 0,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+      }}
+    >
       {equipe.sigle || equipe.nom.charAt(0)}
     </div>
   )
@@ -104,7 +110,7 @@ function MatchCard({ match }: { match: Match }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 12, alignItems: 'center' }}>
           {/* Équipe A */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-            <TeamLogo equipe={match.equipe_a} />
+            <TeamLogo equipe={match.equipe_a} className="match-team-logo" />
             <span style={{ fontSize: '0.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--color-text-primary)', lineHeight: 1.2 }}>
               {match.equipe_a.nom}
             </span>
@@ -141,7 +147,7 @@ function MatchCard({ match }: { match: Match }) {
 
           {/* Équipe B */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-            <TeamLogo equipe={match.equipe_b} />
+            <TeamLogo equipe={match.equipe_b} className="match-team-logo" />
             <span style={{ fontSize: '0.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--color-text-primary)', lineHeight: 1.2 }}>
               {match.equipe_b.nom}
             </span>
