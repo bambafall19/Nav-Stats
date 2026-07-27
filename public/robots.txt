@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and auth pages from indexing
+Disallow: /admin/
+Disallow: /auth/
+
+# Sitemap location
+Sitemap: https://navestats.site/sitemap.xml
+
+# Crawl delay (optional, be respectful)
+Crawl-delay: 1
