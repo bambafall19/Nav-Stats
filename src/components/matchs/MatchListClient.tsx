@@ -129,69 +129,99 @@ export default function MatchListClient({ initialMatchs }: Props) {
 
   return (
     <div style={{ maxWidth: 720, margin: '0 auto' }}>
-      {/* Filtres */}
-      <div style={{ display: 'grid', gap: 12, marginBottom: 18 }}>
+      {/* Filtres mobile d'abord : statut puis poule */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
         <input
           className="input"
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Rechercher une équipe ou un stade..."
           aria-label="Rechercher un match"
-          style={{ background: 'var(--color-surface-card)' }}
+          style={{ background: 'var(--color-surface-card)', borderRadius: 16, padding: '12px 14px' }}
         />
-        <div className="match-filter-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-          <div style={{ display: 'flex', gap: 6, padding: 6, background: 'var(--color-surface-card)', borderRadius: 18, overflowX: 'auto', border: '1px solid var(--color-border)' }}>
-            {statusFilters.map(filter => (
-              <FilterButton
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '6px 4px' }}>
+          {statusFilters.map(filter => {
+            const active = selectedStatus === filter.value
+            return (
+              <button
                 key={filter.value}
-                active={selectedStatus === filter.value}
+                type="button"
                 onClick={() => setSelectedStatus(filter.value)}
+                style={{
+                  flex: '1 0 auto',
+                  padding: '10px 14px',
+                  borderRadius: 16,
+                  border: '1px solid ' + (active ? 'var(--color-primary)' : 'var(--color-border)'),
+                  background: active ? 'rgba(0,98,51,0.08)' : 'var(--color-surface-card)',
+                  color: active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  boxShadow: 'var(--shadow-sm)',
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'nowrap',
+                  fontFamily: 'var(--font-outfit)',
+                }}
               >
                 {filter.label}
-              </FilterButton>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: 6, padding: 6, background: 'var(--color-surface-card)', borderRadius: 18, overflowX: 'auto', border: '1px solid var(--color-border)' }}>
-            {pouleFilters.map(filter => (
-              <FilterButton
+              </button>
+            )
+          })}
+        </div>
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '6px 4px' }}>
+          {pouleFilters.map(filter => {
+            const active = selectedPoule === filter.value
+            return (
+              <button
                 key={filter.value}
-                active={selectedPoule === filter.value}
+                type="button"
                 onClick={() => setSelectedPoule(filter.value)}
+                style={{
+                  flex: '1 0 auto',
+                  padding: '10px 14px',
+                  borderRadius: 16,
+                  border: '1px solid ' + (active ? 'var(--color-primary)' : 'var(--color-border)'),
+                  background: active ? 'rgba(0,98,51,0.08)' : 'var(--color-surface-card)',
+                  color: active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  boxShadow: 'var(--shadow-sm)',
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'nowrap',
+                  fontFamily: 'var(--font-outfit)',
+                }}
               >
                 {filter.label}
-              </FilterButton>
-            ))}
-          </div>
+              </button>
+            )
+          })}
         </div>
       </div>
 
       {/* Journée Tab Pills */}
       <div style={{
         display: 'flex',
-        gap: 6,
-        padding: 6,
-        background: 'var(--color-surface-card)',
-        borderRadius: 20,
+        gap: 8,
         marginBottom: 24,
         overflowX: 'auto',
         WebkitOverflowScrolling: 'touch',
-        border: '1px solid var(--color-border)',
-        boxShadow: 'var(--shadow-sm)',
         scrollbarWidth: 'none',
+        padding: '4px 2px',
       }}>
         <button
           onClick={() => setSelectedJournee('all')}
           style={{
-            flex: 1,
-            padding: '11px 16px',
+            flex: '1 0 auto',
+            padding: '10px 14px',
             border: 'none',
-            background: selectedJournee === 'all' ? 'var(--gradient-green)' : 'transparent',
+            background: selectedJournee === 'all' ? 'var(--gradient-green)' : 'var(--color-surface-card)',
             color: selectedJournee === 'all' ? 'white' : 'var(--color-text-secondary)',
-            borderRadius: 14,
+            borderRadius: 16,
             fontSize: '0.82rem',
             fontWeight: 700,
             cursor: 'pointer',
-            boxShadow: selectedJournee === 'all' ? 'var(--shadow-green)' : 'none',
+            boxShadow: selectedJournee === 'all' ? 'var(--shadow-green)' : 'var(--shadow-sm)',
             transition: 'all 0.25s ease',
             whiteSpace: 'nowrap',
             minWidth: 90,
@@ -205,21 +235,20 @@ export default function MatchListClient({ initialMatchs }: Props) {
             key={j}
             onClick={() => setSelectedJournee(j)}
             style={{
-              flex: 1,
-              padding: '11px 16px',
+              flex: '1 0 auto',
+              padding: '10px 14px',
               border: 'none',
-              background: selectedJournee === j ? 'var(--gradient-green)' : 'transparent',
+              background: selectedJournee === j ? 'var(--gradient-green)' : 'var(--color-surface-card)',
               color: selectedJournee === j ? 'white' : 'var(--color-text-secondary)',
-              borderRadius: 14,
+              borderRadius: 16,
               fontSize: '0.82rem',
               fontWeight: 700,
               cursor: 'pointer',
-              boxShadow: selectedJournee === j ? 'var(--shadow-green)' : 'none',
+              boxShadow: selectedJournee === j ? 'var(--shadow-green)' : 'var(--shadow-sm)',
               transition: 'all 0.25s ease',
               whiteSpace: 'nowrap',
               minWidth: 90,
               fontFamily: 'var(--font-outfit)',
-              letterSpacing: '-0.01em',
             }}
           >
             J{j}
