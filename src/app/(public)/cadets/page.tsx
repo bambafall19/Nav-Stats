@@ -273,11 +273,11 @@ export default async function CadetsPage() {
                         </span>
                       </div>
 
-                      {/* Match Cards - Compact */}
+                      {/* Match Cards - Ultra Compact */}
                       <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                        gap: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 6,
                       }}>
                         {dateMatches.map(match => {
                           const equipeA = match.equipe_a_info || (match.equipe_a_id ? logoMap.get(match.equipe_a_id) : undefined) || logoMap.get(normalizeAscName(match.equipe_a))
@@ -287,109 +287,96 @@ export default async function CadetsPage() {
 
                           return (
                             <div key={`${match.date_match}-${match.equipe_a}-${match.equipe_b}`} style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 8,
+                              padding: '10px 12px',
                               background: 'var(--color-surface-card)',
-                              borderRadius: 'var(--radius-lg)',
-                              padding: 'clamp(14px, 3vw, 18px)',
+                              borderRadius: 'var(--radius-md)',
                               border: '1px solid var(--color-border)',
-                              boxShadow: 'var(--shadow-sm)',
-                              transition: 'all 0.2s ease',
                             }}>
-                              {/* Teams VS Compact */}
-                              <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                gap: 10,
-                                marginBottom: 12,
-                              }}>
-                                {/* Équipe A */}
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, flex: 1 }}>
-                                  <div style={{
-                                    width: 44,
-                                    height: 44,
-                                    borderRadius: 'var(--radius-md)',
-                                    overflow: 'hidden',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                                    border: '2px solid var(--color-border)',
-                                  }}>
-                                    <TeamLogo name={equipeAName} align="right" logo={equipeA} />
-                                  </div>
-                                  <span style={{
-                                    fontSize: '0.75rem',
-                                    fontWeight: 600,
-                                    textAlign: 'center',
-                                    color: 'var(--color-text-primary)',
-                                    lineHeight: 1.2,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap',
-                                    maxWidth: '100%',
-                                  }}>
-                                    {equipeAName}
-                                  </span>
-                                </div>
-
-                                {/* VS Badge */}
+                              {/* Équipe A */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
                                 <div style={{
-                                  width: 36,
-                                  height: 36,
-                                  borderRadius: '50%',
-                                  background: 'linear-gradient(135deg, rgba(232,0,45,0.12), rgba(232,0,45,0.06))',
-                                  color: 'var(--color-red)',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  fontSize: '0.7rem',
-                                  fontWeight: 900,
-                                  fontFamily: 'var(--font-outfit)',
-                                  border: '2px solid rgba(232,0,45,0.2)',
+                                  width: 28,
+                                  height: 28,
+                                  borderRadius: 'var(--radius-sm)',
+                                  overflow: 'hidden',
                                   flexShrink: 0,
                                 }}>
-                                  VS
+                                  <TeamLogo name={equipeAName} align="right" logo={equipeA} />
                                 </div>
+                                <span style={{
+                                  fontSize: '0.7rem',
+                                  fontWeight: 600,
+                                  color: 'var(--color-text-primary)',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                }}>
+                                  {equipeAName}
+                                </span>
+                              </div>
 
-                                {/* Équipe B */}
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, flex: 1 }}>
-                                  <div style={{
-                                    width: 44,
-                                    height: 44,
-                                    borderRadius: 'var(--radius-md)',
-                                    overflow: 'hidden',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                                    border: '2px solid var(--color-border)',
-                                  }}>
-                                    <TeamLogo name={equipeBName} align="left" logo={equipeB} />
-                                  </div>
-                                  <span style={{
-                                    fontSize: '0.75rem',
-                                    fontWeight: 600,
-                                    textAlign: 'center',
-                                    color: 'var(--color-text-primary)',
-                                    lineHeight: 1.2,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap',
-                                    maxWidth: '100%',
-                                  }}>
-                                    {equipeBName}
-                                  </span>
+                              {/* VS */}
+                              <span style={{
+                                fontSize: '0.6rem',
+                                fontWeight: 800,
+                                color: 'var(--color-red)',
+                                flexShrink: 0,
+                                fontFamily: 'var(--font-outfit)',
+                              }}>
+                                VS
+                              </span>
+
+                              {/* Équipe B */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0, justifyContent: 'flex-end' }}>
+                                <span style={{
+                                  fontSize: '0.7rem',
+                                  fontWeight: 600,
+                                  color: 'var(--color-text-primary)',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                }}>
+                                  {equipeBName}
+                                </span>
+                                <div style={{
+                                  width: 28,
+                                  height: 28,
+                                  borderRadius: 'var(--radius-sm)',
+                                  overflow: 'hidden',
+                                  flexShrink: 0,
+                                }}>
+                                  <TeamLogo name={equipeBName} align="left" logo={equipeB} />
                                 </div>
                               </div>
 
-                              {/* Info bar */}
-                              <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                paddingTop: 10,
-                                borderTop: '1px solid var(--color-border)',
-                                fontSize: '0.68rem',
+                              {/* Terrain */}
+                              <span style={{
+                                fontSize: '0.6rem',
                                 color: 'var(--color-text-muted)',
                                 fontWeight: 500,
+                                flexShrink: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 2,
                               }}>
-                                <span>📍 {match.terrain}</span>
-                                {match.ordre && <span style={{ color: 'var(--color-primary)', fontWeight: 700 }}>#{match.ordre}</span>}
-                              </div>
+                                📍 {match.terrain}
+                              </span>
+                              {match.ordre && (
+                                <span style={{
+                                  fontSize: '0.55rem',
+                                  color: 'var(--color-primary)',
+                                  fontWeight: 700,
+                                  background: 'rgba(0,98,51,0.08)',
+                                  padding: '2px 6px',
+                                  borderRadius: 4,
+                                  flexShrink: 0,
+                                }}>
+                                  #{match.ordre}
+                                </span>
+                              )}
                             </div>
                           )
                         })}
