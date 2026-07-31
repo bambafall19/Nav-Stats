@@ -61,11 +61,11 @@ function MatchCard({ match }: { match: Match }) {
   const shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`
 
   return (
-    <Link href={`/matchs/${match.id}`} style={{ textDecoration: 'none' }}>
-      <div style={{
+    <Link href={`/matchs/${match.id}`} style={{ textDecoration: 'none' }} className="match-card-link">
+      <div className="match-card" style={{
         background: 'var(--color-surface-card)',
         borderRadius: 'var(--radius-lg)',
-        padding: 20,
+        padding: 12,
         border: '1px solid var(--color-border)',
         boxShadow: 'var(--shadow-sm)',
         transition: 'all 0.25s ease',
@@ -73,7 +73,7 @@ function MatchCard({ match }: { match: Match }) {
         overflow: 'hidden',
       }}>
         {/* Status badge and date */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18, gap: 12 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, gap: 8 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             {isLive ? (
               <span className="status-live" style={{
@@ -151,24 +151,24 @@ function MatchCard({ match }: { match: Match }) {
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr auto 1fr',
-          gap: 12,
+          gap: 8,
           alignItems: 'center',
-          marginBottom: 16,
+          marginBottom: 12,
         }}>
           {/* Équipe A */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 56,
-              height: 56,
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+            <div className="team-badge" style={{
+              width: 36,
+              height: 36,
               borderRadius: 'var(--radius-md)',
               overflow: 'hidden',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               border: '2px solid var(--color-border)',
             }}>
-              <TeamLogo equipe={match.equipe_a} size={56} />
+              <TeamLogo equipe={match.equipe_a} size={36} />
             </div>
-            <span style={{
-              fontSize: '0.88rem',
+            <span className="team-name" style={{
+              fontSize: '0.72rem',
               fontWeight: 700,
               textAlign: 'center',
               color: 'var(--color-text-primary)',
@@ -183,11 +183,11 @@ function MatchCard({ match }: { match: Match }) {
           </div>
 
           {/* VS / Score */}
-          <div style={{
-            width: 44,
-            height: 44,
+          <div className="vs-badge" style={{
+            width: 32,
+            height: 32,
             borderRadius: '50%',
-            background: isLive 
+            background: isLive
               ? 'linear-gradient(135deg, rgba(232,0,45,0.15), rgba(232,0,45,0.08))'
               : isDone
               ? 'linear-gradient(135deg, rgba(0,98,51,0.12), rgba(0,166,81,0.08))'
@@ -196,16 +196,16 @@ function MatchCard({ match }: { match: Match }) {
             alignItems: 'center',
             justifyContent: 'center',
             fontWeight: 900,
-            fontSize: '0.85rem',
+            fontSize: '0.7rem',
             color: isLive ? 'var(--color-red)' : 'var(--color-primary)',
             border: `2px solid ${isLive ? 'rgba(232,0,45,0.25)' : 'rgba(0,98,51,0.2)'}`,
             fontFamily: 'var(--font-outfit)',
             boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           }}>
             {isDone || isLive ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 2, fontSize: '0.7rem' }}>
                 <span style={{ fontWeight: 900 }}>{match.score_a ?? 0}</span>
-                <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>–</span>
+                <span style={{ fontSize: '0.6rem', opacity: 0.7 }}>–</span>
                 <span style={{ fontWeight: 900 }}>{match.score_b ?? 0}</span>
               </div>
             ) : (
@@ -214,19 +214,19 @@ function MatchCard({ match }: { match: Match }) {
           </div>
 
           {/* Équipe B */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 56,
-              height: 56,
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+            <div className="team-badge" style={{
+              width: 36,
+              height: 36,
               borderRadius: 'var(--radius-md)',
               overflow: 'hidden',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               border: '2px solid var(--color-border)',
             }}>
-              <TeamLogo equipe={match.equipe_b} size={56} />
+              <TeamLogo equipe={match.equipe_b} size={36} />
             </div>
-            <span style={{
-              fontSize: '0.88rem',
+            <span className="team-name" style={{
+              fontSize: '0.72rem',
               fontWeight: 700,
               textAlign: 'center',
               color: 'var(--color-text-primary)',
@@ -243,19 +243,19 @@ function MatchCard({ match }: { match: Match }) {
 
         {/* Footer CTA */}
         {match.statut === 'a_venir' && (
-          <div style={{
-            marginTop: 16,
-            paddingTop: 14,
+          <div className="match-card-footer" style={{
+            marginTop: 12,
+            paddingTop: 10,
             borderTop: '1px solid var(--color-border)',
           }}>
             <div style={{
               width: '100%',
-              padding: '10px',
+              padding: '8px',
               background: 'var(--gradient-green)',
               color: 'white',
               border: 'none',
               borderRadius: 'var(--radius-full)',
-              fontSize: '0.82rem',
+              fontSize: '0.78rem',
               fontWeight: 700,
               textAlign: 'center',
               boxShadow: 'var(--shadow-green)',
@@ -291,7 +291,7 @@ export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isT
           <p style={{ color: 'var(--color-text-secondary)', fontWeight: 500 }}>Aucun match prévu pour le moment</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+        <div className="matchs-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
           {matchs.map((match, i) => (
             <div key={match.id} style={{ animation: `fadeInUp 0.4s ${i * 0.07}s ease both` }}>
               <MatchCard match={match} />
@@ -299,6 +299,41 @@ export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isT
           ))}
         </div>
       )}
+      <style>{`
+        @media (max-width: 640px) {
+          .matchs-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+          .match-card {
+            padding: 12px !important;
+          }
+          .match-card .team-badge {
+            width: 32px !important;
+            height: 32px !important;
+          }
+          .match-card .team-badge img {
+            width: 32px !important;
+            height: 32px !important;
+          }
+          .match-card .vs-badge {
+            width: 30px !important;
+            height: 30px !important;
+            font-size: 0.7rem !important;
+          }
+          .match-card .team-name {
+            font-size: 0.72rem !important;
+          }
+          .match-card-footer {
+            padding-top: 10px !important;
+            margin-top: 10px !important;
+          }
+          .match-card-footer > div {
+            padding: 8px !important;
+            font-size: 0.75rem !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

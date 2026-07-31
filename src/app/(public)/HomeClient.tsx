@@ -33,7 +33,7 @@ export default function HomeClient({
         {/* Hero Section with slideshow */}
         <HeroSection matchCount={matchCount} userCount={userCount} isAuthenticated={isAuthenticated} />
 
-        <div className="home-flow" style={{ paddingTop: 48, paddingBottom: 64 }}>
+        <div className="home-flow" style={{ paddingTop: 24, paddingBottom: 48 }}>
         
         {/* Stats Dashboard - Full width card */}
         <ScrollReveal direction="up" delay={100}>
@@ -300,12 +300,12 @@ export default function HomeClient({
             grid-template-columns: 1fr 1fr !important;
           }
         }
-        @media (max-width: 767px) {
+          @media (max-width: 767px) {
           .home-flow {
             display: flex;
             flex-direction: column;
             gap: 0;
-            padding-top: 20px !important;
+            padding-top: 16px !important;
             padding-bottom: 120px !important;
           }
           .main-home-grid {
@@ -378,7 +378,7 @@ export default function HomeClient({
           #matchs-section,
           #classement-section,
           #resultats-section {
-            margin-bottom: 26px;
+            margin-bottom: 20px;
           }
           .home-action-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;

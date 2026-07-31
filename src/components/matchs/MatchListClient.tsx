@@ -144,13 +144,13 @@ export default function MatchListClient({ initialMatchs }: Props) {
   ]
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto' }}>
+    <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 0 0 0' }} className="matchs-wrapper">
       {/* Hero Section */}
-      <div style={{
+      <div className="matchs-hero" style={{
         background: 'linear-gradient(135deg, #004d27 0%, #006233 50%, #00A651 100%)',
         borderRadius: 'var(--radius-xl)',
-        padding: 'clamp(28px, 4vw, 40px)',
-        marginBottom: 32,
+        padding: 'clamp(16px, 4vw, 28px)',
+        marginBottom: 16,
         position: 'relative',
         overflow: 'hidden',
         boxShadow: 'var(--shadow-green)',
@@ -494,7 +494,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
           )}
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {sortedDates.map(date => {
             const matches = matchesByDate[date]
             const d = new Date(date)
@@ -504,16 +504,16 @@ export default function MatchListClient({ initialMatchs }: Props) {
             return (
               <div key={date}>
                 {/* Date Header */}
-                <div style={{
+                <div className="date-header" style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 12,
-                  marginBottom: 12,
+                  gap: 8,
+                  marginBottom: 10,
                 }}>
                   <div style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 12,
+                    width: 36,
+                    height: 36,
+                    borderRadius: 10,
                     flexShrink: 0,
                     background: 'var(--gradient-green)',
                     display: 'flex',
@@ -522,15 +522,15 @@ export default function MatchListClient({ initialMatchs }: Props) {
                     justifyContent: 'center',
                     boxShadow: 'var(--shadow-green)',
                   }}>
-                    <span style={{ fontSize: '0.6rem', fontWeight: 700, color: 'rgba(255,255,255,0.9)', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1 }}>
+                    <span style={{ fontSize: '0.55rem', fontWeight: 700, color: 'rgba(255,255,255,0.9)', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1 }}>
                       {day.slice(0, 3)}
                     </span>
-                    <span style={{ fontSize: '1rem', fontWeight: 900, color: 'white', lineHeight: 1.1 }}>{d.getDate()}</span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 900, color: 'white', lineHeight: 1.1 }}>{d.getDate()}</span>
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{
                       fontWeight: 800,
-                      fontSize: '0.95rem',
+                      fontSize: '0.85rem',
                       color: 'var(--color-text-primary)',
                       fontFamily: 'var(--font-outfit)',
                       textTransform: 'capitalize',
@@ -538,7 +538,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
                     }}>
                       {day} {dayNum}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, marginTop: 2 }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 600, marginTop: 2 }}>
                       {matches.length} rencontre{matches.length > 1 ? 's' : ''}
                     </div>
                   </div>
@@ -557,8 +557,8 @@ export default function MatchListClient({ initialMatchs }: Props) {
                     const shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`
 
                     return (
-                      <Link key={m.id} href={`/matchs/${m.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-                        <div style={{
+                      <Link key={m.id} href={`/matchs/${m.id}`} style={{ textDecoration: 'none', display: 'block' }} className="match-card-link">
+                        <div className="match-card" style={{
                           background: 'linear-gradient(135deg, var(--color-surface-card) 0%, var(--color-surface-elevated) 100%)',
                           borderRadius: 'var(--radius-lg)',
                           border: '1px solid var(--color-border)',
@@ -577,7 +577,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
                           }}
                         >
                           {/* Top: Poule + Status */}
-                          <div style={{
+                          <div className="match-card-top" style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
@@ -652,27 +652,27 @@ export default function MatchListClient({ initialMatchs }: Props) {
                           </div>
 
                           {/* Match Body */}
-                          <div style={{
+                          <div className="match-card-body" style={{
                             display: 'grid',
                             gridTemplateColumns: '1fr auto 1fr',
-                            gap: 16,
+                            gap: 8,
                             alignItems: 'center',
-                            padding: '20px 16px',
+                            padding: '10px 12px',
                           }}>
                             {/* Équipe A */}
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-                              <div style={{
-                                width: 56,
-                                height: 56,
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                              <div className="team-badge" style={{
+                                width: 36,
+                                height: 36,
                                 borderRadius: 'var(--radius-md)',
                                 overflow: 'hidden',
                                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                                 border: '2px solid var(--color-border)',
                               }}>
-                                <TeamBadge equipe={m.equipe_a} size={56} />
+                                <TeamBadge equipe={m.equipe_a} size={36} />
                               </div>
-                              <span style={{
-                                fontSize: '0.88rem',
+                              <span className="team-name" style={{
+                                fontSize: '0.72rem',
                                 fontWeight: isWinA ? 800 : 600,
                                 color: isWinA ? 'var(--color-primary)' : 'var(--color-text-primary)',
                                 textAlign: 'center',
@@ -683,9 +683,9 @@ export default function MatchListClient({ initialMatchs }: Props) {
                             </div>
 
                             {/* Score / VS */}
-                            <div style={{
-                              width: 48,
-                              height: 48,
+                            <div className="score-badge" style={{
+                              width: 36,
+                              height: 36,
                               borderRadius: '50%',
                               background: isLive
                                 ? 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.08))'
@@ -694,37 +694,37 @@ export default function MatchListClient({ initialMatchs }: Props) {
                               alignItems: 'center',
                               justifyContent: 'center',
                               fontWeight: 900,
-                              fontSize: '0.85rem',
+                              fontSize: '0.7rem',
                               color: isLive ? '#EF4444' : 'var(--color-primary)',
                               border: `2px solid ${isLive ? 'rgba(239,68,68,0.25)' : 'rgba(0,98,51,0.2)'}`,
                               fontFamily: 'var(--font-outfit)',
                               boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                             }}>
                               {isDone || isLive ? (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: '0.85rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 2, fontSize: '0.7rem' }}>
                                   <span style={{ fontWeight: 900 }}>{m.score_a ?? 0}</span>
-                                  <span style={{ fontSize: '0.7rem', opacity: 0.6 }}>–</span>
+                                  <span style={{ fontSize: '0.6rem', opacity: 0.6 }}>–</span>
                                   <span style={{ fontWeight: 900 }}>{m.score_b ?? 0}</span>
                                 </div>
                               ) : (
-                                <span style={{ fontWeight: 900 }}>VS</span>
+                                <span style={{ fontWeight: 900, fontSize: '0.7rem' }}>VS</span>
                               )}
                             </div>
 
                             {/* Équipe B */}
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-                              <div style={{
-                                width: 56,
-                                height: 56,
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                              <div className="team-badge" style={{
+                                width: 36,
+                                height: 36,
                                 borderRadius: 'var(--radius-md)',
                                 overflow: 'hidden',
                                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                                 border: '2px solid var(--color-border)',
                               }}>
-                                <TeamBadge equipe={m.equipe_b} size={56} />
+                                <TeamBadge equipe={m.equipe_b} size={36} />
                               </div>
-                              <span style={{
-                                fontSize: '0.88rem',
+                              <span className="team-name" style={{
+                                fontSize: '0.72rem',
                                 fontWeight: isWinB ? 800 : 600,
                                 color: isWinB ? 'var(--color-primary)' : 'var(--color-text-primary)',
                                 textAlign: 'center',
@@ -736,8 +736,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
                           </div>
 
                           {/* Share Button */}
-                          <button
-                            type="button"
+                          <button className="share-btn" type="button"
                             onClick={event => {
                               event.preventDefault()
                               event.stopPropagation()
@@ -766,28 +765,28 @@ export default function MatchListClient({ initialMatchs }: Props) {
 
                           {/* Bottom CTA */}
                           {m.statut === 'a_venir' && (
-                            <div style={{
+                            <div className="match-card-footer" style={{
                               borderTop: '1px solid var(--color-border)',
-                              padding: '12px 16px',
+                              padding: '8px 12px',
                               display: 'flex',
                               justifyContent: 'center',
                               background: 'linear-gradient(135deg, rgba(0,98,51,0.03), rgba(0,166,81,0.03))',
                             }}>
                               <span style={{
-                                padding: '10px 20px',
+                                padding: '8px 16px',
                                 background: 'var(--gradient-green)',
                                 color: 'white',
                                 borderRadius: 'var(--radius-full)',
-                                fontSize: '0.85rem',
+                                fontSize: '0.78rem',
                                 fontWeight: 700,
                                 boxShadow: '0 4px 12px rgba(0,98,51,0.25)',
                                 fontFamily: 'var(--font-outfit)',
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: 6,
+                                gap: 4,
                                 letterSpacing: '0.01em',
                               }}>
-                                🎯 Pronostiquer ce match →
+                                🎯 Pronostiquer →
                               </span>
                             </div>
                           )}
@@ -801,6 +800,50 @@ export default function MatchListClient({ initialMatchs }: Props) {
           })}
         </div>
       )}
+      <style>{`
+        @media (max-width: 640px) {
+          .match-card {
+            padding: 10px 12px !important;
+            border-radius: var(--radius-md) !important;
+          }
+          .match-card-top {
+            padding: 8px 10px !important;
+          }
+          .match-card-body {
+            padding: 10px !important;
+            gap: 6px !important;
+          }
+          .team-badge {
+            width: 32px !important;
+            height: 32px !important;
+          }
+          .team-badge img {
+            width: 32px !important;
+            height: 32px !important;
+          }
+          .score-badge {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 0.7rem !important;
+          }
+          .team-name {
+            font-size: 0.72rem !important;
+          }
+          .match-card-footer {
+            padding: 8px 10px !important;
+          }
+          .share-btn {
+            width: 28px !important;
+            height: 28px !important;
+            top: 6px !important;
+            right: 6px !important;
+          }
+          .share-btn svg {
+            width: 12px !important;
+            height: 12px !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

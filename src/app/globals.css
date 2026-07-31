@@ -796,6 +796,12 @@ h1, h2, h3, h4, h5, h6 {
       padding-top: calc(var(--nav-height) + 16px);
     }
 
+    .page-content > .container-app {
+      flex: 1 1 auto !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
     .mobile-bottom-nav:not(#mobile-bottom-nav) {
       display: none !important;
     }
@@ -891,8 +897,44 @@ h1, h2, h3, h4, h5, h6 {
       padding: 0 14px;
     }
 
+    .matchs-wrapper {
+      max-width: 100% !important;
+      padding: 0 2px !important;
+    }
+
+    .matchs-hero {
+      padding: 14px !important;
+      margin-bottom: 10px !important;
+    }
+
+    .matchs-hero h1 {
+      font-size: 1.1rem !important;
+      margin-bottom: 4px !important;
+    }
+
+    .matchs-hero p {
+      font-size: 0.75rem !important;
+      margin-bottom: 10px !important;
+    }
+
+    .matchs-hero > div:last-child {
+      gap: 6px !important;
+    }
+
+    .matchs-hero > div:last-child > div {
+      padding: 6px 8px !important;
+    }
+
+    .matchs-hero > div:last-child > div > div:first-child {
+      font-size: 0.9rem !important;
+    }
+
+    .matchs-hero > div:last-child > div > div:last-child {
+      font-size: 0.58rem !important;
+    }
+
     .section-title {
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       letter-spacing: 0;
     }
 
@@ -971,6 +1013,132 @@ h1, h2, h3, h4, h5, h6 {
       height: 36px !important;
       border-radius: 8px !important;
       flex-shrink: 0 !important;
+    }
+
+    /* Compact match cards */
+    .match-card {
+      padding: 12px !important;
+    }
+    .match-card .team-badge,
+    .match-card .team-badge img,
+    .match-card .team-badge > div {
+      width: 32px !important;
+      height: 32px !important;
+    }
+    .match-card .vs-badge {
+      width: 30px !important;
+      height: 30px !important;
+      font-size: 0.7rem !important;
+    }
+    .match-card .team-name {
+      font-size: 0.72rem !important;
+    }
+    .match-card .score-badge {
+      width: 32px !important;
+      height: 32px !important;
+      font-size: 0.7rem !important;
+    }
+    .match-card .match-card-top {
+      padding: 8px 10px !important;
+    }
+    .match-card .match-card-body {
+      padding: 10px !important;
+      gap: 6px !important;
+    }
+    .match-card .match-card-footer {
+      padding: 8px 10px !important;
+    }
+    .match-card .share-btn {
+      width: 28px !important;
+      height: 28px !important;
+      top: 6px !important;
+      right: 6px !important;
+    }
+    .match-card .share-btn svg {
+      width: 12px !important;
+      height: 12px !important;
+    }
+
+    /* Compact sections */
+    .journee-section {
+      margin-bottom: 12px !important;
+    }
+    .journee-header {
+      padding: 14px 16px !important;
+    }
+    .journee-header h2 {
+      font-size: 1rem !important;
+    }
+    .match-cards-list {
+      gap: 4px !important;
+    }
+    .match-row {
+      padding: 8px 10px !important;
+      gap: 6px !important;
+    }
+    .match-row .team-badge,
+    .match-row .team-badge img,
+    .match-row .team-badge > div {
+      width: 24px !important;
+      height: 24px !important;
+    }
+    .match-row .team-name {
+      font-size: 0.68rem !important;
+    }
+    .match-row .vs-badge {
+      font-size: 0.55rem !important;
+    }
+    .match-row .terrain-badge {
+      font-size: 0.55rem !important;
+    }
+    .match-row .ordre-badge {
+      font-size: 0.5rem !important;
+      padding: 1px 4px !important;
+    }
+
+    /* Reduce section spacing */
+    .home-flow > section,
+    .home-flow > div > section {
+      margin-bottom: 20px !important;
+    }
+    .quick-actions-section {
+      margin-bottom: 20px !important;
+    }
+
+    /* MatchListClient mobile overrides */
+    .matchs-wrapper > div:first-child {
+      margin-bottom: 10px !important;
+    }
+
+    .match-card-link {
+      display: block !important;
+    }
+
+    .date-header {
+      gap: 6px !important;
+      margin-bottom: 8px !important;
+    }
+
+    .date-header > div:first-child {
+      width: 32px !important;
+      height: 32px !important;
+      border-radius: 8px !important;
+    }
+
+    .date-header > div:first-child > span:first-child {
+      font-size: 0.5rem !important;
+    }
+
+    .date-header > div:first-child > span:last-child {
+      font-size: 0.75rem !important;
+    }
+
+    .date-header > div:last-child > div:first-child {
+      font-size: 0.78rem !important;
+    }
+
+    .date-header > div:last-child > div:last-child {
+      font-size: 0.65rem !important;
     }
   }
 
