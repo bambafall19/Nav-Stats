@@ -115,47 +115,39 @@ export default function MobileBottomNav() {
           })}
         </div>
 
-        {/* Center FAB - Pronostiquer */}
+        {/* Center FAB - Championnats */}
         <Link
           href="/matchs"
           className="mobile-nav-fab"
           style={{
-            width: 52,
-            height: 52,
-            borderRadius: 20,
+            width: 48,
+            height: 48,
+            borderRadius: 16,
             background: 'linear-gradient(135deg, #006233, #00A651)',
             color: 'white',
             display: 'flex',
             flexDirection: 'column',
-            gap: 2,
+            gap: 1,
             alignItems: 'center',
             justifyContent: 'center',
             fontWeight: 900,
             textDecoration: 'none',
-            boxShadow: '0 8px 20px rgba(0, 98, 51, 0.35)',
+            boxShadow: '0 6px 16px rgba(0, 98, 51, 0.35)',
             transition: 'all 0.2s ease',
-            margin: '-22px 6px 0',
-            border: '3px solid white',
-          }}
-          onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
-            e.currentTarget.style.transform = 'scale(1.1)'
-            e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 98, 51, 0.5)'
-          }}
-          onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
-            e.currentTarget.style.transform = 'scale(1)'
-            e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 98, 51, 0.4)'
+            margin: '-18px 4px 0',
+            border: '2px solid white',
           }}
           aria-label="Championnats"
         >
-          <Target size={22} strokeWidth={2.7} />
+          <Target size={18} strokeWidth={2.7} />
           <span style={{
-            fontSize: '0.52rem',
+            fontSize: '0.48rem',
             lineHeight: 1,
             letterSpacing: '0.02em',
             fontFamily: 'var(--font-outfit)',
             fontWeight: 800,
           }}>
-            Championnats
+            Matchs
           </span>
         </Link>
 

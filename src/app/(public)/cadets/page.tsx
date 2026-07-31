@@ -61,82 +61,20 @@ export default async function CadetsPage() {
         <div style={{
           background: 'linear-gradient(135deg, #004d27 0%, #006233 50%, #00A651 100%)',
           borderRadius: 'var(--radius-xl)',
-          padding: 'clamp(32px, 5vw, 48px)',
-          marginBottom: 32,
+          padding: 'clamp(20px, 4vw, 32px)',
+          marginBottom: 16,
           position: 'relative',
           overflow: 'hidden',
           boxShadow: 'var(--shadow-green)',
         }}>
-          {/* Decorative circles */}
-          <div style={{
-            position: 'absolute',
-            top: -80,
-            right: -60,
-            width: 240,
-            height: 240,
-            borderRadius: '50%',
-            background: 'rgba(255,255,255,0.06)',
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: -60,
-            left: -40,
-            width: 200,
-            height: 200,
-            borderRadius: '50%',
-            background: 'rgba(255,215,0,0.1)',
-          }} />
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            fontSize: '8rem',
-            opacity: 0.03,
-          }}>
-            ⚽
-          </div>
-
           <div style={{ position: 'relative', zIndex: 1 }}>
-            {/* Badges */}
-            <div style={{
-              display: 'flex',
-              gap: 8,
-              marginBottom: 16,
-              flexWrap: 'wrap',
-            }}>
-              <span style={{
-                background: 'rgba(255,255,255,0.15)',
-                color: 'white',
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                letterSpacing: '0.02em',
-                backdropFilter: 'blur(10px)',
-              }}>
-                🏆 ONCAV · ODCAV THIES
-              </span>
-              <span style={{
-                background: 'rgba(255,215,0,0.25)',
-                color: '#FFD700',
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                backdropFilter: 'blur(10px)',
-              }}>
-                📍 ZONE 06 DE KHOMBOLE
-              </span>
-            </div>
-
             {/* Title */}
             <h1 style={{
               color: 'white',
               fontFamily: 'var(--font-outfit)',
-              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              fontSize: 'clamp(1.3rem, 4vw, 2rem)',
               fontWeight: 900,
-              marginBottom: 12,
+              marginBottom: 4,
               letterSpacing: '-0.02em',
               lineHeight: 1.2,
               textAlign: 'center',
@@ -145,63 +83,61 @@ export default async function CadetsPage() {
             </h1>
             <p style={{
               color: 'rgba(255,255,255,0.85)',
-              fontSize: 'clamp(0.9rem, 2vw, 1.05rem)',
-              marginBottom: 24,
-              maxWidth: 600,
-              lineHeight: 1.5,
+              fontSize: 'clamp(0.75rem, 2vw, 0.9rem)',
+              marginBottom: 12,
+              textAlign: 'center',
             }}>
-              Championnat National des Poules - Saison 2026
+              CNP 2026 - Zone 06 de Khombole
             </p>
 
             {/* Stats Cards */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: 10,
-              maxWidth: 600,
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: 6,
             }}>
               <div style={{
                 background: 'rgba(255,255,255,0.12)',
                 backdropFilter: 'blur(10px)',
-                padding: '14px',
-                borderRadius: 'var(--radius-md)',
+                padding: '8px',
+                borderRadius: 'var(--radius-sm)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: '1.6rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
                   {cadetMatches.length}
                 </div>
-                <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 3 }}>
+                <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 2 }}>
                   Matchs
                 </div>
               </div>
               <div style={{
                 background: 'rgba(255,255,255,0.12)',
                 backdropFilter: 'blur(10px)',
-                padding: '14px',
-                borderRadius: 'var(--radius-md)',
+                padding: '8px',
+                borderRadius: 'var(--radius-sm)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: '1.6rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
                   {journees.length}
                 </div>
-                <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 3 }}>
+                <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 2 }}>
                   Journées
                 </div>
               </div>
               <div style={{
                 background: 'rgba(255,255,255,0.12)',
                 backdropFilter: 'blur(10px)',
-                padding: '14px',
-                borderRadius: 'var(--radius-md)',
+                padding: '8px',
+                borderRadius: 'var(--radius-sm)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: '1.6rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
                   {equipesList.length}
                 </div>
-                <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 3 }}>
+                <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 2 }}>
                   Équipes
                 </div>
               </div>
