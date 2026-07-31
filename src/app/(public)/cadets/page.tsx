@@ -340,8 +340,8 @@ export default async function CadetsPage() {
                       {/* Match Cards - Compact */}
                       <div style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                        gap: 10,
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                        gap: 8,
                       }}>
                         {dateMatches.map(match => {
                           const equipeA = match.equipe_a_info || (match.equipe_a_id ? logoMap.get(match.equipe_a_id) : undefined) || logoMap.get(normalizeAscName(match.equipe_a))
