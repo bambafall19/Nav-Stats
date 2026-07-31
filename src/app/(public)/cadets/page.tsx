@@ -157,51 +157,51 @@ export default async function CadetsPage() {
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: 12,
+              gap: 10,
               maxWidth: 600,
             }}>
               <div style={{
                 background: 'rgba(255,255,255,0.12)',
                 backdropFilter: 'blur(10px)',
-                padding: '16px',
+                padding: '14px',
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: '2rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
+                <div style={{ fontSize: '1.6rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
                   {cadetMatches.length}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 4 }}>
+                <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 3 }}>
                   Matchs
                 </div>
               </div>
               <div style={{
                 background: 'rgba(255,255,255,0.12)',
                 backdropFilter: 'blur(10px)',
-                padding: '16px',
+                padding: '14px',
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: '2rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
+                <div style={{ fontSize: '1.6rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
                   {journees.length}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 4 }}>
+                <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 3 }}>
                   Journées
                 </div>
               </div>
               <div style={{
                 background: 'rgba(255,255,255,0.12)',
                 backdropFilter: 'blur(10px)',
-                padding: '16px',
+                padding: '14px',
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: '2rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
+                <div style={{ fontSize: '1.6rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
                   {equipesList.length}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 4 }}>
+                <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 3 }}>
                   Équipes
                 </div>
               </div>
@@ -210,7 +210,7 @@ export default async function CadetsPage() {
         </div>
 
         {/* Matchs par journée */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {journees.map(journee => {
             const matches = cadetMatches.filter(match => match.journee === journee)
             const matchesByDate = matches.reduce<Record<string, CadetMatch[]>>((acc, match) => {
@@ -298,7 +298,7 @@ export default async function CadetsPage() {
                 </div>
 
                 {/* Matchs par date */}
-                <div style={{ padding: '20px' }}>
+                <div style={{ padding: '16px' }}>
                   {Object.entries(matchesByDate).map(([date, dateMatches], dateIndex) => (
                     <div key={date} style={{
                       marginBottom: dateIndex < Object.keys(matchesByDate).length - 1 ? 24 : 0,
@@ -308,9 +308,9 @@ export default async function CadetsPage() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        gap: 12,
-                        paddingBottom: 12,
-                        marginBottom: 14,
+                        gap: 8,
+                        paddingBottom: 10,
+                        marginBottom: 10,
                         borderBottom: '1px solid var(--color-border)',
                       }}>
                         <div style={{
