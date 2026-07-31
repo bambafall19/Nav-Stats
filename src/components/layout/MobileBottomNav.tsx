@@ -120,22 +120,22 @@ export default function MobileBottomNav() {
           href="/matchs"
           className="mobile-nav-fab"
           style={{
-            width: 64,
-            height: 64,
-            borderRadius: 24,
+            width: 52,
+            height: 52,
+            borderRadius: 20,
             background: 'linear-gradient(135deg, #006233, #00A651)',
             color: 'white',
             display: 'flex',
             flexDirection: 'column',
-            gap: 3,
+            gap: 2,
             alignItems: 'center',
             justifyContent: 'center',
             fontWeight: 900,
             textDecoration: 'none',
-            boxShadow: '0 12px 24px rgba(0, 98, 51, 0.4)',
+            boxShadow: '0 8px 20px rgba(0, 98, 51, 0.35)',
             transition: 'all 0.2s ease',
-            margin: '-28px 8px 0',
-            border: '4px solid white',
+            margin: '-22px 6px 0',
+            border: '3px solid white',
           }}
           onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
             e.currentTarget.style.transform = 'scale(1.1)'
