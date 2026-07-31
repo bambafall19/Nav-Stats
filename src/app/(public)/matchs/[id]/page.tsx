@@ -142,7 +142,7 @@ export default async function MatchDetailPage({ params }: Props) {
     <div className="page-content">
       <div className="container-app">
         {/* Breadcrumb */}
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 24, fontSize: '0.85rem' }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 20, fontSize: '0.82rem' }}>
           <Link href="/" style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Accueil</Link>
           <span style={{ color: 'var(--color-text-muted)' }}>›</span>
           <Link href="/matchs" style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Matchs</Link>
@@ -156,7 +156,7 @@ export default async function MatchDetailPage({ params }: Props) {
         <MatchHeroClient initialMatch={m} />
 
         {/* Content grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }} className="detail-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }} className="detail-grid">
 
           {/* Pronostic Form */}
           {isAvenir && (
@@ -182,19 +182,18 @@ export default async function MatchDetailPage({ params }: Props) {
           />
 
           {/* Statistiques équipes */}
-          <div className="card" style={{ padding: 24 }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 20 }}>📊 Forme des équipes</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+          <div className="card" style={{ padding: '16px 16px' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 16 }}>📊 Forme des équipes</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }} className="team-stats-grid">
               {[
                 { eq: equipeA, recent: recentMatchsA },
                 { eq: equipeB, recent: recentMatchsB }
               ].map(({ eq, recent }) => (
                 <div key={eq.id}>
-                  <div style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: 8, color: 'var(--color-text-primary)' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: 8, color: 'var(--color-text-primary)' }}>
                     {eq.nom}
                   </div>
                   
-                  {/* Pastilles V/N/D */}
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   <FormeRecente teamId={eq.id} lastMatchs={(recent || []) as any[]} />
 
@@ -204,7 +203,7 @@ export default async function MatchDetailPage({ params }: Props) {
                     defaites={eq.defaites}
                     total={eq.matchs_joues}
                   />
-                  <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
                     {[
                       { label: 'MJ', value: eq.matchs_joues },
                       { label: 'Pts', value: eq.points_classement },
@@ -214,11 +213,11 @@ export default async function MatchDetailPage({ params }: Props) {
                       <div key={s.label} style={{
                         background: 'var(--color-surface)',
                         borderRadius: 'var(--radius-sm)',
-                        padding: '8px 10px',
+                        padding: '8px 6px',
                         textAlign: 'center',
                       }}>
-                        <div className="stat-number" style={{ fontSize: '1.1rem' }}>{s.value}</div>
-                        <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>{s.label}</div>
+                        <div className="stat-number" style={{ fontSize: '1rem' }}>{s.value}</div>
+                        <div style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>{s.label}</div>
                       </div>
                     ))}
                   </div>
@@ -264,6 +263,9 @@ export default async function MatchDetailPage({ params }: Props) {
         <style>{`
           @media (min-width: 1024px) {
             .detail-grid { grid-template-columns: 2fr 1fr !important; }
+          }
+          @media (min-width: 640px) {
+            .team-stats-grid { grid-template-columns: 1fr 1fr !important; }
           }
         `}</style>
       </div>

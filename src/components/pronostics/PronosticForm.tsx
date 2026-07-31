@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import Link from 'next/link'
 import FormSubmitButton from '@/components/shared/FormSubmitButton'
 import LinkButton from '@/components/shared/LinkButton'
 import type { Database } from '@/types/database.types'
+import { addToOfflineQueue, getPendingCount, syncOfflineQueue } from '@/lib/offlineQueue'
 
 type Equipe = Database['public']['Tables']['equipes']['Row']
 type Joueur = Database['public']['Tables']['joueurs']['Row']
@@ -24,14 +24,37 @@ interface Props {
 
 export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, joueursB, userId, existingPronostic }: Props) {
   const router = useRouter()
-  const supabase = createClient() as any
+  const supabase = createClient() as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const [resultat, setResultat] = useState<'equipe_a' | 'nul' | 'equipe_b' | null>(
-    existingPronostic?.resultat_predit as any || null
+    (existingPronostic?.resultat_predit as 'equipe_a' | 'nul' | 'equipe_b' | null) || null
   )
+  const [scoreA, setScoreA] = useState<number | null>(existingPronostic?.score_a_predit ?? null)
+  const [scoreB, setScoreB] = useState<number | null>(existingPronostic?.score_b_predit ?? null)
+  const [premierButeur, setPremierButeur] = useState<string | null>(existingPronostic?.premier_buteur_id ?? null)
+  const [hommeDuMatch, setHommeDuMatch] = useState<string | null>(existingPronostic?.homme_du_match_predit_id ?? null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+  const [isOnline, setIsOnline] = useState(true)
+  const [pendingCount, setPendingCount] = useState(() => getPendingCount())
+
+  useEffect(() => {
+    const updateStatus = () => setIsOnline(navigator.onLine)
+    updateStatus()
+    window.addEventListener('online', updateStatus)
+    window.addEventListener('offline', updateStatus)
+    return () => {
+      window.removeEventListener('online', updateStatus)
+      window.removeEventListener('offline', updateStatus)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isOnline) {
+      syncOfflineQueue(supabase).then(() => setPendingCount(getPendingCount()))
+    }
+  }, [isOnline, supabase])
 
   void joueursA
   void joueursB
@@ -46,7 +69,7 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <LinkButton href="/auth/login" variant="primary" size="md">🔑 Connexion</LinkButton>
-          <LinkButton href="/auth/register" variant="secondary" size="md">✨ S'inscrire</LinkButton>
+          <LinkButton href="/auth/register" variant="secondary" size="md">✨ S&apos;inscrire</LinkButton>
         </div>
       </div>
     )
@@ -64,6 +87,17 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
                 {existingPronostic.resultat_predit === 'equipe_a' ? `Victoire ${equipeA.nom}` :
                  existingPronostic.resultat_predit === 'equipe_b' ? `Victoire ${equipeB.nom}` : 'Match Nul'}
               </span>
+              {existingPronostic.score_exact && existingPronostic.score_a_predit !== null && existingPronostic.score_b_predit !== null && (
+                <span className="badge badge-blue">
+                  Score: {existingPronostic.score_a_predit} - {existingPronostic.score_b_predit}
+                </span>
+              )}
+              {existingPronostic.premier_buteur_id && (
+                <span className="badge badge-gold">⚽ Premier buteur</span>
+              )}
+              {existingPronostic.homme_du_match_predit_id && (
+                <span className="badge badge-green">⭐ Homme du match</span>
+              )}
             </div>
             {existingPronostic.points_gagnes > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'rgba(251,191,0,0.15)', borderRadius: 'var(--radius-md)' }}>
@@ -80,22 +114,32 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!resultat) { setError('Veuillez choisir un résultat'); return }
-    setLoading(true); setError('')
+    setLoading(true)
+    setError('')
 
-    const data = {
+    const pronosticData = {
       user_id: userId!,
       match_id: matchId,
       resultat_predit: resultat,
-      score_a_predit: null,
-      score_b_predit: null,
-      premier_buteur_id: null,
-      homme_du_match_predit_id: null,
-      score_exact: false,
+      score_a_predit: scoreA,
+      score_b_predit: scoreB,
+      premier_buteur_id: premierButeur,
+      homme_du_match_predit_id: hommeDuMatch,
+      score_exact: scoreA !== null && scoreB !== null,
     }
 
-    const { error: err } = await supabase.from('pronostics').upsert(data, { onConflict: 'user_id,match_id' })
+    if (!isOnline) {
+      addToOfflineQueue(pronosticData)
+      setPendingCount(getPendingCount())
+      setSuccess(true)
+      setLoading(false)
+      setError('')
+      return
+    }
 
-    if (err) { setError('Erreur lors de l\'enregistrement. Réessayez.'); setLoading(false); return }
+    const { error: err } = await supabase.from('pronostics').upsert(pronosticData, { onConflict: 'user_id,match_id' })
+
+    if (err) { setError("Erreur lors de l'enregistrement. Réessayez."); setLoading(false); return }
 
     setSuccess(true)
     setLoading(false)
@@ -116,6 +160,20 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
       <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: 24 }}>
         Choisissez seulement le vainqueur ou le match nul. Victoire trouvée = 3 pts · Nul trouvé = 1 pt.
       </p>
+
+      {!isOnline && (
+        <div style={{ padding: '10px 14px', background: 'rgba(251,191,0,0.1)', border: '1px solid rgba(251,191,0,0.3)', borderRadius: 'var(--radius-md)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: '#7a5900' }}>
+          <span>⚠️</span>
+          <span>Vous êtes hors ligne. Votre pronostic sera synchronisé automatiquement.</span>
+        </div>
+      )}
+
+      {pendingCount > 0 && isOnline && (
+        <div style={{ padding: '10px 14px', background: 'rgba(0,166,81,0.1)', border: '1px solid rgba(0,166,81,0.3)', borderRadius: 'var(--radius-md)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: 'var(--color-primary)' }}>
+          <span>🔄</span>
+          <span>{pendingCount} pronostic{pendingCount > 1 ? 's' : ''} en attente de synchronisation...</span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         {/* Choix du résultat */}
@@ -140,6 +198,94 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
           </div>
         </div>
 
+        {/* Score exact */}
+        <div style={{ marginBottom: 24 }}>
+          <label className="label">Score exact (optionnel)</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <input
+              type="number"
+              min="0"
+              value={scoreA ?? ''}
+              onChange={e => setScoreA(e.target.value ? parseInt(e.target.value) : null)}
+              placeholder={equipeA.nom}
+              style={{
+                width: 80, padding: '10px 12px', borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--color-border)', background: 'var(--color-surface-card)',
+                textAlign: 'center', fontSize: '1rem', fontFamily: 'var(--font-outfit)', fontWeight: 700
+              }}
+            />
+            <span style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>–</span>
+            <input
+              type="number"
+              min="0"
+              value={scoreB ?? ''}
+              onChange={e => setScoreB(e.target.value ? parseInt(e.target.value) : null)}
+              placeholder={equipeB.nom}
+              style={{
+                width: 80, padding: '10px 12px', borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--color-border)', background: 'var(--color-surface-card)',
+                textAlign: 'center', fontSize: '1rem', fontFamily: 'var(--font-outfit)', fontWeight: 700
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Premier buteur */}
+        {joueursA.length > 0 && joueursB.length > 0 && (
+          <div style={{ marginBottom: 24 }}>
+            <label className="label">Premier buteur (optionnel)</label>
+            <select
+              value={premierButeur || ''}
+              onChange={e => setPremierButeur(e.target.value || null)}
+              style={{
+                width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--color-border)', background: 'var(--color-surface-card)',
+                fontSize: '0.9rem', color: 'var(--color-text-primary)'
+              }}
+            >
+              <option value="">Sélectionner un joueur</option>
+              <optgroup label={equipeA.nom}>
+                {joueursA.map(j => (
+                  <option key={j.id} value={j.id}>{j.nom} {j.prenom ? j.prenom : ''}</option>
+                ))}
+              </optgroup>
+              <optgroup label={equipeB.nom}>
+                {joueursB.map(j => (
+                  <option key={j.id} value={j.id}>{j.nom} {j.prenom ? j.prenom : ''}</option>
+                ))}
+              </optgroup>
+            </select>
+          </div>
+        )}
+
+        {/* Homme du match */}
+        {joueursA.length > 0 && joueursB.length > 0 && (
+          <div style={{ marginBottom: 24 }}>
+            <label className="label">Homme du match (optionnel)</label>
+            <select
+              value={hommeDuMatch || ''}
+              onChange={e => setHommeDuMatch(e.target.value || null)}
+              style={{
+                width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--color-border)', background: 'var(--color-surface-card)',
+                fontSize: '0.9rem', color: 'var(--color-text-primary)'
+              }}
+            >
+              <option value="">Sélectionner un joueur</option>
+              <optgroup label={equipeA.nom}>
+                {joueursA.map(j => (
+                  <option key={j.id} value={j.id}>{j.nom} {j.prenom ? j.prenom : ''}</option>
+                ))}
+              </optgroup>
+              <optgroup label={equipeB.nom}>
+                {joueursB.map(j => (
+                  <option key={j.id} value={j.id}>{j.nom} {j.prenom ? j.prenom : ''}</option>
+                ))}
+              </optgroup>
+            </select>
+          </div>
+        )}
+
         {error && (
           <div style={{ padding: '12px 16px', background: 'rgba(232,0,45,0.08)', border: '1px solid rgba(232,0,45,0.2)', borderRadius: 'var(--radius-md)', color: 'var(--color-red)', fontSize: '0.875rem', marginBottom: 16 }}>
             ⚠️ {error}
@@ -148,7 +294,7 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
 
         {success && (
           <div style={{ padding: '12px 16px', background: 'rgba(0,166,81,0.1)', border: '1px solid rgba(0,166,81,0.3)', borderRadius: 'var(--radius-md)', color: 'var(--color-primary)', fontSize: '0.875rem', marginBottom: 16 }}>
-            ✅ Pronostic enregistré avec succès !
+            ✅ {isOnline ? 'Pronostic enregistré avec succès !' : 'Pronostic enregistré hors ligne. Il sera synchronisé dès que vous serez connecté.'}
           </div>
         )}
 

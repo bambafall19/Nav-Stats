@@ -12,10 +12,10 @@ export const metadata: Metadata = {
     siteName: 'NavéStats',
     images: [
       {
-        url: 'https://navestats.site/og-image.jpg',
+        url: 'https://navestats.site/og-home.jpg',
         width: 1200,
         height: 630,
-        alt: 'NavéStats - Pronostics Navétanes Khombole',
+        alt: 'NavéStats - Pronostics Football Khombole',
       },
     ],
     type: 'website',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'NavéStats – Pronostics Navétanes Khombole',
     description: 'Rejoignez la communauté NavéStats et pronostiquez les matchs des Navétanes de Khombole',
-    images: ['https://navestats.site/og-image.jpg'],
+    images: ['https://navestats.site/og-home.jpg'],
   },
 }
 

@@ -55,7 +55,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#006233",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#006233" },
+    { media: "(prefers-color-scheme: dark)", color: "#00A651" },
+  ],
   width: "device-width",
   initialScale: 1,
 };
@@ -70,8 +73,32 @@ export default function RootLayout({
       <head>
         <GoogleTagManager />
         <GoogleAnalytics />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('navestats-theme');
+                  var isDark = false;
+                  if (theme === 'dark') {
+                    isDark = true;
+                  } else if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    isDark = true;
+                  }
+                  if (isDark) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                  } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                  }
+                  // Force inline styles to avoid FOUC
+                  document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
       </head>
-      <body className="font-inter antialiased bg-surface text-text-primary">
+      <body className="font-inter antialiased">
         <GoogleTagManagerNoScript />
         <ToastProvider>
           <ErrorBoundary>

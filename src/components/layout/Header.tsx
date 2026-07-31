@@ -2,26 +2,28 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
-import LinkButton from '@/components/shared/LinkButton'
+import ThemeToggle from '@/components/shared/ThemeToggle'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
 const navLinks = [
-  { href: '/', label: 'Accueil', icon: '🏠' },
-  { href: '/matchs', label: 'Matchs', icon: '⚽' },
-  { href: '/classements', label: 'Classements', icon: '🏆' },
-  { href: '/statistiques', label: 'Statistiques', icon: '📊' },
-  { href: '/communaute', label: 'Communauté', icon: '💬' },
+  { href: '/', label: 'Accueil', icon: '\u{1F3E0}' },
+  { href: '/matchs', label: 'Matchs', icon: '\u26BD' },
+  { href: '/cadets', label: 'Cadets', icon: '\u{1F4C5}' },
+  { href: '/classements', label: 'Classements', icon: '\u{1F3C6}' },
+  { href: '/statistiques', label: 'Stats', icon: '\u{1F4CA}' },
+  { href: '/communaute', label: 'Chat', icon: '\u{1F4AC}' },
 ]
 
 export default function Header() {
   const pathname = usePathname()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
   const supabase = createClient() as any
 
   useEffect(() => {
@@ -29,10 +31,18 @@ export default function Header() {
       const user = res.data?.user
       if (user) {
         supabase.from('profiles').select('*').eq('id', user.id).single()
-          .then((resProfile: any) => setProfile(resProfile.data))
+          .then((r: any) => setProfile(r.data))
       }
     })
   }, [])
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false)
+    }
+    if (menuOpen) document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [menuOpen])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -41,83 +51,44 @@ export default function Header() {
 
   return (
     <header
-      id="main-header"
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
-        background: 'rgba(255, 255, 255, 0.96)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid var(--color-border)',
-        height: 'var(--nav-height)',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)',
+        position: 'relative', top: 0, left: 0, right: 0,
+        height: 56,
+        background: 'var(--header-bg)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderBottom: '1px solid var(--header-border)',
+        boxShadow: 'var(--header-shadow)',
       }}
     >
-      <div className="container-app header-shell" style={{ display: 'flex', alignItems: 'center', height: '100%', gap: 16 }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        height: '100%', paddingLeft: 12, paddingRight: 12,
+        maxWidth: 1200, margin: '0 auto', gap: 8,
+      }}>
         {/* Logo */}
-        <Link href="/" className="brand-link" style={{ textDecoration: 'none', flexShrink: 0 }}>
-          <div className="brand-mark" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div className="brand-logo-animated" style={{
-              width: 38, height: 38, borderRadius: 10,
-              background: 'var(--gradient-green)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: 'var(--shadow-green)',
-              flexShrink: 0,
-              overflow: 'hidden',
-            }}>
-              <img
-                src="/logo.png"
-                alt="NavéStats"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: 10,
-                }}
-              />
-            </div>
-            <div>
-              <div style={{
-                fontFamily: 'var(--font-outfit)',
-                fontWeight: 800,
-                fontSize: '1.1rem',
-                color: 'var(--color-text-primary)',
-                letterSpacing: '-0.02em',
-                lineHeight: 1,
-              }}>NavéStats</div>
-              <div style={{ fontSize: '0.65rem', color: 'var(--color-primary)', letterSpacing: '0.08em', fontWeight: 700 }}>KHOMBOLE 2026</div>
-            </div>
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: 9,
+            background: 'var(--gradient-green)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            overflow: 'hidden', flexShrink: 0,
+            boxShadow: '0 4px 12px rgba(0,98,51,0.25)',
+          }}>
+            <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 9 }} />
           </div>
+          <span className="logo-text" style={{
+            fontFamily: 'var(--font-outfit)', fontWeight: 800,
+            fontSize: '1.15rem', color: 'var(--color-primary)',
+            letterSpacing: '-0.03em',
+          }}>NavéStats</span>
         </Link>
 
-        {/* Partnership Logo */}
-        <div className="zone-partner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ width: 1, height: 22, background: 'var(--color-border)', flexShrink: 0 }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <img
-              src="/oncav-logo.png"
-              alt="ONCAV Zone 6"
-              className="zone-logo"
-              style={{ width: 28, height: 28, objectFit: 'contain', flexShrink: 0 }}
-            />
-            <span className="oncav-label" style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.1 }}>
-              Zone 6<br />Khombole
-            </span>
-          </div>
-        </div>
-
-        {/* Desktop nav */}
-        <nav style={{
-          display: 'none',
-          gap: 2,
-          background: 'rgba(0,0,0,0.04)',
-          padding: 4,
-          borderRadius: 'var(--radius-full)',
-          margin: '0 auto',
-        }} className="desktop-nav">
+        {/* Navigation horizontale */}
+        <nav className="top-nav" style={{
+          display: 'flex', alignItems: 'center', gap: 2,
+          flex: 1, justifyContent: 'center',
+        }}>
           {navLinks.map(link => {
             const isActive = pathname === link.href
             return (
@@ -125,145 +96,138 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '8px 18px',
-                  borderRadius: 'var(--radius-full)',
-                  fontSize: '0.85rem',
-                  fontWeight: isActive ? 700 : 500,
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '6px 10px', borderRadius: 8,
+                  fontSize: '0.78rem', fontWeight: isActive ? 600 : 500,
                   color: isActive ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                  background: isActive ? 'white' : 'transparent',
-                  boxShadow: isActive ? 'var(--shadow-sm)' : 'none',
+                  background: isActive ? 'rgba(0,98,51,0.07)' : 'transparent',
                   textDecoration: 'none',
-                  transition: 'all 0.2s ease',
-                  fontFamily: 'var(--font-outfit)',
+                  transition: 'all 0.15s',
+                  whiteSpace: 'nowrap',
+                  fontFamily: 'var(--font-outfit), sans-serif',
                 }}
+                onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'var(--color-surface-elevated)' }}
+                onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
               >
-                <span>{link.icon}</span>
-                <span>{link.label}</span>
+                <span className="nav-icon" style={{ fontSize: '0.9rem' }}>{link.icon}</span>
+                <span className="nav-label">{link.label}</span>
               </Link>
             )
           })}
         </nav>
 
-        {/* Right actions */}
-        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, marginLeft: 'auto' }}>
-          {profile ? (
-            <>
-              <NotificationBell userId={profile.id} />
-              <div style={{ position: 'relative' }} className="desktop-user-menu">
-                <button
-                  onClick={() => setMenuOpen(!menuOpen)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '6px 12px 6px 6px',
-                    borderRadius: 'var(--radius-full)',
-                    border: '1px solid var(--color-border)',
-                    background: 'transparent',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                  aria-label="Menu utilisateur"
-                  id="user-menu-btn"
-                >
-                  <div className="avatar" style={{ width: 32, height: 32, fontSize: '0.8rem' }}>
-                    {profile.avatar_url
-                      ? <img src={profile.avatar_url} alt={profile.username} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                      : profile.username.charAt(0).toUpperCase()
-                    }
-                  </div>
-                  <span className="hidden-mobile" style={{ fontSize: '0.875rem', fontWeight: 600, maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {profile.username}
-                  </span>
-                  <div style={{
-                    width: 20, height: 20,
-                    background: 'var(--gradient-gold)',
-                    borderRadius: 'var(--radius-full)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '0.65rem', fontWeight: 700, color: '#5a3800',
-                  }}>
-                    {profile.points}
-                  </div>
-                </button>
+        {/* Actions droite */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+          <ThemeToggle />
+          {profile && <NotificationBell userId={profile.id} />}
+          
+          {/* Admin link if admin */}
+          {profile?.is_admin && (
+            <Link 
+              href="/admin" 
+              style={{
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-full)',
+                background: 'var(--gradient-gold)',
+                color: '#5a3800',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                boxShadow: 'var(--shadow-gold)',
+              }}
+            >
+              ⚙️ Admin
+            </Link>
+          )}
 
-                {menuOpen && (
-                  <div id="user-dropdown" style={{
-                    position: 'absolute',
-                    top: 'calc(100% + 8px)',
-                    right: 0,
-                    minWidth: 200,
-                    background: 'var(--color-surface-card)',
-                    borderRadius: 'var(--radius-lg)',
-                    border: '1px solid var(--color-border)',
-                    boxShadow: 'var(--shadow-lg)',
-                    padding: 8,
-                    zIndex: 200,
-                    animation: 'fadeInUp 0.15s ease',
-                  }}>
-                    <Link href={`/profil/${profile.id}`}
-                      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-text-primary)', transition: 'background 0.15s' }}
-                      onClick={() => setMenuOpen(false)}
-                      onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.05)')}
-                      onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <span>👤</span> <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Mon Profil</span>
-                    </Link>
-                    <Link href="/pronostics"
-                      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-text-primary)', transition: 'background 0.15s' }}
-                      onClick={() => setMenuOpen(false)}
-                      onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.05)')}
-                      onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <span>📊</span> <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Mes Pronostics</span>
-                    </Link>
-                    {profile.is_admin && (
-                      <Link href="/admin"
-                        style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'var(--color-primary)', transition: 'background 0.15s' }}
-                        onClick={() => setMenuOpen(false)}
-                        onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.05)')}
-                        onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
-                      >
-                        <span>🛡️</span> <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Admin</span>
-                      </Link>
-                    )}
-                    <div style={{ height: 1, background: 'var(--color-border)', margin: '6px 0' }} />
-                    <button onClick={handleSignOut}
-                      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 'var(--radius-md)', color: 'var(--color-red)', background: 'transparent', border: 'none', cursor: 'pointer', width: '100%', fontSize: '0.875rem', fontWeight: 500, transition: 'background 0.15s' }}
-                      onMouseOver={e => (e.currentTarget.style.background = 'rgba(232,0,45,0.05)')}
-                      onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <span>🚪</span> <span>Déconnexion</span>
-                    </button>
+          {profile ? (
+            <div ref={menuRef} style={{ position: 'relative' }}>
+              <button onClick={() => setMenuOpen(!menuOpen)}
+                style={{
+                  width: 32, height: 32, borderRadius: '50%', border: '2px solid var(--color-border)',
+                  background: 'var(--gradient-gold)', cursor: 'pointer', overflow: 'hidden',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '0.65rem', fontWeight: 700, color: '#5a3800', padding: 0,
+                }}
+                aria-label="Menu"
+              >
+                {profile.avatar_url
+                  ? <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : profile.username.charAt(0).toUpperCase()
+                }
+              </button>
+              {menuOpen && (
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                  minWidth: 170, padding: 6, zIndex: 200,
+                  background: 'var(--color-surface-card)',
+                  borderRadius: 14, border: '1px solid var(--color-border)',
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
+                  animation: 'fadeSlide 0.15s ease',
+                }}>
+                  <div style={{ padding: '6px 10px 4px', borderBottom: '1px solid var(--color-border)', marginBottom: 2 }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 600 }}>{profile.username}</div>
+                    <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{profile.points} pts</div>
                   </div>
-                )}
-              </div>
-            </>
+                  <Link href={`/profil/${profile.id}`} onClick={() => setMenuOpen(false)}
+                    style={{ display: 'block', padding: '7px 10px', borderRadius: 8, textDecoration: 'none', color: 'var(--color-text-primary)', fontSize: '0.8rem', fontWeight: 500 }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-elevated)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >{'\u{1F464}'} Mon Profil</Link>
+                  <Link href="/pronostics" onClick={() => setMenuOpen(false)}
+                    style={{ display: 'block', padding: '7px 10px', borderRadius: 8, textDecoration: 'none', color: 'var(--color-text-primary)', fontSize: '0.8rem', fontWeight: 500 }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-elevated)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >{'\u{1F4CA}'} Mes Pronostics</Link>
+                  {profile.is_admin && (
+                    <Link href="/admin" onClick={() => setMenuOpen(false)}
+                      style={{ display: 'block', padding: '7px 10px', borderRadius: 8, textDecoration: 'none', color: 'var(--color-primary)', fontSize: '0.8rem', fontWeight: 600 }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-elevated)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >{'\u{1F6E1}\uFE0F'} Admin</Link>
+                  )}
+                  <div style={{ height: 1, background: 'var(--color-border)', margin: '4px 0' }} />
+                  <button onClick={handleSignOut}
+                    style={{ display: 'block', width: '100%', padding: '7px 10px', borderRadius: 8, color: 'var(--color-red)', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 500, textAlign: 'left' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,0,45,0.06)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >{'\u{1F6AA}'} Déconnexion</button>
+                </div>
+              )}
+            </div>
           ) : (
-            <>
-              <LinkButton href="/auth/login" variant="secondary" size="sm">
-                🔑 Connexion
-              </LinkButton>
-              <LinkButton href="/auth/register" variant="primary" size="sm" className="register-link">
-                ✨ S'inscrire
-              </LinkButton>
-            </>
+            <Link href="/auth/login" style={{
+              display: 'inline-flex', alignItems: 'center',
+              padding: '5px 12px', fontSize: '0.75rem', fontWeight: 600,
+              fontFamily: 'var(--font-outfit), sans-serif',
+              borderRadius: 20, textDecoration: 'none',
+              border: '1px solid var(--color-border)',
+              color: 'var(--color-text-primary)',
+              height: 30, transition: 'all 0.2s',
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-elevated)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >{'\u{1F511}'} Se connecter</Link>
           )}
         </div>
       </div>
 
       <style>{`
-        @media (max-width: 767px) {
-          .desktop-nav { display: none !important; }
-          .hidden-mobile { display: none !important; }
-          .desktop-user-menu { display: none !important; }
+        @media (max-width: 640px) {
+          header { display: none !important; }
+          .nav-label { display: none !important; }
+          .nav-icon { font-size: 1.1rem !important; }
+          .top-nav { gap: 0 !important; }
+          .top-nav a { padding: 6px 8px !important; }
+          .logo-text { font-size: 0.85rem !important; }
         }
-        @media (min-width: 768px) {
-          .desktop-nav { display: flex !important; align-items: center; }
+        @keyframes fadeSlide {
+          from { opacity: 0; transform: translateY(-4px) scale(0.96); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
     </header>
   )

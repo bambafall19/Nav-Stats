@@ -114,12 +114,25 @@ export function ClassementsClient({
     if (data.length === 0) {
       return (
         <div style={{
-          padding: 24,
+          padding: 'clamp(32px, 5vw, 48px) 20px',
           textAlign: 'center',
-          color: 'var(--color-text-muted)',
-          fontSize: '0.9rem',
+          background: 'var(--color-surface-card)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--color-border)',
         }}>
-          Aucun résultat
+          <div style={{ fontSize: '3rem', marginBottom: 12 }}>📊</div>
+          <h3 style={{
+            fontFamily: 'var(--font-outfit)',
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            color: 'var(--color-text-primary)',
+            marginBottom: 6,
+          }}>
+            Aucun résultat
+          </h3>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem', maxWidth: 320, margin: '0 auto' }}>
+            Aucune donnée disponible pour le moment. Revenez plus tard !
+          </p>
         </div>
       )
     }
@@ -223,7 +236,59 @@ export function ClassementsClient({
   }
 
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div style={{ display: 'grid', gap: 20 }}>
+      {/* Hero Section */}
+      <div style={{
+        background: 'linear-gradient(135deg, #004d27 0%, #006233 50%, #00A651 100%)',
+        borderRadius: 'var(--radius-xl)',
+        padding: 'clamp(24px, 4vw, 32px)',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: 'var(--shadow-green)',
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: -40,
+          right: -30,
+          width: 140,
+          height: 140,
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.06)',
+        }} />
+        <div style={{
+          position: 'absolute',
+          bottom: -30,
+          left: -20,
+          width: 100,
+          height: 100,
+          borderRadius: '50%',
+          background: 'rgba(255,215,0,0.08)',
+        }} />
+
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <h1 style={{
+            color: 'white',
+            fontFamily: 'var(--font-outfit)',
+            fontSize: 'clamp(1.6rem, 4vw, 2.2rem)',
+            fontWeight: 900,
+            marginBottom: 8,
+            letterSpacing: '-0.02em',
+            textAlign: 'center',
+          }}>
+            🏆 Classements
+          </h1>
+          <p style={{
+            color: 'rgba(255,255,255,0.85)',
+            fontSize: 'clamp(0.85rem, 2vw, 0.95rem)',
+            textAlign: 'center',
+            maxWidth: 500,
+            margin: '0 auto',
+          }}>
+            Classement des pronostiqueurs, équipes et ASC
+          </p>
+        </div>
+      </div>
+
       {/* Recherche rapide */}
       <QuickSearch onSearch={handleSearch} onSelect={handleSelectSearch} />
 
@@ -251,33 +316,39 @@ export function ClassementsClient({
           <div style={{
             background: 'var(--color-surface-card)',
             border: '1px solid var(--color-border)',
-            borderRadius: 8,
+            borderRadius: 'var(--radius-lg)',
             overflow: 'hidden',
+            boxShadow: 'var(--shadow-sm)',
           }}>
             {classementQuartier.map((q, i) => (
               <div key={q?.quartier || i} style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
-                padding: '12px 16px',
+                padding: '14px 16px',
                 borderBottom: i < classementQuartier.length - 1 ? '1px solid var(--color-border)' : 'none',
-              }}>
-                <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-text-muted)', flexShrink: 0, width: 24, textAlign: 'center' }}>
-                  {i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-surface)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                <span style={{ fontSize: '1.2rem', flexShrink: 0, width: 32, textAlign: 'center' }}>
+                  {i < 3 ? ['🥇', '🥈', '🥉'][i] : <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>{i + 1}</span>}
                 </span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{q?.quartier}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{q?.quartier}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
                     {q?.membres} membres
                   </div>
                 </div>
                 <div style={{
-                  background: 'rgba(0,98,51,0.08)',
-                  borderRadius: 6,
-                  padding: '4px 8px',
+                  background: 'linear-gradient(135deg, rgba(0,98,51,0.12), rgba(0,166,81,0.08))',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '6px 12px',
                   fontWeight: 900,
-                  fontSize: '0.85rem',
+                  fontSize: '0.9rem',
                   color: 'var(--color-primary)',
+                  fontFamily: 'var(--font-outfit)',
                 }}>
                   {q?.points}
                 </div>
@@ -289,33 +360,39 @@ export function ClassementsClient({
           <div style={{
             background: 'var(--color-surface-card)',
             border: '1px solid var(--color-border)',
-            borderRadius: 8,
+            borderRadius: 'var(--radius-lg)',
             overflow: 'hidden',
+            boxShadow: 'var(--shadow-sm)',
           }}>
             {classementASC.map((a, i) => (
               <div key={a?.asc || i} style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
-                padding: '12px 16px',
+                padding: '14px 16px',
                 borderBottom: i < classementASC.length - 1 ? '1px solid var(--color-border)' : 'none',
-              }}>
-                <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-text-muted)', flexShrink: 0, width: 24, textAlign: 'center' }}>
-                  {i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-surface)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                <span style={{ fontSize: '1.2rem', flexShrink: 0, width: 32, textAlign: 'center' }}>
+                  {i < 3 ? ['🥇', '🥈', '🥉'][i] : <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>{i + 1}</span>}
                 </span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>ASC {a?.asc}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>ASC {a?.asc}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
                     {a?.membres} membres
                   </div>
                 </div>
                 <div style={{
-                  background: 'rgba(0,98,51,0.08)',
-                  borderRadius: 6,
-                  padding: '4px 8px',
+                  background: 'linear-gradient(135deg, rgba(0,98,51,0.12), rgba(0,166,81,0.08))',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '6px 12px',
                   fontWeight: 900,
-                  fontSize: '0.85rem',
+                  fontSize: '0.9rem',
                   color: 'var(--color-primary)',
+                  fontFamily: 'var(--font-outfit)',
                 }}>
                   {a?.points}
                 </div>

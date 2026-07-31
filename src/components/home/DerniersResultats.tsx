@@ -8,8 +8,8 @@ type Match = Database['public']['Tables']['matchs']['Row'] & {
 export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
   return (
     <div>
-      <h2 className="section-title" style={{ marginBottom: 4 }}>📋 Derniers Résultats</h2>
-      <p className="section-subtitle" style={{ marginBottom: 20 }}>Résultats récents</p>
+      <h2 className="section-title" style={{ marginBottom: 4, textAlign: 'center' }}>📋 Derniers Résultats</h2>
+      <p className="section-subtitle" style={{ marginBottom: 20, textAlign: 'center' }}>Résultats récents</p>
 
       <div className="card" style={{ overflow: 'hidden' }}>
         {matchs.map((match, i) => {

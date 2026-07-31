@@ -75,7 +75,7 @@ export default function AdminDashboard() {
         <AdminCard title="Gestion Utilisateurs" icon="👥" href="/admin/utilisateurs" />
         <AdminCard title="Gestion Équipes" icon="🏆" href="/admin/equipes" />
         <AdminCard title="Modération" icon="🛡️" href="/admin/moderation" />
-        <AdminCard title="Logs & Audit" icon="📋" href="/admin/logs" />
+        <AdminCard title="Logs & Audit" icon="📋" href="/admin/audit-logs" />
         <AdminCard title="Paramètres" icon="⚙️" href="/admin/parametres" />
       </div>
     </div>

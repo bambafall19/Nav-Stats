@@ -60,10 +60,11 @@ export function SkeletonRow() {
 
 export function SkeletonList({ count = 5 }: { count?: number }) {
   return (
-    <div style={{ background: 'var(--color-surface-card)', border: '1px solid var(--color-border)', borderRadius: 'clamp(12px, 3vw, 16px)', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {Array.from({ length: count }).map((_, i) => (
-        <SkeletonRow key={i} />
+        <div key={i} className="skeleton" style={{ height: 72, borderRadius: 12 }} />
       ))}
     </div>
   )
 }
+

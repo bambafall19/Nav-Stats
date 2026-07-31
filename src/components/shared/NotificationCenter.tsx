@@ -1,22 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/shared/Toast'
+import Link from 'next/link'
 
 export function NotificationCenter() {
-  const [notifications, setNotifications] = useState<any[]>([])
+  const [notifications, setNotifications] = useState<any[]>([]) // eslint-disable-line @typescript-eslint/no-explicit-any
   const [loading, setLoading] = useState(true)
-  const supabase = createClient() as any
+  const supabase = createClient() as any // eslint-disable-line @typescript-eslint/no-explicit-any
   const { addToast } = useToast()
 
-  useEffect(() => {
-    fetchNotifications()
-    const interval = setInterval(fetchNotifications, 5000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
@@ -25,8 +20,8 @@ export function NotificationCenter() {
         .from('notifications')
         .select('*')
         .eq('user_id', user.id)
-        .eq('dismissed', false)
         .order('created_at', { ascending: false })
+        .limit(50)
 
       setNotifications(data || [])
     } catch (error) {
@@ -34,6 +29,17 @@ export function NotificationCenter() {
     } finally {
       setLoading(false)
     }
+  }, [supabase])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchNotifications()
+    const interval = setInterval(fetchNotifications, 5000)
+    return () => clearInterval(interval)
+  }, [fetchNotifications])
+
+  const markAsRead = async (id: string) => {
+    await supabase.from('notifications').update({ est_lue: true }).eq('id', id)
   }
 
   const handleDismiss = async (notificationId: string) => {
@@ -45,7 +51,7 @@ export function NotificationCenter() {
 
       setNotifications(notifications.filter(n => n.id !== notificationId))
       addToast('Notification supprimée', 'success')
-    } catch (error) {
+    } catch {
       addToast('Erreur lors de la suppression', 'error')
     }
   }
@@ -63,37 +69,52 @@ export function NotificationCenter() {
 
       setNotifications([])
       addToast('Toutes les notifications supprimées', 'success')
-    } catch (error) {
+    } catch {
       addToast('Erreur', 'error')
-    }
-  }
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'success':
-        return '#10b981'
-      case 'warning':
-        return '#f59e0b'
-      case 'error':
-        return '#ef4444'
-      default:
-        return 'var(--color-primary)'
     }
   }
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'success':
-        return '✓'
-      case 'warning':
-        return '⚠️'
-      case 'error':
-        return '✕'
-      case 'match':
-        return '⚽'
-      default:
-        return 'ℹ️'
+      case 'match': return '⚽'
+      case 'resultat': return '🏆'
+      case 'classement': return '📊'
+      case 'badge': return '🎖️'
+      case 'annonce': return '📢'
+      default: return 'ℹ️'
     }
+  }
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'match': return 'var(--color-primary)'
+      case 'resultat': return '#FFD700'
+      case 'classement': return '#3b82f6'
+      case 'badge': return '#a855f7'
+      case 'annonce': return '#f59e0b'
+      default: return 'var(--color-text-muted)'
+    }
+  }
+
+  const groupNotifications = (notifs: any[]) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    const groups: { [key: string]: any[] } = {} // eslint-disable-line @typescript-eslint/no-explicit-any
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
+    const week = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+
+    notifs.forEach(notif => {
+      const date = new Date(notif.created_at)
+      const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+      let group = 'older'
+      if (dateOnly >= today) group = 'today'
+      else if (dateOnly >= yesterday) group = 'yesterday'
+      else if (date >= week) group = 'week'
+      if (!groups[group]) groups[group] = []
+      groups[group].push(notif)
+    })
+
+    return groups
   }
 
   if (loading) {
@@ -127,55 +148,78 @@ export function NotificationCenter() {
 
       {notifications.length > 0 ? (
         <div style={{ display: 'grid', gap: 'clamp(12px, 2vw, 16px)' }}>
-          {notifications.map(notif => (
-            <div
-              key={notif.id}
-              style={{
-                background: 'var(--color-surface-card)',
-                border: `2px solid ${getTypeColor(notif.type)}`,
-                borderRadius: 'clamp(12px, 3vw, 16px)',
-                padding: 'clamp(12px, 2vw, 16px)',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 12,
-                animation: 'slideInLeft 0.3s ease',
-              }}
-            >
-              <div style={{
-                fontSize: '1.5rem',
-                flexShrink: 0,
-                color: getTypeColor(notif.type),
-              }}>
-                {getTypeIcon(notif.type)}
+          {Object.entries(groupNotifications(notifications)).map(([group, groupNotifs]) => (
+            <div key={group}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+                {group === 'today' ? "Aujourd&apos;hui" : group === 'yesterday' ? 'Hier' : group === 'week' ? 'Cette semaine' : 'Plus ancien'}
               </div>
+              {groupNotifs.map(notif => (
+                <div
+                  key={notif.id}
+                  style={{
+                    background: 'var(--color-surface-card)',
+                    border: `1px solid ${getTypeColor(notif.type)}40`,
+                    borderLeft: `4px solid ${getTypeColor(notif.type)}`,
+                    borderRadius: 'clamp(12px, 3vw, 16px)',
+                    padding: 'clamp(12px, 2vw, 16px)',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 12,
+                    animation: 'slideInLeft 0.3s ease',
+                    marginBottom: 8,
+                  }}
+                >
+                  <div style={{
+                    fontSize: '1.5rem',
+                    flexShrink: 0,
+                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+                  }}>
+                    {getTypeIcon(notif.type)}
+                  </div>
 
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: 4 }}>
-                  {notif.title}
-                </div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: 8 }}>
-                  {notif.message}
-                </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                  {new Date(notif.created_at).toLocaleString('fr-FR')}
-                </div>
-              </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: 4, color: 'var(--color-text-primary)' }}>
+                      {notif.title}
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: 8, lineHeight: 1.5 }}>
+                      {notif.message}
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                        {new Date(notif.created_at).toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                      {notif.lien && (
+                        <Link href={notif.lien} onClick={() => markAsRead(notif.id)} style={{
+                          fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)',
+                          textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4
+                        }}>
+                          Voir →
+                        </Link>
+                      )}
+                    </div>
+                  </div>
 
-              <button
-                onClick={() => handleDismiss(notif.id)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '1.2rem',
-                  color: 'var(--color-text-muted)',
-                  padding: 0,
-                  flexShrink: 0,
-                }}
-                title="Supprimer"
-              >
-                ✕
-              </button>
+                  <button
+                    onClick={() => handleDismiss(notif.id)}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '1.1rem',
+                      color: 'var(--color-text-muted)',
+                      padding: '4px',
+                      flexShrink: 0,
+                      borderRadius: '50%',
+                      transition: 'all 0.15s',
+                    }}
+                    title="Supprimer"
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = 'var(--color-red)' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--color-text-muted)' }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
             </div>
           ))}
         </div>

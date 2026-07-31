@@ -76,15 +76,6 @@ export default async function MatchsPage() {
       />
 
       <div className="container-app">
-        <div style={{ marginBottom: 32 }}>
-          <h1 className="section-title" style={{ fontSize: '2.2rem', marginBottom: 4, fontFamily: 'var(--font-outfit)' }}>
-            ⚽ Calendrier des Matchs
-          </h1>
-          <p className="section-subtitle">
-            Calendrier officiel des phases de poules des Navétanes Zone 6 de Khombole
-          </p>
-        </div>
-
         <MatchsClientWrapper initialMatchs={matchs} />
       </div>
     </div>

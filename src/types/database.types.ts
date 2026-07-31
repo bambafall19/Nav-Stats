@@ -90,6 +90,26 @@ export type Database = {
         Insert: Omit<Database['public']['Tables']['matchs']['Row'], 'id' | 'created_at' | 'updated_at' | 'equipe_a' | 'equipe_b'>
         Update: Partial<Database['public']['Tables']['matchs']['Insert']>
       }
+      cadet_matchs: {
+        Row: {
+          id: string
+          journee: number
+          date_match: string
+          poule: string
+          equipe_a_id: string | null
+          equipe_b_id: string | null
+          equipe_a: string
+          equipe_b: string
+          terrain: string
+          ordre: string | null
+          created_at: string
+          updated_at: string
+          equipe_a_info?: Database['public']['Tables']['equipes']['Row'] | null
+          equipe_b_info?: Database['public']['Tables']['equipes']['Row'] | null
+        }
+        Insert: Omit<Database['public']['Tables']['cadet_matchs']['Row'], 'id' | 'created_at' | 'updated_at' | 'equipe_a_info' | 'equipe_b_info'>
+        Update: Partial<Database['public']['Tables']['cadet_matchs']['Insert']>
+      }
       pronostics: {
         Row: {
           id: string
@@ -174,6 +194,22 @@ export type Database = {
         }
         Insert: Omit<Database['public']['Tables']['notifications']['Row'], 'id' | 'created_at'>
         Update: Partial<Database['public']['Tables']['notifications']['Insert']>
+      }
+      audit_logs: {
+        Row: {
+          id: string
+          user_id: string | null
+          action: string
+          resource_type: string
+          resource_id: string | null
+          old_values: any
+          new_values: any
+          ip_address: string | null
+          user_agent: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['audit_logs']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['audit_logs']['Insert']>
       }
     }
   }

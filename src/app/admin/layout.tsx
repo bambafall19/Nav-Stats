@@ -16,6 +16,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: '/admin/equipes', icon: '🛡️', label: 'Équipes' },
     { href: '/admin/joueurs', icon: '👤', label: 'Joueurs' },
     { href: '/admin/matchs', icon: '⚽', label: 'Matchs' },
+    { href: '/admin/cadets', icon: '📅', label: 'Cadets' },
     { href: '/admin/classements', icon: '🏆', label: 'Classements' },
     { href: '/admin/resultats', icon: '✅', label: 'Résultats' },
     { href: '/admin/utilisateurs', icon: '👥', label: 'Utilisateurs' },

@@ -35,9 +35,9 @@ export default function StatsDashboard({
   }
 }: DashboardProps) {
   return (
-    <section style={{ marginBottom: 32 }}>
-      {/* Stats Overview Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, marginBottom: 24 }}>
+    <section style={{ marginBottom: 24 }}>
+      {/* Stats Overview Cards - Compact */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, marginBottom: 16 }}>
         {[
           { icon: '🎯', label: 'Pronostics', value: statsGlobales.totalPronostics, color: '#39FF14', bg: 'rgba(57,255,20,0.08)' },
           { icon: '👥', label: 'Pronostiqueurs', value: statsGlobales.totalUtilisateurs, color: '#00ff88', bg: 'rgba(0,255,136,0.08)' },
@@ -52,137 +52,49 @@ export default function StatsDashboard({
             style={{
               background: 'var(--color-surface-card)',
               border: '1px solid var(--color-border)',
-              borderRadius: 16,
-              padding: 16,
+              borderRadius: 'var(--radius-md)',
+              padding: 'clamp(10px, 2vw, 14px)',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: 12,
+              textAlign: 'center',
+              gap: 6,
               boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div style={{
-              width: 48,
-              height: 48,
-              borderRadius: 14,
+              width: 36,
+              height: 36,
+              borderRadius: 'var(--radius-md)',
               background: stat.bg,
               color: stat.color,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.5rem',
+              fontSize: '1.1rem',
               flexShrink: 0,
             }}>
               {stat.icon}
             </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{
-                fontFamily: 'var(--font-outfit)',
-                fontSize: '1.4rem',
-                fontWeight: 900,
-                color: stat.color,
-                lineHeight: 1,
-              }}>
-                {stat.value.toLocaleString()}
-              </div>
-              <div style={{
-                fontSize: '0.72rem',
-                color: 'var(--color-text-muted)',
-                fontWeight: 600,
-                marginTop: 2,
-              }}>
-                {stat.label}
-              </div>
+            <div style={{
+              fontFamily: 'var(--font-outfit)',
+              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+              fontWeight: 900,
+              color: stat.color,
+              lineHeight: 1,
+            }}>
+              {stat.value.toLocaleString()}
+            </div>
+            <div style={{
+              fontSize: '0.65rem',
+              color: 'var(--color-text-muted)',
+              fontWeight: 600,
+            }}>
+              {stat.label}
             </div>
           </motion.div>
         ))}
       </div>
-
-      {/* Top Pronostiqueurs */}
-      {topPronostiqueurs.length > 0 && (
-        <motion.div
-          className="card dashboard-top-pronostiqueurs"
-          style={{ padding: 20, marginBottom: 16 }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-            <TrendingUp size={20} color="var(--color-primary)" />
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
-              Top Pronostiqueurs
-            </h3>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {topPronostiqueurs.slice(0, 5).map((user, idx) => (
-              <div
-                key={user.username}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  padding: '10px 14px',
-                  background: 'var(--color-surface)',
-                  borderRadius: 12,
-                  border: '1px solid var(--color-border)',
-                }}
-              >
-                <div style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: idx < 3 ? 'var(--gradient-green)' : 'var(--color-surface-elevated)',
-                  color: idx < 3 ? '#0a0f0d' : 'var(--color-text-secondary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 900,
-                  fontSize: '0.85rem',
-                  flexShrink: 0,
-                }}>
-                  {idx + 1}
-                </div>
-                {user.avatar_url ? (
-                  <img
-                    src={user.avatar_url}
-                    alt=""
-                    style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <div style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: '50%',
-                    background: 'var(--gradient-green)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 700,
-                    color: '#0a0f0d',
-                  }}>
-                    {user.username.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {user.username}
-                  </div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
-                    {user.accuracy}% réussite
-                  </div>
-                </div>
-                <div style={{
-                  fontFamily: 'var(--font-outfit)',
-                  fontWeight: 900,
-                  fontSize: '0.9rem',
-                  color: 'var(--color-primary)',
-                }}>
-                  {user.points}
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      )}
 
       {/* Top Équipes */}
       {topEquipes.length > 0 && (
@@ -232,25 +144,27 @@ export default function StatsDashboard({
                   <img
                     src={equipe.logo_url}
                     alt=""
-                    style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover' }}
+                    style={{ width: 28, height: 28, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }}
                   />
                 ) : (
                   <div style={{
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     borderRadius: 8,
                     background: 'var(--gradient-green)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 800,
+                    fontSize: '0.75rem',
                     color: '#0a0f0d',
+                    flexShrink: 0,
                   }}>
                     {equipe.nom.charAt(0)}
                   </div>
                 )}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>
                     {equipe.nom}
                   </div>
                   <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
@@ -273,7 +187,7 @@ export default function StatsDashboard({
       <style>{`
         @media (max-width: 767px) {
           .dashboard-top-pronostiqueurs {
-            display: none !important;
+            display: block !important;
           }
         }
       `}</style>

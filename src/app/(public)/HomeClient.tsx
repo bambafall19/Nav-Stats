@@ -5,7 +5,6 @@ import HeroSection from '@/components/home/HeroSection'
 import MatchsDuJour from '@/components/home/MatchsDuJour'
 import DerniersResultats from '@/components/home/DerniersResultats'
 import Actualites from '@/components/home/Actualites'
-import TopPronostiqueurs from '@/components/home/TopPronostiqueurs'
 import StatsDashboard from '@/components/home/StatsDashboard'
 import ScrollReveal from '@/components/shared/ScrollReveal'
 
@@ -29,11 +28,12 @@ export default function HomeClient({
   statsGlobales,
 }: HomeClientProps) {
   return (
-    <>
-      {/* Hero Section with slideshow */}
-      <HeroSection matchCount={matchCount} userCount={userCount} isAuthenticated={isAuthenticated} />
+    <div className="page-content">
+      <div className="container-app">
+        {/* Hero Section with slideshow */}
+        <HeroSection matchCount={matchCount} userCount={userCount} isAuthenticated={isAuthenticated} />
 
-      <div className="container-app home-flow" style={{ paddingTop: 48, paddingBottom: 64 }}>
+        <div className="home-flow" style={{ paddingTop: 48, paddingBottom: 64 }}>
         
         {/* Stats Dashboard - Full width card */}
         <ScrollReveal direction="up" delay={100}>
@@ -184,6 +184,7 @@ export default function HomeClient({
             }}>
               {[
                 { href: '/matchs', icon: '⚽', title: 'Matchs', desc: 'Pronostiquer les matchs à venir', color: '#006233' },
+                { href: '/cadets', icon: '📅', title: 'Cadets', desc: 'Calendrier CNP 2026', color: '#7C3AED' },
                 { href: '/classements', icon: '🏆', title: 'Classements', desc: 'Voir le classement général', color: '#D97706' },
                 { href: '/statistiques', icon: '📊', title: 'Statistiques', desc: 'Poules et stats des équipes', color: '#1E40AF' },
                 { href: '/communaute', icon: '💬', title: 'Communauté', desc: 'Discuter avec les fans', color: '#B91C1C' },
@@ -282,13 +283,6 @@ export default function HomeClient({
               </section>
             )}
 
-            {/* Top pronostiqueurs */}
-            <section id="classement-section">
-              <ScrollReveal direction="up" delay={160}>
-                <TopPronostiqueurs users={topPronostiqueurs || []} />
-              </ScrollReveal>
-            </section>
-
             {/* Actualités */}
             <section id="actualites-section">
               <ScrollReveal direction="up" delay={240}>
@@ -298,8 +292,9 @@ export default function HomeClient({
           </div>
         </div>
       </div>
+    </div>
 
-      <style>{`
+    <style>{`
         @media (min-width: 1024px) {
           .home-sidebar {
             grid-template-columns: 1fr 1fr !important;
@@ -393,6 +388,6 @@ export default function HomeClient({
           }
         }
       `}</style>
-    </>
+    </div>
   )
 }

@@ -53,7 +53,7 @@ export default function TopPronostiqueurs({ users }: { users: Profile[] }) {
                           : user.username.charAt(0).toUpperCase()
                         }
                       </div>
-                      <div style={{ fontWeight: 700, fontSize: '0.8rem', color: 'var(--color-text-primary)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.8rem', color: 'var(--color-text-primary)', marginBottom: 4 }}>
                         {user.username}
                       </div>
                       <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1.1rem', color: 'var(--color-primary)' }}>

@@ -108,7 +108,7 @@ export default function PerformanceClient() {
 
   return (
     <div className="page-content">
-      <div className="container-app" style={{ maxWidth: 800, margin: '0 auto' }}>
+      <div className="container-app">
         <h1 className="section-title" style={{ marginBottom: 4 }}>📈 Mes Performances</h1>
         <p className="section-subtitle" style={{ marginBottom: 28 }}>Analyse complète de vos pronostics</p>
 

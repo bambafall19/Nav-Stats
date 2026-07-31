@@ -52,6 +52,7 @@ export default function AdminEquipesPage() {
   const [form, setForm] = useState<EquipeForm>(defaultForm)
   const [editId, setEditId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [logoFile, setLogoFile] = useState<File | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
@@ -71,13 +72,33 @@ export default function AdminEquipesPage() {
     setLoading(true)
     setMessage(null)
 
+    let logoUrl = form.logo_url || null
+    if (logoFile) {
+      const ext = logoFile.name.split('.').pop()?.toLowerCase() || 'png'
+      const safeName = form.nom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      const path = `${safeName || 'asc'}-${Date.now()}.${ext}`
+      const { error: uploadError } = await supabase.storage.from('asc-logos').upload(path, logoFile, {
+        cacheControl: '3600',
+        upsert: true,
+      })
+
+      if (uploadError) {
+        setLoading(false)
+        setMessage({ type: 'error', text: `Upload logo impossible : ${uploadError.message}` })
+        return
+      }
+
+      const { data } = supabase.storage.from('asc-logos').getPublicUrl(path)
+      logoUrl = data.publicUrl
+    }
+
     const payload = {
       nom: form.nom,
       sigle: form.sigle || null,
       poule: form.poule,
       couleur_principale: form.couleur_principale,
       couleur_secondaire: form.couleur_secondaire,
-      logo_url: form.logo_url || null,
+      logo_url: logoUrl,
       quartier: form.quartier || null,
       asc_nom: form.asc_nom || null,
       description: form.description || null,
@@ -138,6 +159,7 @@ export default function AdminEquipesPage() {
 
   const resetForm = () => {
     setForm(defaultForm)
+    setLogoFile(null)
     setEditId(null)
     setShowForm(false)
   }
@@ -267,6 +289,24 @@ export default function AdminEquipesPage() {
               <div>
                 <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-secondary)', display: 'block', marginBottom: 6 }}>Logo URL</label>
                 <input type="text" value={form.logo_url} onChange={e => setForm({ ...form, logo_url: e.target.value })} placeholder="https://lien-du-logo.png" style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none' }} />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-secondary)', display: 'block', marginBottom: 6 }}>Importer un logo</label>
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  onChange={e => setLogoFile(e.target.files?.[0] || null)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'white' }}
+                />
+                {(logoFile || form.logo_url) && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10 }}>
+                    {form.logo_url && <img src={form.logo_url} alt="Aperçu logo" style={{ width: 42, height: 42, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--color-border)' }} />}
+                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                      {logoFile ? logoFile.name : 'Logo actuel'}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>

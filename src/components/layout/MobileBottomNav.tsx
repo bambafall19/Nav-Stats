@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { BarChart3, Home, Trophy, User, Target } from 'lucide-react'
+import { CalendarDays, Home, Trophy, User, Target } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 
@@ -12,7 +12,7 @@ type Profile = Database['public']['Tables']['profiles']['Row']
 const mobileNavLinks = [
   { href: '/', label: 'Accueil', Icon: Home },
   { href: '/classements', label: 'Classement', Icon: Trophy },
-  { href: '/statistiques', label: 'Stats', Icon: BarChart3 },
+  { href: '/cadets', label: 'Cadets', Icon: CalendarDays },
   { href: '/profil', label: 'Profil', Icon: User },
 ]
 
@@ -81,8 +81,8 @@ export default function MobileBottomNav() {
           left: 12,
           right: 12,
           height: 68,
-          background: '#ffffff',
-          border: '1px solid rgba(0, 98, 51, 0.12)',
+          background: 'var(--color-surface-card)',
+          border: '1px solid var(--color-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -120,21 +120,21 @@ export default function MobileBottomNav() {
           href="/matchs"
           className="mobile-nav-fab"
           style={{
-            width: 62,
-            height: 62,
-            borderRadius: 22,
+            width: 64,
+            height: 64,
+            borderRadius: 24,
             background: 'linear-gradient(135deg, #006233, #00A651)',
             color: 'white',
             display: 'flex',
             flexDirection: 'column',
-            gap: 2,
+            gap: 3,
             alignItems: 'center',
             justifyContent: 'center',
             fontWeight: 900,
             textDecoration: 'none',
-            boxShadow: '0 12px 24px rgba(0, 98, 51, 0.34)',
+            boxShadow: '0 12px 24px rgba(0, 98, 51, 0.4)',
             transition: 'all 0.2s ease',
-            margin: '-26px 8px 0',
+            margin: '-28px 8px 0',
             border: '4px solid white',
           }}
           onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -145,10 +145,18 @@ export default function MobileBottomNav() {
             e.currentTarget.style.transform = 'scale(1)'
             e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 98, 51, 0.4)'
           }}
-          aria-label="Pronostiquer"
+          aria-label="Championnats"
         >
-          <Target size={21} strokeWidth={2.7} />
-          <span style={{ fontSize: '0.58rem', lineHeight: 1, letterSpacing: 0, fontFamily: 'var(--font-outfit)' }}>Prono</span>
+          <Target size={22} strokeWidth={2.7} />
+          <span style={{
+            fontSize: '0.52rem',
+            lineHeight: 1,
+            letterSpacing: '0.02em',
+            fontFamily: 'var(--font-outfit)',
+            fontWeight: 800,
+          }}>
+            Championnats
+          </span>
         </Link>
 
         {/* Right items */}
@@ -199,7 +207,7 @@ export default function MobileBottomNav() {
                       bottom: 'calc(100% + 12px)',
                       right: 0,
                       minWidth: 200,
-                      background: 'white',
+                      background: 'var(--color-surface-card)',
                       borderRadius: 'var(--radius-lg)',
                       border: '1px solid var(--color-border)',
                       boxShadow: 'var(--shadow-lg)',

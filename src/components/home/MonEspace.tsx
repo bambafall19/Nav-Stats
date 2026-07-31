@@ -200,7 +200,7 @@ export default function MonEspace({ profile, recentPronostics, pronosticsToMake 
                         {isDone ? (isCorrect ? '✅' : '❌') : '⏳'}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, fontSize: '0.82rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>
                           {match?.equipe_a?.sigle || match?.equipe_a?.nom} vs {match?.equipe_b?.sigle || match?.equipe_b?.nom}
                         </div>
                         <div style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', marginTop: 1 }}>

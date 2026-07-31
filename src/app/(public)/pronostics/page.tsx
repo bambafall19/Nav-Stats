@@ -40,7 +40,7 @@ export default async function MesPronosticsPage() {
   if (!user) {
     return (
       <div className="page-content">
-        <div className="container-app" style={{ maxWidth: 720 }}>
+        <div className="container-app">
           <div className="card" style={{ padding: 32, textAlign: 'center' }}>
             <div style={{ fontSize: '2.8rem', marginBottom: 12 }}>🎯</div>
             <h1 style={{ fontSize: '1.7rem', marginBottom: 8 }}>Mes pronostics</h1>
@@ -49,7 +49,7 @@ export default async function MesPronosticsPage() {
             </p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link href="/auth/login" className="btn btn-primary">Connexion</Link>
-              <Link href="/auth/register" className="btn btn-outline">S&apos;inscrire</Link>
+              <Link href="/auth/register" className="btn btn-outline">S'inscrire</Link>
             </div>
           </div>
         </div>

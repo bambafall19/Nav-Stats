@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Share2 } from 'lucide-react'
+import { Share2, RefreshCw } from 'lucide-react'
 import FilterButton from '@/components/shared/FilterButton'
+import { PullToRefresh } from '@/components/shared/PullToRefresh'
 import CountdownTimer from '@/components/shared/CountdownTimer'
 import { MATCH_STATUS_LABELS } from '@/lib/constants/matchStatus'
 
@@ -55,35 +56,50 @@ const POULE_COLORS: Record<string, string> = {
   C: '#B91C1C',
 }
 
-function TeamBadge({ equipe, size = 52 }: { equipe: Team; size?: number }) {
+function TeamBadge({ equipe, size = 48 }: { equipe: Team; size?: number }) {
   if (equipe.logo_url) {
     return (
-      <img
-        src={equipe.logo_url}
-        alt={equipe.nom}
-        width={size}
-        height={size}
-        className="match-team-logo"
-        style={{
-          borderRadius: 12,
-          objectFit: 'cover',
-          flexShrink: 0,
-          boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
-        }}
-      />
+      <div style={{
+        width: size,
+        height: size,
+        borderRadius: 'var(--radius-md)',
+        overflow: 'hidden',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        border: '2px solid var(--color-border)',
+        flexShrink: 0,
+      }}>
+        <img
+          src={equipe.logo_url}
+          alt={equipe.nom}
+          width={size}
+          height={size}
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: 'var(--radius-md)',
+            objectFit: 'cover',
+          }}
+        />
+      </div>
     )
   }
+
   return (
-    <div className="match-team-logo-fallback" style={{
-      width: size, height: size,
-      borderRadius: 12,
-      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#39FF14'}, ${equipe.couleur_secondaire || '#00ff88'})`,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    <div style={{
+      width: size,
+      height: size,
+      borderRadius: 'var(--radius-md)',
+      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#006233'}, ${equipe.couleur_secondaire || '#FBBF00'})`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       fontWeight: 800,
-      color: '#0a0f0d',
-      flexShrink: 0,
-      boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
+      color: 'white',
       fontFamily: 'var(--font-outfit)',
+      fontSize: size < 36 ? '0.65rem' : '0.8rem',
+      flexShrink: 0,
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+      border: '2px solid var(--color-border)',
     }}>
       {equipe.sigle || equipe.nom.charAt(0)}
     </div>
@@ -91,7 +107,7 @@ function TeamBadge({ equipe, size = 52 }: { equipe: Team; size?: number }) {
 }
 
 export default function MatchListClient({ initialMatchs }: Props) {
-  const [selectedJournee, setSelectedJournee] = useState<number | 'all'>(1)
+  const [selectedJournee, setSelectedJournee] = useState<number | 'all'>('all')
   const [selectedStatus, setSelectedStatus] = useState<'all' | Match['statut']>('all')
   const [selectedPoule, setSelectedPoule] = useState<'all' | 'A' | 'B' | 'C'>('all')
   const [search, setSearch] = useState('')
@@ -129,17 +145,124 @@ export default function MatchListClient({ initialMatchs }: Props) {
 
   return (
     <div style={{ maxWidth: 720, margin: '0 auto' }}>
-      {/* Filtres mobile d'abord : statut puis poule */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
-        <input
-          className="input"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Rechercher une équipe ou un stade..."
-          aria-label="Rechercher un match"
-          style={{ background: 'var(--color-surface-card)', borderRadius: 16, padding: '12px 14px' }}
-        />
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '6px 4px' }}>
+      {/* Hero Section */}
+      <div style={{
+        background: 'linear-gradient(135deg, #004d27 0%, #006233 50%, #00A651 100%)',
+        borderRadius: 'var(--radius-xl)',
+        padding: 'clamp(28px, 4vw, 40px)',
+        marginBottom: 32,
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: 'var(--shadow-green)',
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: -60,
+          right: -40,
+          width: 180,
+          height: 180,
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.06)',
+        }} />
+        <div style={{
+          position: 'absolute',
+          bottom: -40,
+          left: -20,
+          width: 140,
+          height: 140,
+          borderRadius: '50%',
+          background: 'rgba(255,215,0,0.08)',
+        }} />
+
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <h1 style={{
+            color: 'white',
+            fontFamily: 'var(--font-outfit)',
+            fontSize: 'clamp(1.6rem, 4vw, 2.2rem)',
+            fontWeight: 900,
+            marginBottom: 8,
+            letterSpacing: '-0.02em',
+            textAlign: 'center',
+          }}>
+            ⚽ Calendrier des Matchs
+          </h1>
+          <p style={{
+            color: 'rgba(255,255,255,0.85)',
+            fontSize: 'clamp(0.85rem, 2vw, 0.95rem)',
+            marginBottom: 20,
+            maxWidth: 500,
+          }}>
+            Calendrier officiel des phases de poules - Navétanes Zone 6 de Khombole
+          </p>
+
+          <div style={{
+            display: 'flex',
+            gap: 10,
+            flexWrap: 'wrap',
+          }}>
+            <div style={{
+              background: 'rgba(255,255,255,0.12)',
+              backdropFilter: 'blur(10px)',
+              padding: '10px 16px',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid rgba(255,255,255,0.2)',
+            }}>
+              <div style={{ fontSize: '1.3rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
+                {initialMatchs.length}
+              </div>
+              <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 2 }}>
+                Matchs
+              </div>
+            </div>
+            <div style={{
+              background: 'rgba(255,255,255,0.12)',
+              backdropFilter: 'blur(10px)',
+              padding: '10px 16px',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid rgba(255,255,255,0.2)',
+            }}>
+              <div style={{ fontSize: '1.3rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
+                {new Set(initialMatchs.map(m => m.equipe_a_id).concat(initialMatchs.map(m => m.equipe_b_id))).size}
+              </div>
+              <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 2 }}>
+                Équipes
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters Section */}
+      <div style={{
+        background: 'var(--color-surface-card)',
+        borderRadius: 'var(--radius-lg)',
+        padding: 20,
+        border: '1px solid var(--color-border)',
+        boxShadow: 'var(--shadow-sm)',
+        marginBottom: 24,
+      }}>
+        {/* Search */}
+        <div style={{ marginBottom: 14 }}>
+          <input
+            className="input"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="🔍 Rechercher une équipe ou un stade..."
+            aria-label="Rechercher un match"
+            style={{
+              width: '100%',
+              background: 'var(--color-surface)',
+              borderRadius: 14,
+              padding: '12px 16px',
+              border: '1px solid var(--color-border)',
+              fontSize: '0.88rem',
+              fontFamily: 'var(--font-outfit)',
+            }}
+          />
+        </div>
+
+        {/* Status Filters */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 10, overflowX: 'auto', padding: '2px 2px' }}>
           {statusFilters.map(filter => {
             const active = selectedStatus === filter.value
             return (
@@ -149,15 +272,15 @@ export default function MatchListClient({ initialMatchs }: Props) {
                 onClick={() => setSelectedStatus(filter.value)}
                 style={{
                   flex: '1 0 auto',
-                  padding: '10px 14px',
-                  borderRadius: 16,
+                  padding: '8px 14px',
+                  borderRadius: 14,
                   border: '1px solid ' + (active ? 'var(--color-primary)' : 'var(--color-border)'),
-                  background: active ? 'rgba(0,98,51,0.08)' : 'var(--color-surface-card)',
+                  background: active ? 'rgba(0,98,51,0.08)' : 'var(--color-surface)',
                   color: active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
                   fontWeight: 700,
-                  fontSize: '0.82rem',
+                  fontSize: '0.78rem',
                   cursor: 'pointer',
-                  boxShadow: 'var(--shadow-sm)',
+                  boxShadow: active ? 'var(--shadow-sm)' : 'none',
                   transition: 'all 0.2s ease',
                   whiteSpace: 'nowrap',
                   fontFamily: 'var(--font-outfit)',
@@ -168,7 +291,9 @@ export default function MatchListClient({ initialMatchs }: Props) {
             )
           })}
         </div>
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '6px 4px' }}>
+
+        {/* Poule Filters */}
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '2px 2px' }}>
           {pouleFilters.map(filter => {
             const active = selectedPoule === filter.value
             return (
@@ -178,15 +303,15 @@ export default function MatchListClient({ initialMatchs }: Props) {
                 onClick={() => setSelectedPoule(filter.value)}
                 style={{
                   flex: '1 0 auto',
-                  padding: '10px 14px',
-                  borderRadius: 16,
+                  padding: '8px 14px',
+                  borderRadius: 14,
                   border: '1px solid ' + (active ? 'var(--color-primary)' : 'var(--color-border)'),
-                  background: active ? 'rgba(0,98,51,0.08)' : 'var(--color-surface-card)',
+                  background: active ? 'rgba(0,98,51,0.08)' : 'var(--color-surface)',
                   color: active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
                   fontWeight: 700,
-                  fontSize: '0.82rem',
+                  fontSize: '0.78rem',
                   cursor: 'pointer',
-                  boxShadow: 'var(--shadow-sm)',
+                  boxShadow: active ? 'var(--shadow-sm)' : 'none',
                   transition: 'all 0.2s ease',
                   whiteSpace: 'nowrap',
                   fontFamily: 'var(--font-outfit)',
@@ -197,34 +322,59 @@ export default function MatchListClient({ initialMatchs }: Props) {
             )
           })}
         </div>
+
+        {/* Refresh Button */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 12px',
+              borderRadius: 12,
+              border: '1px solid var(--color-border)',
+              background: 'var(--color-surface)',
+              color: 'var(--color-text-secondary)',
+              cursor: 'pointer',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              fontFamily: 'var(--font-outfit)',
+            }}
+            aria-label="Actualiser la liste des matchs"
+          >
+            <RefreshCw size={14} /> Actualiser
+          </button>
+        </div>
       </div>
 
-      {/* Journée Tab Pills */}
+      {/* Journée Tabs */}
       <div style={{
         display: 'flex',
         gap: 8,
-        marginBottom: 24,
+        marginBottom: 20,
         overflowX: 'auto',
         WebkitOverflowScrolling: 'touch',
         scrollbarWidth: 'none',
-        padding: '4px 2px',
+        padding: '2px 2px',
       }}>
         <button
           onClick={() => setSelectedJournee('all')}
           style={{
             flex: '1 0 auto',
-            padding: '10px 14px',
+            padding: '10px 16px',
             border: 'none',
             background: selectedJournee === 'all' ? 'var(--gradient-green)' : 'var(--color-surface-card)',
             color: selectedJournee === 'all' ? 'white' : 'var(--color-text-secondary)',
-            borderRadius: 16,
+            borderRadius: 14,
             fontSize: '0.82rem',
             fontWeight: 700,
             cursor: 'pointer',
             boxShadow: selectedJournee === 'all' ? 'var(--shadow-green)' : 'var(--shadow-sm)',
             transition: 'all 0.25s ease',
             whiteSpace: 'nowrap',
-            minWidth: 90,
+            minWidth: 80,
             fontFamily: 'var(--font-outfit)',
           }}
         >
@@ -236,18 +386,18 @@ export default function MatchListClient({ initialMatchs }: Props) {
             onClick={() => setSelectedJournee(j)}
             style={{
               flex: '1 0 auto',
-              padding: '10px 14px',
+              padding: '10px 16px',
               border: 'none',
               background: selectedJournee === j ? 'var(--gradient-green)' : 'var(--color-surface-card)',
               color: selectedJournee === j ? 'white' : 'var(--color-text-secondary)',
-              borderRadius: 16,
+              borderRadius: 14,
               fontSize: '0.82rem',
               fontWeight: 700,
               cursor: 'pointer',
               boxShadow: selectedJournee === j ? 'var(--shadow-green)' : 'var(--shadow-sm)',
               transition: 'all 0.25s ease',
               whiteSpace: 'nowrap',
-              minWidth: 90,
+              minWidth: 80,
               fontFamily: 'var(--font-outfit)',
             }}
           >
@@ -262,18 +412,18 @@ export default function MatchListClient({ initialMatchs }: Props) {
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          padding: '12px 18px',
+          padding: '12px 16px',
           background: 'rgba(251,191,0,0.07)',
           border: '1px dashed rgba(251,191,0,0.45)',
-          borderRadius: 14,
-          marginBottom: 24,
+          borderRadius: 12,
+          marginBottom: 20,
           fontSize: '0.82rem',
           color: 'var(--color-text-secondary)',
           fontWeight: 500,
         }}>
           <span style={{ fontSize: '1.1rem' }}>📢</span>
           <span>
-            Exempté ce tour : <strong style={{ color: '#D97706' }}>ASC {EXEMPTE_MAP[selectedJournee].nom}</strong>
+            Exempté ce tour : <strong style={{ color: '#D97706', fontWeight: 700 }}>ASC {EXEMPTE_MAP[selectedJournee].nom}</strong>
           </span>
         </div>
       )}
@@ -285,18 +435,18 @@ export default function MatchListClient({ initialMatchs }: Props) {
           flexDirection: 'column',
           alignItems: 'center',
           gap: 6,
-          padding: '20px',
+          padding: '16px',
           background: 'rgba(0,98,51,0.05)',
           border: '1px solid rgba(0,98,51,0.12)',
-          borderRadius: 16,
-          marginBottom: 24,
+          borderRadius: 14,
+          marginBottom: 20,
           textAlign: 'center',
         }}>
-          <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--color-primary)', fontFamily: 'var(--font-outfit)' }}>
+          <span style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-primary)', fontFamily: 'var(--font-outfit)' }}>
             🕌 Pause Magal de Touba
           </span>
-          <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', maxWidth: 380, lineHeight: 1.5 }}>
-            Le calendrier observe une pause officielle. Les matchs reprennent le <strong>03/08/2026</strong>.
+          <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', maxWidth: 340, lineHeight: 1.5 }}>
+            Le calendrier observe une pause officielle. Les matchs reprennent le <strong style={{ color: 'var(--color-primary)' }}>03/08/2026</strong>.
           </span>
         </div>
       )}
@@ -306,18 +456,32 @@ export default function MatchListClient({ initialMatchs }: Props) {
         <div style={{
           background: 'var(--color-surface-card)',
           border: '1px solid var(--color-border)',
-          borderRadius: 20,
-          padding: '60px 20px',
+          borderRadius: 18,
+          padding: '48px 20px',
           textAlign: 'center',
+          boxShadow: 'var(--shadow-sm)',
         }}>
           <div style={{ fontSize: '3rem', marginBottom: 12 }}>⚽</div>
-          <h3 style={{ fontFamily: 'var(--font-outfit)', marginBottom: 6, fontSize: '1.1rem' }}>Aucun match programmé</h3>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Revenez bientôt pour le calendrier officiel.</p>
+          <h3 style={{ fontFamily: 'var(--font-outfit)', marginBottom: 6, fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+            Aucun match programmé
+          </h3>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem' }}>Revenez bientôt pour le calendrier officiel.</p>
           {(selectedStatus !== 'all' || selectedPoule !== 'all' || selectedJournee !== 'all' || search) && (
             <button
               type="button"
-              className="btn btn-primary"
-              style={{ marginTop: 16 }}
+              style={{
+                marginTop: 14,
+                padding: '10px 20px',
+                background: 'var(--gradient-green)',
+                color: 'white',
+                border: 'none',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.84rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: 'var(--shadow-green)',
+                fontFamily: 'var(--font-outfit)',
+              }}
               onClick={() => {
                 setSelectedJournee('all')
                 setSelectedStatus('all')
@@ -340,25 +504,48 @@ export default function MatchListClient({ initialMatchs }: Props) {
             return (
               <div key={date}>
                 {/* Date Header */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  marginBottom: 12,
+                }}>
                   <div style={{
-                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                    width: 44,
+                    height: 44,
+                    borderRadius: 12,
+                    flexShrink: 0,
                     background: 'var(--gradient-green)',
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     boxShadow: 'var(--shadow-green)',
                   }}>
-                    <span style={{ fontSize: '0.6rem', fontWeight: 700, color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1 }}>{day.slice(0, 3)}</span>
+                    <span style={{ fontSize: '0.6rem', fontWeight: 700, color: 'rgba(255,255,255,0.9)', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1 }}>
+                      {day.slice(0, 3)}
+                    </span>
                     <span style={{ fontSize: '1rem', fontWeight: 900, color: 'white', lineHeight: 1.1 }}>{d.getDate()}</span>
                   </div>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-text-primary)', fontFamily: 'var(--font-outfit)', textTransform: 'capitalize' }}>{day} {dayNum}</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>{matches.length} rencontre{matches.length > 1 ? 's' : ''}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{
+                      fontWeight: 800,
+                      fontSize: '0.95rem',
+                      color: 'var(--color-text-primary)',
+                      fontFamily: 'var(--font-outfit)',
+                      textTransform: 'capitalize',
+                      lineHeight: 1.3,
+                    }}>
+                      {day} {dayNum}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, marginTop: 2 }}>
+                      {matches.length} rencontre{matches.length > 1 ? 's' : ''}
+                    </div>
                   </div>
-                  <div style={{ flex: 1, height: 1, background: 'var(--color-border)', marginLeft: 4 }} />
                 </div>
 
-                {/* Match List */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {/* Match Cards */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {matches.map(m => {
                     const isDone = m.statut === 'termine'
                     const isLive = m.statut === 'en_cours'
@@ -372,51 +559,76 @@ export default function MatchListClient({ initialMatchs }: Props) {
                     return (
                       <Link key={m.id} href={`/matchs/${m.id}`} style={{ textDecoration: 'none', display: 'block' }}>
                         <div style={{
-                          background: 'var(--color-surface-card)',
+                          background: 'linear-gradient(135deg, var(--color-surface-card) 0%, var(--color-surface-elevated) 100%)',
+                          borderRadius: 'var(--radius-lg)',
                           border: '1px solid var(--color-border)',
-                          borderRadius: 16,
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)',
                           overflow: 'hidden',
-                          position: 'relative',
-                          boxShadow: 'var(--shadow-sm)',
-                          transition: 'transform 0.2s, box-shadow 0.2s',
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          cursor: 'pointer',
                         }}
-                          onMouseEnter={e => {
-                            (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'
-                            ;(e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)'
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-3px)'
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.06), 0 12px 32px rgba(0,0,0,0.1)'
                           }}
-                          onMouseLeave={e => {
-                            (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
-                            ;(e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)'
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)'
+                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)'
                           }}
                         >
-                          {/* Top strip: Poule label + status badge */}
+                          {/* Top: Poule + Status */}
                           <div style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            padding: '8px 16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '12px 16px',
                             borderBottom: '1px solid var(--color-border)',
-                            background: 'var(--color-surface-elevated)',
+                            background: 'var(--color-surface)',
                           }}>
                             <span style={{
-                              fontSize: '0.68rem', fontWeight: 800,
+                              fontSize: '0.68rem',
+                              fontWeight: 800,
                               color: pouleColor,
                               background: `${pouleColor}15`,
-                              padding: '3px 10px', borderRadius: 20,
-                              textTransform: 'uppercase', letterSpacing: '0.04em',
+                              padding: '3px 10px',
+                              borderRadius: 'var(--radius-full)',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.04em',
                             }}>
                               Poule {poule}
                             </span>
 
                             {isLive ? (
                               <span style={{
-                                fontSize: '0.68rem', fontWeight: 800, color: '#EF4444',
-                                background: 'rgba(239,68,68,0.08)', padding: '3px 10px',
-                                borderRadius: 20, display: 'flex', alignItems: 'center', gap: 5,
+                                fontSize: '0.68rem',
+                                fontWeight: 800,
+                                color: '#EF4444',
+                                background: 'rgba(239,68,68,0.1)',
+                                padding: '3px 10px',
+                                borderRadius: 'var(--radius-full)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 5,
                               }}>
-                                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#EF4444', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
+                                <span style={{
+                                  width: 6,
+                                  height: 6,
+                                  borderRadius: '50%',
+                                  background: '#EF4444',
+                                  display: 'inline-block',
+                                  animation: 'pulse 1.5s infinite',
+                                }} />
                                 EN DIRECT
                               </span>
                             ) : isDone ? (
-                              <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-text-muted)', background: 'var(--color-surface)', padding: '3px 10px', borderRadius: 20 }}>
+                              <span style={{
+                                fontSize: '0.68rem',
+                                fontWeight: 700,
+                                color: 'var(--color-text-muted)',
+                                background: 'var(--color-surface-elevated)',
+                                padding: '3px 10px',
+                                borderRadius: 'var(--radius-full)',
+                              }}>
                                 ✓ Terminé
                               </span>
                             ) : (
@@ -425,7 +637,14 @@ export default function MatchListClient({ initialMatchs }: Props) {
                                   targetDate={m.date_match}
                                   targetTime={m.heure_match || '00:00'}
                                 />
-                                <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--color-primary)', background: 'rgba(0,98,51,0.07)', padding: '3px 10px', borderRadius: 20 }}>
+                                <span style={{
+                                  fontSize: '0.68rem',
+                                  fontWeight: 700,
+                                  color: 'var(--color-primary)',
+                                  background: 'rgba(0,98,51,0.06)',
+                                  padding: '3px 10px',
+                                  borderRadius: 'var(--radius-full)',
+                                }}>
                                   ⏰ {m.heure_match?.slice(0, 5)}
                                 </span>
                               </div>
@@ -436,58 +655,87 @@ export default function MatchListClient({ initialMatchs }: Props) {
                           <div style={{
                             display: 'grid',
                             gridTemplateColumns: '1fr auto 1fr',
-                            gap: 8,
+                            gap: 16,
                             alignItems: 'center',
-                            padding: '16px 16px',
+                            padding: '20px 16px',
                           }}>
                             {/* Équipe A */}
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                              <TeamBadge equipe={m.equipe_a} size={52} />
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                              <div style={{
+                                width: 56,
+                                height: 56,
+                                borderRadius: 'var(--radius-md)',
+                                overflow: 'hidden',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                border: '2px solid var(--color-border)',
+                              }}>
+                                <TeamBadge equipe={m.equipe_a} size={56} />
+                              </div>
                               <span style={{
-                                fontSize: '0.78rem', fontWeight: isWinA ? 800 : 600,
+                                fontSize: '0.88rem',
+                                fontWeight: isWinA ? 800 : 600,
                                 color: isWinA ? 'var(--color-primary)' : 'var(--color-text-primary)',
-                                textAlign: 'center', lineHeight: 1.2,
-                                maxWidth: 90, overflow: 'hidden',
+                                textAlign: 'center',
+                                lineHeight: 1.3,
                               }}>
                                 {m.equipe_a.nom}
                               </span>
                             </div>
 
-                            {/* Center: Score or VS */}
-                            <div style={{ textAlign: 'center', padding: '0 8px' }}>
+                            {/* Score / VS */}
+                            <div style={{
+                              width: 48,
+                              height: 48,
+                              borderRadius: '50%',
+                              background: isLive
+                                ? 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.08))'
+                                : 'linear-gradient(135deg, rgba(0,98,51,0.12), rgba(0,166,81,0.08))',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontWeight: 900,
+                              fontSize: '0.85rem',
+                              color: isLive ? '#EF4444' : 'var(--color-primary)',
+                              border: `2px solid ${isLive ? 'rgba(239,68,68,0.25)' : 'rgba(0,98,51,0.2)'}`,
+                              fontFamily: 'var(--font-outfit)',
+                              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                            }}>
                               {isDone || isLive ? (
-                                <div style={{
-                                  fontFamily: 'var(--font-outfit)',
-                                  fontWeight: 900,
-                                  fontSize: '1.5rem',
-                                  letterSpacing: '-0.03em',
-                                  color: isLive ? '#EF4444' : 'var(--color-text-primary)',
-                                  lineHeight: 1,
-                                }}>
-                                  {m.score_a} <span style={{ opacity: 0.4, fontSize: '1rem' }}>–</span> {m.score_b}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: '0.85rem' }}>
+                                  <span style={{ fontWeight: 900 }}>{m.score_a ?? 0}</span>
+                                  <span style={{ fontSize: '0.7rem', opacity: 0.6 }}>–</span>
+                                  <span style={{ fontWeight: 900 }}>{m.score_b ?? 0}</span>
                                 </div>
                               ) : (
-                                <div>
-                                  <div style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--color-text-muted)', fontFamily: 'var(--font-outfit)' }}>VS</div>
-                                  <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: 2 }}>📍 {m.stade?.split(' ')[0]}</div>
-                                </div>
+                                <span style={{ fontWeight: 900 }}>VS</span>
                               )}
                             </div>
 
                             {/* Équipe B */}
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                              <TeamBadge equipe={m.equipe_b} size={52} />
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                              <div style={{
+                                width: 56,
+                                height: 56,
+                                borderRadius: 'var(--radius-md)',
+                                overflow: 'hidden',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                border: '2px solid var(--color-border)',
+                              }}>
+                                <TeamBadge equipe={m.equipe_b} size={56} />
+                              </div>
                               <span style={{
-                                fontSize: '0.78rem', fontWeight: isWinB ? 800 : 600,
+                                fontSize: '0.88rem',
+                                fontWeight: isWinB ? 800 : 600,
                                 color: isWinB ? 'var(--color-primary)' : 'var(--color-text-primary)',
-                                textAlign: 'center', lineHeight: 1.2,
-                                maxWidth: 90, overflow: 'hidden',
+                                textAlign: 'center',
+                                lineHeight: 1.3,
                               }}>
                                 {m.equipe_b.nom}
                               </span>
                             </div>
                           </div>
 
+                          {/* Share Button */}
                           <button
                             type="button"
                             onClick={event => {
@@ -498,35 +746,46 @@ export default function MatchListClient({ initialMatchs }: Props) {
                             aria-label="Partager ce match sur WhatsApp"
                             style={{
                               position: 'absolute',
-                              right: 10,
-                              bottom: 10,
-                              width: 34,
-                              height: 34,
+                              top: 12,
+                              right: 12,
+                              width: 32,
+                              height: 32,
                               borderRadius: '50%',
-                              border: '1px solid rgba(0,98,51,0.12)',
-                              background: 'rgba(0,98,51,0.08)',
+                              background: 'var(--color-surface)',
                               color: 'var(--color-primary)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
+                              border: '1px solid var(--color-border)',
                               cursor: 'pointer',
+                              transition: 'all 0.2s',
                             }}
                           >
-                            <Share2 size={16} />
+                            <Share2 size={14} />
                           </button>
 
-                          {/* Bottom: Pronostiquer CTA (if upcoming) */}
+                          {/* Bottom CTA */}
                           {m.statut === 'a_venir' && (
                             <div style={{
                               borderTop: '1px solid var(--color-border)',
-                              padding: '10px 16px',
+                              padding: '12px 16px',
                               display: 'flex',
                               justifyContent: 'center',
-                              paddingRight: 48,
+                              background: 'linear-gradient(135deg, rgba(0,98,51,0.03), rgba(0,166,81,0.03))',
                             }}>
                               <span style={{
-                                fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-primary)',
-                                display: 'flex', alignItems: 'center', gap: 6,
+                                padding: '10px 20px',
+                                background: 'var(--gradient-green)',
+                                color: 'white',
+                                borderRadius: 'var(--radius-full)',
+                                fontSize: '0.85rem',
+                                fontWeight: 700,
+                                boxShadow: '0 4px 12px rgba(0,98,51,0.25)',
+                                fontFamily: 'var(--font-outfit)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 6,
+                                letterSpacing: '0.01em',
                               }}>
                                 🎯 Pronostiquer ce match →
                               </span>
@@ -542,13 +801,6 @@ export default function MatchListClient({ initialMatchs }: Props) {
           })}
         </div>
       )}
-      <style>{`
-        @media (max-width: 720px) {
-          .match-filter-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </div>
   )
 }
