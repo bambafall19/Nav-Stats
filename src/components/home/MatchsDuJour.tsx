@@ -276,6 +276,19 @@ export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isT
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
         <h2 className="section-title" style={{ marginBottom: 4 }}>
           {isToday ? '⚽ Matchs du Jour' : '📅 Prochains Matchs'}
+          <span style={{
+            marginLeft: 10,
+            fontSize: '0.7rem',
+            fontWeight: 800,
+            letterSpacing: '0.04em',
+            textTransform: 'uppercase',
+            padding: '4px 10px',
+            borderRadius: 'var(--radius-full)',
+            background: 'rgba(124,58,237,0.08)',
+            color: '#7C3AED',
+            border: '1px solid rgba(124,58,237,0.18)',
+            verticalAlign: 'middle',
+          }}>Cadets</span>
         </h2>
         <p className="section-subtitle">
           {matchs.length === 0
