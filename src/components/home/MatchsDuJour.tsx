@@ -280,16 +280,16 @@ function MatchCard({ match }: { match: Match }) {
 export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isToday: boolean }) {
   return (
     <div>
-      <div style={{ textAlign: 'center', marginBottom: 20 }}>
-        <h2 className="section-title" style={{ marginBottom: 4 }}>
+      <div style={{ textAlign: 'center', marginBottom: 12 }}>
+        <h2 className="section-title" style={{ marginBottom: 2 }}>
           {isToday ? '⚽ Matchs du Jour' : '📅 Prochains Matchs'}
           <span style={{
-            marginLeft: 10,
-            fontSize: '0.7rem',
+            marginLeft: 8,
+            fontSize: '0.62rem',
             fontWeight: 800,
-            letterSpacing: '0.04em',
+            letterSpacing: '0.03em',
             textTransform: 'uppercase',
-            padding: '4px 10px',
+            padding: '3px 8px',
             borderRadius: 'var(--radius-full)',
             background: 'rgba(124,58,237,0.08)',
             color: '#7C3AED',
@@ -306,14 +306,14 @@ export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isT
       </div>
 
       {matchs.length === 0 ? (
-        <div className="card" style={{ padding: 40, textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: 12 }}>⚽</div>
-          <p style={{ color: 'var(--color-text-secondary)', fontWeight: 500 }}>Aucun match prévu pour le moment</p>
+        <div className="card" style={{ padding: 32, textAlign: 'center' }}>
+          <div style={{ fontSize: '2.2rem', marginBottom: 8 }}>⚽</div>
+          <p style={{ color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: '0.85rem' }}>Aucun match prévu pour le moment</p>
         </div>
       ) : (
-        <div className="matchs-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+        <div className="matchs-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
           {matchs.map((match, i) => (
-            <div key={match.id} style={{ animation: `fadeInUp 0.4s ${i * 0.07}s ease both` }}>
+            <div key={match.id} style={{ animation: `fadeInUp 0.4s ${i * 0.06}s ease both` }}>
               <MatchCard match={match} />
             </div>
           ))}
@@ -323,34 +323,34 @@ export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isT
         @media (max-width: 640px) {
           .matchs-grid {
             grid-template-columns: 1fr !important;
-            gap: 10px !important;
+            gap: 8px !important;
           }
           .match-card {
-            padding: 12px !important;
+            padding: 10px !important;
           }
           .match-card .team-badge {
-            width: 32px !important;
-            height: 32px !important;
-          }
-          .match-card .team-badge img {
-            width: 32px !important;
-            height: 32px !important;
-          }
-          .match-card .vs-badge {
             width: 30px !important;
             height: 30px !important;
-            font-size: 0.7rem !important;
+          }
+          .match-card .team-badge img {
+            width: 30px !important;
+            height: 30px !important;
+          }
+          .match-card .vs-badge {
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 0.65rem !important;
           }
           .match-card .team-name {
-            font-size: 0.72rem !important;
+            font-size: 0.68rem !important;
           }
           .match-card-footer {
-            padding-top: 10px !important;
-            margin-top: 10px !important;
+            padding-top: 8px !important;
+            margin-top: 8px !important;
           }
           .match-card-footer > div {
-            padding: 8px !important;
-            font-size: 0.75rem !important;
+            padding: 7px !important;
+            font-size: 0.72rem !important;
           }
         }
       `}</style>

@@ -83,9 +83,9 @@ export default function MobileBottomNav() {
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0, 0, 0, 0.3)',
+            background: 'rgba(0, 0, 0, 0.25)',
             zIndex: 98,
-            animation: 'fadeIn 0.2s ease',
+            animation: 'fadeIn 0.15s ease',
           }}
           aria-label="Fermer le menu"
         />
@@ -95,23 +95,25 @@ export default function MobileBottomNav() {
         id="mobile-bottom-nav"
         style={{
           position: 'fixed',
-          bottom: 'max(10px, env(safe-area-inset-bottom))',
-          left: 12,
-          right: 12,
-          height: 68,
-          background: 'var(--color-surface-card)',
-          border: '1px solid var(--color-border)',
+          bottom: 'max(8px, env(safe-area-inset-bottom))',
+          left: 10,
+          right: 10,
+          height: 60,
+          background: 'rgba(255, 255, 255, 0.92)',
+          border: '1px solid rgba(0, 98, 51, 0.08)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 10px',
+          padding: '0 8px',
           zIndex: 999,
-          borderRadius: 24,
-          boxShadow: '0 16px 42px rgba(15, 23, 42, 0.18)',
+          borderRadius: 18,
+          boxShadow: '0 12px 32px rgba(15, 23, 42, 0.08)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         }}
       >
         {/* Left items */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 6, flex: 1 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 4, flex: 1 }}>
           {mobileNavLinks.slice(0, 2).map(link => {
             const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
             const Icon = link.Icon
@@ -121,12 +123,12 @@ export default function MobileBottomNav() {
                 href={link.href}
                 className="mobile-nav-item"
                 style={{
-                  background: isActive ? 'rgba(0, 98, 51, 0.1)' : 'transparent',
+                  background: isActive ? 'rgba(0, 98, 51, 0.08)' : 'transparent',
                   color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
                 }}
                 aria-label={link.label}
               >
-                <Icon size={20} strokeWidth={isActive ? 2.8 : 2.2} />
+                <Icon size={18} strokeWidth={isActive ? 2.6 : 2} />
                 <span className="mobile-nav-label">{link.label}</span>
               </Link>
             )
@@ -138,33 +140,33 @@ export default function MobileBottomNav() {
           href="/matchs"
           className="mobile-nav-fab"
           style={{
-            width: 48,
-            height: 48,
-            borderRadius: 16,
+            width: 44,
+            height: 44,
+            borderRadius: 14,
             background: 'linear-gradient(135deg, #006233, #00A651)',
             color: 'white',
             display: 'flex',
             flexDirection: 'column',
-            gap: 1,
+            gap: 0,
             alignItems: 'center',
             justifyContent: 'center',
             fontWeight: 900,
             textDecoration: 'none',
             boxShadow: isMatchsActive
-              ? '0 8px 20px rgba(0, 98, 51, 0.45), 0 0 0 4px rgba(0, 166, 81, 0.16)'
-              : '0 6px 16px rgba(0, 98, 51, 0.35)',
-            transition: 'all 0.2s ease',
-            margin: '-18px 4px 0',
-            border: isMatchsActive ? '2px solid #FFD700' : '2px solid white',
+              ? '0 6px 16px rgba(0, 98, 51, 0.4), 0 0 0 3px rgba(0, 166, 81, 0.12)'
+              : '0 4px 12px rgba(0, 98, 51, 0.3)',
+            transition: 'all 0.15s ease',
+            margin: '-16px 2px 0',
+            border: isMatchsActive ? '2px solid #FFD700' : '2px solid rgba(255,255,255,0.9)',
             position: 'relative',
           }}
           aria-label="Championnats"
         >
-          <Target size={18} strokeWidth={2.7} />
+          <Target size={16} strokeWidth={2.6} />
           <span style={{
-            fontSize: '0.54rem',
+            fontSize: '0.48rem',
             lineHeight: 1,
-            letterSpacing: '0.02em',
+            letterSpacing: '0.01em',
             fontFamily: 'var(--font-outfit)',
             fontWeight: 800,
           }}>
@@ -173,21 +175,21 @@ export default function MobileBottomNav() {
           {todayMatchCount > 0 && (
             <span style={{
               position: 'absolute',
-              top: -4,
-              right: -4,
-              minWidth: 18,
-              height: 18,
+              top: -3,
+              right: -3,
+              minWidth: 16,
+              height: 16,
               borderRadius: '50%',
               background: '#E8002D',
               color: 'white',
-              fontSize: '0.6rem',
+              fontSize: '0.55rem',
               fontWeight: 800,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '0 4px',
+              padding: '0 3px',
               border: '2px solid white',
-              boxShadow: '0 2px 8px rgba(232,0,45,0.4)',
+              boxShadow: '0 2px 6px rgba(232,0,45,0.35)',
               fontFamily: 'var(--font-outfit)',
             }}>
               {todayMatchCount}
@@ -196,7 +198,7 @@ export default function MobileBottomNav() {
         </Link>
 
         {/* Right items */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 6, flex: 1 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 4, flex: 1 }}>
           {mobileNavLinks.slice(2).map(link => {
             const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
             const isProfileLink = link.href === '/profil'
@@ -209,15 +211,15 @@ export default function MobileBottomNav() {
                     onClick={() => setMenuOpen(!menuOpen)}
                     className="mobile-nav-item"
                     style={{
-                      background: isActive ? 'rgba(0, 98, 51, 0.1)' : 'transparent',
+                      background: isActive ? 'rgba(0, 98, 51, 0.08)' : 'transparent',
                       color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
                     }}
                     aria-label="Menu profil"
                     aria-expanded={menuOpen}
                   >
                     <div style={{
-                      width: 28,
-                      height: 28,
+                      width: 24,
+                      height: 24,
                       borderRadius: '50%',
                       border: '2px solid var(--color-primary)',
                       overflow: 'hidden',
@@ -225,12 +227,12 @@ export default function MobileBottomNav() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '0.75rem',
+                      fontSize: '0.7rem',
                       fontWeight: 700,
                       color: 'var(--color-primary)',
                     }}>
                       {profile.avatar_url
-                        ? <Image src={profile.avatar_url} alt={profile.username} width={28} height={28} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ? <Image src={profile.avatar_url} alt={profile.username} width={24} height={24} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         : profile.username.charAt(0).toUpperCase()
                       }
                     </div>
@@ -240,16 +242,16 @@ export default function MobileBottomNav() {
                   {menuOpen && (
                     <div style={{
                       position: 'absolute',
-                      bottom: 'calc(100% + 12px)',
+                      bottom: 'calc(100% + 10px)',
                       right: 0,
-                      minWidth: 200,
+                      minWidth: 180,
                       background: 'var(--color-surface-card)',
                       borderRadius: 'var(--radius-lg)',
                       border: '1px solid var(--color-border)',
                       boxShadow: 'var(--shadow-lg)',
-                      padding: 8,
+                      padding: 6,
                       zIndex: 200,
-                      animation: 'slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                      animation: 'slideUp 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     }}>
                       {menuItems.map((item, idx) => (
                         <Link
@@ -258,25 +260,25 @@ export default function MobileBottomNav() {
                           style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: 10,
-                            padding: '12px 14px',
+                            gap: 8,
+                            padding: '10px 12px',
                             borderRadius: 'var(--radius-md)',
                             textDecoration: 'none',
                             color: item.color,
-                            transition: 'all 0.15s ease',
-                            background: hoveredItem === `menu-${idx}` ? 'rgba(0, 98, 51, 0.08)' : 'transparent',
-                            transform: hoveredItem === `menu-${idx}` ? 'translateX(4px)' : 'translateX(0)',
-                            animation: `slideInLeft 0.25s ease ${idx * 0.05}s backwards`,
+                            transition: 'all 0.12s ease',
+                            background: hoveredItem === `menu-${idx}` ? 'rgba(0, 98, 51, 0.06)' : 'transparent',
+                            transform: hoveredItem === `menu-${idx}` ? 'translateX(3px)' : 'translateX(0)',
+                            animation: `slideInLeft 0.2s ease ${idx * 0.04}s backwards`,
                           }}
                           onClick={closeMenu}
                           onMouseEnter={() => setHoveredItem(`menu-${idx}`)}
                           onMouseLeave={() => setHoveredItem(null)}
                         >
-                          <span style={{ fontSize: '1.1rem' }}>{item.icon}</span>
-                          <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>{item.label}</span>
+                          <span style={{ fontSize: '1rem' }}>{item.icon}</span>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 500 }}>{item.label}</span>
                         </Link>
                       ))}
-                      <div style={{ height: 1, background: 'var(--color-border)', margin: '8px 0' }} />
+                      <div style={{ height: 1, background: 'var(--color-border)', margin: '6px 0' }} />
                       <button
                         onClick={() => {
                           handleSignOut()
@@ -285,25 +287,25 @@ export default function MobileBottomNav() {
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 10,
-                          padding: '12px 14px',
+                          gap: 8,
+                          padding: '10px 12px',
                           borderRadius: 'var(--radius-md)',
                           color: 'var(--color-red)',
-                          background: hoveredItem === 'logout' ? 'rgba(232, 0, 45, 0.1)' : 'transparent',
+                          background: hoveredItem === 'logout' ? 'rgba(232, 0, 45, 0.08)' : 'transparent',
                           border: 'none',
                           cursor: 'pointer',
                           width: '100%',
-                          fontSize: '0.875rem',
+                          fontSize: '0.8rem',
                           fontWeight: 600,
-                          transition: 'all 0.15s ease',
-                          transform: hoveredItem === 'logout' ? 'translateX(4px)' : 'translateX(0)',
-                          animation: 'slideInLeft 0.25s ease 0.15s backwards',
+                          transition: 'all 0.12s ease',
+                          transform: hoveredItem === 'logout' ? 'translateX(3px)' : 'translateX(0)',
+                          animation: 'slideInLeft 0.2s ease 0.12s backwards',
                         }}
                         onMouseEnter={() => setHoveredItem('logout')}
                         onMouseLeave={() => setHoveredItem(null)}
                         aria-label="Se déconnecter"
                       >
-                        <span style={{ fontSize: '1.1rem' }}>🚪</span>
+                        <span style={{ fontSize: '1rem' }}>🚪</span>
                         <span>Déconnexion</span>
                       </button>
                     </div>
@@ -318,14 +320,14 @@ export default function MobileBottomNav() {
                 href={link.href}
                 className="mobile-nav-item"
                 style={{
-                  background: isActive ? 'rgba(0, 98, 51, 0.1)' : 'transparent',
+                  background: isActive ? 'rgba(0, 98, 51, 0.08)' : 'transparent',
                   color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
                 }}
                 aria-label={link.label}
                 onMouseEnter={() => setHoveredItem(link.href)}
                 onMouseLeave={() => setHoveredItem(null)}
               >
-                <Icon size={20} strokeWidth={isActive ? 2.8 : 2.2} />
+                <Icon size={18} strokeWidth={isActive ? 2.6 : 2} />
                 <span className="mobile-nav-label">{link.label}</span>
               </Link>
             )
@@ -342,22 +344,22 @@ export default function MobileBottomNav() {
           aria-label="Basculer le thème"
           style={{
             position: 'absolute',
-            top: -14,
-            right: 12,
-            width: 36,
-            height: 36,
+            top: -12,
+            right: 10,
+            width: 32,
+            height: 32,
             borderRadius: '50%',
-            border: '2px solid var(--color-border)',
+            border: '1.5px solid var(--color-border)',
             background: 'var(--color-surface-card)',
             color: 'var(--color-text-primary)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '0.9rem',
-            boxShadow: 'var(--shadow-md)',
+            fontSize: '0.8rem',
+            boxShadow: 'var(--shadow-sm)',
             zIndex: 100,
-            transition: 'all 0.2s ease',
+            transition: 'all 0.15s ease',
           }}
         >
           <span id="mobile-theme-icon">🌙</span>
@@ -369,25 +371,25 @@ export default function MobileBottomNav() {
           #mobile-bottom-nav .mobile-nav-item {
             width: 100%;
             min-width: 0;
-            height: 52px;
-            padding: 5px 2px;
-            border-radius: 16px;
+            height: 48px;
+            padding: 4px 2px;
+            border-radius: 14px;
             display: inline-flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 3px;
+            gap: 2px;
             text-decoration: none;
             border: none;
             cursor: pointer;
-            transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+            transition: background 0.12s ease, color 0.12s ease, transform 0.12s ease;
           }
           #mobile-bottom-nav .mobile-nav-item:active,
           #mobile-bottom-nav .mobile-nav-fab:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
           }
           #mobile-bottom-nav .mobile-nav-label {
-            font-size: 0.64rem;
+            font-size: 0.58rem;
             line-height: 1;
             font-weight: 800;
             font-family: var(--font-outfit);
@@ -403,7 +405,7 @@ export default function MobileBottomNav() {
           @keyframes slideUp {
             from {
               opacity: 0;
-              transform: translateY(10px);
+              transform: translateY(8px);
             }
             to {
               opacity: 1;
@@ -414,7 +416,7 @@ export default function MobileBottomNav() {
           @keyframes slideInLeft {
             from {
               opacity: 0;
-              transform: translateX(-10px);
+              transform: translateX(-8px);
             }
             to {
               opacity: 1;

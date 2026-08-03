@@ -408,7 +408,7 @@ export default function HomeClient({
             display: flex;
             flex-direction: column;
             gap: 0;
-            padding-top: 16px !important;
+            padding-top: 14px !important;
             padding-bottom: 120px !important;
           }
           .main-home-grid {
@@ -416,7 +416,7 @@ export default function HomeClient({
           }
           .quick-actions-section {
             order: 1;
-            margin-bottom: 24px !important;
+            margin-bottom: 16px !important;
           }
           .mobile-actualites {
             order: 2;
@@ -424,18 +424,22 @@ export default function HomeClient({
           }
           #matchs-section {
             order: 3;
+            margin-bottom: 16px !important;
           }
           .stats-dashboard-section {
             order: 4;
+            margin-bottom: 16px !important;
           }
           .home-sidebar {
             display: contents !important;
           }
           #classement-section {
             order: 5;
+            margin-bottom: 16px !important;
           }
           #resultats-section {
             order: 6;
+            margin-bottom: 16px !important;
           }
           #actualites-section {
             order: 7;
@@ -448,35 +452,35 @@ export default function HomeClient({
             display: none !important;
           }
           .section-title {
-            font-size: 1.25rem !important;
+            font-size: 1.1rem !important;
             line-height: 1.15 !important;
           }
           .section-subtitle {
-            font-size: 0.82rem !important;
+            font-size: 0.75rem !important;
           }
           .quick-actions-section > div > div {
             grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-            gap: 8px !important;
+            gap: 6px !important;
           }
           .quick-actions-section a {
-            min-height: 76px;
+            min-height: 68px;
             flex-direction: column;
             justify-content: center;
-            gap: 7px !important;
-            padding: 10px 6px !important;
+            gap: 4px !important;
+            padding: 8px 4px !important;
             text-align: center;
-            border-radius: 14px !important;
+            border-radius: 12px !important;
           }
           .quick-actions-section a > div:first-child {
-            width: 34px !important;
-            height: 34px !important;
-            font-size: 1.1rem !important;
+            width: 30px !important;
+            height: 30px !important;
+            font-size: 1rem !important;
           }
           .quick-actions-section a > div:last-child {
             width: 100%;
           }
           .quick-actions-section a > div:last-child > div:first-child {
-            font-size: 0.72rem !important;
+            font-size: 0.68rem !important;
             margin-bottom: 0 !important;
             white-space: nowrap;
             overflow: hidden;
@@ -488,13 +492,13 @@ export default function HomeClient({
           #matchs-section,
           #classement-section,
           #resultats-section {
-            margin-bottom: 20px;
+            margin-bottom: 14px !important;
           }
           .home-action-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
           }
           .home-action-card {
-            padding: 12px !important;
+            padding: 10px !important;
           }
         }
       `}</style>

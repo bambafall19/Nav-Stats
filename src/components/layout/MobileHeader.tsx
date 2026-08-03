@@ -46,8 +46,8 @@ export default function MobileHeader() {
           right: 0,
           height: 56,
           background: 'var(--header-bg)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
           borderBottom: '1px solid var(--header-border)',
           boxShadow: 'var(--header-shadow)',
           zIndex: 1000,
@@ -59,29 +59,29 @@ export default function MobileHeader() {
           alignItems: 'center',
           justifyContent: 'space-between',
           height: '100%',
-          padding: '0 12px',
+          padding: '0 10px',
           gap: 8,
         }}>
           {/* Logo */}
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0 }}>
             <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: 9,
+              width: 30,
+              height: 30,
+              borderRadius: 8,
               background: 'var(--gradient-green)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               overflow: 'hidden',
               flexShrink: 0,
-              boxShadow: '0 4px 12px rgba(0,98,51,0.25)',
+              boxShadow: '0 3px 10px rgba(0,98,51,0.2)',
             }}>
-              <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 9 }} />
+              <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />
             </div>
             <span style={{
               fontFamily: 'var(--font-outfit)',
               fontWeight: 800,
-              fontSize: '1rem',
+              fontSize: '0.95rem',
               color: 'var(--color-primary)',
               letterSpacing: '-0.03em',
               whiteSpace: 'nowrap',
@@ -89,15 +89,15 @@ export default function MobileHeader() {
           </Link>
 
           {/* Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
             {/* Search */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               aria-label="Rechercher"
               style={{
-                width: 40,
-                height: 40,
-                borderRadius: 14,
+                width: 36,
+                height: 36,
+                borderRadius: 12,
                 border: '1px solid var(--color-border)',
                 background: 'var(--color-surface-card)',
                 color: 'var(--color-text-primary)',
@@ -106,10 +106,10 @@ export default function MobileHeader() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 boxShadow: 'var(--shadow-sm)',
-                transition: 'all 0.2s ease',
+                transition: 'all 0.15s ease',
               }}
             >
-              <Search size={18} />
+              <Search size={16} />
             </button>
 
             <ThemeToggle />
@@ -125,14 +125,14 @@ export default function MobileHeader() {
             top: 56,
             left: 0,
             right: 0,
-            padding: '10px 12px',
+            padding: '8px 10px',
             background: 'var(--color-surface-card)',
             borderBottom: '1px solid var(--color-border)',
             boxShadow: 'var(--shadow-md)',
             zIndex: 1001,
-            animation: 'slideDown 0.2s ease',
+            animation: 'slideDown 0.18s ease',
           }}>
-            <form onSubmit={handleSearch} style={{ display: 'flex', gap: 8 }}>
+            <form onSubmit={handleSearch} style={{ display: 'flex', gap: 6 }}>
               <input
                 autoFocus
                 type="text"
@@ -141,12 +141,12 @@ export default function MobileHeader() {
                 placeholder="Rechercher équipes, matchs, joueurs..."
                 style={{
                   flex: 1,
-                  padding: '10px 14px',
-                  borderRadius: 12,
+                  padding: '9px 12px',
+                  borderRadius: 10,
                   border: '1.5px solid var(--color-border)',
                   background: 'var(--color-bg-secondary)',
                   color: 'var(--color-text-primary)',
-                  fontSize: '16px',
+                  fontSize: '15px',
                   outline: 'none',
                   fontFamily: 'var(--font-inter)',
                 }}
@@ -154,14 +154,14 @@ export default function MobileHeader() {
               <button
                 type="submit"
                 style={{
-                  padding: '0 16px',
-                  borderRadius: 12,
+                  padding: '0 12px',
+                  borderRadius: 10,
                   background: 'var(--gradient-green)',
                   color: 'white',
                   border: 'none',
                   cursor: 'pointer',
                   fontWeight: 700,
-                  fontSize: '0.85rem',
+                  fontSize: '0.8rem',
                   fontFamily: 'var(--font-outfit)',
                   boxShadow: 'var(--shadow-green)',
                 }}
@@ -181,7 +181,7 @@ export default function MobileHeader() {
           #mobile-header { display: none !important; }
         }
         @keyframes slideDown {
-          from { opacity: 0; transform: translateY(-8px); }
+          from { opacity: 0; transform: translateY(-6px); }
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
