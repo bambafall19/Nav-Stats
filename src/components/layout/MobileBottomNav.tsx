@@ -95,15 +95,15 @@ export default function MobileBottomNav() {
           left: 10,
           right: 10,
           height: 64,
-          background: 'rgba(255, 255, 255, 0.95)',
-          border: '1px solid rgba(0, 98, 51, 0.08)',
+          background: 'var(--color-surface-overlay)',
+          border: '1px solid var(--color-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 6px',
           zIndex: 999,
           borderRadius: 20,
-          boxShadow: '0 12px 32px rgba(15, 23, 42, 0.08)',
+          boxShadow: 'var(--shadow-lg)',
           backdropFilter: 'blur(20px) saturate(180%)',
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         }}
@@ -124,7 +124,7 @@ export default function MobileBottomNav() {
                   width: 50,
                   height: 50,
                   borderRadius: 16,
-                  background: 'linear-gradient(135deg, #FF6B00, #E8002D)',
+                  background: 'var(--gradient-green)',
                   color: 'white',
                   display: 'flex',
                   flexDirection: 'column',
@@ -134,11 +134,11 @@ export default function MobileBottomNav() {
                   fontWeight: 900,
                   textDecoration: 'none',
                   boxShadow: isActive
-                    ? '0 6px 20px rgba(232, 0, 45, 0.45), 0 0 0 3px rgba(255, 107, 0, 0.15)'
-                    : '0 4px 14px rgba(232, 0, 45, 0.35)',
+                    ? 'var(--shadow-green)'
+                    : '0 4px 14px rgba(0,98,51,0.35)',
                   transition: 'all 0.2s ease',
                   margin: '-18px 0 0',
-                  border: isActive ? '2px solid #FFD700' : '2px solid rgba(255,255,255,0.9)',
+                  border: isActive ? '2px solid var(--color-accent)' : '2px solid var(--color-surface)',
                   position: 'relative',
                 }}
                 aria-label="Matchs"
@@ -161,16 +161,16 @@ export default function MobileBottomNav() {
                     minWidth: 16,
                     height: 16,
                     borderRadius: '50%',
-                    background: '#FFD700',
-                    color: '#7C3AED',
+                    background: 'var(--color-accent)',
+                    color: 'var(--color-primary-dark)',
                     fontSize: '0.55rem',
                     fontWeight: 800,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: '0 3px',
-                    border: '2px solid white',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+                    border: '2px solid var(--color-surface)',
+                    boxShadow: 'var(--shadow-sm)',
                     fontFamily: 'var(--font-outfit)',
                   }}>
                     {todayMatchCount}
