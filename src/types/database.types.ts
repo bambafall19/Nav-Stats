@@ -211,6 +211,74 @@ export type Database = {
         Insert: Omit<Database['public']['Tables']['audit_logs']['Row'], 'id' | 'created_at'>
         Update: Partial<Database['public']['Tables']['audit_logs']['Insert']>
       }
+      mini_ligues: {
+        Row: {
+          id: string
+          nom: string
+          code_invitation: string
+          createur_id: string | null
+          is_public: boolean
+          description: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['mini_ligues']['Row'], 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Database['public']['Tables']['mini_ligues']['Insert']>
+      }
+      mini_ligue_members: {
+        Row: {
+          id: string
+          ligue_id: string
+          user_id: string
+          joined_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['mini_ligue_members']['Row'], 'id' | 'joined_at'>
+        Update: Partial<Database['public']['Tables']['mini_ligue_members']['Insert']>
+      }
+      team_follows: {
+        Row: {
+          id: string
+          user_id: string
+          equipe_id: string
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['team_follows']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['team_follows']['Insert']>
+      }
+      match_reports: {
+        Row: {
+          id: string
+          match_id: string
+          reported_by: string | null
+          reason: string
+          new_date_match: string | null
+          new_heure_match: string | null
+          statut: string
+          resolved_by: string | null
+          resolution: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['match_reports']['Row'], 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Database['public']['Tables']['match_reports']['Insert']>
+      }
+      notification_preferences: {
+        Row: {
+          user_id: string
+          match_reminder: boolean
+          team_notification: boolean
+          ranking_change: boolean
+          community_mentions: boolean
+          push_enabled: boolean
+          updated_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['notification_preferences']['Row'], 'updated_at'>
+        Update: Partial<Database['public']['Tables']['notification_preferences']['Insert']>
+      }
     }
   }
 }
+
+}
+
+export default Database
