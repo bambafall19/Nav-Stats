@@ -921,19 +921,19 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .matchs-hero {
-      padding: 16px !important;
-      margin: 0 -12px 10px !important;
-      border-radius: 0 0 18px 18px !important;
+      padding: 14px !important;
+      margin: 0 -10px 8px !important;
+      border-radius: 0 0 14px 14px !important;
     }
 
     .matchs-hero h1 {
-      font-size: 1.15rem !important;
-      margin-bottom: 3px !important;
+      font-size: 1.05rem !important;
+      margin-bottom: 2px !important;
     }
 
     .matchs-hero p {
-      font-size: 0.72rem !important;
-      margin-bottom: 10px !important;
+      font-size: 0.68rem !important;
+      margin-bottom: 8px !important;
     }
 
     .matchs-hero > div:last-child {
@@ -953,12 +953,12 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .section-title {
-      font-size: 1.1rem;
+      font-size: 1rem;
       letter-spacing: 0;
     }
 
     .section-subtitle {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
     }
 
     .desktop-table-only {
@@ -1022,47 +1022,47 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .match-card {
-      padding: 10px !important;
-      border-radius: 12px !important;
+      padding: 8px !important;
+      border-radius: 10px !important;
     }
     .match-card .team-badge,
     .match-card .team-badge img,
     .match-card .team-badge > div {
-      width: 28px !important;
-      height: 28px !important;
+      width: 26px !important;
+      height: 26px !important;
     }
     .match-card .vs-badge {
-      width: 26px !important;
-      height: 26px !important;
-      font-size: 0.65rem !important;
+      width: 24px !important;
+      height: 24px !important;
+      font-size: 0.6rem !important;
     }
     .match-card .team-name {
-      font-size: 0.68rem !important;
+      font-size: 0.62rem !important;
     }
     .match-card .score-badge {
-      width: 28px !important;
-      height: 28px !important;
-      font-size: 0.65rem !important;
-    }
-    .match-card .match-card-top {
-      padding: 6px 8px !important;
-    }
-    .match-card .match-card-body {
-      padding: 8px !important;
-      gap: 4px !important;
-    }
-    .match-card .match-card-footer {
-      padding: 6px 8px !important;
-    }
-    .match-card .share-btn {
       width: 26px !important;
       height: 26px !important;
-      top: 4px !important;
-      right: 4px !important;
+      font-size: 0.6rem !important;
+    }
+    .match-card .match-card-top {
+      padding: 5px 6px !important;
+    }
+    .match-card .match-card-body {
+      padding: 6px !important;
+      gap: 3px !important;
+    }
+    .match-card .match-card-footer {
+      padding: 5px 6px !important;
+    }
+    .match-card .share-btn {
+      width: 24px !important;
+      height: 24px !important;
+      top: 3px !important;
+      right: 3px !important;
     }
     .match-card .share-btn svg {
-      width: 11px !important;
-      height: 11px !important;
+      width: 10px !important;
+      height: 10px !important;
     }
 
     .journee-section {
@@ -1103,10 +1103,10 @@ h1, h2, h3, h4, h5, h6 {
 
     .home-flow > section,
     .home-flow > div > section {
-      margin-bottom: 14px !important;
+      margin-bottom: 10px !important;
     }
     .quick-actions-section {
-      margin-bottom: 14px !important;
+      margin-bottom: 10px !important;
     }
 
     .matchs-wrapper > div:first-child {
