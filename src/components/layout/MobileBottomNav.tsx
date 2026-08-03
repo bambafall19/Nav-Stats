@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react'
 import { CalendarDays, Home, Trophy, User, Target, BarChart3 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
-import ThemeToggle from '@/components/shared/ThemeToggle'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -21,7 +20,6 @@ const mobileNavLinks = [
 export default function MobileBottomNav() {
   const pathname = usePathname()
   const isMatchsActive = pathname === '/matchs' || pathname.startsWith('/matchs/')
-  const isPronosticsActive = pathname === '/pronostics' || pathname.startsWith('/pronostics/')
   const [profile, setProfile] = useState<Profile | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
@@ -38,7 +36,6 @@ export default function MobileBottomNav() {
       }
     })
 
-    // Fetch today's match count for FAB badge
     const today = new Date().toISOString().split('T')[0]
     supabase
       .from('matchs')
@@ -76,7 +73,6 @@ export default function MobileBottomNav() {
 
   return (
     <>
-      {/* Overlay */}
       {menuOpen && (
         <div
           onClick={closeMenu}
@@ -112,7 +108,6 @@ export default function MobileBottomNav() {
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         }}
       >
-        {/* Left items */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 4, flex: 1 }}>
           {mobileNavLinks.slice(0, 2).map(link => {
             const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
@@ -135,7 +130,6 @@ export default function MobileBottomNav() {
           })}
         </div>
 
-        {/* Center FAB - Championnats */}
         <Link
           href="/matchs"
           className="mobile-nav-fab"
@@ -197,7 +191,6 @@ export default function MobileBottomNav() {
           )}
         </Link>
 
-        {/* Right items */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 4, flex: 1 }}>
           {mobileNavLinks.slice(2).map(link => {
             const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
@@ -333,37 +326,6 @@ export default function MobileBottomNav() {
             )
           })}
         </div>
-
-        {/* Theme toggle floating button */}
-        <button
-          onClick={() => {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
-            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark')
-            localStorage.setItem('navestats-theme', isDark ? 'light' : 'dark')
-          }}
-          aria-label="Basculer le thème"
-          style={{
-            position: 'absolute',
-            top: -12,
-            right: 10,
-            width: 32,
-            height: 32,
-            borderRadius: '50%',
-            border: '1.5px solid var(--color-border)',
-            background: 'var(--color-surface-card)',
-            color: 'var(--color-text-primary)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '0.8rem',
-            boxShadow: 'var(--shadow-sm)',
-            zIndex: 100,
-            transition: 'all 0.15s ease',
-          }}
-        >
-          <span id="mobile-theme-icon">🌙</span>
-        </button>
 
         <style>{`
           @media (min-width: 768px) { #mobile-bottom-nav { display: none !important; } }

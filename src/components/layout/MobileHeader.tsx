@@ -3,10 +3,9 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { Search, Bell } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
-import ThemeToggle from '@/components/shared/ThemeToggle'
 import NotificationBell from '@/components/shared/NotificationBell'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -44,7 +43,7 @@ export default function MobileHeader() {
           top: 0,
           left: 0,
           right: 0,
-          height: 56,
+          height: 52,
           background: 'var(--header-bg)',
           backdropFilter: 'blur(20px) saturate(180%)',
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
@@ -59,14 +58,13 @@ export default function MobileHeader() {
           alignItems: 'center',
           justifyContent: 'space-between',
           height: '100%',
-          padding: '0 10px',
-          gap: 8,
+          padding: '0 14px',
+          gap: 10,
         }}>
-          {/* Logo */}
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0 }}>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
             <div style={{
-              width: 30,
-              height: 30,
+              width: 28,
+              height: 28,
               borderRadius: 8,
               background: 'var(--gradient-green)',
               display: 'flex',
@@ -74,7 +72,7 @@ export default function MobileHeader() {
               justifyContent: 'center',
               overflow: 'hidden',
               flexShrink: 0,
-              boxShadow: '0 3px 10px rgba(0,98,51,0.2)',
+              boxShadow: '0 3px 10px rgba(0,98,51,0.18)',
             }}>
               <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />
             </div>
@@ -83,21 +81,19 @@ export default function MobileHeader() {
               fontWeight: 800,
               fontSize: '0.95rem',
               color: 'var(--color-primary)',
-              letterSpacing: '-0.03em',
+              letterSpacing: '-0.02em',
               whiteSpace: 'nowrap',
             }}>NavéStats</span>
           </Link>
 
-          {/* Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-            {/* Search */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               aria-label="Rechercher"
               style={{
-                width: 36,
-                height: 36,
-                borderRadius: 12,
+                width: 34,
+                height: 34,
+                borderRadius: 10,
                 border: '1px solid var(--color-border)',
                 background: 'var(--color-surface-card)',
                 color: 'var(--color-text-primary)',
@@ -112,20 +108,17 @@ export default function MobileHeader() {
               <Search size={16} />
             </button>
 
-            <ThemeToggle />
-
             {profile && <NotificationBell userId={profile.id} />}
           </div>
         </div>
 
-        {/* Search overlay */}
         {searchOpen && (
           <div style={{
             position: 'absolute',
-            top: 56,
+            top: 52,
             left: 0,
             right: 0,
-            padding: '8px 10px',
+            padding: '8px 14px',
             background: 'var(--color-surface-card)',
             borderBottom: '1px solid var(--color-border)',
             boxShadow: 'var(--shadow-md)',
@@ -141,7 +134,7 @@ export default function MobileHeader() {
                 placeholder="Rechercher équipes, matchs, joueurs..."
                 style={{
                   flex: 1,
-                  padding: '9px 12px',
+                  padding: '10px 12px',
                   borderRadius: 10,
                   border: '1.5px solid var(--color-border)',
                   background: 'var(--color-bg-secondary)',
@@ -154,7 +147,7 @@ export default function MobileHeader() {
               <button
                 type="submit"
                 style={{
-                  padding: '0 12px',
+                  padding: '0 14px',
                   borderRadius: 10,
                   background: 'var(--gradient-green)',
                   color: 'white',
