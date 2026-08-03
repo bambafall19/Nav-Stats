@@ -93,6 +93,24 @@ export default async function HomePage() {
     .order('date_match')
     .limit(6)
 
+  // Matchs cadets du jour
+  const { data: cadetsDuJour } = await supabase
+    .from('cadet_matchs')
+    .select('*, equipe_a_info:equipes!cadet_matchs_equipe_a_id_fkey(id, nom, sigle, logo_url, couleur_principale, couleur_secondaire), equipe_b_info:equipes!cadet_matchs_equipe_b_id_fkey(id, nom, sigle, logo_url, couleur_principale, couleur_secondaire)')
+    .eq('date_match', today)
+    .order('journee')
+    .order('ordre')
+
+  // Prochains matchs cadets
+  const { data: prochainsCadets } = await supabase
+    .from('cadet_matchs')
+    .select('*, equipe_a_info:equipes!cadet_matchs_equipe_a_id_fkey(id, nom, sigle, logo_url, couleur_principale, couleur_secondaire), equipe_b_info:equipes!cadet_matchs_equipe_b_id_fkey(id, nom, sigle, logo_url, couleur_principale, couleur_secondaire)')
+    .gte('date_match', today)
+    .order('journee')
+    .order('date_match')
+    .order('ordre')
+    .limit(6)
+
   // Top pronostiqueurs
   const { data: topPronostiqueurs } = await supabase
     .from('profiles')
@@ -128,6 +146,7 @@ export default async function HomePage() {
     .limit(4)
 
   const displayMatchs = (matchsDuJour && matchsDuJour.length > 0) ? matchsDuJour : (prochainsMatchs || [])
+  const displayCadets = (cadetsDuJour && cadetsDuJour.length > 0) ? cadetsDuJour : (prochainsCadets || [])
   const isToday = matchsDuJour && matchsDuJour.length > 0
 
   return (
@@ -139,13 +158,13 @@ export default async function HomePage() {
       isToday={isToday || false}
       topPronostiqueurs={(topPronostiqueurs as any[])?.slice(0, 5).map(u => ({
         id: u.id,
-        username: u.username,
-        points: u.points,
-        total_pronostics: u.total_pronostics,
-        pronostics_corrects: u.pronostics_corrects,
-        rang: u.rang,
-        accuracy: u.total_pronostics > 0 ? Math.round((u.pronostics_corrects / u.total_pronostics) * 100) : 0,
-        avatar_url: u.avatar_url,
+        username: u.username || 'Joueur',
+        points: u.points || 0,
+        total_pronostics: u.total_pronostics || 0,
+        pronostics_corrects: u.pronostics_corrects || 0,
+        rang: u.rang || 0,
+        accuracy: u.total_pronostics > 0 ? Math.round(((u.pronostics_corrects || 0) / u.total_pronostics) * 100) : 0,
+        avatar_url: u.avatar_url || undefined,
       }))}
       statsGlobales={{
         totalPronostics: totalPronostics || 0,
@@ -153,6 +172,8 @@ export default async function HomePage() {
         totalMatchs: totalMatchs || 0,
         totalPoints: totalPoints,
       }}
+      displayCadets={displayCadets}
+      cadetsToday={!!(cadetsDuJour && cadetsDuJour.length > 0)}
     />
   )
 }

@@ -131,7 +131,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.25;
   color: var(--color-text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -793,7 +793,8 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .page-content {
-      padding-top: calc(var(--nav-height) + 16px);
+      padding-top: 0;
+      padding-bottom: calc(112px + env(safe-area-inset-bottom));
     }
 
     .page-content > .container-app {

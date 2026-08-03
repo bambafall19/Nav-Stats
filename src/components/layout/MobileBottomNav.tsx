@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { CalendarDays, Home, Trophy, User, Target } from 'lucide-react'
@@ -18,17 +19,19 @@ const mobileNavLinks = [
 
 export default function MobileBottomNav() {
   const pathname = usePathname()
+  const isMatchsActive = pathname === '/matchs' || pathname.startsWith('/matchs/')
   const [profile, setProfile] = useState<Profile | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
-  const supabase = createClient() as any
 
   useEffect(() => {
-    supabase.auth.getUser().then((res: any) => {
+    const supabase = createClient()
+
+    supabase.auth.getUser().then((res) => {
       const user = res.data?.user
       if (user) {
         supabase.from('profiles').select('*').eq('id', user.id).single()
-          .then((resProfile: any) => setProfile(resProfile.data))
+          .then((resProfile) => setProfile(resProfile.data))
       }
     })
   }, [])
@@ -44,8 +47,9 @@ export default function MobileBottomNav() {
   }, [menuOpen])
 
   const handleSignOut = async () => {
+    const supabase = createClient()
     await supabase.auth.signOut()
-    window.location.href = '/'
+    window.location.assign('/')
   }
 
   const closeMenu = () => setMenuOpen(false)
@@ -77,7 +81,7 @@ export default function MobileBottomNav() {
         id="mobile-bottom-nav"
         style={{
           position: 'fixed',
-          bottom: 10,
+          bottom: 'max(10px, env(safe-area-inset-bottom))',
           left: 12,
           right: 12,
           height: 68,
@@ -132,16 +136,18 @@ export default function MobileBottomNav() {
             justifyContent: 'center',
             fontWeight: 900,
             textDecoration: 'none',
-            boxShadow: '0 6px 16px rgba(0, 98, 51, 0.35)',
+            boxShadow: isMatchsActive
+              ? '0 8px 20px rgba(0, 98, 51, 0.45), 0 0 0 4px rgba(0, 166, 81, 0.16)'
+              : '0 6px 16px rgba(0, 98, 51, 0.35)',
             transition: 'all 0.2s ease',
             margin: '-18px 4px 0',
-            border: '2px solid white',
+            border: isMatchsActive ? '2px solid #FFD700' : '2px solid white',
           }}
           aria-label="Championnats"
         >
           <Target size={18} strokeWidth={2.7} />
           <span style={{
-            fontSize: '0.48rem',
+            fontSize: '0.54rem',
             lineHeight: 1,
             letterSpacing: '0.02em',
             fontFamily: 'var(--font-outfit)',
@@ -186,7 +192,7 @@ export default function MobileBottomNav() {
                       color: 'var(--color-primary)',
                     }}>
                       {profile.avatar_url
-                        ? <img src={profile.avatar_url} alt={profile.username} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ? <Image src={profile.avatar_url} alt={profile.username} width={28} height={28} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         : profile.username.charAt(0).toUpperCase()
                       }
                     </div>
@@ -295,7 +301,7 @@ export default function MobileBottomNav() {
             width: 100%;
             min-width: 0;
             height: 52px;
-            padding: 5px 3px;
+            padding: 5px 2px;
             border-radius: 16px;
             display: inline-flex;
             flex-direction: column;
@@ -312,7 +318,7 @@ export default function MobileBottomNav() {
             transform: scale(0.96);
           }
           #mobile-bottom-nav .mobile-nav-label {
-            font-size: 0.56rem;
+            font-size: 0.64rem;
             line-height: 1;
             font-weight: 800;
             font-family: var(--font-outfit);

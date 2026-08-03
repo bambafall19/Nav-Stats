@@ -7,15 +7,42 @@ import DerniersResultats from '@/components/home/DerniersResultats'
 import Actualites from '@/components/home/Actualites'
 import StatsDashboard from '@/components/home/StatsDashboard'
 import ScrollReveal from '@/components/shared/ScrollReveal'
+import { CalendarDays, MessageCircle, ShieldCheck, Trophy, BarChart3 } from 'lucide-react'
+import type { Database } from '@/types/database.types'
+
+type HomeMatch = Database['public']['Tables']['matchs']['Row'] & {
+  equipe_a: Database['public']['Tables']['equipes']['Row']
+  equipe_b: Database['public']['Tables']['equipes']['Row']
+}
+type HomeCadetMatch = Record<string, unknown>
+type HomePronostiqueur = {
+  id: string
+  username: string
+  points: number
+  total_pronostics: number
+  pronostics_corrects: number
+  rang: number
+  accuracy: number
+  avatar_url?: string
+}
+
+type HomeStats = {
+  totalPronostics: number
+  totalUtilisateurs: number
+  totalMatchs: number
+  totalPoints: number
+}
 
 interface HomeClientProps {
   matchCount: number
   userCount: number
   isAuthenticated: boolean
-  displayMatchs: any[]
+  displayMatchs: HomeMatch[]
   isToday: boolean
-  topPronostiqueurs: any[]
-  statsGlobales: any
+  topPronostiqueurs: HomePronostiqueur[]
+  statsGlobales: HomeStats
+  displayCadets?: HomeCadetMatch[]
+  cadetsToday?: boolean
 }
 
 export default function HomeClient({
@@ -26,7 +53,17 @@ export default function HomeClient({
   isToday,
   topPronostiqueurs,
   statsGlobales,
+  displayCadets = [],
+  cadetsToday = false,
 }: HomeClientProps) {
+  const quickActions = [
+    { href: '/matchs', Icon: ShieldCheck, title: 'Matchs', desc: 'Pronostiquer les matchs à venir', color: '#006233' },
+    { href: '/cadets', Icon: CalendarDays, title: 'Cadets', desc: cadetsToday ? `${displayCadets.length} match(s) aujourd'hui` : 'Calendrier CNP 2026', color: '#7C3AED' },
+    { href: '/classements', Icon: Trophy, title: 'Classements', desc: 'Voir le classement général', color: '#D97706' },
+    { href: '/statistiques', Icon: BarChart3, title: 'Statistiques', desc: 'Poules et stats des équipes', color: '#1E40AF' },
+    { href: '/communaute', Icon: MessageCircle, title: 'Communauté', desc: 'Discuter avec les fans', color: '#B91C1C' },
+  ]
+
   return (
     <div className="page-content">
       <div className="container-app">
@@ -182,13 +219,7 @@ export default function HomeClient({
               gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
               gap: 16,
             }}>
-              {[
-                { href: '/matchs', icon: '⚽', title: 'Matchs', desc: 'Pronostiquer les matchs à venir', color: '#006233' },
-                { href: '/cadets', icon: '📅', title: 'Cadets', desc: 'Calendrier CNP 2026', color: '#7C3AED' },
-                { href: '/classements', icon: '🏆', title: 'Classements', desc: 'Voir le classement général', color: '#D97706' },
-                { href: '/statistiques', icon: '📊', title: 'Statistiques', desc: 'Poules et stats des équipes', color: '#1E40AF' },
-                { href: '/communaute', icon: '💬', title: 'Communauté', desc: 'Discuter avec les fans', color: '#B91C1C' },
-              ].map((action, i) => (
+              {quickActions.map((action, i) => (
                 <ScrollReveal key={action.href} direction="up" delay={i * 80}>
                   <Link
                     href={action.href}
@@ -215,7 +246,7 @@ export default function HomeClient({
                       e.currentTarget.style.borderColor = 'var(--color-border)'
                     }}
                   >
-                    <div style={{
+                    <div className="quick-action-icon" style={{
                       width: 48,
                       height: 48,
                       borderRadius: 'var(--radius-md)',
@@ -223,10 +254,9 @@ export default function HomeClient({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '1.5rem',
                       flexShrink: 0,
                     }}>
-                      {action.icon}
+                      <action.Icon size={22} strokeWidth={2.5} color={action.color} />
                     </div>
                     <div style={{ minWidth: 0 }}>
                       <div style={{

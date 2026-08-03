@@ -4,8 +4,6 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Share2, RefreshCw } from 'lucide-react'
-import FilterButton from '@/components/shared/FilterButton'
-import { PullToRefresh } from '@/components/shared/PullToRefresh'
 import CountdownTimer from '@/components/shared/CountdownTimer'
 import { MATCH_STATUS_LABELS } from '@/lib/constants/matchStatus'
 
@@ -68,7 +66,7 @@ function TeamBadge({ equipe, size = 48 }: { equipe: Team; size?: number }) {
         border: '2px solid var(--color-border)',
         flexShrink: 0,
       }}>
-        <img
+        <Image
           src={equipe.logo_url}
           alt={equipe.nom}
           width={size}
@@ -233,10 +231,10 @@ export default function MatchListClient({ initialMatchs }: Props) {
       </div>
 
       {/* Filters Section */}
-      <div style={{
+      <div className="matchs-filter-panel" style={{
         background: 'var(--color-surface-card)',
         borderRadius: 'var(--radius-lg)',
-        padding: 20,
+        padding: 16,
         border: '1px solid var(--color-border)',
         boxShadow: 'var(--shadow-sm)',
         marginBottom: 24,
@@ -252,7 +250,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
             style={{
               width: '100%',
               background: 'var(--color-surface)',
-              borderRadius: 14,
+              borderRadius: 12,
               padding: '12px 16px',
               border: '1px solid var(--color-border)',
               fontSize: '0.88rem',
@@ -262,7 +260,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
         </div>
 
         {/* Status Filters */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 10, overflowX: 'auto', padding: '2px 2px' }}>
+        <div className="matchs-filter-row" style={{ display: 'flex', gap: 8, marginBottom: 10, overflowX: 'auto', padding: '2px 2px' }}>
           {statusFilters.map(filter => {
             const active = selectedStatus === filter.value
             return (
@@ -293,7 +291,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
         </div>
 
         {/* Poule Filters */}
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '2px 2px' }}>
+        <div className="matchs-filter-row" style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '2px 2px' }}>
           {pouleFilters.map(filter => {
             const active = selectedPoule === filter.value
             return (
@@ -350,7 +348,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
       </div>
 
       {/* Journée Tabs */}
-      <div style={{
+      <div className="journee-tabs" style={{
         display: 'flex',
         gap: 8,
         marginBottom: 20,
@@ -559,6 +557,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
                     return (
                       <Link key={m.id} href={`/matchs/${m.id}`} style={{ textDecoration: 'none', display: 'block' }} className="match-card-link">
                         <div className="match-card" style={{
+                          position: 'relative',
                           background: 'linear-gradient(135deg, var(--color-surface-card) 0%, var(--color-surface-elevated) 100%)',
                           borderRadius: 'var(--radius-lg)',
                           border: '1px solid var(--color-border)',
@@ -677,6 +676,11 @@ export default function MatchListClient({ initialMatchs }: Props) {
                                 color: isWinA ? 'var(--color-primary)' : 'var(--color-text-primary)',
                                 textAlign: 'center',
                                 lineHeight: 1.3,
+                                minHeight: 36,
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
                               }}>
                                 {m.equipe_a.nom}
                               </span>
@@ -729,6 +733,11 @@ export default function MatchListClient({ initialMatchs }: Props) {
                                 color: isWinB ? 'var(--color-primary)' : 'var(--color-text-primary)',
                                 textAlign: 'center',
                                 lineHeight: 1.3,
+                                minHeight: 36,
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
                               }}>
                                 {m.equipe_b.nom}
                               </span>
@@ -802,8 +811,52 @@ export default function MatchListClient({ initialMatchs }: Props) {
       )}
       <style>{`
         @media (max-width: 640px) {
+          .matchs-wrapper {
+            padding-bottom: 104px !important;
+          }
+          .matchs-hero {
+            border-radius: 0 0 22px 22px !important;
+            margin-left: -16px !important;
+            margin-right: -16px !important;
+            margin-bottom: 12px !important;
+            padding: 20px 16px !important;
+          }
+          .matchs-hero h1 {
+            font-size: 1.55rem !important;
+            text-align: left !important;
+            letter-spacing: 0 !important;
+          }
+          .matchs-hero p {
+            text-align: left !important;
+            margin-bottom: 14px !important;
+          }
+          .matchs-filter-panel {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            margin-left: -8px;
+            margin-right: -8px;
+            padding: 12px !important;
+            border-radius: 16px !important;
+            backdrop-filter: blur(18px);
+          }
+          .matchs-filter-row {
+            scrollbar-width: none;
+          }
+          .matchs-filter-row::-webkit-scrollbar,
+          .journee-tabs::-webkit-scrollbar {
+            display: none;
+          }
+          .journee-tabs {
+            position: sticky;
+            top: 124px;
+            z-index: 25;
+            background: var(--color-bg-primary);
+            padding: 8px 0 10px !important;
+            margin-bottom: 12px !important;
+          }
           .match-card {
-            padding: 10px 12px !important;
+            padding: 0 !important;
             border-radius: var(--radius-md) !important;
           }
           .match-card-top {
@@ -827,7 +880,8 @@ export default function MatchListClient({ initialMatchs }: Props) {
             font-size: 0.7rem !important;
           }
           .team-name {
-            font-size: 0.72rem !important;
+            font-size: 0.76rem !important;
+            min-height: 40px !important;
           }
           .match-card-footer {
             padding: 8px 10px !important;

@@ -6,7 +6,7 @@ const SAFE_REDIRECT_PATHS: Record<string, string> = {
   '/pronostics': '/auth/login?redirect=/pronostics',
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -31,12 +31,11 @@ export async function middleware(request: NextRequest) {
   )
 
   const { data: { user } } = await supabase.auth.getUser()
-
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin
 
   for (const [protectedPath, loginPath] of Object.entries(SAFE_REDIRECT_PATHS)) {
     if (request.nextUrl.pathname.startsWith(protectedPath) && !user) {
-      return NextResponse.redirect(new URL(loginPath, SITE_URL))
+      return NextResponse.redirect(new URL(loginPath, siteUrl))
     }
   }
 

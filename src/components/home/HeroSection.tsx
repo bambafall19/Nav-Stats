@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 
 interface HeroSectionProps {
   matchCount: number
@@ -14,7 +14,7 @@ interface HeroSectionProps {
 export default function HeroSection({ matchCount, userCount, isAuthenticated }: HeroSectionProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   
-  const slides = [
+  const slides = useMemo(() => [
     {
       title: "Bienvenue sur NavéStats",
       subtitle: "La plateforme de pronostics des Navétanes de Khombole",
@@ -39,7 +39,7 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated }: 
       emoji: "👥",
       gradient: "linear-gradient(135deg, #B91C1C 0%, #E8002D 100%)"
     }
-  ]
+  ], [matchCount, userCount])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -117,7 +117,7 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated }: 
               lineHeight: 1.1,
               textShadow: '0 4px 20px rgba(0,0,0,0.3)',
               fontFamily: 'var(--font-outfit)',
-              letterSpacing: '-0.03em',
+              letterSpacing: 0,
             }}
           >
             {slides[currentSlide].emoji} {slides[currentSlide].title}
@@ -272,7 +272,7 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated }: 
         }
         @media (max-width: 640px) {
           .hero-section {
-            min-height: 430px !important;
+            min-height: 390px !important;
             align-items: flex-end !important;
             border-bottom-left-radius: 28px;
             border-bottom-right-radius: 28px;
@@ -288,8 +288,8 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated }: 
             z-index: 1;
           }
           .hero-content {
-            padding-top: 34px !important;
-            padding-bottom: 38px !important;
+            padding-top: 28px !important;
+            padding-bottom: 30px !important;
           }
           .mobile-hero-copy {
             display: block;
@@ -314,7 +314,7 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated }: 
             margin: 12px auto 8px;
             color: white;
             font-family: var(--font-outfit);
-            font-size: 2.22rem !important;
+            font-size: 2rem !important;
             line-height: 1.02 !important;
             font-weight: 950;
             letter-spacing: 0 !important;
@@ -322,7 +322,7 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated }: 
           }
           .mobile-hero-copy p {
             max-width: 300px;
-            margin: 0 auto 18px !important;
+            margin: 0 auto 16px !important;
             color: rgba(255, 255, 255, 0.84) !important;
             font-size: 0.92rem !important;
             line-height: 1.42 !important;
@@ -350,14 +350,14 @@ export default function HeroSection({ matchCount, userCount, isAuthenticated }: 
           }
           .hero-stats {
             width: min(100%, 340px);
-            margin: 24px auto 0 !important;
+            margin: 18px auto 0 !important;
             gap: 0 !important;
             justify-content: stretch !important;
             flex-wrap: nowrap !important;
             background: rgba(255, 255, 255, 0.12);
             border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 20px;
-            padding: 10px 8px;
+            padding: 8px;
             backdrop-filter: blur(14px);
           }
           .hero-stat {
