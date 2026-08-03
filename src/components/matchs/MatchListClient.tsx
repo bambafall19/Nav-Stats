@@ -234,10 +234,10 @@ export default function MatchListClient({ initialMatchs }: Props) {
       <div className="matchs-filter-panel" style={{
         background: 'var(--color-surface-card)',
         borderRadius: 'var(--radius-lg)',
-        padding: 12,
+        padding: 10,
         border: '1px solid var(--color-border)',
         boxShadow: 'var(--shadow-sm)',
-        marginBottom: 16,
+        marginBottom: 12,
       }}>
         {/* Search */}
         <div style={{ marginBottom: 10 }}>
@@ -455,26 +455,26 @@ export default function MatchListClient({ initialMatchs }: Props) {
           background: 'var(--color-surface-card)',
           border: '1px solid var(--color-border)',
           borderRadius: 16,
-          padding: '32px 16px',
+          padding: '28px 16px',
           textAlign: 'center',
           boxShadow: 'var(--shadow-sm)',
         }}>
-          <div style={{ fontSize: '2.2rem', marginBottom: 8 }}>⚽</div>
-          <h3 style={{ fontFamily: 'var(--font-outfit)', marginBottom: 4, fontSize: '1rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 6 }}>⚽</div>
+          <h3 style={{ fontFamily: 'var(--font-outfit)', marginBottom: 3, fontSize: '0.95rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
             Aucun match programmé
           </h3>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem' }}>Revenez bientôt pour le calendrier officiel.</p>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem' }}>Revenez bientôt pour le calendrier officiel.</p>
           {(selectedStatus !== 'all' || selectedPoule !== 'all' || selectedJournee !== 'all' || search) && (
             <button
               type="button"
               style={{
-                marginTop: 12,
-                padding: '8px 16px',
+                marginTop: 10,
+                padding: '7px 14px',
                 background: 'var(--gradient-green)',
                 color: 'white',
                 border: 'none',
                 borderRadius: 'var(--radius-full)',
-                fontSize: '0.78rem',
+                fontSize: '0.72rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 boxShadow: 'var(--shadow-green)',
@@ -492,7 +492,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
           )}
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {sortedDates.map(date => {
             const matches = matchesByDate[date]
             const d = new Date(date)

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { CalendarDays, Home, Trophy, User, Target, BarChart3 } from 'lucide-react'
+import { Home, Trophy, Target, BarChart3, User } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 
@@ -13,13 +13,13 @@ type Profile = Database['public']['Tables']['profiles']['Row']
 const mobileNavLinks = [
   { href: '/', label: 'Accueil', Icon: Home },
   { href: '/classements', label: 'Classement', Icon: Trophy },
-  { href: '/cadets', label: 'Cadets', Icon: CalendarDays },
+  { href: '/matchs', label: 'Matchs', Icon: Target, isFAB: true },
+  { href: '/pronostics', label: 'Pronostics', Icon: BarChart3 },
   { href: '/profil', label: 'Profil', Icon: User },
 ]
 
 export default function MobileBottomNav() {
   const pathname = usePathname()
-  const isMatchsActive = pathname === '/matchs' || pathname.startsWith('/matchs/')
   const [profile, setProfile] = useState<Profile | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
@@ -94,238 +94,220 @@ export default function MobileBottomNav() {
           bottom: 'max(8px, env(safe-area-inset-bottom))',
           left: 10,
           right: 10,
-          height: 60,
-          background: 'rgba(255, 255, 255, 0.92)',
+          height: 64,
+          background: 'rgba(255, 255, 255, 0.95)',
           border: '1px solid rgba(0, 98, 51, 0.08)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 8px',
+          padding: '0 6px',
           zIndex: 999,
-          borderRadius: 18,
+          borderRadius: 20,
           boxShadow: '0 12px 32px rgba(15, 23, 42, 0.08)',
           backdropFilter: 'blur(20px) saturate(180%)',
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         }}
       >
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 4, flex: 1 }}>
-          {mobileNavLinks.slice(0, 2).map(link => {
-            const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
-            const Icon = link.Icon
+        {mobileNavLinks.map((link, idx) => {
+          const isCenter = idx === 2
+          const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
+          const isProfileLink = link.href === '/profil'
+          const Icon = link.Icon
+
+          if (isCenter) {
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className="mobile-nav-item"
+                className="mobile-nav-fab"
                 style={{
-                  background: isActive ? 'rgba(0, 98, 51, 0.08)' : 'transparent',
-                  color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
+                  width: 50,
+                  height: 50,
+                  borderRadius: 16,
+                  background: 'linear-gradient(135deg, #FF6B00, #E8002D)',
+                  color: 'white',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 900,
+                  textDecoration: 'none',
+                  boxShadow: isActive
+                    ? '0 6px 20px rgba(232, 0, 45, 0.45), 0 0 0 3px rgba(255, 107, 0, 0.15)'
+                    : '0 4px 14px rgba(232, 0, 45, 0.35)',
+                  transition: 'all 0.2s ease',
+                  margin: '-18px 0 0',
+                  border: isActive ? '2px solid #FFD700' : '2px solid rgba(255,255,255,0.9)',
+                  position: 'relative',
                 }}
-                aria-label={link.label}
+                aria-label="Matchs"
               >
-                <Icon size={18} strokeWidth={isActive ? 2.6 : 2} />
-                <span className="mobile-nav-label">{link.label}</span>
+                <Target size={20} strokeWidth={2.6} />
+                <span style={{
+                  fontSize: '0.52rem',
+                  lineHeight: 1,
+                  letterSpacing: '0.01em',
+                  fontFamily: 'var(--font-outfit)',
+                  fontWeight: 800,
+                }}>
+                  Matchs
+                </span>
+                {todayMatchCount > 0 && (
+                  <span style={{
+                    position: 'absolute',
+                    top: -4,
+                    right: -4,
+                    minWidth: 16,
+                    height: 16,
+                    borderRadius: '50%',
+                    background: '#FFD700',
+                    color: '#7C3AED',
+                    fontSize: '0.55rem',
+                    fontWeight: 800,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0 3px',
+                    border: '2px solid white',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+                    fontFamily: 'var(--font-outfit)',
+                  }}>
+                    {todayMatchCount}
+                  </span>
+                )}
               </Link>
             )
-          })}
-        </div>
+          }
 
-        <Link
-          href="/matchs"
-          className="mobile-nav-fab"
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 14,
-            background: 'linear-gradient(135deg, #006233, #00A651)',
-            color: 'white',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 900,
-            textDecoration: 'none',
-            boxShadow: isMatchsActive
-              ? '0 6px 16px rgba(0, 98, 51, 0.4), 0 0 0 3px rgba(0, 166, 81, 0.12)'
-              : '0 4px 12px rgba(0, 98, 51, 0.3)',
-            transition: 'all 0.15s ease',
-            margin: '-16px 2px 0',
-            border: isMatchsActive ? '2px solid #FFD700' : '2px solid rgba(255,255,255,0.9)',
-            position: 'relative',
-          }}
-          aria-label="Championnats"
-        >
-          <Target size={16} strokeWidth={2.6} />
-          <span style={{
-            fontSize: '0.48rem',
-            lineHeight: 1,
-            letterSpacing: '0.01em',
-            fontFamily: 'var(--font-outfit)',
-            fontWeight: 800,
-          }}>
-            Matchs
-          </span>
-          {todayMatchCount > 0 && (
-            <span style={{
-              position: 'absolute',
-              top: -3,
-              right: -3,
-              minWidth: 16,
-              height: 16,
-              borderRadius: '50%',
-              background: '#E8002D',
-              color: 'white',
-              fontSize: '0.55rem',
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 3px',
-              border: '2px solid white',
-              boxShadow: '0 2px 6px rgba(232,0,45,0.35)',
-              fontFamily: 'var(--font-outfit)',
-            }}>
-              {todayMatchCount}
-            </span>
-          )}
-        </Link>
+          if (isProfileLink && profile) {
+            return (
+              <div key={link.href} style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  className="mobile-nav-item"
+                  style={{
+                    background: isActive ? 'rgba(0, 98, 51, 0.08)' : 'transparent',
+                    color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
+                  }}
+                  aria-label="Menu profil"
+                  aria-expanded={menuOpen}
+                >
+                  <div style={{
+                    width: 22,
+                    height: 22,
+                    borderRadius: '50%',
+                    border: '1.5px solid var(--color-primary)',
+                    overflow: 'hidden',
+                    background: 'var(--color-bg-secondary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.65rem',
+                    fontWeight: 700,
+                    color: 'var(--color-primary)',
+                  }}>
+                    {profile.avatar_url
+                      ? <Image src={profile.avatar_url} alt={profile.username} width={22} height={22} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : profile.username.charAt(0).toUpperCase()
+                    }
+                  </div>
+                  <span className="mobile-nav-label">{link.label}</span>
+                </button>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 4, flex: 1 }}>
-          {mobileNavLinks.slice(2).map(link => {
-            const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
-            const isProfileLink = link.href === '/profil'
-            const Icon = link.Icon
-
-            if (isProfileLink && profile) {
-              return (
-                <div key={link.href} style={{ position: 'relative' }}>
-                  <button
-                    onClick={() => setMenuOpen(!menuOpen)}
-                    className="mobile-nav-item"
-                    style={{
-                      background: isActive ? 'rgba(0, 98, 51, 0.08)' : 'transparent',
-                      color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
-                    }}
-                    aria-label="Menu profil"
-                    aria-expanded={menuOpen}
-                  >
-                    <div style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: '50%',
-                      border: '2px solid var(--color-primary)',
-                      overflow: 'hidden',
-                      background: 'var(--color-bg-secondary)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.7rem',
-                      fontWeight: 700,
-                      color: 'var(--color-primary)',
-                    }}>
-                      {profile.avatar_url
-                        ? <Image src={profile.avatar_url} alt={profile.username} width={24} height={24} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        : profile.username.charAt(0).toUpperCase()
-                      }
-                    </div>
-                    <span className="mobile-nav-label">Profil</span>
-                  </button>
-
-                  {menuOpen && (
-                    <div style={{
-                      position: 'absolute',
-                      bottom: 'calc(100% + 10px)',
-                      right: 0,
-                      minWidth: 180,
-                      background: 'var(--color-surface-card)',
-                      borderRadius: 'var(--radius-lg)',
-                      border: '1px solid var(--color-border)',
-                      boxShadow: 'var(--shadow-lg)',
-                      padding: 6,
-                      zIndex: 200,
-                      animation: 'slideUp 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                    }}>
-                      {menuItems.map((item, idx) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
-                            padding: '10px 12px',
-                            borderRadius: 'var(--radius-md)',
-                            textDecoration: 'none',
-                            color: item.color,
-                            transition: 'all 0.12s ease',
-                            background: hoveredItem === `menu-${idx}` ? 'rgba(0, 98, 51, 0.06)' : 'transparent',
-                            transform: hoveredItem === `menu-${idx}` ? 'translateX(3px)' : 'translateX(0)',
-                            animation: `slideInLeft 0.2s ease ${idx * 0.04}s backwards`,
-                          }}
-                          onClick={closeMenu}
-                          onMouseEnter={() => setHoveredItem(`menu-${idx}`)}
-                          onMouseLeave={() => setHoveredItem(null)}
-                        >
-                          <span style={{ fontSize: '1rem' }}>{item.icon}</span>
-                          <span style={{ fontSize: '0.8rem', fontWeight: 500 }}>{item.label}</span>
-                        </Link>
-                      ))}
-                      <div style={{ height: 1, background: 'var(--color-border)', margin: '6px 0' }} />
-                      <button
-                        onClick={() => {
-                          handleSignOut()
-                          closeMenu()
-                        }}
+                {menuOpen && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 'calc(100% + 10px)',
+                    right: 0,
+                    minWidth: 180,
+                    background: 'var(--color-surface-card)',
+                    borderRadius: 'var(--radius-lg)',
+                    border: '1px solid var(--color-border)',
+                    boxShadow: 'var(--shadow-lg)',
+                    padding: 6,
+                    zIndex: 200,
+                    animation: 'slideUp 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  }}>
+                    {menuItems.map((item, idx) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
                           gap: 8,
                           padding: '10px 12px',
                           borderRadius: 'var(--radius-md)',
-                          color: 'var(--color-red)',
-                          background: hoveredItem === 'logout' ? 'rgba(232, 0, 45, 0.08)' : 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          width: '100%',
-                          fontSize: '0.8rem',
-                          fontWeight: 600,
+                          textDecoration: 'none',
+                          color: item.color,
                           transition: 'all 0.12s ease',
-                          transform: hoveredItem === 'logout' ? 'translateX(3px)' : 'translateX(0)',
-                          animation: 'slideInLeft 0.2s ease 0.12s backwards',
+                          background: hoveredItem === `menu-${idx}` ? 'rgba(0, 98, 51, 0.06)' : 'transparent',
+                          transform: hoveredItem === `menu-${idx}` ? 'translateX(3px)' : 'translateX(0)',
+                          animation: `slideInLeft 0.2s ease ${idx * 0.04}s backwards`,
                         }}
-                        onMouseEnter={() => setHoveredItem('logout')}
+                        onClick={closeMenu}
+                        onMouseEnter={() => setHoveredItem(`menu-${idx}`)}
                         onMouseLeave={() => setHoveredItem(null)}
-                        aria-label="Se déconnecter"
                       >
-                        <span style={{ fontSize: '1rem' }}>🚪</span>
-                        <span>Déconnexion</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )
-            }
-
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="mobile-nav-item"
-                style={{
-                  background: isActive ? 'rgba(0, 98, 51, 0.08)' : 'transparent',
-                  color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
-                }}
-                aria-label={link.label}
-                onMouseEnter={() => setHoveredItem(link.href)}
-                onMouseLeave={() => setHoveredItem(null)}
-              >
-                <Icon size={18} strokeWidth={isActive ? 2.6 : 2} />
-                <span className="mobile-nav-label">{link.label}</span>
-              </Link>
+                        <span style={{ fontSize: '1rem' }}>{item.icon}</span>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 500 }}>{item.label}</span>
+                      </Link>
+                    ))}
+                    <div style={{ height: 1, background: 'var(--color-border)', margin: '6px 0' }} />
+                    <button
+                      onClick={() => {
+                        handleSignOut()
+                        closeMenu()
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: '10px 12px',
+                        borderRadius: 'var(--radius-md)',
+                        color: 'var(--color-red)',
+                        background: hoveredItem === 'logout' ? 'rgba(232, 0, 45, 0.08)' : 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        width: '100%',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        transition: 'all 0.12s ease',
+                        transform: hoveredItem === 'logout' ? 'translateX(3px)' : 'translateX(0)',
+                        animation: 'slideInLeft 0.2s ease 0.12s backwards',
+                      }}
+                      onMouseEnter={() => setHoveredItem('logout')}
+                      onMouseLeave={() => setHoveredItem(null)}
+                      aria-label="Se déconnecter"
+                    >
+                      <span style={{ fontSize: '1rem' }}>🚪</span>
+                      <span>Déconnexion</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             )
-          })}
-        </div>
+          }
+
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="mobile-nav-item"
+              style={{
+                background: isActive ? 'rgba(0, 98, 51, 0.08)' : 'transparent',
+                color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
+              }}
+              aria-label={link.label}
+              onMouseEnter={() => setHoveredItem(link.href)}
+              onMouseLeave={() => setHoveredItem(null)}
+            >
+              <Icon size={20} strokeWidth={isActive ? 2.6 : 2} />
+              <span className="mobile-nav-label">{link.label}</span>
+            </Link>
+          )
+        })}
 
         <style>{`
           @media (min-width: 768px) { #mobile-bottom-nav { display: none !important; } }
@@ -333,12 +315,12 @@ export default function MobileBottomNav() {
           #mobile-bottom-nav .mobile-nav-item {
             width: 100%;
             min-width: 0;
-            height: 48px;
+            height: 52px;
             padding: 4px 2px;
             border-radius: 14px;
             display: inline-flex;
             flex-direction: column;
-            align-items: center;
+            alignItems: center;
             justify-content: center;
             gap: 2px;
             text-decoration: none;
@@ -351,9 +333,9 @@ export default function MobileBottomNav() {
             transform: scale(0.95);
           }
           #mobile-bottom-nav .mobile-nav-label {
-            font-size: 0.58rem;
+            font-size: 0.6rem;
             line-height: 1;
-            font-weight: 800;
+            font-weight: 700;
             font-family: var(--font-outfit);
             letter-spacing: 0;
             white-space: nowrap;

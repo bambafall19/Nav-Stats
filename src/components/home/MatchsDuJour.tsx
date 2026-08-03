@@ -74,7 +74,7 @@ function MatchCard({ match }: { match: Match }) {
         overflow: 'hidden',
       }}>
         {/* Status badge and date */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, gap: 6 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8, gap: 6 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             {isLive ? (
               <span className="status-live" style={{
@@ -130,8 +130,8 @@ function MatchCard({ match }: { match: Match }) {
             }}
             aria-label="Partager ce match sur WhatsApp"
             style={{
-              width: 38,
-              height: 38,
+              width: 34,
+              height: 34,
               borderRadius: '50%',
               background: 'rgba(0,98,51,0.06)',
               color: 'var(--color-primary)',
@@ -144,7 +144,7 @@ function MatchCard({ match }: { match: Match }) {
               transition: 'all 0.2s',
             }}
           >
-            <Share2 size={16} />
+            <Share2 size={15} />
           </button>
         </div>
 
@@ -154,22 +154,22 @@ function MatchCard({ match }: { match: Match }) {
           gridTemplateColumns: '1fr auto 1fr',
           gap: 6,
           alignItems: 'center',
-          marginBottom: 10,
+          marginBottom: 8,
         }}>
           {/* Équipe A */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
             <div className="team-badge" style={{
-              width: 30,
-              height: 30,
+              width: 28,
+              height: 28,
               borderRadius: 'var(--radius-md)',
               overflow: 'hidden',
               boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
               border: '1.5px solid var(--color-border)',
             }}>
-              <TeamLogo equipe={match.equipe_a} size={30} />
+              <TeamLogo equipe={match.equipe_a} size={28} />
             </div>
             <span className="team-name" style={{
-              fontSize: '0.65rem',
+              fontSize: '0.62rem',
               fontWeight: 700,
               textAlign: 'center',
               color: 'var(--color-text-primary)',
@@ -185,8 +185,8 @@ function MatchCard({ match }: { match: Match }) {
 
           {/* VS / Score */}
           <div className="vs-badge" style={{
-            width: 28,
-            height: 28,
+            width: 26,
+            height: 26,
             borderRadius: '50%',
             background: isLive
               ? 'linear-gradient(135deg, rgba(232,0,45,0.15), rgba(232,0,45,0.08))'
@@ -197,16 +197,16 @@ function MatchCard({ match }: { match: Match }) {
             alignItems: 'center',
             justifyContent: 'center',
             fontWeight: 900,
-            fontSize: '0.65rem',
+            fontSize: '0.62rem',
             color: isLive ? 'var(--color-red)' : 'var(--color-primary)',
             border: `1.5px solid ${isLive ? 'rgba(239,68,68,0.25)' : 'rgba(0,98,51,0.2)'}`,
             fontFamily: 'var(--font-outfit)',
             boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
           }}>
             {isDone || isLive ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.65rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.62rem' }}>
                 <span style={{ fontWeight: 900 }}>{match.score_a ?? 0}</span>
-                <span style={{ fontSize: '0.55rem', opacity: 0.7 }}>–</span>
+                <span style={{ fontSize: '0.5rem', opacity: 0.7 }}>–</span>
                 <span style={{ fontWeight: 900 }}>{match.score_b ?? 0}</span>
               </div>
             ) : (
@@ -215,19 +215,19 @@ function MatchCard({ match }: { match: Match }) {
           </div>
 
           {/* Équipe B */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
             <div className="team-badge" style={{
-              width: 30,
-              height: 30,
+              width: 28,
+              height: 28,
               borderRadius: 'var(--radius-md)',
               overflow: 'hidden',
               boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
               border: '1.5px solid var(--color-border)',
             }}>
-              <TeamLogo equipe={match.equipe_b} size={30} />
+              <TeamLogo equipe={match.equipe_b} size={28} />
             </div>
             <span className="team-name" style={{
-              fontSize: '0.65rem',
+              fontSize: '0.62rem',
               fontWeight: 700,
               textAlign: 'center',
               color: 'var(--color-text-primary)',
@@ -245,24 +245,24 @@ function MatchCard({ match }: { match: Match }) {
         {/* Countdown + Footer CTA */}
         {match.statut === 'a_venir' && (
           <div className="match-card-footer" style={{
-            marginTop: 8,
-            paddingTop: 8,
+            marginTop: 6,
+            paddingTop: 6,
             borderTop: '1px solid var(--color-border)',
             display: 'flex',
             flexDirection: 'column',
-            gap: 6,
+            gap: 4,
           }}>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <CountdownTimer targetDate={match.date_match} targetTime={match.heure_match || '00:00:00'} />
             </div>
             <div style={{
               width: '100%',
-              padding: '7px',
+              padding: '6px',
               background: 'var(--gradient-green)',
               color: 'white',
               border: 'none',
               borderRadius: 'var(--radius-full)',
-              fontSize: '0.72rem',
+              fontSize: '0.68rem',
               fontWeight: 700,
               textAlign: 'center',
               boxShadow: 'var(--shadow-green)',
@@ -280,8 +280,8 @@ function MatchCard({ match }: { match: Match }) {
 export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isToday: boolean }) {
   return (
     <div>
-      <div style={{ textAlign: 'center', marginBottom: 10 }}>
-        <h2 className="section-title" style={{ marginBottom: 1, fontSize: '1.05rem' }}>
+      <div style={{ textAlign: 'center', marginBottom: 8 }}>
+        <h2 className="section-title" style={{ marginBottom: 1, fontSize: '1rem' }}>
           {isToday ? '⚽ Matchs du Jour' : '📅 Prochains Matchs'}
           <span style={{
             marginLeft: 6,
@@ -297,7 +297,7 @@ export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isT
             verticalAlign: 'middle',
           }}>Cadets</span>
         </h2>
-        <p className="section-subtitle" style={{ fontSize: '0.72rem' }}>
+        <p className="section-subtitle" style={{ fontSize: '0.68rem' }}>
           {matchs.length === 0
             ? 'Aucun match prévu'
             : `${matchs.length} rencontre${matchs.length > 1 ? 's' : ''}`
@@ -311,7 +311,7 @@ export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isT
           <p style={{ color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: '0.8rem' }}>Aucun match prévu pour le moment</p>
         </div>
       ) : (
-        <div className="matchs-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 8 }}>
+        <div className="matchs-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
           {matchs.map((match, i) => (
             <div key={match.id} style={{ animation: `fadeInUp 0.4s ${i * 0.06}s ease both` }}>
               <MatchCard match={match} />

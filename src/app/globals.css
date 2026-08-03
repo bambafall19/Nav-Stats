@@ -787,7 +787,7 @@ h1, h2, h3, h4, h5, h6 {
 
   @media (max-width: 767px), (hover: none) and (pointer: coarse) {
     :root {
-      --nav-height: 60px;
+      --nav-height: 0px;
     }
 
     * {
@@ -809,8 +809,8 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .page-content {
-      padding-top: 52px;
-      padding-bottom: calc(100px + env(safe-area-inset-bottom));
+      padding-top: 12px;
+      padding-bottom: calc(96px + env(safe-area-inset-bottom));
     }
 
     .page-content > .container-app {
@@ -823,69 +823,8 @@ h1, h2, h3, h4, h5, h6 {
       display: none !important;
     }
 
-    .header-shell {
-      gap: 6px !important;
-      padding-inline: 10px !important;
-    }
-
-    .brand-mark {
-      gap: 6px !important;
-    }
-
-    .brand-logo {
-      width: 30px !important;
-      height: 30px !important;
-      border-radius: 7px !important;
-    }
-
-    .brand-mark > div {
-      display: none;
-    }
-
-    .zone-partner {
-      gap: 4px !important;
-      min-width: 0;
-    }
-
-    .zone-logo {
-      width: 22px !important;
-      height: 22px !important;
-    }
-
-    .oncav-label {
-      display: inline !important;
-      font-size: 0.52rem !important;
-      line-height: 1 !important;
-      max-width: 48px;
-      overflow: hidden;
-    }
-
     .desktop-nav {
       display: none !important;
-    }
-
-    .header-actions {
-      gap: 4px !important;
-    }
-
-    #notification-bell,
-    #user-menu-btn {
-      width: 36px !important;
-      height: 36px !important;
-      min-width: 36px !important;
-      padding: 0 !important;
-      border-radius: 12px !important;
-      background: var(--color-surface-card) !important;
-      box-shadow: var(--shadow-sm) !important;
-    }
-
-    .header-actions > a {
-      min-height: 36px !important;
-      min-width: 36px !important;
-      padding: 0 8px !important;
-      border-radius: 12px !important;
-      font-size: 0.68rem !important;
-      white-space: nowrap;
     }
 
     .register-link {
@@ -896,10 +835,10 @@ h1, h2, h3, h4, h5, h6 {
       bottom: 8px !important;
       left: 10px !important;
       right: 10px !important;
-      height: 60px !important;
-      border-radius: 18px !important;
+      height: 64px !important;
+      border-radius: 20px !important;
       box-shadow: 0 12px 32px rgba(16, 24, 32, 0.1) !important;
-      padding: 0 8px !important;
+      padding: 0 6px !important;
     }
 
     .home-action-grid {
@@ -922,18 +861,18 @@ h1, h2, h3, h4, h5, h6 {
 
     .matchs-hero {
       padding: 14px !important;
-      margin: 0 -10px 8px !important;
-      border-radius: 0 0 14px 14px !important;
+      margin: 0 -10px 6px !important;
+      border-radius: 0 0 12px 12px !important;
     }
 
     .matchs-hero h1 {
-      font-size: 1.05rem !important;
+      font-size: 1rem !important;
       margin-bottom: 2px !important;
     }
 
     .matchs-hero p {
-      font-size: 0.68rem !important;
-      margin-bottom: 8px !important;
+      font-size: 0.66rem !important;
+      margin-bottom: 6px !important;
     }
 
     .matchs-hero > div:last-child {
@@ -1028,41 +967,41 @@ h1, h2, h3, h4, h5, h6 {
     .match-card .team-badge,
     .match-card .team-badge img,
     .match-card .team-badge > div {
-      width: 26px !important;
-      height: 26px !important;
+      width: 24px !important;
+      height: 24px !important;
     }
     .match-card .vs-badge {
-      width: 24px !important;
-      height: 24px !important;
-      font-size: 0.6rem !important;
+      width: 22px !important;
+      height: 22px !important;
+      font-size: 0.58rem !important;
     }
     .match-card .team-name {
-      font-size: 0.62rem !important;
-    }
-    .match-card .score-badge {
-      width: 26px !important;
-      height: 26px !important;
       font-size: 0.6rem !important;
     }
-    .match-card .match-card-top {
-      padding: 5px 6px !important;
-    }
-    .match-card .match-card-body {
-      padding: 6px !important;
-      gap: 3px !important;
-    }
-    .match-card .match-card-footer {
-      padding: 5px 6px !important;
-    }
-    .match-card .share-btn {
+    .match-card .score-badge {
       width: 24px !important;
       height: 24px !important;
-      top: 3px !important;
-      right: 3px !important;
+      font-size: 0.58rem !important;
+    }
+    .match-card .match-card-top {
+      padding: 4px 5px !important;
+    }
+    .match-card .match-card-body {
+      padding: 5px !important;
+      gap: 2px !important;
+    }
+    .match-card .match-card-footer {
+      padding: 4px 5px !important;
+    }
+    .match-card .share-btn {
+      width: 22px !important;
+      height: 22px !important;
+      top: 2px !important;
+      right: 2px !important;
     }
     .match-card .share-btn svg {
-      width: 10px !important;
-      height: 10px !important;
+      width: 9px !important;
+      height: 9px !important;
     }
 
     .journee-section {
@@ -1103,14 +1042,14 @@ h1, h2, h3, h4, h5, h6 {
 
     .home-flow > section,
     .home-flow > div > section {
-      margin-bottom: 10px !important;
+      margin-bottom: 8px !important;
     }
     .quick-actions-section {
-      margin-bottom: 10px !important;
+      margin-bottom: 8px !important;
     }
 
     .matchs-wrapper > div:first-child {
-      margin-bottom: 8px !important;
+      margin-bottom: 4px !important;
     }
 
     .match-card-link {
