@@ -4,9 +4,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { CalendarDays, Home, Trophy, User, Target } from 'lucide-react'
+import { CalendarDays, Home, Trophy, User, Target, BarChart3 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
+import ThemeToggle from '@/components/shared/ThemeToggle'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -20,9 +21,11 @@ const mobileNavLinks = [
 export default function MobileBottomNav() {
   const pathname = usePathname()
   const isMatchsActive = pathname === '/matchs' || pathname.startsWith('/matchs/')
+  const isPronosticsActive = pathname === '/pronostics' || pathname.startsWith('/pronostics/')
   const [profile, setProfile] = useState<Profile | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
+  const [todayMatchCount, setTodayMatchCount] = useState(0)
 
   useEffect(() => {
     const supabase = createClient()
@@ -34,6 +37,17 @@ export default function MobileBottomNav() {
           .then((resProfile) => setProfile(resProfile.data))
       }
     })
+
+    // Fetch today's match count for FAB badge
+    const today = new Date().toISOString().split('T')[0]
+    supabase
+      .from('matchs')
+      .select('id')
+      .eq('date_match', today)
+      .eq('statut', 'a_venir')
+      .then(({ data }) => {
+        if (data) setTodayMatchCount(data.length)
+      })
   }, [])
 
   useEffect(() => {
@@ -142,6 +156,7 @@ export default function MobileBottomNav() {
             transition: 'all 0.2s ease',
             margin: '-18px 4px 0',
             border: isMatchsActive ? '2px solid #FFD700' : '2px solid white',
+            position: 'relative',
           }}
           aria-label="Championnats"
         >
@@ -155,6 +170,29 @@ export default function MobileBottomNav() {
           }}>
             Matchs
           </span>
+          {todayMatchCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: -4,
+              right: -4,
+              minWidth: 18,
+              height: 18,
+              borderRadius: '50%',
+              background: '#E8002D',
+              color: 'white',
+              fontSize: '0.6rem',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0 4px',
+              border: '2px solid white',
+              boxShadow: '0 2px 8px rgba(232,0,45,0.4)',
+              fontFamily: 'var(--font-outfit)',
+            }}>
+              {todayMatchCount}
+            </span>
+          )}
         </Link>
 
         {/* Right items */}
@@ -293,7 +331,38 @@ export default function MobileBottomNav() {
             )
           })}
         </div>
-        
+
+        {/* Theme toggle floating button */}
+        <button
+          onClick={() => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark')
+            localStorage.setItem('navestats-theme', isDark ? 'light' : 'dark')
+          }}
+          aria-label="Basculer le thème"
+          style={{
+            position: 'absolute',
+            top: -14,
+            right: 12,
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            border: '2px solid var(--color-border)',
+            background: 'var(--color-surface-card)',
+            color: 'var(--color-text-primary)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '0.9rem',
+            boxShadow: 'var(--shadow-md)',
+            zIndex: 100,
+            transition: 'all 0.2s ease',
+          }}
+        >
+          <span id="mobile-theme-icon">🌙</span>
+        </button>
+
         <style>{`
           @media (min-width: 768px) { #mobile-bottom-nav { display: none !important; } }
           @media (max-width: 767px) { #mobile-bottom-nav { display: flex !important; } }

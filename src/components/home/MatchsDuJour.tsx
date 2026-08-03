@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Share2 } from 'lucide-react'
+import CountdownTimer from '@/components/shared/CountdownTimer'
 import type { Database } from '@/types/database.types'
 
 type Match = Database['public']['Tables']['matchs']['Row'] & {
@@ -119,7 +120,7 @@ function MatchCard({ match }: { match: Match }) {
             </div>
           </div>
 
-          {/* Share button */}
+          {/* Share button - 44px touch target */}
           <button
             type="button"
             onClick={event => {
@@ -129,8 +130,8 @@ function MatchCard({ match }: { match: Match }) {
             }}
             aria-label="Partager ce match sur WhatsApp"
             style={{
-              width: 36,
-              height: 36,
+              width: 44,
+              height: 44,
               borderRadius: '50%',
               background: 'rgba(0,98,51,0.06)',
               color: 'var(--color-primary)',
@@ -143,7 +144,7 @@ function MatchCard({ match }: { match: Match }) {
               transition: 'all 0.2s',
             }}
           >
-            <Share2 size={16} />
+            <Share2 size={18} />
           </button>
         </div>
 
@@ -241,13 +242,19 @@ function MatchCard({ match }: { match: Match }) {
           </div>
         </div>
 
-        {/* Footer CTA */}
+        {/* Countdown + Footer CTA */}
         {match.statut === 'a_venir' && (
           <div className="match-card-footer" style={{
             marginTop: 12,
             paddingTop: 10,
             borderTop: '1px solid var(--color-border)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
           }}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <CountdownTimer targetDate={match.date_match} targetTime={match.heure_match || '00:00:00'} />
+            </div>
             <div style={{
               width: '100%',
               padding: '8px',

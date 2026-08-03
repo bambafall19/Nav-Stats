@@ -1,0 +1,317 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "NavéStats" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=e9]:
+          - link "🏠 Accueil" [ref=e10] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e11]: 🏠
+            - generic [ref=e12]: Accueil
+          - link "⚽ Matchs" [ref=e13] [cursor=pointer]:
+            - /url: /matchs
+            - generic [ref=e14]: ⚽
+            - generic [ref=e15]: Matchs
+          - link "📅 Cadets" [ref=e16] [cursor=pointer]:
+            - /url: /cadets
+            - generic [ref=e17]: 📅
+            - generic [ref=e18]: Cadets
+          - link "🏆 Classements" [ref=e19] [cursor=pointer]:
+            - /url: /classements
+            - generic [ref=e20]: 🏆
+            - generic [ref=e21]: Classements
+          - link "📊 Stats" [ref=e22] [cursor=pointer]:
+            - /url: /statistiques
+            - generic [ref=e23]: 📊
+            - generic [ref=e24]: Stats
+          - link "💬 Chat" [ref=e25] [cursor=pointer]:
+            - /url: /communaute
+            - generic [ref=e26]: 💬
+            - generic [ref=e27]: Chat
+        - generic [ref=e28]:
+          - button "Basculer vers le thème sombre" [ref=e29] [cursor=pointer]: ☀️
+          - link "🔑 Se connecter" [ref=e30] [cursor=pointer]:
+            - /url: /auth/login
+    - main [ref=e31]:
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - img "Stade de football" [ref=e36]
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - generic [ref=e40]:
+                - generic [ref=e41]: 🏆
+                - generic [ref=e42]: Navétanes de Khombole 2026
+              - heading "⚽ Bienvenue sur NavéStats" [level=1] [ref=e43]
+              - paragraph [ref=e44]: La plateforme de pronostics des Navétanes de Khombole
+              - generic [ref=e45]:
+                - link "Commencer maintenant →" [ref=e46] [cursor=pointer]:
+                  - /url: /matchs
+                  - text: Commencer maintenant
+                  - generic [ref=e47]: →
+                - link "Se connecter" [ref=e48] [cursor=pointer]:
+                  - /url: /auth/login
+              - generic [ref=e49]:
+                - generic [ref=e50]:
+                  - generic [ref=e51]: ⚽
+                  - generic [ref=e52]: "6"
+                  - generic [ref=e53]: Matchs
+                - generic [ref=e54]:
+                  - generic [ref=e55]: 👥
+                  - generic [ref=e56]: "66"
+                  - generic [ref=e57]: Pronostiqueurs
+                - generic [ref=e58]:
+                  - generic [ref=e59]: 🏆
+                  - generic [ref=e60]: "17"
+                  - generic [ref=e61]: Équipes
+            - generic [ref=e62]:
+              - button "Slide 1" [ref=e63] [cursor=pointer]
+              - button "Slide 2" [ref=e64] [cursor=pointer]
+              - button "Slide 3" [ref=e65] [cursor=pointer]
+        - generic [ref=e66]:
+          - generic [ref=e70]:
+            - generic [ref=e71]:
+              - generic [ref=e72]: 🎯
+              - generic [ref=e73]: "44"
+              - generic [ref=e74]: Pronostics
+            - generic [ref=e75]:
+              - generic [ref=e76]: 👥
+              - generic [ref=e77]: "66"
+              - generic [ref=e78]: Pronostiqueurs
+            - generic [ref=e79]:
+              - generic [ref=e80]: ⚽
+              - generic [ref=e81]: "40"
+              - generic [ref=e82]: Matchs
+            - generic [ref=e83]:
+              - generic [ref=e84]: 🏆
+              - generic [ref=e85]: "0"
+              - generic [ref=e86]: Points distribués
+          - generic [ref=e87]:
+            - generic [ref=e89]:
+              - heading "Comment ça marche ?" [level=2] [ref=e90]
+              - paragraph [ref=e91]: Rejoignez des milliers de pronostiqueurs et testez vos connaissances
+            - generic [ref=e92]:
+              - generic [ref=e94]:
+                - generic [ref=e95]: "1"
+                - generic [ref=e96]: 👋
+                - heading "Créez votre compte" [level=3] [ref=e97]
+                - paragraph [ref=e98]: Inscription gratuite en 30 secondes. Rejoignez la communauté des fans de football.
+              - generic [ref=e100]:
+                - generic [ref=e101]: "2"
+                - generic [ref=e102]: 🎯
+                - heading "Pronostiquez" [level=3] [ref=e103]
+                - paragraph [ref=e104]: Choisissez vos matchs, prédisez les scores exacts et les joueurs clés.
+              - generic [ref=e106]:
+                - generic [ref=e107]: "3"
+                - generic [ref=e108]: 🏆
+                - heading "Gagnez des points" [level=3] [ref=e109]
+                - paragraph [ref=e110]: Plus votre pronostic est précis, plus vous gagnez de points. Grimpez dans le classement.
+          - generic [ref=e113]:
+            - link "⚽ Matchs Pronostiquer les matchs à venir" [ref=e115] [cursor=pointer]:
+              - /url: /matchs
+              - generic [ref=e116]: ⚽
+              - generic [ref=e117]:
+                - generic [ref=e118]: Matchs
+                - generic [ref=e119]: Pronostiquer les matchs à venir
+            - link "📅 Cadets Calendrier CNP 2026" [ref=e121] [cursor=pointer]:
+              - /url: /cadets
+              - generic [ref=e122]: 📅
+              - generic [ref=e123]:
+                - generic [ref=e124]: Cadets
+                - generic [ref=e125]: Calendrier CNP 2026
+            - link "🏆 Classements Voir le classement général" [ref=e127] [cursor=pointer]:
+              - /url: /classements
+              - generic [ref=e128]: 🏆
+              - generic [ref=e129]:
+                - generic [ref=e130]: Classements
+                - generic [ref=e131]: Voir le classement général
+            - link "📊 Statistiques Poules et stats des équipes" [ref=e133] [cursor=pointer]:
+              - /url: /statistiques
+              - generic [ref=e134]: 📊
+              - generic [ref=e135]:
+                - generic [ref=e136]: Statistiques
+                - generic [ref=e137]: Poules et stats des équipes
+            - link "💬 Communauté Discuter avec les fans" [ref=e139] [cursor=pointer]:
+              - /url: /communaute
+              - generic [ref=e140]: 💬
+              - generic [ref=e141]:
+                - generic [ref=e142]: Communauté
+                - generic [ref=e143]: Discuter avec les fans
+          - generic [ref=e144]:
+            - generic [ref=e147]:
+              - generic [ref=e148]:
+                - heading "📅 Prochains Matchs" [level=2] [ref=e149]
+                - paragraph [ref=e150]: 6 rencontres
+              - generic [ref=e151]:
+                - link "⏰ 18:00 mer. 12 août · J4 Partager ce match sur WhatsApp Asc Manko Asc Manko VS ASC Entente CS ASC Entente CS 🎯 Pronostiquer" [ref=e153] [cursor=pointer]:
+                  - /url: /matchs/1dabaa94-c6d8-48c1-a9d4-a6da9f9983fa
+                  - generic [ref=e154]:
+                    - generic [ref=e155]:
+                      - generic [ref=e156]:
+                        - generic [ref=e157]: ⏰ 18:00
+                        - generic [ref=e158]: mer. 12 août · J4
+                      - button "Partager ce match sur WhatsApp" [ref=e159]
+                    - generic [ref=e166]:
+                      - generic [ref=e167]:
+                        - img "Asc Manko" [ref=e169]
+                        - generic [ref=e170]: Asc Manko
+                      - generic [ref=e171]: VS
+                      - generic [ref=e172]:
+                        - img "ASC Entente CS" [ref=e174]
+                        - generic [ref=e175]: ASC Entente CS
+                    - generic [ref=e176]: 🎯 Pronostiquer
+                - link "⏰ 16:00 mer. 12 août · J4 Partager ce match sur WhatsApp Asc Maag daan Asc Maag daan VS Asc Kocc Asc Kocc 🎯 Pronostiquer" [ref=e179] [cursor=pointer]:
+                  - /url: /matchs/8d160654-73e3-487b-a3ac-c72fa297b90d
+                  - generic [ref=e180]:
+                    - generic [ref=e181]:
+                      - generic [ref=e182]:
+                        - generic [ref=e183]: ⏰ 16:00
+                        - generic [ref=e184]: mer. 12 août · J4
+                      - button "Partager ce match sur WhatsApp" [ref=e185]
+                    - generic [ref=e192]:
+                      - generic [ref=e193]:
+                        - img "Asc Maag daan" [ref=e195]
+                        - generic [ref=e196]: Asc Maag daan
+                      - generic [ref=e197]: VS
+                      - generic [ref=e198]:
+                        - img "Asc Kocc" [ref=e200]
+                        - generic [ref=e201]: Asc Kocc
+                    - generic [ref=e202]: 🎯 Pronostiquer
+                - link "⏰ 16:00 jeu. 13 août · J4 Partager ce match sur WhatsApp Asc Espoirs Asc Espoirs VS Asc Thilla Asc Thilla 🎯 Pronostiquer" [ref=e205] [cursor=pointer]:
+                  - /url: /matchs/8abc9ebf-d0ee-463b-99cf-2c373b61c3a6
+                  - generic [ref=e206]:
+                    - generic [ref=e207]:
+                      - generic [ref=e208]:
+                        - generic [ref=e209]: ⏰ 16:00
+                        - generic [ref=e210]: jeu. 13 août · J4
+                      - button "Partager ce match sur WhatsApp" [ref=e211]
+                    - generic [ref=e218]:
+                      - generic [ref=e219]:
+                        - img "Asc Espoirs" [ref=e221]
+                        - generic [ref=e222]: Asc Espoirs
+                      - generic [ref=e223]: VS
+                      - generic [ref=e224]:
+                        - img "Asc Thilla" [ref=e226]
+                        - generic [ref=e227]: Asc Thilla
+                    - generic [ref=e228]: 🎯 Pronostiquer
+                - link "⏰ 18:00 jeu. 13 août · J4 Partager ce match sur WhatsApp Asc waaly daan Asc waaly daan VS Asc Jubbo Asc Jubbo 🎯 Pronostiquer" [ref=e231] [cursor=pointer]:
+                  - /url: /matchs/ce0bb1e4-3df3-4db1-8da8-2fb6f4f4823e
+                  - generic [ref=e232]:
+                    - generic [ref=e233]:
+                      - generic [ref=e234]:
+                        - generic [ref=e235]: ⏰ 18:00
+                        - generic [ref=e236]: jeu. 13 août · J4
+                      - button "Partager ce match sur WhatsApp" [ref=e237]
+                    - generic [ref=e244]:
+                      - generic [ref=e245]:
+                        - img "Asc waaly daan" [ref=e247]
+                        - generic [ref=e248]: Asc waaly daan
+                      - generic [ref=e249]: VS
+                      - generic [ref=e250]:
+                        - img "Asc Jubbo" [ref=e252]
+                        - generic [ref=e253]: Asc Jubbo
+                    - generic [ref=e254]: 🎯 Pronostiquer
+                - link "⏰ 18:00 ven. 14 août · J4 Partager ce match sur WhatsApp Asc G. Rail Asc G. Rail VS Khay Gui Khay Gui 🎯 Pronostiquer" [ref=e257] [cursor=pointer]:
+                  - /url: /matchs/d339f866-304b-4679-b577-bd1635eea1fd
+                  - generic [ref=e258]:
+                    - generic [ref=e259]:
+                      - generic [ref=e260]:
+                        - generic [ref=e261]: ⏰ 18:00
+                        - generic [ref=e262]: ven. 14 août · J4
+                      - button "Partager ce match sur WhatsApp" [ref=e263]
+                    - generic [ref=e270]:
+                      - generic [ref=e271]:
+                        - img "Asc G. Rail" [ref=e273]
+                        - generic [ref=e274]: Asc G. Rail
+                      - generic [ref=e275]: VS
+                      - generic [ref=e276]:
+                        - img "Khay Gui" [ref=e278]
+                        - generic [ref=e279]: Khay Gui
+                    - generic [ref=e280]: 🎯 Pronostiquer
+                - link "⏰ 16:00 ven. 14 août · J4 Partager ce match sur WhatsApp Asc Rakadiou Asc Rakadiou VS Asc Yaakaar Asc Yaakaar 🎯 Pronostiquer" [ref=e283] [cursor=pointer]:
+                  - /url: /matchs/5072bf29-3805-413f-98e4-09ed68ae7885
+                  - generic [ref=e284]:
+                    - generic [ref=e285]:
+                      - generic [ref=e286]:
+                        - generic [ref=e287]: ⏰ 16:00
+                        - generic [ref=e288]: ven. 14 août · J4
+                      - button "Partager ce match sur WhatsApp" [ref=e289]
+                    - generic [ref=e296]:
+                      - generic [ref=e297]:
+                        - img "Asc Rakadiou" [ref=e299]
+                        - generic [ref=e300]: Asc Rakadiou
+                      - generic [ref=e301]: VS
+                      - generic [ref=e302]:
+                        - img "Asc Yaakaar" [ref=e304]
+                        - generic [ref=e305]: Asc Yaakaar
+                    - generic [ref=e306]: 🎯 Pronostiquer
+            - generic [ref=e308]:
+              - generic [ref=e311]:
+                - heading "📋 Derniers Résultats" [level=2] [ref=e312]
+                - paragraph [ref=e313]: Résultats récents
+                - generic [ref=e314]:
+                  - generic [ref=e315]:
+                    - generic [ref=e316]:
+                      - generic [ref=e317]: Asc Manko
+                      - img "Asc Manko" [ref=e318]
+                    - generic [ref=e319]:
+                      - generic [ref=e320]: –
+                      - generic [ref=e322]: 12 août
+                    - generic [ref=e323]:
+                      - img "ASC Entente CS" [ref=e324]
+                      - generic [ref=e325]: ASC Entente CS
+                  - generic [ref=e326]:
+                    - generic [ref=e327]:
+                      - generic [ref=e328]: Asc Maag daan
+                      - img "Asc Maag daan" [ref=e329]
+                    - generic [ref=e330]:
+                      - generic [ref=e331]: –
+                      - generic [ref=e333]: 12 août
+                    - generic [ref=e334]:
+                      - img "Asc Kocc" [ref=e335]
+                      - generic [ref=e336]: Asc Kocc
+                  - generic [ref=e337]:
+                    - generic [ref=e338]:
+                      - generic [ref=e339]: Asc Espoirs
+                      - img "Asc Espoirs" [ref=e340]
+                    - generic [ref=e341]:
+                      - generic [ref=e342]: –
+                      - generic [ref=e344]: 13 août
+                    - generic [ref=e345]:
+                      - img "Asc Thilla" [ref=e346]
+                      - generic [ref=e347]: Asc Thilla
+                  - generic [ref=e348]:
+                    - generic [ref=e349]:
+                      - generic [ref=e350]: Asc waaly daan
+                      - img "Asc waaly daan" [ref=e351]
+                    - generic [ref=e352]:
+                      - generic [ref=e353]: –
+                      - generic [ref=e355]: 13 août
+                    - generic [ref=e356]:
+                      - img "Asc Jubbo" [ref=e357]
+                      - generic [ref=e358]: Asc Jubbo
+                  - generic [ref=e359]:
+                    - generic [ref=e360]:
+                      - generic [ref=e361]: Asc G. Rail
+                      - img "Asc G. Rail" [ref=e362]
+                    - generic [ref=e363]:
+                      - generic [ref=e364]: –
+                      - generic [ref=e366]: 14 août
+                    - generic [ref=e367]:
+                      - img "Khay Gui" [ref=e368]
+                      - generic [ref=e369]: Khay Gui
+                  - generic [ref=e370]:
+                    - generic [ref=e371]:
+                      - generic [ref=e372]: Asc Rakadiou
+                      - img "Asc Rakadiou" [ref=e373]
+                    - generic [ref=e374]:
+                      - generic [ref=e375]: –
+                      - generic [ref=e377]: 14 août
+                    - generic [ref=e378]:
+                      - img "Asc Yaakaar" [ref=e379]
+                      - generic [ref=e380]: Asc Yaakaar
+              - generic [ref=e383]:
+                - heading "📰 Actualités" [level=2] [ref=e384]
+                - paragraph [ref=e385]: Dernières nouvelles des Navétanes
+  - button "Open Next.js Dev Tools" [ref=e391] [cursor=pointer]
+  - alert [ref=e395]

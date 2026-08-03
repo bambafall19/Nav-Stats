@@ -1,0 +1,902 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "NavéStats" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=e9]:
+          - link "🏠 Accueil" [ref=e10] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e11]: 🏠
+            - generic [ref=e12]: Accueil
+          - link "⚽ Matchs" [ref=e13] [cursor=pointer]:
+            - /url: /matchs
+            - generic [ref=e14]: ⚽
+            - generic [ref=e15]: Matchs
+          - link "📅 Cadets" [ref=e16] [cursor=pointer]:
+            - /url: /cadets
+            - generic [ref=e17]: 📅
+            - generic [ref=e18]: Cadets
+          - link "🏆 Classements" [ref=e19] [cursor=pointer]:
+            - /url: /classements
+            - generic [ref=e20]: 🏆
+            - generic [ref=e21]: Classements
+          - link "📊 Stats" [ref=e22] [cursor=pointer]:
+            - /url: /statistiques
+            - generic [ref=e23]: 📊
+            - generic [ref=e24]: Stats
+          - link "💬 Chat" [ref=e25] [cursor=pointer]:
+            - /url: /communaute
+            - generic [ref=e26]: 💬
+            - generic [ref=e27]: Chat
+        - link "🔑 Se connecter" [ref=e30] [cursor=pointer]:
+          - /url: /auth/login
+    - main [ref=e31]:
+      - generic [ref=e34]:
+        - generic [ref=e38]:
+          - heading "⚽ Calendrier des Matchs" [level=1] [ref=e39]
+          - paragraph [ref=e40]: Calendrier officiel des phases de poules - Navétanes Zone 6 de Khombole
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]: "40"
+              - generic [ref=e44]: Matchs
+            - generic [ref=e45]:
+              - generic [ref=e46]: "17"
+              - generic [ref=e47]: Équipes
+        - generic [ref=e48]:
+          - textbox "Rechercher un match" [ref=e50]:
+            - /placeholder: 🔍 Rechercher une équipe ou un stade...
+          - generic [ref=e51]:
+            - button "Tous" [ref=e52] [cursor=pointer]
+            - button "À venir" [ref=e53] [cursor=pointer]
+            - button "En direct" [ref=e54] [cursor=pointer]
+            - button "Terminé" [ref=e55] [cursor=pointer]
+          - generic [ref=e56]:
+            - button "Poules" [ref=e57] [cursor=pointer]
+            - button "A" [ref=e58] [cursor=pointer]
+            - button "B" [ref=e59] [cursor=pointer]
+            - button "C" [ref=e60] [cursor=pointer]
+          - button "Actualiser la liste des matchs" [ref=e62] [cursor=pointer]: Actualiser
+        - generic [ref=e68]:
+          - button "Toutes" [ref=e69] [cursor=pointer]
+          - button "J1" [ref=e70] [cursor=pointer]
+          - button "J2" [ref=e71] [cursor=pointer]
+          - button "J3" [ref=e72] [cursor=pointer]
+          - button "J4" [ref=e73] [cursor=pointer]
+          - button "J5" [ref=e74] [cursor=pointer]
+        - generic [ref=e75]:
+          - generic [ref=e76]:
+            - generic [ref=e77]:
+              - generic [ref=e78]:
+                - generic [ref=e79]: mer
+                - generic [ref=e80]: "15"
+              - generic [ref=e81]:
+                - generic [ref=e82]: mercredi 15 juillet
+                - generic [ref=e83]: 2 rencontres
+            - generic [ref=e84]:
+              - link "Poule A ✓ Terminé Book Joom Book Joom 2 – 1 ASC Entente CS ASC Entente CS Partager ce match sur WhatsApp" [ref=e85] [cursor=pointer]:
+                - /url: /matchs/1143d309-9b46-451c-9be4-8d0fd0c26428
+                - generic [ref=e86]:
+                  - generic [ref=e87]:
+                    - generic [ref=e88]: Poule A
+                    - generic [ref=e89]: ✓ Terminé
+                  - generic [ref=e90]:
+                    - generic [ref=e91]:
+                      - img "Book Joom" [ref=e94]
+                      - generic [ref=e95]: Book Joom
+                    - generic [ref=e97]:
+                      - generic [ref=e98]: "2"
+                      - generic [ref=e99]: –
+                      - generic [ref=e100]: "1"
+                    - generic [ref=e101]:
+                      - img "ASC Entente CS" [ref=e104]
+                      - generic [ref=e105]: ASC Entente CS
+                  - button "Partager ce match sur WhatsApp" [ref=e106]
+              - link "Poule A ✓ Terminé Asc Maag daan Asc Maag daan 1 – 2 Asc Manko Asc Manko Partager ce match sur WhatsApp" [ref=e113] [cursor=pointer]:
+                - /url: /matchs/a7cacbc4-805f-4daa-bb19-9f87c6830447
+                - generic [ref=e114]:
+                  - generic [ref=e115]:
+                    - generic [ref=e116]: Poule A
+                    - generic [ref=e117]: ✓ Terminé
+                  - generic [ref=e118]:
+                    - generic [ref=e119]:
+                      - img "Asc Maag daan" [ref=e122]
+                      - generic [ref=e123]: Asc Maag daan
+                    - generic [ref=e125]:
+                      - generic [ref=e126]: "1"
+                      - generic [ref=e127]: –
+                      - generic [ref=e128]: "2"
+                    - generic [ref=e129]:
+                      - img "Asc Manko" [ref=e132]
+                      - generic [ref=e133]: Asc Manko
+                  - button "Partager ce match sur WhatsApp" [ref=e134]
+          - generic [ref=e141]:
+            - generic [ref=e142]:
+              - generic [ref=e143]:
+                - generic [ref=e144]: jeu
+                - generic [ref=e145]: "16"
+              - generic [ref=e146]:
+                - generic [ref=e147]: jeudi 16 juillet
+                - generic [ref=e148]: 2 rencontres
+            - generic [ref=e149]:
+              - link "Poule B ✓ Terminé Asc Espoirs Asc Espoirs 1 – 0 Asc Jubbo Asc Jubbo Partager ce match sur WhatsApp" [ref=e150] [cursor=pointer]:
+                - /url: /matchs/91fbcf60-15c2-4864-ad6e-6dbb0df28c52
+                - generic [ref=e151]:
+                  - generic [ref=e152]:
+                    - generic [ref=e153]: Poule B
+                    - generic [ref=e154]: ✓ Terminé
+                  - generic [ref=e155]:
+                    - generic [ref=e156]:
+                      - img "Asc Espoirs" [ref=e159]
+                      - generic [ref=e160]: Asc Espoirs
+                    - generic [ref=e162]:
+                      - generic [ref=e163]: "1"
+                      - generic [ref=e164]: –
+                      - generic [ref=e165]: "0"
+                    - generic [ref=e166]:
+                      - img "Asc Jubbo" [ref=e169]
+                      - generic [ref=e170]: Asc Jubbo
+                  - button "Partager ce match sur WhatsApp" [ref=e171]
+              - link "Poule B ✓ Terminé Asc waaly daan Asc waaly daan 0 – 3 Asc G. Rail Asc G. Rail Partager ce match sur WhatsApp" [ref=e178] [cursor=pointer]:
+                - /url: /matchs/285b1069-f9d1-455c-b534-1d288f5f8de0
+                - generic [ref=e179]:
+                  - generic [ref=e180]:
+                    - generic [ref=e181]: Poule B
+                    - generic [ref=e182]: ✓ Terminé
+                  - generic [ref=e183]:
+                    - generic [ref=e184]:
+                      - img "Asc waaly daan" [ref=e187]
+                      - generic [ref=e188]: Asc waaly daan
+                    - generic [ref=e190]:
+                      - generic [ref=e191]: "0"
+                      - generic [ref=e192]: –
+                      - generic [ref=e193]: "3"
+                    - generic [ref=e194]:
+                      - img "Asc G. Rail" [ref=e197]
+                      - generic [ref=e198]: Asc G. Rail
+                  - button "Partager ce match sur WhatsApp" [ref=e199]
+          - generic [ref=e206]:
+            - generic [ref=e207]:
+              - generic [ref=e208]:
+                - generic [ref=e209]: ven
+                - generic [ref=e210]: "17"
+              - generic [ref=e211]:
+                - generic [ref=e212]: vendredi 17 juillet
+                - generic [ref=e213]: 2 rencontres
+            - generic [ref=e214]:
+              - link "Poule C ✓ Terminé Asc Kairé Asc Kairé 1 – 0 Asc Lat dior Asc Lat dior Partager ce match sur WhatsApp" [ref=e215] [cursor=pointer]:
+                - /url: /matchs/eef7fd10-7110-4d79-b5a2-8e0220a3c5f0
+                - generic [ref=e216]:
+                  - generic [ref=e217]:
+                    - generic [ref=e218]: Poule C
+                    - generic [ref=e219]: ✓ Terminé
+                  - generic [ref=e220]:
+                    - generic [ref=e221]:
+                      - img "Asc Kairé" [ref=e224]
+                      - generic [ref=e225]: Asc Kairé
+                    - generic [ref=e227]:
+                      - generic [ref=e228]: "1"
+                      - generic [ref=e229]: –
+                      - generic [ref=e230]: "0"
+                    - generic [ref=e231]:
+                      - img "Asc Lat dior" [ref=e234]
+                      - generic [ref=e235]: Asc Lat dior
+                  - button "Partager ce match sur WhatsApp" [ref=e236]
+              - link "Poule B ✓ Terminé Khay Gui Khay Gui 0 – 0 Asc Thilla Asc Thilla Partager ce match sur WhatsApp" [ref=e243] [cursor=pointer]:
+                - /url: /matchs/4b8f8a4c-5f8a-43a4-9205-1563fbaee9a6
+                - generic [ref=e244]:
+                  - generic [ref=e245]:
+                    - generic [ref=e246]: Poule B
+                    - generic [ref=e247]: ✓ Terminé
+                  - generic [ref=e248]:
+                    - generic [ref=e249]:
+                      - img "Khay Gui" [ref=e252]
+                      - generic [ref=e253]: Khay Gui
+                    - generic [ref=e255]:
+                      - generic [ref=e256]: "0"
+                      - generic [ref=e257]: –
+                      - generic [ref=e258]: "0"
+                    - generic [ref=e259]:
+                      - img "Asc Thilla" [ref=e262]
+                      - generic [ref=e263]: Asc Thilla
+                  - button "Partager ce match sur WhatsApp" [ref=e264]
+          - generic [ref=e271]:
+            - generic [ref=e272]:
+              - generic [ref=e273]:
+                - generic [ref=e274]: sam
+                - generic [ref=e275]: "18"
+              - generic [ref=e276]:
+                - generic [ref=e277]: samedi 18 juillet
+                - generic [ref=e278]: 2 rencontres
+            - generic [ref=e279]:
+              - link "Poule C ✓ Terminé Asc Jambars Asc Jambars 0 – 0 Asc Yaakaar Asc Yaakaar Partager ce match sur WhatsApp" [ref=e280] [cursor=pointer]:
+                - /url: /matchs/ccdbb0ee-ab44-4409-ad7f-3e4ad2d12906
+                - generic [ref=e281]:
+                  - generic [ref=e282]:
+                    - generic [ref=e283]: Poule C
+                    - generic [ref=e284]: ✓ Terminé
+                  - generic [ref=e285]:
+                    - generic [ref=e286]:
+                      - img "Asc Jambars" [ref=e289]
+                      - generic [ref=e290]: Asc Jambars
+                    - generic [ref=e292]:
+                      - generic [ref=e293]: "0"
+                      - generic [ref=e294]: –
+                      - generic [ref=e295]: "0"
+                    - generic [ref=e296]:
+                      - img "Asc Yaakaar" [ref=e299]
+                      - generic [ref=e300]: Asc Yaakaar
+                  - button "Partager ce match sur WhatsApp" [ref=e301]
+              - link "Poule C ✓ Terminé Asc Rakadiou Asc Rakadiou 1 – 1 Asc Jappo Asc Jappo Partager ce match sur WhatsApp" [ref=e308] [cursor=pointer]:
+                - /url: /matchs/373ff20a-0d05-43ea-ba20-4221197a9925
+                - generic [ref=e309]:
+                  - generic [ref=e310]:
+                    - generic [ref=e311]: Poule C
+                    - generic [ref=e312]: ✓ Terminé
+                  - generic [ref=e313]:
+                    - generic [ref=e314]:
+                      - img "Asc Rakadiou" [ref=e317]
+                      - generic [ref=e318]: Asc Rakadiou
+                    - generic [ref=e320]:
+                      - generic [ref=e321]: "1"
+                      - generic [ref=e322]: –
+                      - generic [ref=e323]: "1"
+                    - generic [ref=e324]:
+                      - img "Asc Jappo" [ref=e327]
+                      - generic [ref=e328]: Asc Jappo
+                  - button "Partager ce match sur WhatsApp" [ref=e329]
+          - generic [ref=e336]:
+            - generic [ref=e337]:
+              - generic [ref=e338]:
+                - generic [ref=e339]: mer
+                - generic [ref=e340]: "22"
+              - generic [ref=e341]:
+                - generic [ref=e342]: mercredi 22 juillet
+                - generic [ref=e343]: 2 rencontres
+            - generic [ref=e344]:
+              - link "Poule A ✓ Terminé Asc Manko Asc Manko 1 – 0 Asc Kocc Asc Kocc Partager ce match sur WhatsApp" [ref=e345] [cursor=pointer]:
+                - /url: /matchs/c008aba3-69ae-400a-9cce-6f512ef6e6f4
+                - generic [ref=e346]:
+                  - generic [ref=e347]:
+                    - generic [ref=e348]: Poule A
+                    - generic [ref=e349]: ✓ Terminé
+                  - generic [ref=e350]:
+                    - generic [ref=e351]:
+                      - img "Asc Manko" [ref=e354]
+                      - generic [ref=e355]: Asc Manko
+                    - generic [ref=e357]:
+                      - generic [ref=e358]: "1"
+                      - generic [ref=e359]: –
+                      - generic [ref=e360]: "0"
+                    - generic [ref=e361]:
+                      - img "Asc Kocc" [ref=e364]
+                      - generic [ref=e365]: Asc Kocc
+                  - button "Partager ce match sur WhatsApp" [ref=e366]
+              - link "Poule A ✓ Terminé Asc Maag daan Asc Maag daan 1 – 0 Book Joom Book Joom Partager ce match sur WhatsApp" [ref=e373] [cursor=pointer]:
+                - /url: /matchs/0acc4c9f-4604-496e-b1cb-fb4990b9efa2
+                - generic [ref=e374]:
+                  - generic [ref=e375]:
+                    - generic [ref=e376]: Poule A
+                    - generic [ref=e377]: ✓ Terminé
+                  - generic [ref=e378]:
+                    - generic [ref=e379]:
+                      - img "Asc Maag daan" [ref=e382]
+                      - generic [ref=e383]: Asc Maag daan
+                    - generic [ref=e385]:
+                      - generic [ref=e386]: "1"
+                      - generic [ref=e387]: –
+                      - generic [ref=e388]: "0"
+                    - generic [ref=e389]:
+                      - img "Book Joom" [ref=e392]
+                      - generic [ref=e393]: Book Joom
+                  - button "Partager ce match sur WhatsApp" [ref=e394]
+          - generic [ref=e401]:
+            - generic [ref=e402]:
+              - generic [ref=e403]:
+                - generic [ref=e404]: jeu
+                - generic [ref=e405]: "23"
+              - generic [ref=e406]:
+                - generic [ref=e407]: jeudi 23 juillet
+                - generic [ref=e408]: 4 rencontres
+            - generic [ref=e409]:
+              - link "Poule B ✓ Terminé Asc Jubbo Asc Jubbo 1 – 1 Khay Gui Khay Gui Partager ce match sur WhatsApp" [ref=e410] [cursor=pointer]:
+                - /url: /matchs/852a4141-0b82-4481-8709-5e80f893da25
+                - generic [ref=e411]:
+                  - generic [ref=e412]:
+                    - generic [ref=e413]: Poule B
+                    - generic [ref=e414]: ✓ Terminé
+                  - generic [ref=e415]:
+                    - generic [ref=e416]:
+                      - img "Asc Jubbo" [ref=e419]
+                      - generic [ref=e420]: Asc Jubbo
+                    - generic [ref=e422]:
+                      - generic [ref=e423]: "1"
+                      - generic [ref=e424]: –
+                      - generic [ref=e425]: "1"
+                    - generic [ref=e426]:
+                      - img "Khay Gui" [ref=e429]
+                      - generic [ref=e430]: Khay Gui
+                  - button "Partager ce match sur WhatsApp" [ref=e431]
+              - link "Poule A ⏰ 16:00 Asc Maag daan Asc Maag daan VS ASC Entente CS ASC Entente CS Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e438] [cursor=pointer]:
+                - /url: /matchs/82abee2c-a769-4563-abf4-8b08cee7c6df
+                - generic [ref=e439]:
+                  - generic [ref=e440]:
+                    - generic [ref=e441]: Poule A
+                    - generic [ref=e442]: ⏰ 16:00
+                  - generic [ref=e444]:
+                    - generic [ref=e445]:
+                      - img "Asc Maag daan" [ref=e448]
+                      - generic [ref=e449]: Asc Maag daan
+                    - generic [ref=e450]: VS
+                    - generic [ref=e452]:
+                      - img "ASC Entente CS" [ref=e455]
+                      - generic [ref=e456]: ASC Entente CS
+                  - button "Partager ce match sur WhatsApp" [ref=e457]
+                  - generic [ref=e464]: 🎯 Pronostiquer →
+              - link "Poule B ✓ Terminé Asc Espoirs Asc Espoirs 5 – 0 Asc waaly daan Asc waaly daan Partager ce match sur WhatsApp" [ref=e466] [cursor=pointer]:
+                - /url: /matchs/618f23b1-de38-4c3e-a1f9-5b854c5b2e55
+                - generic [ref=e467]:
+                  - generic [ref=e468]:
+                    - generic [ref=e469]: Poule B
+                    - generic [ref=e470]: ✓ Terminé
+                  - generic [ref=e471]:
+                    - generic [ref=e472]:
+                      - img "Asc Espoirs" [ref=e475]
+                      - generic [ref=e476]: Asc Espoirs
+                    - generic [ref=e478]:
+                      - generic [ref=e479]: "5"
+                      - generic [ref=e480]: –
+                      - generic [ref=e481]: "0"
+                    - generic [ref=e482]:
+                      - img "Asc waaly daan" [ref=e485]
+                      - generic [ref=e486]: Asc waaly daan
+                  - button "Partager ce match sur WhatsApp" [ref=e487]
+              - link "Poule A ⏰ 18:00 Book Joom Book Joom VS Asc Kocc Asc Kocc Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e494] [cursor=pointer]:
+                - /url: /matchs/cdee9ed7-4303-4e34-a88f-82f48871330a
+                - generic [ref=e495]:
+                  - generic [ref=e496]:
+                    - generic [ref=e497]: Poule A
+                    - generic [ref=e498]: ⏰ 18:00
+                  - generic [ref=e500]:
+                    - generic [ref=e501]:
+                      - img "Book Joom" [ref=e504]
+                      - generic [ref=e505]: Book Joom
+                    - generic [ref=e506]: VS
+                    - generic [ref=e508]:
+                      - img "Asc Kocc" [ref=e511]
+                      - generic [ref=e512]: Asc Kocc
+                  - button "Partager ce match sur WhatsApp" [ref=e513]
+                  - generic [ref=e520]: 🎯 Pronostiquer →
+          - generic [ref=e522]:
+            - generic [ref=e523]:
+              - generic [ref=e524]:
+                - generic [ref=e525]: ven
+                - generic [ref=e526]: "24"
+              - generic [ref=e527]:
+                - generic [ref=e528]: vendredi 24 juillet
+                - generic [ref=e529]: 4 rencontres
+            - generic [ref=e530]:
+              - link "Poule B ✓ Terminé Asc G. Rail Asc G. Rail 2 – 0 Asc Thilla Asc Thilla Partager ce match sur WhatsApp" [ref=e531] [cursor=pointer]:
+                - /url: /matchs/19fc0b43-debe-4792-b246-8c4818cf92d8
+                - generic [ref=e532]:
+                  - generic [ref=e533]:
+                    - generic [ref=e534]: Poule B
+                    - generic [ref=e535]: ✓ Terminé
+                  - generic [ref=e536]:
+                    - generic [ref=e537]:
+                      - img "Asc G. Rail" [ref=e540]
+                      - generic [ref=e541]: Asc G. Rail
+                    - generic [ref=e543]:
+                      - generic [ref=e544]: "2"
+                      - generic [ref=e545]: –
+                      - generic [ref=e546]: "0"
+                    - generic [ref=e547]:
+                      - img "Asc Thilla" [ref=e550]
+                      - generic [ref=e551]: Asc Thilla
+                  - button "Partager ce match sur WhatsApp" [ref=e552]
+              - link "Poule B ⏰ 16:00 Asc Jubbo Asc Jubbo VS Asc Thilla Asc Thilla Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e559] [cursor=pointer]:
+                - /url: /matchs/a0986981-c552-4572-8773-e383c82bf1f4
+                - generic [ref=e560]:
+                  - generic [ref=e561]:
+                    - generic [ref=e562]: Poule B
+                    - generic [ref=e563]: ⏰ 16:00
+                  - generic [ref=e565]:
+                    - generic [ref=e566]:
+                      - img "Asc Jubbo" [ref=e569]
+                      - generic [ref=e570]: Asc Jubbo
+                    - generic [ref=e571]: VS
+                    - generic [ref=e573]:
+                      - img "Asc Thilla" [ref=e576]
+                      - generic [ref=e577]: Asc Thilla
+                  - button "Partager ce match sur WhatsApp" [ref=e578]
+                  - generic [ref=e585]: 🎯 Pronostiquer →
+              - link "Poule C ✓ Terminé Asc Kairé Asc Kairé 3 – 0 Asc Jambars Asc Jambars Partager ce match sur WhatsApp" [ref=e587] [cursor=pointer]:
+                - /url: /matchs/f1e7496b-2152-4e6d-85d0-81f883fd8e17
+                - generic [ref=e588]:
+                  - generic [ref=e589]:
+                    - generic [ref=e590]: Poule C
+                    - generic [ref=e591]: ✓ Terminé
+                  - generic [ref=e592]:
+                    - generic [ref=e593]:
+                      - img "Asc Kairé" [ref=e596]
+                      - generic [ref=e597]: Asc Kairé
+                    - generic [ref=e599]:
+                      - generic [ref=e600]: "3"
+                      - generic [ref=e601]: –
+                      - generic [ref=e602]: "0"
+                    - generic [ref=e603]:
+                      - img "Asc Jambars" [ref=e606]
+                      - generic [ref=e607]: Asc Jambars
+                  - button "Partager ce match sur WhatsApp" [ref=e608]
+              - link "Poule B ⏰ 18:00 Asc G. Rail Asc G. Rail VS Asc Espoirs Asc Espoirs Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e615] [cursor=pointer]:
+                - /url: /matchs/048666e1-d358-4ea8-90f0-f1b2eaa328a6
+                - generic [ref=e616]:
+                  - generic [ref=e617]:
+                    - generic [ref=e618]: Poule B
+                    - generic [ref=e619]: ⏰ 18:00
+                  - generic [ref=e621]:
+                    - generic [ref=e622]:
+                      - img "Asc G. Rail" [ref=e625]
+                      - generic [ref=e626]: Asc G. Rail
+                    - generic [ref=e627]: VS
+                    - generic [ref=e629]:
+                      - img "Asc Espoirs" [ref=e632]
+                      - generic [ref=e633]: Asc Espoirs
+                  - button "Partager ce match sur WhatsApp" [ref=e634]
+                  - generic [ref=e641]: 🎯 Pronostiquer →
+          - generic [ref=e643]:
+            - generic [ref=e644]:
+              - generic [ref=e645]:
+                - generic [ref=e646]: sam
+                - generic [ref=e647]: "25"
+              - generic [ref=e648]:
+                - generic [ref=e649]: samedi 25 juillet
+                - generic [ref=e650]: 2 rencontres
+            - generic [ref=e651]:
+              - link "Poule B ⏰ 16:00 Asc waaly daan Asc waaly daan VS Khay Gui Khay Gui Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e652] [cursor=pointer]:
+                - /url: /matchs/1d85009b-e4b3-46f8-8da3-e01194fe4886
+                - generic [ref=e653]:
+                  - generic [ref=e654]:
+                    - generic [ref=e655]: Poule B
+                    - generic [ref=e656]: ⏰ 16:00
+                  - generic [ref=e658]:
+                    - generic [ref=e659]:
+                      - img "Asc waaly daan" [ref=e662]
+                      - generic [ref=e663]: Asc waaly daan
+                    - generic [ref=e664]: VS
+                    - generic [ref=e666]:
+                      - img "Khay Gui" [ref=e669]
+                      - generic [ref=e670]: Khay Gui
+                  - button "Partager ce match sur WhatsApp" [ref=e671]
+                  - generic [ref=e678]: 🎯 Pronostiquer →
+              - link "Poule C ⏰ 18:00 Asc Yaakaar Asc Yaakaar VS Asc Kairé Asc Kairé Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e680] [cursor=pointer]:
+                - /url: /matchs/3606b9ed-0df7-4bea-8f30-ab144edbef7e
+                - generic [ref=e681]:
+                  - generic [ref=e682]:
+                    - generic [ref=e683]: Poule C
+                    - generic [ref=e684]: ⏰ 18:00
+                  - generic [ref=e686]:
+                    - generic [ref=e687]:
+                      - img "Asc Yaakaar" [ref=e690]
+                      - generic [ref=e691]: Asc Yaakaar
+                    - generic [ref=e692]: VS
+                    - generic [ref=e694]:
+                      - img "Asc Kairé" [ref=e697]
+                      - generic [ref=e698]: Asc Kairé
+                  - button "Partager ce match sur WhatsApp" [ref=e699]
+                  - generic [ref=e706]: 🎯 Pronostiquer →
+          - generic [ref=e708]:
+            - generic [ref=e709]:
+              - generic [ref=e710]:
+                - generic [ref=e711]: dim
+                - generic [ref=e712]: "26"
+              - generic [ref=e713]:
+                - generic [ref=e714]: dimanche 26 juillet
+                - generic [ref=e715]: 2 rencontres
+            - generic [ref=e716]:
+              - link "Poule C ⏰ 16:00 Asc Lat dior Asc Lat dior VS Asc Jappo Asc Jappo Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e717] [cursor=pointer]:
+                - /url: /matchs/be47f726-1da9-4692-8724-1f8dd7dba4f3
+                - generic [ref=e718]:
+                  - generic [ref=e719]:
+                    - generic [ref=e720]: Poule C
+                    - generic [ref=e721]: ⏰ 16:00
+                  - generic [ref=e723]:
+                    - generic [ref=e724]:
+                      - img "Asc Lat dior" [ref=e727]
+                      - generic [ref=e728]: Asc Lat dior
+                    - generic [ref=e729]: VS
+                    - generic [ref=e731]:
+                      - img "Asc Jappo" [ref=e734]
+                      - generic [ref=e735]: Asc Jappo
+                  - button "Partager ce match sur WhatsApp" [ref=e736]
+                  - generic [ref=e743]: 🎯 Pronostiquer →
+              - link "Poule C ⏰ 18:00 Asc Jambars Asc Jambars VS Asc Rakadiou Asc Rakadiou Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e745] [cursor=pointer]:
+                - /url: /matchs/411b0437-86bd-4d1e-b1a2-ced19e160125
+                - generic [ref=e746]:
+                  - generic [ref=e747]:
+                    - generic [ref=e748]: Poule C
+                    - generic [ref=e749]: ⏰ 18:00
+                  - generic [ref=e751]:
+                    - generic [ref=e752]:
+                      - img "Asc Jambars" [ref=e755]
+                      - generic [ref=e756]: Asc Jambars
+                    - generic [ref=e757]: VS
+                    - generic [ref=e759]:
+                      - img "Asc Rakadiou" [ref=e762]
+                      - generic [ref=e763]: Asc Rakadiou
+                  - button "Partager ce match sur WhatsApp" [ref=e764]
+                  - generic [ref=e771]: 🎯 Pronostiquer →
+          - generic [ref=e773]:
+            - generic [ref=e774]:
+              - generic [ref=e775]:
+                - generic [ref=e776]: lun
+                - generic [ref=e777]: "27"
+              - generic [ref=e778]:
+                - generic [ref=e779]: lundi 27 juillet
+                - generic [ref=e780]: 2 rencontres
+            - generic [ref=e781]:
+              - link "Poule C ✓ Terminé Asc Lat dior Asc Lat dior 0 – 0 Asc Rakadiou Asc Rakadiou Partager ce match sur WhatsApp" [ref=e782] [cursor=pointer]:
+                - /url: /matchs/8eafd23b-e5cd-4947-93a8-b30b09f3a9c7
+                - generic [ref=e783]:
+                  - generic [ref=e784]:
+                    - generic [ref=e785]: Poule C
+                    - generic [ref=e786]: ✓ Terminé
+                  - generic [ref=e787]:
+                    - generic [ref=e788]:
+                      - img "Asc Lat dior" [ref=e791]
+                      - generic [ref=e792]: Asc Lat dior
+                    - generic [ref=e794]:
+                      - generic [ref=e795]: "0"
+                      - generic [ref=e796]: –
+                      - generic [ref=e797]: "0"
+                    - generic [ref=e798]:
+                      - img "Asc Rakadiou" [ref=e801]
+                      - generic [ref=e802]: Asc Rakadiou
+                  - button "Partager ce match sur WhatsApp" [ref=e803]
+              - link "Poule C ✓ Terminé Asc Yaakaar Asc Yaakaar 1 – 0 Asc Jappo Asc Jappo Partager ce match sur WhatsApp" [ref=e810] [cursor=pointer]:
+                - /url: /matchs/2421468b-a028-4c7b-b457-4a4b13d3c4e2
+                - generic [ref=e811]:
+                  - generic [ref=e812]:
+                    - generic [ref=e813]: Poule C
+                    - generic [ref=e814]: ✓ Terminé
+                  - generic [ref=e815]:
+                    - generic [ref=e816]:
+                      - img "Asc Yaakaar" [ref=e819]
+                      - generic [ref=e820]: Asc Yaakaar
+                    - generic [ref=e822]:
+                      - generic [ref=e823]: "1"
+                      - generic [ref=e824]: –
+                      - generic [ref=e825]: "0"
+                    - generic [ref=e826]:
+                      - img "Asc Jappo" [ref=e829]
+                      - generic [ref=e830]: Asc Jappo
+                  - button "Partager ce match sur WhatsApp" [ref=e831]
+          - generic [ref=e838]:
+            - generic [ref=e839]:
+              - generic [ref=e840]:
+                - generic [ref=e841]: mer
+                - generic [ref=e842]: "12"
+              - generic [ref=e843]:
+                - generic [ref=e844]: mercredi 12 août
+                - generic [ref=e845]: 2 rencontres
+            - generic [ref=e846]:
+              - link "Poule A ⏰ 16:00 Asc Maag daan Asc Maag daan VS Asc Kocc Asc Kocc Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e847] [cursor=pointer]:
+                - /url: /matchs/8d160654-73e3-487b-a3ac-c72fa297b90d
+                - generic [ref=e848]:
+                  - generic [ref=e849]:
+                    - generic [ref=e850]: Poule A
+                    - generic [ref=e851]: ⏰ 16:00
+                  - generic [ref=e853]:
+                    - generic [ref=e854]:
+                      - img "Asc Maag daan" [ref=e857]
+                      - generic [ref=e858]: Asc Maag daan
+                    - generic [ref=e859]: VS
+                    - generic [ref=e861]:
+                      - img "Asc Kocc" [ref=e864]
+                      - generic [ref=e865]: Asc Kocc
+                  - button "Partager ce match sur WhatsApp" [ref=e866]
+                  - generic [ref=e873]: 🎯 Pronostiquer →
+              - link "Poule A ⏰ 18:00 Asc Manko Asc Manko VS ASC Entente CS ASC Entente CS Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e875] [cursor=pointer]:
+                - /url: /matchs/1dabaa94-c6d8-48c1-a9d4-a6da9f9983fa
+                - generic [ref=e876]:
+                  - generic [ref=e877]:
+                    - generic [ref=e878]: Poule A
+                    - generic [ref=e879]: ⏰ 18:00
+                  - generic [ref=e881]:
+                    - generic [ref=e882]:
+                      - img "Asc Manko" [ref=e885]
+                      - generic [ref=e886]: Asc Manko
+                    - generic [ref=e887]: VS
+                    - generic [ref=e889]:
+                      - img "ASC Entente CS" [ref=e892]
+                      - generic [ref=e893]: ASC Entente CS
+                  - button "Partager ce match sur WhatsApp" [ref=e894]
+                  - generic [ref=e901]: 🎯 Pronostiquer →
+          - generic [ref=e903]:
+            - generic [ref=e904]:
+              - generic [ref=e905]:
+                - generic [ref=e906]: jeu
+                - generic [ref=e907]: "13"
+              - generic [ref=e908]:
+                - generic [ref=e909]: jeudi 13 août
+                - generic [ref=e910]: 2 rencontres
+            - generic [ref=e911]:
+              - link "Poule B ⏰ 16:00 Asc Espoirs Asc Espoirs VS Asc Thilla Asc Thilla Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e912] [cursor=pointer]:
+                - /url: /matchs/8abc9ebf-d0ee-463b-99cf-2c373b61c3a6
+                - generic [ref=e913]:
+                  - generic [ref=e914]:
+                    - generic [ref=e915]: Poule B
+                    - generic [ref=e916]: ⏰ 16:00
+                  - generic [ref=e918]:
+                    - generic [ref=e919]:
+                      - img "Asc Espoirs" [ref=e922]
+                      - generic [ref=e923]: Asc Espoirs
+                    - generic [ref=e924]: VS
+                    - generic [ref=e926]:
+                      - img "Asc Thilla" [ref=e929]
+                      - generic [ref=e930]: Asc Thilla
+                  - button "Partager ce match sur WhatsApp" [ref=e931]
+                  - generic [ref=e938]: 🎯 Pronostiquer →
+              - link "Poule B ⏰ 18:00 Asc waaly daan Asc waaly daan VS Asc Jubbo Asc Jubbo Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e940] [cursor=pointer]:
+                - /url: /matchs/ce0bb1e4-3df3-4db1-8da8-2fb6f4f4823e
+                - generic [ref=e941]:
+                  - generic [ref=e942]:
+                    - generic [ref=e943]: Poule B
+                    - generic [ref=e944]: ⏰ 18:00
+                  - generic [ref=e946]:
+                    - generic [ref=e947]:
+                      - img "Asc waaly daan" [ref=e950]
+                      - generic [ref=e951]: Asc waaly daan
+                    - generic [ref=e952]: VS
+                    - generic [ref=e954]:
+                      - img "Asc Jubbo" [ref=e957]
+                      - generic [ref=e958]: Asc Jubbo
+                  - button "Partager ce match sur WhatsApp" [ref=e959]
+                  - generic [ref=e966]: 🎯 Pronostiquer →
+          - generic [ref=e968]:
+            - generic [ref=e969]:
+              - generic [ref=e970]:
+                - generic [ref=e971]: ven
+                - generic [ref=e972]: "14"
+              - generic [ref=e973]:
+                - generic [ref=e974]: vendredi 14 août
+                - generic [ref=e975]: 2 rencontres
+            - generic [ref=e976]:
+              - link "Poule C ⏰ 16:00 Asc Rakadiou Asc Rakadiou VS Asc Yaakaar Asc Yaakaar Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e977] [cursor=pointer]:
+                - /url: /matchs/5072bf29-3805-413f-98e4-09ed68ae7885
+                - generic [ref=e978]:
+                  - generic [ref=e979]:
+                    - generic [ref=e980]: Poule C
+                    - generic [ref=e981]: ⏰ 16:00
+                  - generic [ref=e983]:
+                    - generic [ref=e984]:
+                      - img "Asc Rakadiou" [ref=e987]
+                      - generic [ref=e988]: Asc Rakadiou
+                    - generic [ref=e989]: VS
+                    - generic [ref=e991]:
+                      - img "Asc Yaakaar" [ref=e994]
+                      - generic [ref=e995]: Asc Yaakaar
+                  - button "Partager ce match sur WhatsApp" [ref=e996]
+                  - generic [ref=e1003]: 🎯 Pronostiquer →
+              - link "Poule B ⏰ 18:00 Asc G. Rail Asc G. Rail VS Khay Gui Khay Gui Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1005] [cursor=pointer]:
+                - /url: /matchs/d339f866-304b-4679-b577-bd1635eea1fd
+                - generic [ref=e1006]:
+                  - generic [ref=e1007]:
+                    - generic [ref=e1008]: Poule B
+                    - generic [ref=e1009]: ⏰ 18:00
+                  - generic [ref=e1011]:
+                    - generic [ref=e1012]:
+                      - img "Asc G. Rail" [ref=e1015]
+                      - generic [ref=e1016]: Asc G. Rail
+                    - generic [ref=e1017]: VS
+                    - generic [ref=e1019]:
+                      - img "Khay Gui" [ref=e1022]
+                      - generic [ref=e1023]: Khay Gui
+                  - button "Partager ce match sur WhatsApp" [ref=e1024]
+                  - generic [ref=e1031]: 🎯 Pronostiquer →
+          - generic [ref=e1033]:
+            - generic [ref=e1034]:
+              - generic [ref=e1035]:
+                - generic [ref=e1036]: sam
+                - generic [ref=e1037]: "15"
+              - generic [ref=e1038]:
+                - generic [ref=e1039]: samedi 15 août
+                - generic [ref=e1040]: 2 rencontres
+            - generic [ref=e1041]:
+              - link "Poule C ⏰ 16:00 Asc Lat dior Asc Lat dior VS Asc Jambars Asc Jambars Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1042] [cursor=pointer]:
+                - /url: /matchs/a5ea38f2-1279-4fc2-9492-4bd99a8d53ff
+                - generic [ref=e1043]:
+                  - generic [ref=e1044]:
+                    - generic [ref=e1045]: Poule C
+                    - generic [ref=e1046]: ⏰ 16:00
+                  - generic [ref=e1048]:
+                    - generic [ref=e1049]:
+                      - img "Asc Lat dior" [ref=e1052]
+                      - generic [ref=e1053]: Asc Lat dior
+                    - generic [ref=e1054]: VS
+                    - generic [ref=e1056]:
+                      - img "Asc Jambars" [ref=e1059]
+                      - generic [ref=e1060]: Asc Jambars
+                  - button "Partager ce match sur WhatsApp" [ref=e1061]
+                  - generic [ref=e1068]: 🎯 Pronostiquer →
+              - link "Poule C ⏰ 18:00 Asc Jappo Asc Jappo VS Asc Kairé Asc Kairé Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1070] [cursor=pointer]:
+                - /url: /matchs/860fff8c-b4ee-431d-b6aa-8ee079e89985
+                - generic [ref=e1071]:
+                  - generic [ref=e1072]:
+                    - generic [ref=e1073]: Poule C
+                    - generic [ref=e1074]: ⏰ 18:00
+                  - generic [ref=e1076]:
+                    - generic [ref=e1077]:
+                      - img "Asc Jappo" [ref=e1080]
+                      - generic [ref=e1081]: Asc Jappo
+                    - generic [ref=e1082]: VS
+                    - generic [ref=e1084]:
+                      - img "Asc Kairé" [ref=e1087]
+                      - generic [ref=e1088]: Asc Kairé
+                  - button "Partager ce match sur WhatsApp" [ref=e1089]
+                  - generic [ref=e1096]: 🎯 Pronostiquer →
+          - generic [ref=e1098]:
+            - generic [ref=e1099]:
+              - generic [ref=e1100]:
+                - generic [ref=e1101]: mer
+                - generic [ref=e1102]: "19"
+              - generic [ref=e1103]:
+                - generic [ref=e1104]: mercredi 19 août
+                - generic [ref=e1105]: 2 rencontres
+            - generic [ref=e1106]:
+              - link "Poule A ⏰ 16:00 ASC Entente CS ASC Entente CS VS Asc Kocc Asc Kocc Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1107] [cursor=pointer]:
+                - /url: /matchs/34a432f6-a919-4a59-bb23-a0cf58da166f
+                - generic [ref=e1108]:
+                  - generic [ref=e1109]:
+                    - generic [ref=e1110]: Poule A
+                    - generic [ref=e1111]: ⏰ 16:00
+                  - generic [ref=e1113]:
+                    - generic [ref=e1114]:
+                      - img "ASC Entente CS" [ref=e1117]
+                      - generic [ref=e1118]: ASC Entente CS
+                    - generic [ref=e1119]: VS
+                    - generic [ref=e1121]:
+                      - img "Asc Kocc" [ref=e1124]
+                      - generic [ref=e1125]: Asc Kocc
+                  - button "Partager ce match sur WhatsApp" [ref=e1126]
+                  - generic [ref=e1133]: 🎯 Pronostiquer →
+              - link "Poule A ⏰ 18:00 Asc Manko Asc Manko VS Book Joom Book Joom Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1135] [cursor=pointer]:
+                - /url: /matchs/ce09a68e-026c-42fa-90d3-f7f22b6af191
+                - generic [ref=e1136]:
+                  - generic [ref=e1137]:
+                    - generic [ref=e1138]: Poule A
+                    - generic [ref=e1139]: ⏰ 18:00
+                  - generic [ref=e1141]:
+                    - generic [ref=e1142]:
+                      - img "Asc Manko" [ref=e1145]
+                      - generic [ref=e1146]: Asc Manko
+                    - generic [ref=e1147]: VS
+                    - generic [ref=e1149]:
+                      - img "Book Joom" [ref=e1152]
+                      - generic [ref=e1153]: Book Joom
+                  - button "Partager ce match sur WhatsApp" [ref=e1154]
+                  - generic [ref=e1161]: 🎯 Pronostiquer →
+          - generic [ref=e1163]:
+            - generic [ref=e1164]:
+              - generic [ref=e1165]:
+                - generic [ref=e1166]: jeu
+                - generic [ref=e1167]: "20"
+              - generic [ref=e1168]:
+                - generic [ref=e1169]: jeudi 20 août
+                - generic [ref=e1170]: 2 rencontres
+            - generic [ref=e1171]:
+              - link "Poule B ⏰ 16:00 Khay Gui Khay Gui VS Asc Espoirs Asc Espoirs Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1172] [cursor=pointer]:
+                - /url: /matchs/0c12bdbb-89b0-41c0-80f4-a15ca38a6430
+                - generic [ref=e1173]:
+                  - generic [ref=e1174]:
+                    - generic [ref=e1175]: Poule B
+                    - generic [ref=e1176]: ⏰ 16:00
+                  - generic [ref=e1178]:
+                    - generic [ref=e1179]:
+                      - img "Khay Gui" [ref=e1182]
+                      - generic [ref=e1183]: Khay Gui
+                    - generic [ref=e1184]: VS
+                    - generic [ref=e1186]:
+                      - img "Asc Espoirs" [ref=e1189]
+                      - generic [ref=e1190]: Asc Espoirs
+                  - button "Partager ce match sur WhatsApp" [ref=e1191]
+                  - generic [ref=e1198]: 🎯 Pronostiquer →
+              - link "Poule B ⏰ 18:00 Asc G. Rail Asc G. Rail VS Asc Jubbo Asc Jubbo Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1200] [cursor=pointer]:
+                - /url: /matchs/b17dfb5d-df88-4916-ae95-0c5d28ead5b3
+                - generic [ref=e1201]:
+                  - generic [ref=e1202]:
+                    - generic [ref=e1203]: Poule B
+                    - generic [ref=e1204]: ⏰ 18:00
+                  - generic [ref=e1206]:
+                    - generic [ref=e1207]:
+                      - img "Asc G. Rail" [ref=e1210]
+                      - generic [ref=e1211]: Asc G. Rail
+                    - generic [ref=e1212]: VS
+                    - generic [ref=e1214]:
+                      - img "Asc Jubbo" [ref=e1217]
+                      - generic [ref=e1218]: Asc Jubbo
+                  - button "Partager ce match sur WhatsApp" [ref=e1219]
+                  - generic [ref=e1226]: 🎯 Pronostiquer →
+          - generic [ref=e1228]:
+            - generic [ref=e1229]:
+              - generic [ref=e1230]:
+                - generic [ref=e1231]: ven
+                - generic [ref=e1232]: "21"
+              - generic [ref=e1233]:
+                - generic [ref=e1234]: vendredi 21 août
+                - generic [ref=e1235]: 2 rencontres
+            - generic [ref=e1236]:
+              - link "Poule B ⏰ 16:00 Asc waaly daan Asc waaly daan VS Asc Thilla Asc Thilla Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1237] [cursor=pointer]:
+                - /url: /matchs/953b5d15-fe62-4919-85d7-99461ec9be67
+                - generic [ref=e1238]:
+                  - generic [ref=e1239]:
+                    - generic [ref=e1240]: Poule B
+                    - generic [ref=e1241]: ⏰ 16:00
+                  - generic [ref=e1243]:
+                    - generic [ref=e1244]:
+                      - img "Asc waaly daan" [ref=e1247]
+                      - generic [ref=e1248]: Asc waaly daan
+                    - generic [ref=e1249]: VS
+                    - generic [ref=e1251]:
+                      - img "Asc Thilla" [ref=e1254]
+                      - generic [ref=e1255]: Asc Thilla
+                  - button "Partager ce match sur WhatsApp" [ref=e1256]
+                  - generic [ref=e1263]: 🎯 Pronostiquer →
+              - link "Poule C ⏰ 18:00 Asc Rakadiou Asc Rakadiou VS Asc Kairé Asc Kairé Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1265] [cursor=pointer]:
+                - /url: /matchs/477ac97f-1fbc-4232-a3fa-85bd9f82d711
+                - generic [ref=e1266]:
+                  - generic [ref=e1267]:
+                    - generic [ref=e1268]: Poule C
+                    - generic [ref=e1269]: ⏰ 18:00
+                  - generic [ref=e1271]:
+                    - generic [ref=e1272]:
+                      - img "Asc Rakadiou" [ref=e1275]
+                      - generic [ref=e1276]: Asc Rakadiou
+                    - generic [ref=e1277]: VS
+                    - generic [ref=e1279]:
+                      - img "Asc Kairé" [ref=e1282]
+                      - generic [ref=e1283]: Asc Kairé
+                  - button "Partager ce match sur WhatsApp" [ref=e1284]
+                  - generic [ref=e1291]: 🎯 Pronostiquer →
+          - generic [ref=e1293]:
+            - generic [ref=e1294]:
+              - generic [ref=e1295]:
+                - generic [ref=e1296]: sam
+                - generic [ref=e1297]: "22"
+              - generic [ref=e1298]:
+                - generic [ref=e1299]: samedi 22 août
+                - generic [ref=e1300]: 2 rencontres
+            - generic [ref=e1301]:
+              - link "Poule C ⏰ 16:00 Asc Lat dior Asc Lat dior VS Asc Yaakaar Asc Yaakaar Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1302] [cursor=pointer]:
+                - /url: /matchs/0b7e463f-35a8-4c2e-96d1-892fbf6d1dc4
+                - generic [ref=e1303]:
+                  - generic [ref=e1304]:
+                    - generic [ref=e1305]: Poule C
+                    - generic [ref=e1306]: ⏰ 16:00
+                  - generic [ref=e1308]:
+                    - generic [ref=e1309]:
+                      - img "Asc Lat dior" [ref=e1312]
+                      - generic [ref=e1313]: Asc Lat dior
+                    - generic [ref=e1314]: VS
+                    - generic [ref=e1316]:
+                      - img "Asc Yaakaar" [ref=e1319]
+                      - generic [ref=e1320]: Asc Yaakaar
+                  - button "Partager ce match sur WhatsApp" [ref=e1321]
+                  - generic [ref=e1328]: 🎯 Pronostiquer →
+              - link "Poule C ⏰ 18:00 Asc Jambars Asc Jambars VS Asc Jappo Asc Jappo Partager ce match sur WhatsApp 🎯 Pronostiquer →" [ref=e1330] [cursor=pointer]:
+                - /url: /matchs/003cd787-7f47-4957-81a3-d5b6d7672abe
+                - generic [ref=e1331]:
+                  - generic [ref=e1332]:
+                    - generic [ref=e1333]: Poule C
+                    - generic [ref=e1334]: ⏰ 18:00
+                  - generic [ref=e1336]:
+                    - generic [ref=e1337]:
+                      - img "Asc Jambars" [ref=e1340]
+                      - generic [ref=e1341]: Asc Jambars
+                    - generic [ref=e1342]: VS
+                    - generic [ref=e1344]:
+                      - img "Asc Jappo" [ref=e1347]
+                      - generic [ref=e1348]: Asc Jappo
+                  - button "Partager ce match sur WhatsApp" [ref=e1349]
+                  - generic [ref=e1356]: 🎯 Pronostiquer →
+  - button "Open Next.js Dev Tools" [ref=e1363] [cursor=pointer]

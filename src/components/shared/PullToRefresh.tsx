@@ -1,134 +1,118 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect, useRef, ReactNode } from 'react'
 
 interface PullToRefreshProps {
   onRefresh: () => Promise<void>
-  children: React.ReactNode
+  children: ReactNode
+  className?: string
 }
 
-export function PullToRefresh({ onRefresh, children }: PullToRefreshProps) {
-  const [pulling, setPulling] = useState(false)
+export default function PullToRefresh({ onRefresh, children, className }: PullToRefreshProps) {
   const [pullDistance, setPullDistance] = useState(0)
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const startYRef = useRef(0)
+  const [refreshing, setRefreshing] = useState(false)
+  const startY = useRef(0)
+  const isPulling = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const handleTouchStart = (e: TouchEvent) => {
-    if (containerRef.current?.scrollTop === 0) {
-      startYRef.current = e.touches[0].clientY
-      setPulling(true)
-    }
-  }
-
-  const handleTouchMove = (e: TouchEvent) => {
-    if (!pulling) return
-
-    const currentY = e.touches[0].clientY
-    const distance = currentY - startYRef.current
-
-    if (distance > 0) {
-      setPullDistance(Math.min(distance, 100))
-    }
-  }
-
-  const handleTouchEnd = async () => {
-    setPulling(false)
-
-    if (pullDistance > 60 && !isRefreshing) {
-      setIsRefreshing(true)
-      try {
-        await onRefresh()
-      } finally {
-        setIsRefreshing(false)
-      }
-    }
-
-    setPullDistance(0)
-  }
+  const THRESHOLD = 80
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
-    container.addEventListener('touchstart', handleTouchStart as any)
-    container.addEventListener('touchmove', handleTouchMove as any)
-    container.addEventListener('touchend', handleTouchEnd)
+    const isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent)
+    if (!isMobile) return
+
+    const onTouchStart = (e: TouchEvent) => {
+      // Only trigger when at top of page
+      if (window.scrollY <= 0) {
+        startY.current = e.touches[0].clientY
+        isPulling.current = true
+      }
+    }
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isPulling.current || refreshing) return
+      const currentY = e.touches[0].clientY
+      const diff = currentY - startY.current
+      if (diff > 0 && window.scrollY <= 0) {
+        // Apply resistance
+        const resistance = 0.4
+        const distance = Math.min(diff * resistance, 120)
+        setPullDistance(distance)
+        if (distance > 0) {
+          e.preventDefault()
+        }
+      }
+    }
+
+    const onTouchEnd = async () => {
+      if (!isPulling.current) return
+      isPulling.current = false
+
+      if (pullDistance >= THRESHOLD && !refreshing) {
+        setRefreshing(true)
+        setPullDistance(THRESHOLD)
+        try {
+          await onRefresh()
+        } finally {
+          setRefreshing(false)
+          setPullDistance(0)
+        }
+      } else {
+        setPullDistance(0)
+      }
+    }
+
+    container.addEventListener('touchstart', onTouchStart, { passive: true })
+    container.addEventListener('touchmove', onTouchMove, { passive: false })
+    container.addEventListener('touchend', onTouchEnd)
 
     return () => {
-      container.removeEventListener('touchstart', handleTouchStart as any)
-      container.removeEventListener('touchmove', handleTouchMove as any)
-      container.removeEventListener('touchend', handleTouchEnd)
+      container.removeEventListener('touchstart', onTouchStart)
+      container.removeEventListener('touchmove', onTouchMove)
+      container.removeEventListener('touchend', onTouchEnd)
     }
-  }, [pulling, pullDistance, isRefreshing])
+  }, [pullDistance, refreshing, onRefresh])
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        position: 'relative',
-        overflow: 'auto',
-        height: '100%',
-      }}
-    >
+    <div ref={containerRef} className={className} style={{ position: 'relative' }}>
       {/* Pull indicator */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: Math.max(0, pullDistance),
-          background: 'linear-gradient(180deg, rgba(0,98,51,0.1), transparent)',
+      <div style={{
+        position: 'absolute',
+        top: -50 + pullDistance,
+        left: 0,
+        right: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 50,
+        pointerEvents: 'none',
+        transition: refreshing ? 'none' : 'transform 0.2s ease',
+        opacity: Math.min(pullDistance / THRESHOLD, 1),
+        zIndex: 10,
+      }}>
+        <div style={{
+          width: 36,
+          height: 36,
+          borderRadius: '50%',
+          background: 'var(--color-surface-card)',
+          border: '1px solid var(--color-border)',
+          boxShadow: 'var(--shadow-md)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          overflow: 'hidden',
-          zIndex: 1,
-        }}
-      >
-        {pullDistance > 0 && (
-          <div
-            style={{
-              fontSize: '1.5rem',
-              transform: `rotate(${Math.min(pullDistance * 3.6, 360)}deg)`,
-              transition: isRefreshing ? 'none' : 'transform 0.2s',
-            }}
-          >
-            {isRefreshing ? '⟳' : '⬇️'}
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div style={{ paddingTop: Math.max(0, pullDistance) }}>
-        {children}
-      </div>
-
-      {/* Refreshing indicator */}
-      {isRefreshing && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 'clamp(60px, 15vh, 100px)',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'var(--color-surface-card)',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-full)',
-            padding: '8px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            zIndex: 100,
-            boxShadow: 'var(--shadow-lg)',
-            animation: 'slideDown 0.3s ease',
-          }}
-        >
-          <span style={{ animation: 'spin 1s linear infinite' }}>⟳</span>
-          <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Actualisation...</span>
+          fontSize: '1rem',
+          transform: refreshing ? 'rotate(360deg)' : `rotate(${pullDistance * 3}deg)`,
+          transition: refreshing ? 'transform 0.6s linear infinite' : 'transform 0.2s ease',
+          color: 'var(--color-primary)',
+        }}>
+          {refreshing ? '⏳' : '⬇️'}
         </div>
-      )}
+      </div>
+
+      {children}
     </div>
   )
 }

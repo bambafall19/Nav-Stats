@@ -279,6 +279,4 @@ export type Database = {
   }
 }
 
-}
-
 export default Database

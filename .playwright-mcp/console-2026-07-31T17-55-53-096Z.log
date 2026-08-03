@@ -1,0 +1,11 @@
+[     793ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[     824ms] [LOG] [HMR] connected @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[    1240ms] [LOG] %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[    1240ms] [LOG] %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {route: /cadets, path: /cadets} @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[    1240ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:8080/cadets color: rgb(120, 120, 120) color: inherit {o: http://localhost:8080/cadets, sv: 0.1.3, sdkn: @vercel/analytics/next, sdkv: 2.0.1, ts: 1785520554336} /_vercel/insights/view @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  117499ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  117602ms] [LOG] [Fast Refresh] done in 65ms @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  118355ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:8080/cadets:0
+[  157256ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  157337ms] [LOG] [Fast Refresh] done in 76ms @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  158004ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:8080/cadets:0

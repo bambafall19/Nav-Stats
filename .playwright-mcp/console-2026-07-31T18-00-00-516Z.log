@@ -1,0 +1,21 @@
+[     773ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[     808ms] [LOG] [HMR] connected @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[    1193ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[    1198ms] [LOG] %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[    1199ms] [LOG] %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {route: /cadets, path: /cadets} @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[    1199ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:8080/cadets color: rgb(120, 120, 120) color: inherit {o: http://localhost:8080/cadets, sv: 0.1.3, sdkn: @vercel/analytics/next, sdkv: 2.0.1, ts: 1785520801714} /_vercel/insights/view @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[    1407ms] [LOG] [Fast Refresh] done in 335ms @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  143388ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  143603ms] [LOG] [Fast Refresh] done in 61ms @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  144758ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:8080/cadets:0
+[  180222ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  180364ms] [LOG] [Fast Refresh] done in 155ms @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  181591ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:8080/cadets:0
+[  215450ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  215532ms] [LOG] [Fast Refresh] done in 62ms @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  216593ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:8080/cadets:0
+[  303516ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  303554ms] [LOG] [Fast Refresh] done in 85ms @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  303867ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  303936ms] [LOG] [Fast Refresh] done in 170ms @ http://localhost:8080/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477
+[  304606ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:8080/cadets:0

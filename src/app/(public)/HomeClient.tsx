@@ -74,7 +74,7 @@ export default function HomeClient({
         
         {/* Stats Dashboard - Full width card */}
         <ScrollReveal direction="up" delay={100}>
-          <div style={{ marginBottom: 48 }}>
+          <div style={{ marginBottom: 48 }} className="stats-dashboard-section">
             <StatsDashboard
               topPronostiqueurs={topPronostiqueurs}
               topEquipes={[]}
@@ -211,7 +211,7 @@ export default function HomeClient({
           </div>
         </section>
 
-        {/* Quick Actions Grid */}
+        {/* Quick Actions Grid - Moved first on mobile */}
         <section className="quick-actions-section" style={{ marginBottom: 48 }}>
           <ScrollReveal direction="up" delay={0}>
             <div style={{
@@ -285,6 +285,79 @@ export default function HomeClient({
           </ScrollReveal>
         </section>
 
+        {/* Actualités horizontales - Mobile only */}
+        <section className="mobile-actualites" style={{ marginBottom: 24 }}>
+          <ScrollReveal direction="up" delay={0}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 12,
+            }}>
+              <h2 className="section-title" style={{ fontSize: '1.1rem', margin: 0 }}>
+                📰 Actualités
+              </h2>
+              <Link href="/communaute" style={{
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                color: 'var(--color-primary)',
+                textDecoration: 'none',
+              }}>
+                Voir tout →
+              </Link>
+            </div>
+            <div style={{
+              display: 'flex',
+              gap: 10,
+              overflowX: 'auto',
+              paddingBottom: 8,
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+            }} className="actualites-scroll">
+              {[
+                { emoji: '🏆', title: 'CNP 2026', desc: 'La compétition bat son plein !' },
+                { emoji: '⚽', title: 'Matchs du jour', desc: `${matchCount} rencontres à pronostiquer` },
+                { emoji: '📊', title: 'Classement', desc: `${userCount} pronostiqueurs en lice` },
+                { emoji: '🔥', title: 'Top pronostiqueurs', desc: 'Qui dominera cette semaine ?' },
+              ].map((news, i) => (
+                <Link
+                  key={i}
+                  href={news.emoji === '🏆' ? '/cadets' : news.emoji === '⚽' ? '/matchs' : news.emoji === '📊' ? '/classements' : '/classements'}
+                  style={{
+                    flexShrink: 0,
+                    width: 200,
+                    padding: '14px 16px',
+                    background: 'var(--color-surface-card)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-lg)',
+                    textDecoration: 'none',
+                    boxShadow: 'var(--shadow-sm)',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <div style={{ fontSize: '1.4rem', marginBottom: 6 }}>{news.emoji}</div>
+                  <div style={{
+                    fontFamily: 'var(--font-outfit)',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    color: 'var(--color-text-primary)',
+                    marginBottom: 2,
+                  }}>
+                    {news.title}
+                  </div>
+                  <div style={{
+                    fontSize: '0.72rem',
+                    color: 'var(--color-text-muted)',
+                    lineHeight: 1.4,
+                  }}>
+                    {news.desc}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </ScrollReveal>
+        </section>
+
         {/* Main Content - Matchs + Sidebar */}
         <div style={{
           display: 'grid',
@@ -341,27 +414,34 @@ export default function HomeClient({
           .main-home-grid {
             display: contents !important;
           }
-          #matchs-section {
-            order: 1;
-          }
           .quick-actions-section {
-            order: 2;
+            order: 1;
             margin-bottom: 24px !important;
           }
-          .home-flow > div:first-child {
+          .mobile-actualites {
+            order: 2;
+            display: block !important;
+          }
+          #matchs-section {
             order: 3;
+          }
+          .stats-dashboard-section {
+            order: 4;
           }
           .home-sidebar {
             display: contents !important;
           }
           #classement-section {
-            order: 4;
-          }
-          #resultats-section {
             order: 5;
           }
-          #actualites-section {
+          #resultats-section {
             order: 6;
+          }
+          #actualites-section {
+            order: 7;
+            display: none;
+          }
+          .actualites-scroll::-webkit-scrollbar {
             display: none;
           }
           .hide-mobile {

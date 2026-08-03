@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Header from '@/components/layout/Header'
+import MobileHeader from '@/components/layout/MobileHeader'
 import MobileBottomNav from '@/components/layout/MobileBottomNav'
 import MobileOnboarding from '@/components/layout/MobileOnboarding'
 
@@ -14,6 +15,7 @@ export default function PublicLayoutClient({ children }: PublicLayoutClientProps
     <>
       <MobileOnboarding />
       <Header />
+      <MobileHeader />
       <motion.main
         style={{ minHeight: '100vh' }}
         initial={{ opacity: 0, y: 10 }}
