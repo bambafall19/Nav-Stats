@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import CountdownTimer from '@/components/shared/CountdownTimer'
 
@@ -11,9 +11,10 @@ interface MatchHeroClientProps {
 
 export function MatchHeroClient({ initialMatch }: MatchHeroClientProps) {
   const [match, setMatch] = useState(initialMatch)
-  const supabase = createClient()
+  const supabaseRef = useRef(createClient())
 
   useEffect(() => {
+    const supabase = supabaseRef.current
     const channel = supabase
       .channel(`match-${match.id}`)
       .on(
@@ -36,7 +37,7 @@ export function MatchHeroClient({ initialMatch }: MatchHeroClientProps) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [match.id, supabase])
+  }, [match.id])
 
   const equipeA = match.equipe_a
   const equipeB = match.equipe_b

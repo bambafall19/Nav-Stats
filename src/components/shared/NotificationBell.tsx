@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 
@@ -9,15 +9,17 @@ type Notification = Database['public']['Tables']['notifications']['Row']
 export default function NotificationBell({ userId }: { userId: string }) {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [open, setOpen] = useState(false)
-  const supabase = createClient() as any
+  const supabaseRef = useRef(createClient() as any)
+  const channelIdRef = useRef(`notifications-${Math.random().toString(36).slice(2, 10)}-${userId}`)
 
+  const supabase = supabaseRef.current
   const unreadCount = notifications.filter(n => !n.est_lue).length
 
   useEffect(() => {
     fetchNotifications()
-    // Subscribe to real-time notifications
-    const channel = supabase
-      .channel('notifications')
+    // Subscribe to real-time notifications with unique channel name
+    const channel = supabaseRef.current
+      .channel(channelIdRef.current)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -27,7 +29,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
         setNotifications(prev => [payload.new as Notification, ...prev])
       })
       .subscribe()
-    return () => { supabase.removeChannel(channel) }
+    return () => { supabaseRef.current.removeChannel(channel) }
   }, [userId])
 
   async function fetchNotifications() {
