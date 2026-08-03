@@ -61,31 +61,6 @@ export default function MobileHeader() {
           padding: '0 14px',
           gap: 10,
         }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-            <div style={{
-              width: 28,
-              height: 28,
-              borderRadius: 8,
-              background: 'var(--gradient-green)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              flexShrink: 0,
-              boxShadow: '0 3px 10px rgba(0,98,51,0.18)',
-            }}>
-              <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />
-            </div>
-            <span style={{
-              fontFamily: 'var(--font-outfit)',
-              fontWeight: 800,
-              fontSize: '0.95rem',
-              color: 'var(--color-primary)',
-              letterSpacing: '-0.02em',
-              whiteSpace: 'nowrap',
-            }}>NavéStats</span>
-          </Link>
-
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
             <button
               onClick={() => setSearchOpen(!searchOpen)}
@@ -110,6 +85,31 @@ export default function MobileHeader() {
 
             {profile && <NotificationBell userId={profile.id} />}
           </div>
+
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <div style={{
+              width: 28,
+              height: 28,
+              borderRadius: 8,
+              background: 'var(--gradient-green)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              flexShrink: 0,
+              boxShadow: '0 3px 10px rgba(0,98,51,0.18)',
+            }}>
+              <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />
+            </div>
+            <span style={{
+              fontFamily: 'var(--font-outfit)',
+              fontWeight: 800,
+              fontSize: '0.95rem',
+              color: 'var(--color-primary)',
+              letterSpacing: '-0.02em',
+              whiteSpace: 'nowrap',
+            }}>NavéStats</span>
+          </Link>
         </div>
 
         {searchOpen && (
