@@ -70,11 +70,11 @@ export default function HomeClient({
         {/* Hero Section with slideshow */}
         <HeroSection matchCount={matchCount} userCount={userCount} isAuthenticated={isAuthenticated} />
 
-        <div className="home-flow" style={{ paddingTop: 24, paddingBottom: 48 }}>
+        <div className="home-flow" style={{ paddingTop: 12, paddingBottom: 32 }}>
         
         {/* Stats Dashboard - Full width card */}
         <ScrollReveal direction="up" delay={100}>
-          <div style={{ marginBottom: 48 }} className="stats-dashboard-section">
+          <div style={{ marginBottom: 20 }} className="stats-dashboard-section">
             <StatsDashboard
               topPronostiqueurs={topPronostiqueurs}
               topEquipes={[]}
@@ -84,19 +84,19 @@ export default function HomeClient({
         </ScrollReveal>
 
         {/* Comment ça marche - Feature cards */}
-        <section style={{ marginBottom: 56 }} className="hide-mobile">
+        <section style={{ marginBottom: 24 }} className="hide-mobile">
           <ScrollReveal direction="up" delay={0}>
-            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <div style={{ textAlign: 'center', marginBottom: 20 }}>
               <h2 style={{
                 fontFamily: 'var(--font-outfit)',
-                fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
+                fontSize: 'clamp(1.5rem, 4vw, 2rem)',
                 fontWeight: 800,
                 color: 'var(--color-text-primary)',
-                marginBottom: 8,
+                marginBottom: 6,
               }}>
                 Comment ça marche ?
               </h2>
-              <p style={{ color: 'var(--color-text-secondary)', fontSize: '1rem', maxWidth: 500, margin: '0 auto' }}>
+              <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', maxWidth: 420, margin: '0 auto' }}>
                 Rejoignez des milliers de pronostiqueurs et testez vos connaissances
               </p>
             </div>
@@ -212,12 +212,12 @@ export default function HomeClient({
         </section>
 
         {/* Quick Actions Grid - Moved first on mobile */}
-        <section className="quick-actions-section" style={{ marginBottom: 48 }}>
+        <section className="quick-actions-section" style={{ marginBottom: 16 }}>
           <ScrollReveal direction="up" delay={0}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: 16,
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: 10,
             }}>
               {quickActions.map((action, i) => (
                 <ScrollReveal key={action.href} direction="up" delay={i * 80}>
@@ -286,7 +286,7 @@ export default function HomeClient({
         </section>
 
         {/* Actualités horizontales - Mobile only */}
-        <section className="mobile-actualites" style={{ marginBottom: 24 }}>
+        <section className="mobile-actualites" style={{ marginBottom: 16 }}>
           <ScrollReveal direction="up" delay={0}>
             <div style={{
               display: 'flex',
@@ -362,7 +362,7 @@ export default function HomeClient({
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr',
-          gap: 32,
+          gap: 16,
         }} className="main-home-grid">
           {/* Matchs du jour section */}
           <section id="matchs-section">
