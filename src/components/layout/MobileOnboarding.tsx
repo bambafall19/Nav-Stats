@@ -21,6 +21,7 @@ export default function MobileOnboarding() {
     let active = true
     const supabase = createClient()
     ;(async () => {
+      if (window.innerWidth >= 768) return
       let seen = false
       try { seen = localStorage.getItem(SEEN_KEY) === '1' } catch { /* ignore */ }
       if (seen) return
