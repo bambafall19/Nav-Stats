@@ -45,21 +45,22 @@ export function ClassementTabs({ pronostiqueurs, equipes, quartiers, asc }: Clas
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 7,
-                padding: '8px 18px',
+                padding: '9px 18px',
                 borderRadius: 'var(--radius-full)',
-                border: active ? '1.5px solid var(--color-primary)' : '1.5px solid var(--color-border)',
-                background: active ? 'var(--color-primary-50)' : 'var(--color-surface-card)',
-                color: active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                fontWeight: active ? 700 : 600,
+                border: active ? '1px solid transparent' : '1px solid rgba(255, 255, 255, 0.08)',
+                background: active ? 'var(--gradient-green)' : 'rgba(255, 255, 255, 0.04)',
+                color: active ? '#04120A' : 'var(--color-text-secondary)',
+                fontWeight: active ? 800 : 600,
                 fontSize: '0.82rem',
                 cursor: 'pointer',
                 fontFamily: 'var(--font-plus-jakarta)',
                 transition: 'all 0.2s ease',
-                minHeight: 40,
-                boxShadow: active ? '0 0 16px rgba(42,255,160,0.14)' : 'var(--shadow-xs)',
+                minHeight: 42,
+                boxShadow: active ? '0 6px 20px rgba(42,255,160,0.28)' : '0 1px 3px rgba(0, 0, 0, 0.3)',
+                letterSpacing: '-0.01em',
               }}
             >
-              <span style={{ display: 'inline-flex', color: active ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
+              <span style={{ display: 'inline-flex', color: active ? '#04120A' : 'var(--color-text-muted)' }}>
                 {tab.icon}
               </span>
               <span>{tab.label}</span>

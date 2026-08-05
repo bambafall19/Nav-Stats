@@ -21,6 +21,7 @@ export function QuickSearch({ onSearch, onSelect }: QuickSearchProps) {
   const [results, setResults] = useState<SearchResult[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [focused, setFocused] = useState(false)
 
   const handleSearch = useCallback(async (value: string) => {
     setQuery(value)
@@ -34,47 +35,68 @@ export function QuickSearch({ onSearch, onSelect }: QuickSearchProps) {
   }, [onSearch])
 
   return (
-    <div style={{ position: 'relative', marginBottom: 20 }}>
+    <div style={{ position: 'relative', marginBottom: 0 }}>
       <div style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        padding: '10px 14px', borderRadius: 10,
-        border: '1px solid var(--color-border-subtle)',
-        background: 'var(--color-surface-card)',
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '12px 16px', borderRadius: 14,
+        border: focused ? '1px solid rgba(42,255,160,0.45)' : '1px solid rgba(255, 255, 255, 0.07)',
+        background: focused ? 'rgba(42,255,160,0.05)' : 'rgba(255, 255, 255, 0.03)',
+        boxShadow: focused ? '0 0 0 4px rgba(42,255,160,0.08), 0 4px 18px rgba(0,0,0,0.25)' : '0 1px 3px rgba(0, 0, 0, 0.3)',
+        transition: 'all 0.2s ease',
       }}>
-        <Search size={16} color="var(--color-text-muted)" />
+        <Search size={17} color={focused ? 'var(--color-primary)' : 'var(--color-text-muted)'} style={{ flexShrink: 0, transition: 'color 0.2s' }} />
         <input
           type="text"
           placeholder="Chercher un pronostiqueur ou équipe..."
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
-          onFocus={() => query.length >= 2 && setIsOpen(true)}
+          onFocus={() => { setFocused(true); if (query.length >= 2) setIsOpen(true) }}
+          onBlur={() => setFocused(false)}
           style={{
             flex: 1, border: 'none', background: 'transparent',
-            fontSize: '0.85rem', outline: 'none', color: 'var(--color-text-primary)',
+            fontSize: '0.88rem', outline: 'none', color: 'var(--color-text-primary)',
+            fontFamily: 'var(--font-inter)',
+            fontWeight: 500,
           }}
         />
-        {isLoading && <Loader2 size={14} color="var(--color-primary)" style={{ animation: 'spin 1s linear infinite' }} />}
+        {query && (
+          <button
+            aria-label="Effacer"
+            onClick={() => { setQuery(''); setResults([]); setIsOpen(false) }}
+            style={{
+              background: 'rgba(255,255,255,0.08)', border: 'none', cursor: 'pointer',
+              color: 'var(--color-text-muted)', width: 22, height: 22, borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              fontSize: '0.7rem', fontWeight: 700,
+            }}
+          >✕</button>
+        )}
+        {isLoading && <Loader2 size={15} color="var(--color-primary)" style={{ animation: 'spin 1s linear infinite' }} />}
       </div>
 
       {isOpen && results.length > 0 && (
         <div style={{
           position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 8,
-          background: 'var(--color-surface-elevated)', border: '1px solid var(--color-border-subtle)',
-          borderRadius: 12, maxHeight: 300, overflowY: 'auto', zIndex: 1000,
+          background: 'rgba(14, 17, 15, 0.95)',
+          backdropFilter: 'blur(20px) saturate(140%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(140%)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 16, maxHeight: 300, overflowY: 'auto', zIndex: 1000,
           boxShadow: 'var(--shadow-lg)',
+          padding: 4,
         }}>
-          {results.map((result, idx) => (
+          {results.map((result) => (
             <button
               key={result.id}
               onClick={() => { onSelect(result); setQuery(''); setResults([]); setIsOpen(false) }}
               style={{
-                width: '100%', padding: '12px 14px',
-                borderBottom: idx < results.length - 1 ? '1px solid var(--color-border-subtle)' : 'none',
+                width: '100%', padding: '10px 12px',
+                borderRadius: 12,
                 background: 'transparent', border: 'none', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', gap: 12, textAlign: 'left',
                 transition: 'background 0.15s',
               }}
-              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-bg-secondary)'}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
               onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
               {result.avatar ? (
@@ -103,8 +125,11 @@ export function QuickSearch({ onSearch, onSelect }: QuickSearchProps) {
       {isOpen && query.length >= 2 && results.length === 0 && !isLoading && (
         <div style={{
           position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 8,
-          background: 'var(--color-surface-elevated)', border: '1px solid var(--color-border-subtle)',
-          borderRadius: 12, padding: 16, textAlign: 'center',
+          background: 'rgba(14, 17, 15, 0.95)',
+          backdropFilter: 'blur(20px) saturate(140%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(140%)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 16, padding: 16, textAlign: 'center',
           color: 'var(--color-text-muted)', fontSize: '0.85rem',
           boxShadow: 'var(--shadow-lg)',
         }}>

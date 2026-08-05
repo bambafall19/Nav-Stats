@@ -34,13 +34,16 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         style={{
-          padding: '8px 12px',
-          borderRadius: 6,
-          border: '1px solid var(--color-border)',
-          background: currentPage === 1 ? 'var(--color-surface)' : 'var(--color-surface-card)',
+          padding: '9px 14px',
+          borderRadius: 999,
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: currentPage === 1 ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.05)',
           cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
           opacity: currentPage === 1 ? 0.5 : 1,
-          fontSize: '0.85rem',
+          fontSize: '0.82rem',
+          color: 'var(--color-text-secondary)',
+          fontFamily: 'var(--font-plus-jakarta)',
+          transition: 'all 0.15s',
         }}
       >
         ← Précédent
@@ -51,12 +54,15 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
           <button
             onClick={() => onPageChange(1)}
             style={{
-              padding: '8px 12px',
-              borderRadius: 6,
-              border: '1px solid var(--color-border)',
-              background: 'var(--color-surface-card)',
+              padding: '9px 13px',
+              borderRadius: 999,
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'rgba(255, 255, 255, 0.05)',
               cursor: 'pointer',
-              fontSize: '0.85rem',
+              fontSize: '0.82rem',
+              color: 'var(--color-text-secondary)',
+              fontFamily: 'var(--font-plus-jakarta)',
+              transition: 'all 0.15s',
             }}
           >
             1
@@ -70,14 +76,17 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
           key={page}
           onClick={() => onPageChange(page)}
           style={{
-            padding: '8px 12px',
-            borderRadius: 6,
-            border: currentPage === page ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
-            background: currentPage === page ? 'var(--color-primary)' : 'var(--color-surface-card)',
-            color: currentPage === page ? 'white' : 'var(--color-text)',
+            padding: '9px 13px',
+            borderRadius: 999,
+            border: currentPage === page ? '1px solid transparent' : '1px solid rgba(255, 255, 255, 0.08)',
+            background: currentPage === page ? 'var(--gradient-green)' : 'rgba(255, 255, 255, 0.05)',
+            color: currentPage === page ? '#04120A' : 'var(--color-text-secondary)',
             cursor: 'pointer',
-            fontWeight: currentPage === page ? 700 : 500,
-            fontSize: '0.85rem',
+            fontWeight: currentPage === page ? 800 : 500,
+            fontSize: '0.82rem',
+            fontFamily: 'var(--font-plus-jakarta)',
+            boxShadow: currentPage === page ? '0 4px 16px rgba(42,255,160,0.25)' : 'none',
+            transition: 'all 0.15s',
           }}
         >
           {page}
@@ -90,12 +99,15 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
           <button
             onClick={() => onPageChange(totalPages)}
             style={{
-              padding: '8px 12px',
-              borderRadius: 6,
-              border: '1px solid var(--color-border)',
-              background: 'var(--color-surface-card)',
+              padding: '9px 13px',
+              borderRadius: 999,
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'rgba(255, 255, 255, 0.05)',
               cursor: 'pointer',
-              fontSize: '0.85rem',
+              fontSize: '0.82rem',
+              color: 'var(--color-text-secondary)',
+              fontFamily: 'var(--font-plus-jakarta)',
+              transition: 'all 0.15s',
             }}
           >
             {totalPages}
@@ -107,13 +119,16 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         style={{
-          padding: '8px 12px',
-          borderRadius: 6,
-          border: '1px solid var(--color-border)',
-          background: currentPage === totalPages ? 'var(--color-surface)' : 'var(--color-surface-card)',
+          padding: '9px 14px',
+          borderRadius: 999,
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: currentPage === totalPages ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.05)',
           cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
           opacity: currentPage === totalPages ? 0.5 : 1,
-          fontSize: '0.85rem',
+          fontSize: '0.82rem',
+          color: 'var(--color-text-secondary)',
+          fontFamily: 'var(--font-plus-jakarta)',
+          transition: 'all 0.15s',
         }}
       >
         Suivant →

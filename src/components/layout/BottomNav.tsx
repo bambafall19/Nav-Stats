@@ -52,13 +52,13 @@ export default function BottomNav() {
         aria-label="Navigation principale mobile"
         style={{
           position: 'fixed',
-          bottom: 'max(32px, env(safe-area-inset-bottom))',
+          bottom: 'max(28px, env(safe-area-inset-bottom))',
           left: 0,
           right: 0,
           margin: '0 auto',
           width: '84%',
           maxWidth: 400,
-          height: 52,
+          height: 46,
           background: 'rgba(17, 17, 17, 0.9)',
           backdropFilter: 'blur(14px) saturate(150%)',
           WebkitBackdropFilter: 'blur(14px) saturate(150%)',
@@ -67,7 +67,7 @@ export default function BottomNav() {
           display: 'flex',
           alignItems: 'center',
           padding: '0 5px',
-          borderRadius: 26,
+          borderRadius: 22,
           zIndex: 999,
         }}
       >
@@ -181,15 +181,15 @@ export default function BottomNav() {
             #desktop-bottom-nav { display: none !important; }
             #mobile-bottom-nav { display: flex !important; }
             #mobile-bottom-nav {
-              bottom: max(32px, env(safe-area-inset-bottom)) !important;
+              bottom: max(28px, env(safe-area-inset-bottom)) !important;
               left: 0 !important;
               right: 0 !important;
               margin: 0 auto !important;
               transform: none !important;
               width: 84% !important;
               max-width: 400px !important;
-              height: 52px !important;
-              border-radius: 26px !important;
+              height: 46px !important;
+              border-radius: 22px !important;
               border: 1px solid rgba(255, 255, 255, 0.05) !important;
               box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 6px 16px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
               padding: 0 5px !important;
@@ -211,7 +211,7 @@ export default function BottomNav() {
             flex: 1 1 0; min-width: 0; height: 100%;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            gap: 2px; text-decoration: none;
+            gap: 1px; text-decoration: none;
             cursor: pointer; border: none; background: transparent;
             padding: 0 2px;
             -webkit-tap-highlight-color: transparent;
@@ -219,7 +219,7 @@ export default function BottomNav() {
           }
           #mobile-bottom-nav .mobile-nav-item:active { transform: scale(0.92); }
           #mobile-bottom-nav .mobile-nav-icon-wrap {
-            width: 38px; height: 38px; border-radius: 50%;
+            width: 34px; height: 34px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             background: transparent;
             transform: scale(0.94);
@@ -237,7 +237,7 @@ export default function BottomNav() {
             color: ${ACTIVE_BLUE};
           }
           #mobile-bottom-nav .mobile-nav-label {
-            font-size: 9px; line-height: 1; font-weight: 500;
+            font-size: 8.5px; line-height: 1; font-weight: 500;
             font-family: var(--font-plus-jakarta);
             color: #9CA3AF; white-space: nowrap;
             letter-spacing: 0;

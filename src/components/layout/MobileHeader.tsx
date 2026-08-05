@@ -64,9 +64,10 @@ export default function MobileHeader() {
           justifyContent: 'center',
           height: '100%',
           width: '100%',
+          gap: 14,
         }}>
           {/* Gauche : Notifications */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 10 }}>
             {profile
               ? <NotificationBell userId={profile.id} variant="icon" badgeColor="green" />
               : <div style={{ width: 44, height: 44 }} />}
@@ -78,7 +79,7 @@ export default function MobileHeader() {
             gap: 12, flexShrink: 0,
           }}>
             <div style={{
-              width: 40, height: 40, borderRadius: 12,
+              width: 32, height: 32, borderRadius: 10,
               background: 'var(--gradient-green)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               overflow: 'hidden', flexShrink: 0,
@@ -87,15 +88,15 @@ export default function MobileHeader() {
             </div>
             <span style={{
               fontFamily: 'var(--font-signature)',
-              fontWeight: 700, fontSize: 34,
+              fontWeight: 700, fontSize: 26,
               color: '#FFFFFF',
-              letterSpacing: '-0.01em',
+              letterSpacing: '-0.02em',
               whiteSpace: 'nowrap',
             }}>NavéStats</span>
           </Link>
 
           {/* Droite : Recherche + Profil */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10 }}>
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               aria-label="Rechercher"

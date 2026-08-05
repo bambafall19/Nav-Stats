@@ -531,8 +531,18 @@ export default function NotificationsScreen() {
               }}>
                 <Bell size={36} color="#22C55E" strokeWidth={1.8} />
               </div>
-              <p style={{ margin: 0, fontSize: 17, fontWeight: 700, color: '#FFFFFF' }}>Aucune notification</p>
-              <p style={{ margin: '6px 0 0', fontSize: 13.5, color: '#9CA3AF' }}>Vous êtes à jour.</p>
+              <p style={{ margin: 0, fontSize: 17, fontWeight: 700, color: '#FFFFFF' }}>
+                {filter === 'all' && 'Aucune notification'}
+                {filter === 'unread' && 'Aucune notification non lue'}
+                {filter === 'matchs' && 'Aucune notification de match'}
+                {filter === 'systeme' && 'Aucune notification système'}
+              </p>
+              <p style={{ margin: '6px 0 0', fontSize: 13.5, color: '#9CA3AF' }}>
+                {filter === 'all' && 'Vous êtes à jour. Les notifications arriveront ici.'}
+                {filter === 'unread' && 'Tout est lu.'}
+                {filter === 'matchs' && 'Les matchs et résultats apparaîtront ici.'}
+                {filter === 'systeme' && 'Les annonces et classements apparaîtront ici.'}
+              </p>
             </motion.div>
           ) : (
             <AnimatePresence mode="popLayout">

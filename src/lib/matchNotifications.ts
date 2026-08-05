@@ -45,11 +45,10 @@ export async function checkAndSendMatchNotifications() {
           for (const user of users) {
             await supabase.from('notifications').insert({
               user_id: user.id,
-              title: '⚽ Match en cours!',
+              titre: '⚽ Match en cours!',
               message: `${match.equipe1} vs ${match.equipe2} commence maintenant!`,
               type: 'match',
-              read: false,
-              dismissed: false,
+              est_lue: false,
             })
           }
 
@@ -81,11 +80,10 @@ export async function checkAndSendMatchNotifications() {
           for (const user of users) {
             await supabase.from('notifications').insert({
               user_id: user.id,
-              title: '⚽ Match en cours!',
+              titre: '⚽ Match en cours!',
               message: `${match.equipe1} vs ${match.equipe2} commence maintenant!`,
               type: 'match',
-              read: false,
-              dismissed: false,
+              est_lue: false,
             })
           }
 
