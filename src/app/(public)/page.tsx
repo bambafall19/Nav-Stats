@@ -145,9 +145,18 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
     .limit(4)
 
+  // Top équipes du classement
+  const { data: topEquipes } = await supabase
+    .from('equipes')
+    .select('nom, sigle, logo_url, points_classement, matchs_joues, couleur_principale, couleur_secondaire')
+    .order('points_classement', { ascending: false })
+    .limit(5)
+
   const displayMatchs = (matchsDuJour && matchsDuJour.length > 0) ? matchsDuJour : (prochainsMatchs || [])
   const displayCadets = (cadetsDuJour && cadetsDuJour.length > 0) ? cadetsDuJour : (prochainsCadets || [])
   const isToday = matchsDuJour && matchsDuJour.length > 0
+
+  const matchAleUne = ((displayMatchs || []) as any[]).find((m: any) => m.statut === 'a_venir') || displayMatchs?.[0] || null
 
   return (
     <HomeClient
@@ -155,8 +164,9 @@ export default async function HomePage() {
       userCount={totalPronostiqueurs || 0}
       isAuthenticated={!!user}
       displayMatchs={displayMatchs}
+      derniersResultats={((derniersResultats || []) as any[])}
       isToday={isToday || false}
-      topPronostiqueurs={(topPronostiqueurs as any[])?.slice(0, 5).map(u => ({
+      topPronostiqueurs={(topPronostiqueurs as any[])?.slice(0, 8).map(u => ({
         id: u.id,
         username: u.username || 'Joueur',
         points: u.points || 0,
@@ -172,8 +182,19 @@ export default async function HomePage() {
         totalMatchs: totalMatchs || 0,
         totalPoints: totalPoints,
       }}
+      actualites={(actualites || [])}
+      topEquipes={((topEquipes as any[]) || []).map(e => ({
+        nom: e.nom,
+        sigle: e.sigle,
+        logo_url: e.logo_url,
+        points_classement: e.points_classement || 0,
+        matchs_joues: e.matchs_joues || 0,
+        couleur_principale: e.couleur_principale,
+        couleur_secondaire: e.couleur_secondaire,
+      }))}
       displayCadets={displayCadets}
       cadetsToday={!!(cadetsDuJour && cadetsDuJour.length > 0)}
+      matchAleUne={matchAleUne}
     />
   )
 }

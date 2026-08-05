@@ -73,7 +73,7 @@ export function AdminDashboardCharts({
 
           <div style={{ display: 'grid', gap: 10 }}>
             {[
-              { label: 'Victoire A', value: pronoDom, pct: pctDom, color: '#006233' },
+              { label: 'Victoire A', value: pronoDom, pct: pctDom, color: '#0dca6b' },
               { label: 'Match Nul', value: pronoNul, pct: pctNul, color: '#64748B' },
               { label: 'Victoire B', value: pronoExt, pct: pctExt, color: '#1D4ED8' },
             ].map(item => (
@@ -103,8 +103,8 @@ export function AdminDashboardCharts({
           <AreaChart data={activityData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="colorProno" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#006233" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#006233" stopOpacity={0} />
+                <stop offset="5%" stopColor="#0dca6b" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#0dca6b" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f4f8" />
@@ -114,10 +114,10 @@ export function AdminDashboardCharts({
             <Area
               type="monotone"
               dataKey="pronostics"
-              stroke="#006233"
+              stroke="#0dca6b"
               strokeWidth={2.5}
               fill="url(#colorProno)"
-              dot={{ fill: '#006233', strokeWidth: 2, r: 4 }}
+              dot={{ fill: '#0dca6b', strokeWidth: 2, r: 4 }}
               activeDot={{ r: 6 }}
             />
           </AreaChart>
@@ -165,7 +165,7 @@ export function AdminDashboardCharts({
             <XAxis dataKey="jour" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
             <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 }} />
-            <Bar dataKey="matchs" fill="#006233" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="matchs" fill="#0dca6b" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -187,7 +187,7 @@ export function AdminDashboardCharts({
             return (
               <div key={`${user.username}-${index}`} className="admin-leader-row">
                 <div className="admin-rank" style={{
-                  background: index < 3 ? 'linear-gradient(135deg, #006233, #00A651)' : undefined,
+                  background: index < 3 ? 'linear-gradient(135deg, #0dca6b, #0dca6b)' : undefined,
                   color: index < 3 ? 'white' : undefined,
                 }}>
                   {index < 3 ? medals[index] : index + 1}
@@ -221,8 +221,8 @@ export function AdminDashboardCharts({
             <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
             <Tooltip contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 }} />
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
-            <Bar dataKey="points" name="Points" fill="#006233" radius={[6, 6, 0, 0]} maxBarSize={40} />
-            <Bar dataKey="victoires" name="Victoires" fill="#00A651" radius={[6, 6, 0, 0]} maxBarSize={40} />
+            <Bar dataKey="points" name="Points" fill="#0dca6b" radius={[6, 6, 0, 0]} maxBarSize={40} />
+            <Bar dataKey="victoires" name="Victoires" fill="#0dca6b" radius={[6, 6, 0, 0]} maxBarSize={40} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -244,7 +244,7 @@ export function AdminDashboardCharts({
             return (
               <div key={`${user.username}-${index}`} className="admin-leader-row">
                 <div className="admin-rank" style={{
-                  background: index < 3 ? 'linear-gradient(135deg, #006233, #00A651)' : undefined,
+                  background: index < 3 ? 'linear-gradient(135deg, #0dca6b, #0dca6b)' : undefined,
                   color: index < 3 ? 'white' : undefined,
                 }}>
                   {index < 3 ? medals[index] : index + 1}
@@ -264,7 +264,7 @@ export function AdminDashboardCharts({
 
       <style>{`
         .admin-charts-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
-        .admin-pill { border-radius: 999px; font-size: 0.74rem; font-weight: 800; padding: 6px 11px; color: var(--color-primary); background: rgba(0,98,51,0.08); white-space: nowrap; }
+        .admin-pill { border-radius: 999px; font-size: 0.74rem; font-weight: 800; padding: 6px 11px; color: var(--color-primary); background: rgba(42,255,160,0.08); white-space: nowrap; }
         @media (max-width: 900px) { .admin-charts-grid { grid-template-columns: 1fr; } }
       `}</style>
     </section>

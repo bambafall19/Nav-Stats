@@ -77,7 +77,7 @@ export default function PWAInstallBanner() {
         left: 12,
         right: 12,
         zIndex: 999,
-        background: 'linear-gradient(135deg, #004d27 0%, #006233 60%, #00A651 100%)',
+        background: 'var(--gradient-hero)',
         borderRadius: 24,
         padding: '20px 20px 20px',
         boxShadow: '0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)',
@@ -113,7 +113,7 @@ export default function PWAInstallBanner() {
 
           <div style={{ flex: 1 }}>
             <div style={{
-              fontFamily: 'var(--font-outfit)', fontWeight: 900,
+              fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900,
               fontSize: '1rem', color: 'white', marginBottom: 4,
             }}>
               Installer NavéStats 📲
@@ -123,7 +123,7 @@ export default function PWAInstallBanner() {
               lineHeight: 1.5, marginBottom: 16,
             }}>
               {isIOS
-                ? <>Appuyez sur <strong style={{ color: '#FBBF00' }}>Partager</strong> puis <strong style={{ color: '#FBBF00' }}>"Sur l'écran d'accueil"</strong> pour accéder à NavéStats en un instant !</>
+                ? <>Appuyez sur <strong style={{ color: '#fbbf24' }}>Partager</strong> puis <strong style={{ color: '#fbbf24' }}>"Sur l'écran d'accueil"</strong> pour accéder à NavéStats en un instant !</>
                 : <>Installez l'app sur votre téléphone pour un accès rapide aux matchs, pronostics et classements des Navétanes !
                 </>
               }
@@ -136,7 +136,7 @@ export default function PWAInstallBanner() {
               }}>
                 <span style={{ fontSize: '1.3rem' }}>⬆️</span>
                 <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>
-                  Tap <strong style={{ color: '#FBBF00' }}>Share</strong> → <strong style={{ color: '#FBBF00' }}>Ajouter à l'écran d'accueil</strong>
+                  Tap <strong style={{ color: '#fbbf24' }}>Share</strong> → <strong style={{ color: '#fbbf24' }}>Ajouter à l'écran d'accueil</strong>
                 </span>
               </div>
             ) : (
@@ -145,10 +145,10 @@ export default function PWAInstallBanner() {
                 id="pwa-install-btn"
                 style={{
                   width: '100%', padding: '12px 20px',
-                  background: 'linear-gradient(135deg, #FBBF00, #D97706)',
+                  background: 'linear-gradient(135deg, #fbbf24, #ffc94d)',
                   border: 'none', borderRadius: 12, cursor: 'pointer',
-                  fontFamily: 'var(--font-outfit)', fontWeight: 800,
-                  fontSize: '0.9rem', color: '#5a3800',
+                  fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800,
+                  fontSize: '0.9rem', color: '#451a03',
                   boxShadow: '0 4px 16px rgba(251,191,0,0.4)',
                   transition: 'transform 0.15s ease',
                 }}

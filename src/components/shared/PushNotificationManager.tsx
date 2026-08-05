@@ -179,7 +179,7 @@ export default function PushNotificationManager() {
     }}>
       {!isSubscribed ? (
         <div style={{
-          background: 'white',
+          background: 'var(--color-surface-elevated)',
           padding: 16,
           borderRadius: 16,
           boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
@@ -189,7 +189,7 @@ export default function PushNotificationManager() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
             <div style={{
               width: 40, height: 40, borderRadius: 12,
-              background: 'linear-gradient(135deg, #006233, #00A651)',
+              background: 'linear-gradient(135deg, #0dca6b, #0dca6b)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '1.2rem', flexShrink: 0
             }}>🔔</div>
@@ -222,7 +222,7 @@ export default function PushNotificationManager() {
         </div>
       ) : (
         <div style={{
-          background: 'white',
+          background: 'var(--color-surface-elevated)',
           padding: '10px 16px',
           borderRadius: 100,
           boxShadow: '0 4px 16px rgba(0,0,0,0.1)',

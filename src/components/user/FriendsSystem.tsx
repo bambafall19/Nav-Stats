@@ -109,7 +109,7 @@ export function FriendsSystem({ userId }: { userId: string }) {
 
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
-      <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
+      <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
         👥 Amis ({friends.length})
       </h1>
 
@@ -204,7 +204,7 @@ export function FriendsSystem({ userId }: { userId: string }) {
       {/* Friend Requests */}
       {friendRequests.length > 0 && (
         <div style={{ marginBottom: 'clamp(24px, 5vw, 32px)' }}>
-          <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1rem', marginBottom: 12 }}>
+          <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1rem', marginBottom: 12 }}>
             📬 Demandes d'amitié ({friendRequests.length})
           </h2>
           <div style={{
@@ -285,7 +285,7 @@ export function FriendsSystem({ userId }: { userId: string }) {
 
       {/* Friends List */}
       <div>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1rem', marginBottom: 12 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1rem', marginBottom: 12 }}>
           👫 Mes Amis
         </h2>
         {friends.length > 0 ? (
@@ -340,7 +340,7 @@ export function FriendsSystem({ userId }: { userId: string }) {
                   <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: 4 }}>
                     {friend.username}
                   </div>
-                  <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
+                  <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
                     {friend.points} pts
                   </div>
                 </div>

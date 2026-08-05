@@ -111,13 +111,13 @@ export function LevelSystem({ userId }: { userId: string }) {
 
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
-      <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
+      <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
         🎮 Système de Niveaux
       </h1>
 
       {/* Current Level */}
       <div style={{
-        background: 'linear-gradient(135deg, var(--color-primary), #00A651)',
+        background: 'linear-gradient(135deg, var(--color-primary), #0dca6b)',
         borderRadius: 'clamp(12px, 3vw, 16px)',
         padding: 'clamp(20px, 3vw, 24px)',
         color: 'white',
@@ -125,7 +125,7 @@ export function LevelSystem({ userId }: { userId: string }) {
         textAlign: 'center',
       }}>
         <div style={{ fontSize: '3rem', marginBottom: 12 }}>{currentLevel.icon}</div>
-        <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: 8 }}>
+        <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: 8 }}>
           Niveau {currentLevel.level}: {currentLevel.name}
         </div>
         <div style={{ fontSize: '0.95rem', opacity: 0.9 }}>
@@ -149,7 +149,7 @@ export function LevelSystem({ userId }: { userId: string }) {
         }}>
           <div
             style={{
-              background: 'linear-gradient(90deg, var(--color-primary), #00A651)',
+              background: 'linear-gradient(90deg, var(--color-primary), #0dca6b)',
               height: '100%',
               width: `${progressPercent}%`,
               transition: 'width 0.3s ease',
@@ -160,7 +160,7 @@ export function LevelSystem({ userId }: { userId: string }) {
 
       {/* Unlocked Features */}
       <div style={{ marginBottom: 'clamp(24px, 5vw, 32px)' }}>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1rem', marginBottom: 12 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1rem', marginBottom: 12 }}>
           🔓 Fonctionnalités Débloquées
         </h2>
         <div style={{
@@ -189,7 +189,7 @@ export function LevelSystem({ userId }: { userId: string }) {
 
       {/* All Levels */}
       <div>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1rem', marginBottom: 12 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1rem', marginBottom: 12 }}>
           📊 Tous les Niveaux
         </h2>
         <div style={{

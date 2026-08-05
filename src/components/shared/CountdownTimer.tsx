@@ -73,7 +73,7 @@ export default function CountdownTimer({ targetDate, targetTime }: CountdownTime
       padding: '4px 10px',
       borderRadius: 20,
       whiteSpace: 'nowrap',
-      fontFamily: 'var(--font-outfit)',
+      fontFamily: 'var(--font-plus-jakarta)',
       letterSpacing: '0.02em',
       fontVariantNumeric: 'tabular-nums',
     }}>

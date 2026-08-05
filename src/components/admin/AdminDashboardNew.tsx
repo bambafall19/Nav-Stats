@@ -8,7 +8,7 @@ import {
 } from 'recharts'
 
 // Couleurs du thème ONCAV
-const COLORS = ['#006233', '#f59e0b', '#dc2626', '#3b82f6', '#8b5cf6', '#ec4899', '#10b981']
+const COLORS = ['#0dca6b', '#ffc94d', '#ef4444', '#3b82f6', '#8b5cf6', '#ec4899', '#10b981']
 
 interface StatsData {
   totalUsers: number
@@ -96,11 +96,11 @@ export default function AdminDashboardNew() {
     return (
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        minHeight: '60vh', background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+        minHeight: '60vh', background: 'linear-gradient(135deg, #f0fdf9 0%, rgba(42,255,160,0.08) 100%)',
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '3rem', marginBottom: 16 }}>⚽</div>
-          <div style={{ fontSize: '1.1rem', color: '#006233', fontWeight: 700 }}>Chargement du tableau de bord...</div>
+          <div style={{ fontSize: '1.1rem', color: '#0dca6b', fontWeight: 700 }}>Chargement du tableau de bord...</div>
         </div>
       </div>
     )
@@ -110,7 +110,7 @@ export default function AdminDashboardNew() {
     <div style={{ padding: 'clamp(16px, 3vw, 24px)', maxWidth: 1400, margin: '0 auto' }}>
       {/* En-tête avec gradient */}
       <div style={{
-        background: 'linear-gradient(135deg, #006233 0%, #004d27 100%)',
+        background: 'linear-gradient(135deg, #0dca6b 0%, #0b5234 100%)',
         borderRadius: 'clamp(16px, 3vw, 24px)',
         padding: 'clamp(20px, 4vw, 32px)',
         marginBottom: 'clamp(24px, 5vw, 32px)',
@@ -118,7 +118,7 @@ export default function AdminDashboardNew() {
         boxShadow: '0 10px 30px rgba(0, 98, 51, 0.3)',
       }}>
         <h1 style={{
-          fontFamily: 'var(--font-outfit)',
+          fontFamily: 'var(--font-plus-jakarta)',
           fontWeight: 900,
           fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
           marginBottom: 8,
@@ -154,18 +154,18 @@ export default function AdminDashboardNew() {
       }}>
         {/* Graphique de progression */}
         <div style={{
-          background: 'white',
+          background: 'var(--color-surface-elevated)',
           borderRadius: 'clamp(12px, 3vw, 16px)',
           padding: 'clamp(16px, 3vw, 20px)',
-          border: '1px solid #e5e7eb',
+          border: '1px solid var(--color-border-subtle)',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)'
         }}>
           <h3 style={{
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
             fontWeight: 800,
             fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
             marginBottom: 16,
-            color: '#1f2937',
+            color: 'var(--color-text-primary)',
           }}>
             📈 Croissance des Utilisateurs
           </h3>
@@ -173,16 +173,16 @@ export default function AdminDashboardNew() {
             <LineChart data={stats?.progressionData || []}>
               <defs>
                 <linearGradient id="colorPoints" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#006233" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#006233" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#0dca6b" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#0dca6b" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-subtle)" />
               <XAxis dataKey="date" style={{ fontSize: '0.85rem' }} />
               <YAxis style={{ fontSize: '0.85rem' }} />
               <Tooltip
                 contentStyle={{
-                  background: '#1f2937',
+                  background: 'var(--color-surface-elevated)',
                   border: 'none',
                   borderRadius: 8,
                   color: 'white'
@@ -192,9 +192,9 @@ export default function AdminDashboardNew() {
               <Line
                 type="monotone"
                 dataKey="points"
-                stroke="#006233"
+                stroke="#0dca6b"
                 strokeWidth={3}
-                dot={{ fill: '#006233', r: 5 }}
+                dot={{ fill: '#0dca6b', r: 5 }}
                 activeDot={{ r: 7 }}
                 name="Utilisateurs"
               />
@@ -204,18 +204,18 @@ export default function AdminDashboardNew() {
 
         {/* Graphique en donut - Répartition par poule */}
         <div style={{
-          background: 'white',
+          background: 'var(--color-surface-elevated)',
           borderRadius: 'clamp(12px, 3vw, 16px)',
           padding: 'clamp(16px, 3vw, 20px)',
-          border: '1px solid #e5e7eb',
+          border: '1px solid var(--color-border-subtle)',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)'
         }}>
           <h3 style={{
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
             fontWeight: 800,
             fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
             marginBottom: 16,
-            color: '#1f2937',
+            color: 'var(--color-text-primary)',
           }}>
             🏆 Répartition par Poule
           </h3>
@@ -240,7 +240,7 @@ export default function AdminDashboardNew() {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div style={{ textAlign: 'center', padding: 40, color: '#9ca3af' }}>
+            <div style={{ textAlign: 'center', padding: 40, color: 'var(--color-text-muted)' }}>
               Pas de données disponibles
             </div>
           )}
@@ -248,54 +248,54 @@ export default function AdminDashboardNew() {
 
         {/* Graphique à barres - Matchs par journée */}
         <div style={{
-          background: 'white',
+          background: 'var(--color-surface-elevated)',
           borderRadius: 'clamp(12px, 3vw, 16px)',
           padding: 'clamp(16px, 3vw, 20px)',
-          border: '1px solid #e5e7eb',
+          border: '1px solid var(--color-border-subtle)',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)'
         }}>
           <h3 style={{
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
             fontWeight: 800,
             fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
             marginBottom: 16,
-            color: '#1f2937',
+            color: 'var(--color-text-primary)',
           }}>
             ⚽ Matchs par Journée
           </h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={stats?.matchsParJour || []}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-subtle)" />
               <XAxis dataKey="jour" style={{ fontSize: '0.85rem' }} />
               <YAxis style={{ fontSize: '0.85rem' }} />
               <Tooltip
                 contentStyle={{
-                  background: '#1f2937',
+                  background: 'var(--color-surface-elevated)',
                   border: 'none',
                   borderRadius: 8,
                   color: 'white'
                 }}
                 cursor={{ fill: 'rgba(0, 98, 51, 0.1)' }}
               />
-              <Bar dataKey="matchs" fill="#006233" radius={[8, 8, 0, 0]} name="Matchs" />
+              <Bar dataKey="matchs" fill="#0dca6b" radius={[8, 8, 0, 0]} name="Matchs" />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* Graphique - Répartition pronostics */}
         <div style={{
-          background: 'white',
+          background: 'var(--color-surface-elevated)',
           borderRadius: 'clamp(12px, 3vw, 16px)',
           padding: 'clamp(16px, 3vw, 20px)',
-          border: '1px solid #e5e7eb',
+          border: '1px solid var(--color-border-subtle)',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)'
         }}>
           <h3 style={{
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
             fontWeight: 800,
             fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
             marginBottom: 16,
-            color: '#1f2937',
+            color: 'var(--color-text-primary)',
           }}>
             🎯 Répartition des Pronostics
           </h3>
@@ -321,7 +321,7 @@ export default function AdminDashboardNew() {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div style={{ textAlign: 'center', padding: 40, color: '#9ca3af' }}>
+            <div style={{ textAlign: 'center', padding: 40, color: 'var(--color-text-muted)' }}>
               Pas de données disponibles
             </div>
           )}
@@ -330,18 +330,18 @@ export default function AdminDashboardNew() {
 
       {/* Cartes de navigation rapide */}
       <div style={{
-        background: 'white',
+        background: 'var(--color-surface-elevated)',
         borderRadius: 'clamp(16px, 3vw, 24px)',
         padding: 'clamp(16px, 3vw, 24px)',
-        border: '1px solid #e5e7eb',
+        border: '1px solid var(--color-border-subtle)',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)'
       }}>
         <h3 style={{
-          fontFamily: 'var(--font-outfit)',
+          fontFamily: 'var(--font-plus-jakarta)',
           fontWeight: 800,
           fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)',
           marginBottom: 20,
-          color: '#1f2937',
+          color: 'var(--color-text-primary)',
         }}>
           ⚡ Gestion Rapide
         </h3>
@@ -367,10 +367,10 @@ export default function AdminDashboardNew() {
 function StatCard({ label, value, gradient }: { label: string; value: number; gradient: string }) {
   return (
     <div style={{
-      background: 'white',
+      background: 'var(--color-surface-elevated)',
       borderRadius: 'clamp(12px, 3vw, 16px)',
       padding: 'clamp(16px, 2vw, 20px)',
-      border: '1px solid #e5e7eb',
+      border: '1px solid var(--color-border-subtle)',
       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
       transition: 'all 0.3s ease',
       position: 'relative',
@@ -396,7 +396,7 @@ function StatCard({ label, value, gradient }: { label: string; value: number; gr
       }} />
       <div style={{ fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', marginBottom: 8 }}>{label.split(' ').pop()}</div>
       <div style={{
-        fontFamily: 'var(--font-outfit)',
+        fontFamily: 'var(--font-plus-jakarta)',
         fontWeight: 900,
         fontSize: 'clamp(1.5rem, 3vw, 2rem)',
         background: `linear-gradient(135deg, ${getGradientColors(gradient)})`,
@@ -407,7 +407,7 @@ function StatCard({ label, value, gradient }: { label: string; value: number; gr
       }}>
         {value.toLocaleString()}
       </div>
-      <div style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.85rem)', color: '#6b7280', fontWeight: 500 }}>
+      <div style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.85rem)', color: 'var(--color-text-muted)', fontWeight: 500 }}>
         {label.split(' ').slice(0, -1).join(' ')}
       </div>
     </div>
@@ -423,8 +423,8 @@ function AdminNavCard({ title, href, gradient }: { title: string; href: string; 
       justifyContent: 'center',
       gap: 12,
       padding: 'clamp(16px, 2vw, 20px)',
-      background: 'white',
-      border: '1px solid #e5e7eb',
+      background: 'var(--color-surface-elevated)',
+      border: '1px solid var(--color-border-subtle)',
       borderRadius: 'clamp(12px, 2vw, 16px)',
       textDecoration: 'none',
       color: 'inherit',
@@ -443,7 +443,7 @@ function AdminNavCard({ title, href, gradient }: { title: string; href: string; 
       e.currentTarget.style.background = 'white'
       e.currentTarget.style.color = 'inherit'
       e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)'
-      e.currentTarget.style.border = '1px solid #e5e7eb'
+      e.currentTarget.style.border = '1px solid var(--color-border-subtle)'
     }}
     >
       <div style={{
@@ -469,12 +469,12 @@ function getGradientColors(gradient: string): string {
   const gradients: any = {
     'from-blue-500 to-blue-600': '#3b82f6, #2563eb',
     'from-green-500 to-green-600': '#10b981, #059669',
-    'from-purple-500 to-purple-600': '#8b5cf6, #7c3aed',
-    'from-orange-500 to-orange-600': '#f59e0b, #d97706',
+    'from-purple-500 to-purple-600': '#8b5cf6, #b45309',
+    'from-orange-500 to-orange-600': '#ffc94d, #ffc94d',
     'from-pink-500 to-pink-600': '#ec4899, #db2777',
-    'from-red-500 to-red-600': '#ef4444, #dc2626',
+    'from-red-500 to-red-600': '#ef4444, #ef4444',
     'from-gray-700 to-gray-800': '#374151, #1f2937',
     'from-indigo-500 to-indigo-600': '#6366f1, #4f46e5',
   }
-  return gradients[gradient] || '#006233, #004d27'
+  return gradients[gradient] || '#0dca6b, #0b5234'
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { CalendarDays, Filter, MapPin, Trophy, Layers } from 'lucide-react'
 import type { CadetEquipe, CadetMatch } from '@/lib/cadets'
 
 interface CadetsClientProps {
@@ -47,7 +48,7 @@ function TeamLogo({ name, align, logo }: { name: string; align: 'left' | 'right'
       width: '100%',
       height: '100%',
       borderRadius: 'var(--radius-md)',
-      background: `linear-gradient(135deg, ${logo?.couleur_principale || '#006233'}, ${logo?.couleur_secondaire || '#FBBF00'})`,
+      background: `linear-gradient(135deg, ${logo?.couleur_principale || '#0dca6b'}, ${logo?.couleur_secondaire || 'var(--color-accent)'})`,
       color: 'white',
       display: 'inline-flex',
       alignItems: 'center',
@@ -64,17 +65,11 @@ function TeamLogo({ name, align, logo }: { name: string; align: 'left' | 'right'
 export default function CadetsClient({ cadetMatches, equipesList, journees }: CadetsClientProps) {
   const [selectedPoule, setSelectedPoule] = useState<string | null>(null)
   const [selectedJournee, setSelectedJournee] = useState<number | null>(null)
-  const [todayJournee, setTodayJournee] = useState<number | null>(null)
   const journeeRefs = useRef<Record<number, HTMLElement | null>>({})
 
-  // Find today's journee
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0]
-    const matchToday = cadetMatches.find(m => m.date_match === today)
-    if (matchToday) {
-      setTodayJournee(matchToday.journee)
-    }
-  }, [cadetMatches])
+  const today = new Date().toISOString().split('T')[0]
+  const matchToday = cadetMatches.find(m => m.date_match === today)
+  const todayJournee = matchToday ? matchToday.journee : null
 
   // Scroll to today's journee on first load
   useEffect(() => {
@@ -118,27 +113,38 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
         {/* Poule filters */}
         <div style={{
           display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           gap: 8,
-          overflowX: 'auto',
+          flexWrap: 'wrap',
           paddingBottom: 4,
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'none',
         }}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            flexShrink: 0,
+            color: 'var(--color-text-muted)',
+            fontSize: '0.62rem', fontWeight: 800, textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            fontFamily: 'var(--font-plus-jakarta)',
+          }}>
+            <Filter size={12} /> Poules
+          </span>
           <button
             onClick={() => setSelectedPoule(null)}
             style={{
               flexShrink: 0,
               padding: '6px 16px',
               borderRadius: 'var(--radius-full)',
-              border: selectedPoule === null ? '2px solid var(--color-primary)' : '1.5px solid var(--color-border)',
-              background: selectedPoule === null ? 'rgba(0,98,51,0.08)' : 'var(--color-surface-card)',
+              border: selectedPoule === null ? '1.5px solid var(--color-primary)' : '1.5px solid var(--color-border)',
+              background: selectedPoule === null ? 'var(--color-primary-50)' : 'var(--color-surface-card)',
               color: selectedPoule === null ? 'var(--color-primary)' : 'var(--color-text-secondary)',
               fontWeight: 700,
               fontSize: '0.78rem',
               cursor: 'pointer',
-              fontFamily: 'var(--font-outfit)',
+              fontFamily: 'var(--font-plus-jakarta)',
               transition: 'all 0.2s ease',
               minHeight: 36,
+              boxShadow: selectedPoule === null ? '0 0 16px rgba(42,255,160,0.12)' : 'var(--shadow-xs)',
             }}
           >
             Toutes
@@ -151,15 +157,16 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
                 flexShrink: 0,
                 padding: '6px 16px',
                 borderRadius: 'var(--radius-full)',
-                border: selectedPoule === poule ? '2px solid var(--color-primary)' : '1.5px solid var(--color-border)',
-                background: selectedPoule === poule ? 'rgba(0,98,51,0.08)' : 'var(--color-surface-card)',
+                border: selectedPoule === poule ? '1.5px solid var(--color-primary)' : '1.5px solid var(--color-border)',
+                background: selectedPoule === poule ? 'var(--color-primary-50)' : 'var(--color-surface-card)',
                 color: selectedPoule === poule ? 'var(--color-primary)' : 'var(--color-text-secondary)',
                 fontWeight: 700,
                 fontSize: '0.78rem',
                 cursor: 'pointer',
-                fontFamily: 'var(--font-outfit)',
+                fontFamily: 'var(--font-plus-jakarta)',
                 transition: 'all 0.2s ease',
                 minHeight: 36,
+                boxShadow: selectedPoule === poule ? '0 0 16px rgba(42,255,160,0.12)' : 'var(--shadow-xs)',
               }}
             >
               Poule {poule}
@@ -170,25 +177,35 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
         {/* Journee filters */}
         <div style={{
           display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           gap: 6,
-          overflowX: 'auto',
-          paddingTop: 6,
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'none',
+          flexWrap: 'wrap',
+          paddingTop: 8,
         }}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            flexShrink: 0,
+            color: 'var(--color-text-muted)',
+            fontSize: '0.62rem', fontWeight: 800, textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            fontFamily: 'var(--font-plus-jakarta)',
+          }}>
+            <CalendarDays size={12} /> Journées
+          </span>
           <button
             onClick={() => setSelectedJournee(null)}
             style={{
               flexShrink: 0,
               padding: '4px 12px',
               borderRadius: 'var(--radius-full)',
-              border: selectedJournee === null ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
-              background: selectedJournee === null ? 'rgba(0,98,51,0.08)' : 'transparent',
+              border: selectedJournee === null ? '1.5px solid var(--color-primary)' : '1px solid var(--color-border)',
+              background: selectedJournee === null ? 'var(--color-primary-50)' : 'transparent',
               color: selectedJournee === null ? 'var(--color-primary)' : 'var(--color-text-muted)',
               fontWeight: 600,
               fontSize: '0.7rem',
               cursor: 'pointer',
-              fontFamily: 'var(--font-outfit)',
+              fontFamily: 'var(--font-plus-jakarta)',
               minHeight: 32,
             }}
           >
@@ -202,15 +219,16 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
                 flexShrink: 0,
                 padding: '4px 12px',
                 borderRadius: 'var(--radius-full)',
-                border: selectedJournee === j ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
-                background: selectedJournee === j ? 'rgba(0,98,51,0.08)' : 'transparent',
+                border: selectedJournee === j ? '1.5px solid var(--color-primary)' : '1px solid var(--color-border)',
+                background: selectedJournee === j ? 'var(--color-primary-50)' : 'transparent',
                 color: selectedJournee === j ? 'var(--color-primary)' : 'var(--color-text-muted)',
                 fontWeight: 600,
                 fontSize: '0.7rem',
                 cursor: 'pointer',
-                fontFamily: 'var(--font-outfit)',
+                fontFamily: 'var(--font-plus-jakarta)',
                 minHeight: 32,
                 position: 'relative',
+                transition: 'all 0.2s ease',
               }}
             >
               J{j}
@@ -222,8 +240,9 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
                   width: 8,
                   height: 8,
                   borderRadius: '50%',
-                  background: '#FFD700',
+                  background: 'var(--color-accent)',
                   border: '2px solid var(--color-bg-primary)',
+                  boxShadow: '0 0 8px rgba(255,201,77,0.8)',
                 }} />
               )}
             </button>
@@ -250,80 +269,74 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
               style={{
                 background: 'var(--color-surface-card)',
                 borderRadius: 'var(--radius-lg)',
-                border: isToday ? '2px solid #FFD700' : '1px solid var(--color-border)',
-                boxShadow: isToday ? '0 4px 20px rgba(255,215,0,0.15)' : 'var(--shadow-md)',
+                border: isToday ? '1.5px solid rgba(255,201,77,0.45)' : '1px solid var(--color-border-subtle)',
+                boxShadow: isToday ? '0 8px 32px rgba(255,201,77,0.12)' : 'var(--shadow-card)',
                 overflow: 'hidden',
                 scrollMarginTop: 120,
               }}
             >
+              {/* Accent line */}
+              <div style={{
+                height: 3,
+                background: isToday
+                  ? 'linear-gradient(90deg, var(--color-accent), var(--color-primary), transparent)'
+                  : 'linear-gradient(90deg, var(--color-primary), rgba(42,255,160,0.15), transparent)',
+              }} />
+
               {/* Journée Header */}
               <div className="journee-header" style={{
-                background: isToday
-                  ? 'linear-gradient(135deg, #004d27 0%, #006233 50%, #D4A000 100%)'
-                  : 'linear-gradient(135deg, #004d27 0%, #006233 100%)',
-                padding: 'clamp(12px, 3vw, 18px) clamp(12px, 3vw, 18px)',
+                padding: 'clamp(12px, 3vw, 16px) clamp(12px, 3vw, 18px)',
                 position: 'relative',
-                overflow: 'hidden',
               }}>
-                <div style={{
-                  position: 'absolute',
-                  top: -16,
-                  right: -8,
-                  width: 60,
-                  height: 60,
-                  borderRadius: '50%',
-                  background: 'rgba(255,255,255,0.05)',
-                }} />
-
-                <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 'var(--radius-sm)',
-                      background: 'rgba(255,255,255,0.15)',
-                      backdropFilter: 'blur(10px)',
-                      border: '2px solid rgba(255,255,255,0.25)',
+                      width: 36,
+                      height: 36,
+                      borderRadius: 'var(--radius-md)',
+                      background: isToday ? 'var(--gradient-gold)' : 'var(--gradient-green)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '1rem',
+                      fontSize: '0.95rem',
                       fontWeight: 900,
-                      color: 'white',
-                      fontFamily: 'var(--font-outfit)',
+                      color: isToday ? '#2b1b00' : 'var(--color-text-on-primary)',
+                      fontFamily: 'var(--font-plus-jakarta)',
+                      boxShadow: isToday ? 'var(--shadow-gold)' : 'var(--shadow-green)',
+                      flexShrink: 0,
                     }}>
                       {journee}
                     </div>
                     <div>
                       <h2 style={{
-                        color: 'white',
-                        fontFamily: 'var(--font-outfit)',
+                        color: 'var(--color-text-primary)',
+                        fontFamily: 'var(--font-plus-jakarta)',
                         fontSize: 'clamp(0.9rem, 3vw, 1.1rem)',
                         fontWeight: 800,
                         margin: 0,
                         letterSpacing: '-0.01em',
+                        display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap',
                       }}>
                         {journee}{getOrdinalSuffix(journee)} Journée
                         {isToday && (
                           <span style={{
-                            marginLeft: 8,
-                            fontSize: '0.6rem',
+                            fontSize: '0.58rem',
                             fontWeight: 800,
-                            background: '#FFD700',
-                            color: '#5a3800',
-                            padding: '2px 8px',
+                            background: 'var(--gradient-gold)',
+                            color: '#2b1b00',
+                            padding: '3px 9px',
                             borderRadius: 'var(--radius-full)',
-                            verticalAlign: 'middle',
-                            letterSpacing: '0.02em',
+                            letterSpacing: '0.04em',
+                            boxShadow: 'var(--shadow-gold)',
                           }}>
-                            AUJOURD'HUI
+                            AUJOURD&apos;HUI
                           </span>
                         )}
                       </h2>
                       <p style={{
-                        color: 'rgba(255,255,255,0.75)',
+                        color: 'var(--color-text-secondary)',
                         fontSize: '0.65rem',
-                        margin: '1px 0 0',
+                        margin: '2px 0 0',
                         fontWeight: 500,
                       }}>
                         {matches.length} rencontre{matches.length > 1 ? 's' : ''}
@@ -332,23 +345,26 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
                   </div>
 
                   <div style={{
-                    background: 'rgba(255,215,0,0.2)',
-                    color: '#FFD700',
-                    padding: '4px 8px',
+                    background: 'var(--color-accent-50)',
+                    color: 'var(--color-accent)',
+                    padding: '5px 12px',
                     borderRadius: 'var(--radius-full)',
-                    fontSize: '0.6rem',
-                    fontWeight: 700,
+                    fontSize: '0.62rem',
+                    fontWeight: 800,
+                    fontFamily: 'var(--font-plus-jakarta)',
+                    border: '1px solid rgba(255,201,77,0.25)',
+                    display: 'inline-flex', alignItems: 'center', gap: 5,
                   }}>
-                    🏆 CNP 2026
+                    <Trophy size={11} /> CNP 2026
                   </div>
                 </div>
               </div>
 
               {/* Matchs par date */}
-              <div style={{ padding: 'clamp(8px, 2vw, 14px)' }}>
+              <div style={{ padding: 'clamp(8px, 2vw, 14px)', paddingTop: 0 }}>
                 {Object.entries(matchesByDate).map(([date, dateMatches], dateIndex) => (
                   <div key={date} style={{
-                    marginBottom: dateIndex < Object.keys(matchesByDate).length - 1 ? 16 : 0,
+                    marginBottom: dateIndex < Object.keys(matchesByDate).length - 1 ? 14 : 0,
                   }}>
                     {/* Date Header */}
                     <div style={{
@@ -356,35 +372,34 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       gap: 6,
-                      paddingBottom: 6,
-                      marginBottom: 6,
-                      borderBottom: '1px solid var(--color-border)',
+                      padding: '10px 2px 6px',
+                      marginTop: dateIndex === 0 ? 2 : 4,
                     }}>
                       <div style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 6,
+                        gap: 7,
                         color: 'var(--color-text-primary)',
                         fontWeight: 700,
                         fontSize: 'clamp(0.7rem, 2vw, 0.8rem)',
                       }}>
-                        <span>📅</span>
-                        <span>{formatDate(date)}</span>
+                        <span style={{
+                          width: 24, height: 24, borderRadius: 'var(--radius-sm)',
+                          background: 'var(--color-primary-50)',
+                          border: '1px solid rgba(42,255,160,0.18)',
+                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                          color: 'var(--color-primary)',
+                        }}>
+                          <CalendarDays size={13} />
+                        </span>
+                        <span style={{ textTransform: 'capitalize' }}>{formatDate(date)}</span>
                       </div>
-                      <span style={{
-                        background: 'var(--gradient-green)',
-                        color: 'white',
-                        padding: '2px 8px',
-                        borderRadius: 'var(--radius-full)',
-                        fontSize: '0.6rem',
-                        fontWeight: 700,
-                        boxShadow: 'var(--shadow-green)',
-                      }}>
+                      <span className="badge badge-green" style={{ fontSize: '0.58rem', padding: '3px 10px', fontFamily: 'var(--font-plus-jakarta)' }}>
                         {dateMatches.length} match{dateMatches.length > 1 ? 'es' : ''}
                       </span>
                     </div>
 
-                    {/* Match Cards - Beautiful List */}
+                    {/* Match Cards */}
                     <div className="match-cards-list" style={{
                       display: 'flex',
                       flexDirection: 'column',
@@ -395,16 +410,16 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
                         const equipeB = match.equipe_b_info || (match.equipe_b_id ? logoMap.get(match.equipe_b_id) : undefined) || logoMap.get(match.equipe_b)
                         const equipeAName = equipeA?.nom || match.equipe_a
                         const equipeBName = equipeB?.nom || match.equipe_b
-                        const colorA = equipeA?.couleur_principale || '#006233'
-                        const colorB = equipeB?.couleur_principale || '#006233'
+                        const colorA = equipeA?.couleur_principale || '#0dca6b'
+                        const colorB = equipeB?.couleur_principale || '#0dca6b'
 
                         return (
                           <div key={`${match.date_match}-${match.equipe_a}-${match.equipe_b}`} className="match-row" style={{
-                            background: 'var(--color-surface-card)',
-                            borderRadius: 'var(--radius-lg)',
-                            border: '1px solid var(--color-border)',
+                            background: 'linear-gradient(180deg, var(--color-surface-elevated) 0%, var(--color-surface-card) 100%)',
+                            borderRadius: 'var(--radius-md)',
+                            border: '1px solid var(--color-border-subtle)',
                             overflow: 'hidden',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04)',
+                            boxShadow: 'var(--shadow-xs)',
                             transition: 'all 0.25s ease',
                           }}>
                             {/* Main content */}
@@ -417,13 +432,13 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
                               {/* Équipe A */}
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
                                 <div className="team-badge" style={{
-                                  width: 32,
-                                  height: 32,
+                                  width: 34,
+                                  height: 34,
                                   borderRadius: 'var(--radius-md)',
                                   overflow: 'hidden',
                                   flexShrink: 0,
-                                  border: `2px solid ${colorA}30`,
-                                  boxShadow: `0 2px 8px ${colorA}18`,
+                                  border: `1.5px solid ${colorA}40`,
+                                  boxShadow: `0 2px 8px ${colorA}20`,
                                 }}>
                                   <TeamLogo name={equipeAName} align="right" logo={equipeA} />
                                 </div>
@@ -439,20 +454,20 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
                                 </span>
                               </div>
 
-                              {/* VS Badge - Premium */}
+                              {/* VS Badge */}
                               <div style={{
-                                width: 32,
-                                height: 32,
+                                width: 30,
+                                height: 30,
                                 borderRadius: '50%',
-                                background: 'linear-gradient(135deg, #E8002D 0%, #FF6B6B 100%)',
+                                background: 'linear-gradient(135deg, #E8002D, #ff6b6b)',
                                 color: 'white',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '0.65rem',
+                                fontSize: '0.6rem',
                                 fontWeight: 900,
-                                fontFamily: 'var(--font-outfit)',
-                                boxShadow: '0 2px 8px rgba(232,0,45,0.25)',
+                                fontFamily: 'var(--font-plus-jakarta)',
+                                boxShadow: '0 2px 10px rgba(232,0,45,0.3)',
                                 flexShrink: 0,
                                 letterSpacing: '0.02em',
                               }}>
@@ -472,64 +487,56 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
                                   {equipeBName}
                                 </span>
                                 <div className="team-badge" style={{
-                                  width: 32,
-                                  height: 32,
+                                  width: 34,
+                                  height: 34,
                                   borderRadius: 'var(--radius-md)',
                                   overflow: 'hidden',
                                   flexShrink: 0,
-                                  border: `2px solid ${colorB}30`,
-                                  boxShadow: `0 2px 8px ${colorB}18`,
+                                  border: `1.5px solid ${colorB}40`,
+                                  boxShadow: `0 2px 8px ${colorB}20`,
                                 }}>
                                   <TeamLogo name={equipeBName} align="left" logo={equipeB} />
                                 </div>
                               </div>
                             </div>
 
-                            {/* Meta Row - Beautiful */}
+                            {/* Meta Row */}
                             <div style={{
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'space-between',
                               gap: 8,
-                              padding: '8px 14px',
-                              background: 'linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.04) 100%)',
-                              borderTop: '1px solid var(--color-border)',
+                              padding: '7px 14px',
+                              background: 'rgba(0,0,0,0.15)',
+                              borderTop: '1px solid var(--color-border-subtle)',
                             }}>
                               <div style={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 6,
-                                fontSize: '0.7rem',
-                                color: 'var(--color-text-muted)',
-                                fontWeight: 500,
+                                fontSize: '0.68rem',
+                                color: 'var(--color-text-secondary)',
+                                fontWeight: 600,
+                                fontFamily: 'var(--font-plus-jakarta)',
                               }}>
+                                <MapPin size={11} color="var(--color-text-muted)" />
+                                {match.terrain}
+                              </div>
+                              {match.ordre && (
                                 <span style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: 3,
-                                  padding: '2px 8px',
-                                  background: 'var(--color-surface)',
+                                  fontSize: '0.62rem',
+                                  color: 'var(--color-accent)',
+                                  fontWeight: 800,
+                                  background: 'var(--color-accent-50)',
+                                  padding: '2px 9px',
                                   borderRadius: 'var(--radius-full)',
-                                  border: '1px solid var(--color-border)',
+                                  border: '1px solid rgba(255,201,77,0.22)',
+                                  fontFamily: 'var(--font-plus-jakarta)',
+                                  display: 'inline-flex', alignItems: 'center', gap: 4,
                                 }}>
-                                  📍 {match.terrain}
+                                  <Layers size={10} /> #{match.ordre}
                                 </span>
-                              </div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                {match.ordre && (
-                                  <span style={{
-                                    fontSize: '0.68rem',
-                                    color: 'var(--color-primary)',
-                                    fontWeight: 700,
-                                    background: 'linear-gradient(135deg, rgba(0,98,51,0.08), rgba(0,166,81,0.06))',
-                                    padding: '2px 8px',
-                                    borderRadius: 'var(--radius-full)',
-                                    border: '1px solid rgba(0,98,51,0.12)',
-                                  }}>
-                                    #{match.ordre}
-                                  </span>
-                                )}
-                              </div>
+                              )}
                             </div>
                           </div>
                         )
@@ -547,6 +554,11 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
         .journee-section {
           scroll-margin-top: 140px;
         }
+        .match-row:hover {
+          border-color: rgba(42,255,160,0.3) !important;
+          box-shadow: var(--shadow-card-hover) !important;
+          transform: translateY(-1px);
+        }
         @media (max-width: 640px) {
           .journee-section {
             margin-bottom: 10px !important;
@@ -558,37 +570,16 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
             font-size: 0.9rem !important;
           }
           .match-cards-list {
-            gap: 3px !important;
+            gap: 6px !important;
           }
-          .match-row {
-            flex-direction: column !important;
-            padding: 0 !important;
-            gap: 0 !important;
-            border-radius: var(--radius-lg) !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04) !important;
-          }
-          .match-row > div:first-child {
-            padding: 10px 12px !important;
-            gap: 8px !important;
-          }
-          .match-row > div:last-child {
-            padding: 7px 12px !important;
-          }
-          .match-row .team-badge {
-            width: 28px !important;
-            height: 28px !important;
-          }
-          .match-row .team-badge img {
+          .match-row .team-badge,
+          .match-row .team-badge img,
+          .match-row .team-badge > div {
             width: 28px !important;
             height: 28px !important;
           }
           .match-row .team-name {
             font-size: clamp(0.72rem, 2vw, 0.82rem) !important;
-          }
-          .match-row .vs-badge {
-            width: 30px !important;
-            height: 30px !important;
-            font-size: 0.6rem !important;
           }
         }
       `}</style>

@@ -64,7 +64,7 @@ export function TrendingList({ items, period }: TrendingListProps) {
               justifyContent: 'center',
               fontSize: '0.8rem',
               fontWeight: 700,
-              color: isRising ? '#00A651' : '#E74C3C',
+              color: isRising ? '#0dca6b' : '#E74C3C',
               flexShrink: 0,
             }}>
               {isRising ? '↑' : '↓'}
@@ -103,7 +103,7 @@ export function TrendingList({ items, period }: TrendingListProps) {
               <div style={{
                 fontWeight: 700,
                 fontSize: '0.9rem',
-                color: isRising ? '#00A651' : '#E74C3C',
+                color: isRising ? '#0dca6b' : '#E74C3C',
               }}>
                 {isRising ? '+' : '-'}{rankChange}
               </div>

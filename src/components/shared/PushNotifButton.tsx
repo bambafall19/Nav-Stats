@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Loader2, BellRing, BellOff, Ban } from 'lucide-react'
 
 interface PushNotifButtonProps {
   matchId?: string
@@ -31,7 +32,7 @@ export default function PushNotifButton({ matchId, matchLabel }: PushNotifButton
           await navigator.serviceWorker.register('/sw.js')
         }
         // Show confirmation notification
-        new Notification('🔔 NavéStats – Notifications activées !', {
+        new Notification('NavéStats – Notifications activées !', {
           body: matchLabel
             ? `Tu seras alerté avant le match ${matchLabel}`
             : 'Tu seras alerté avant chaque match de Khombole.',
@@ -67,18 +68,18 @@ export default function PushNotifButton({ matchId, matchLabel }: PushNotifButton
         borderRadius: 'var(--radius-full)',
         border: '1.5px solid',
         borderColor: status === 'subscribed' ? 'var(--color-primary)' : status === 'denied' ? 'var(--color-border)' : 'var(--color-primary)',
-        background: status === 'subscribed' ? 'rgba(0,98,51,0.08)' : 'transparent',
+        background: status === 'subscribed' ? 'rgba(42,255,160,0.08)' : 'transparent',
         color: status === 'denied' ? 'var(--color-text-muted)' : 'var(--color-primary)',
         fontWeight: 700,
         fontSize: '0.85rem',
         cursor: status === 'loading' || status === 'denied' ? 'not-allowed' : 'pointer',
         transition: 'all 0.2s',
-        fontFamily: 'var(--font-outfit)',
+        fontFamily: 'var(--font-plus-jakarta)',
         opacity: status === 'denied' ? 0.6 : 1,
       }}
       onMouseOver={e => {
         if (status !== 'loading' && status !== 'denied') {
-          (e.currentTarget as HTMLElement).style.background = 'rgba(0,98,51,0.1)'
+          (e.currentTarget as HTMLElement).style.background = 'rgba(42,255,160,0.1)'
         }
       }}
       onMouseOut={e => {
@@ -87,10 +88,10 @@ export default function PushNotifButton({ matchId, matchLabel }: PushNotifButton
         }
       }}
     >
-      {status === 'loading' && <span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⏳</span>}
-      {status === 'subscribed' && '🔔'}
-      {status === 'idle' && '🔕'}
-      {status === 'denied' && '🚫'}
+      {status === 'loading' && <Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} />}
+      {status === 'subscribed' && <BellRing size={15} />}
+      {status === 'idle' && <BellOff size={15} />}
+      {status === 'denied' && <Ban size={15} />}
       {status === 'loading' ? 'Activation...' : status === 'subscribed' ? 'Notifications ON' : status === 'denied' ? 'Notifications bloquées' : 'M\'alerter avant le match'}
     </button>
   )

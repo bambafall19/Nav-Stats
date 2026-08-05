@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { CalendarX, BarChart3 } from 'lucide-react'
 import type { Metadata } from 'next'
 import PronosticForm from '@/components/pronostics/PronosticForm'
 import AIEstimation from '@/components/shared/AIEstimation'
@@ -8,6 +9,7 @@ import HeadToHead from '@/components/matchs/HeadToHead'
 import SharePronostic from '@/components/pronostics/SharePronostic'
 import PushNotifButton from '@/components/shared/PushNotifButton'
 import FormeRecente from '@/components/shared/FormeRecente'
+import ScoreboardPanel from '@/components/shared/ScoreboardPanel'
 import { MatchHeroClient } from '@/components/matchs/MatchHeroClient'
 
 type Props = { params: Promise<{ id: string }> }
@@ -36,17 +38,46 @@ function FormeBar({ victoires, nuls, defaites, total }: { victoires: number, nul
   const pctN = (nuls / total) * 100
   const pctD = (defaites / total) * 100
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-      <div style={{ display: 'flex', gap: 2, height: 8, borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
-        <div style={{ width: `${pctV}%`, background: 'var(--color-primary-light)', transition: 'width 0.6s ease' }} />
-        <div style={{ width: `${pctN}%`, background: '#FBBF00', transition: 'width 0.6s ease' }} />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+      <div style={{ display: 'flex', gap: 3, height: 9, borderRadius: 99, overflow: 'hidden', background: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-subtle)' }}>
+        <div style={{ width: `${pctV}%`, background: 'var(--color-primary)', transition: 'width 0.6s ease' }} />
+        <div style={{ width: `${pctN}%`, background: 'var(--color-accent)', transition: 'width 0.6s ease' }} />
         <div style={{ width: `${pctD}%`, background: 'var(--color-red)', transition: 'width 0.6s ease' }} />
       </div>
-      <div style={{ display: 'flex', gap: 12, fontSize: '0.75rem', fontWeight: 600 }}>
-        <span style={{ color: 'var(--color-primary)' }}>V {victoires}</span>
-        <span style={{ color: '#7a5900' }}>N {nuls}</span>
-        <span style={{ color: 'var(--color-red)' }}>D {defaites}</span>
+      <div style={{ display: 'flex', gap: 12, fontSize: '0.72rem', fontWeight: 700 }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: 'var(--color-text-secondary)' }}>
+          <span style={{ width: 8, height: 8, borderRadius: 3, background: 'var(--color-primary)' }} /> V {victoires}
+        </span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: 'var(--color-text-secondary)' }}>
+          <span style={{ width: 8, height: 8, borderRadius: 3, background: 'var(--color-accent)' }} /> N {nuls}
+        </span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: 'var(--color-text-secondary)' }}>
+          <span style={{ width: 8, height: 8, borderRadius: 3, background: 'var(--color-red)' }} /> D {defaites}
+        </span>
       </div>
+    </div>
+  )
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function TeamAvatar({ equipe }: { equipe: any }) {
+  if (equipe?.logo_url) {
+    return (
+      <img src={equipe.logo_url} alt={equipe.nom}
+        style={{ width: 36, height: 36, borderRadius: 12, objectFit: 'cover', border: '1px solid var(--color-border-subtle)', boxShadow: '0 3px 10px rgba(0,0,0,0.2)', flexShrink: 0 }}
+      />
+    )
+  }
+  return (
+    <div style={{
+      width: 36, height: 36, borderRadius: 12, flexShrink: 0,
+      background: `linear-gradient(135deg, ${equipe?.couleur_principale || '#0dca6b'}, ${equipe?.couleur_secondaire || '#ffc94d'})`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: 13, fontWeight: 800, color: 'white',
+      fontFamily: 'var(--font-plus-jakarta)',
+      boxShadow: '0 3px 10px rgba(0,0,0,0.2)',
+    }}>
+      {equipe?.sigle || equipe?.nom?.charAt(0)}
     </div>
   )
 }
@@ -70,7 +101,9 @@ export default async function MatchDetailPage({ params }: Props) {
     return (
       <div className="page-content">
         <div className="container-app" style={{ textAlign: 'center', paddingTop: 80 }}>
-          <div style={{ fontSize: '4rem', marginBottom: 16 }}>⚽</div>
+          <div style={{ width: 56, height: 56, borderRadius: 16, background: 'rgba(42,255,160,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+            <CalendarX size={24} color="var(--color-text-muted)" />
+          </div>
           <h1 style={{ marginBottom: 8 }}>Match introuvable</h1>
           <Link href="/matchs" className="btn btn-primary" style={{ textDecoration: 'none' }}>Retour aux matchs</Link>
         </div>
@@ -182,18 +215,29 @@ export default async function MatchDetailPage({ params }: Props) {
           />
 
           {/* Statistiques équipes */}
-          <div className="card" style={{ padding: '16px 16px' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 16 }}>📊 Forme des équipes</h3>
+          <ScoreboardPanel
+            title="Forme des équipes"
+            icon={<BarChart3 size={14} color="var(--color-primary)" />}
+            bodyStyle={{ padding: '18px 18px' }}
+          >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }} className="team-stats-grid">
               {[
                 { eq: equipeA, recent: recentMatchsA },
                 { eq: equipeB, recent: recentMatchsB }
               ].map(({ eq, recent }) => (
-                <div key={eq.id}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: 8, color: 'var(--color-text-primary)' }}>
-                    {eq.nom}
+                <div key={eq.id} style={{
+                  background: 'var(--color-bg-secondary)',
+                  border: '1px solid var(--color-border-subtle)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: 16,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                    <TeamAvatar equipe={eq} />
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--color-text-primary)', fontFamily: 'var(--font-plus-jakarta)' }}>
+                      {eq.nom}
+                    </div>
                   </div>
-                  
+
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   <FormeRecente teamId={eq.id} lastMatchs={(recent || []) as any[]} />
 
@@ -203,33 +247,33 @@ export default async function MatchDetailPage({ params }: Props) {
                     defaites={eq.defaites}
                     total={eq.matchs_joues}
                   />
-                  <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+                  <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
                     {[
                       { label: 'MJ', value: eq.matchs_joues },
                       { label: 'Pts', value: eq.points_classement },
-                      { label: '⚽', value: eq.buts_marques },
-                      { label: '🥅', value: eq.buts_encaisses },
+                      { label: 'Buts +', value: eq.buts_marques },
+                      { label: 'Buts –', value: eq.buts_encaisses },
                     ].map(s => (
                       <div key={s.label} style={{
-                        background: 'var(--color-surface)',
-                        borderRadius: 'var(--radius-sm)',
-                        padding: '8px 6px',
+                        background: 'var(--color-surface-card)',
+                        border: '1px solid var(--color-border-subtle)',
+                        borderRadius: 10,
+                        padding: '9px 6px',
                         textAlign: 'center',
                       }}>
-                        <div className="stat-number" style={{ fontSize: '1rem' }}>{s.value}</div>
-                        <div style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>{s.label}</div>
+                        <div className="stat-number" style={{ fontSize: '1rem', color: 'var(--color-primary)' }}>{s.value}</div>
+                        <div style={{ fontSize: '0.62rem', color: 'var(--color-text-muted)', fontWeight: 600, fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>{s.label}</div>
                       </div>
                     ))}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </ScoreboardPanel>
 
           {/* Historique confrontations */}
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           <HeadToHead
-            matchs={(h2hMatchs || []) as any}
+            matchs={(h2hMatchs || []) as any} // eslint-disable-line @typescript-eslint/no-explicit-any
             equipeAId={equipeA.id}
             equipeBId={equipeB.id}
             equipeANom={equipeA.nom}
@@ -251,7 +295,7 @@ export default async function MatchDetailPage({ params }: Props) {
             <SharePronostic
               equipeA={equipeA.nom}
               equipeB={equipeB.nom}
-              pronostic={monPronostic.resultat_predit as any}
+              pronostic={monPronostic.resultat_predit as any} // eslint-disable-line @typescript-eslint/no-explicit-any
               dateMatch={match.date_match}
             />
           )}

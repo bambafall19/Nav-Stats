@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import ScoreboardPanel from '@/components/shared/ScoreboardPanel'
+import { Share2, Check, Copy } from 'lucide-react'
 
 interface SharePronosticProps {
   equipeA: string
@@ -23,10 +25,10 @@ export default function SharePronostic({ equipeA, equipeB, pronostic, dateMatch 
       ? ` le ${new Date(dateMatch).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`
       : ''
     if (pronostic === 'nul') {
-      return `🔮 Mon pronostic NavéStats : Match nul entre ${equipeA} et ${equipeB}${dateStr} ! 🟡\n🏆 Navétanes Khombole 2026 – navestats.com`
+      return `Mon pronostic NavéStats : Match nul entre ${equipeA} et ${equipeB}${dateStr} !\nNavétanes Khombole 2026 – navestats.com`
     }
     const winner = pronostic === 'equipe_a' ? equipeA : equipeB
-    return `🔮 Mon pronostic NavéStats : Victoire de ${winner}${dateStr} ! 🟢\n🏆 Navétanes Khombole 2026 – navestats.com`
+    return `Mon pronostic NavéStats : Victoire de ${winner}${dateStr} !\nNavétanes Khombole 2026 – navestats.com`
   }
 
   const text = buildText()
@@ -44,26 +46,19 @@ export default function SharePronostic({ equipeA, equipeB, pronostic, dateMatch 
   }
 
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, rgba(0,98,51,0.06), rgba(251,191,0,0.06))',
-      border: '1px solid var(--color-border)',
-      borderRadius: 'var(--radius-lg)',
-      padding: '20px 24px',
-    }}>
-      <div style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-        📲 Partager mon pronostic
-      </div>
+    <ScoreboardPanel title="Partager mon pronostic" icon={<Share2 size={13} color="#00ff88" />}>
 
       {/* Preview */}
       <div style={{
-        background: 'var(--color-surface)',
+        background: '#0a2014',
+        border: '1px solid rgba(0,255,136,0.2)',
         borderRadius: 'var(--radius-md)',
         padding: '12px 16px',
         fontSize: '0.8rem',
-        color: 'var(--color-text-secondary)',
+        color: 'rgba(255,255,255,0.85)',
         lineHeight: 1.6,
         marginBottom: 14,
-        fontStyle: 'italic',
+        fontFamily: 'var(--font-mono)',
       }}>
         {text.split('\n').map((line, i) => <div key={i}>{line}</div>)}
       </div>
@@ -87,7 +82,7 @@ export default function SharePronostic({ equipeA, equipeB, pronostic, dateMatch 
             fontSize: '0.85rem',
             textDecoration: 'none',
             transition: 'filter 0.2s, transform 0.15s',
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
           }}
           onMouseOver={e => { (e.currentTarget as HTMLElement).style.filter = 'brightness(1.1)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)' }}
           onMouseOut={e => { (e.currentTarget as HTMLElement).style.filter = ''; (e.currentTarget as HTMLElement).style.transform = '' }}
@@ -114,7 +109,7 @@ export default function SharePronostic({ equipeA, equipeB, pronostic, dateMatch 
             fontSize: '0.85rem',
             textDecoration: 'none',
             transition: 'filter 0.2s, transform 0.15s',
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
           }}
           onMouseOver={e => { (e.currentTarget as HTMLElement).style.filter = 'brightness(1.3)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)' }}
           onMouseOut={e => { (e.currentTarget as HTMLElement).style.filter = ''; (e.currentTarget as HTMLElement).style.transform = '' }}
@@ -140,12 +135,13 @@ export default function SharePronostic({ equipeA, equipeB, pronostic, dateMatch 
             border: '1px solid var(--color-border)',
             cursor: 'pointer',
             transition: 'all 0.2s',
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
           }}
         >
-          {copied ? '✅ Copié !' : '📋 Copier'}
+          {copied ? <Check size={15} /> : <Copy size={15} />}
+          {copied ? 'Copié !' : 'Copier'}
         </button>
       </div>
-    </div>
+    </ScoreboardPanel>
   )
 }

@@ -105,7 +105,7 @@ export default function AgentChat() {
           gap: 10,
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: 'linear-gradient(135deg, rgba(0,98,51,0.06), rgba(251,191,0,0.08))',
+          background: 'linear-gradient(135deg, rgba(42,255,160,0.06), rgba(251,191,0,0.08))',
         }}
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -116,7 +116,7 @@ export default function AgentChat() {
               onClick={() => setMode(m.id)}
               style={{
                 border: mode === m.id ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
-                background: mode === m.id ? 'rgba(0,98,51,0.12)' : 'var(--color-surface-card)',
+                background: mode === m.id ? 'rgba(42,255,160,0.12)' : 'var(--color-surface-card)',
                 color: mode === m.id ? 'var(--color-primary)' : 'var(--color-text-secondary)',
                 borderRadius: 999,
                 padding: '6px 12px',
@@ -174,7 +174,7 @@ export default function AgentChat() {
             <div style={{ fontSize: '2.5rem', marginBottom: 8 }}>🤖⚽</div>
             <h2
               style={{
-                fontFamily: 'var(--font-outfit)',
+                fontFamily: 'var(--font-plus-jakarta)',
                 fontWeight: 800,
                 fontSize: '1.25rem',
                 marginBottom: 8,
@@ -223,7 +223,7 @@ export default function AgentChat() {
               borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
               background:
                 m.role === 'user'
-                  ? 'linear-gradient(135deg, #006233, #00A651)'
+                  ? 'linear-gradient(135deg, #0dca6b, #0dca6b)'
                   : 'var(--color-surface-card)',
               color: m.role === 'user' ? 'white' : 'var(--color-text-primary)',
               border: m.role === 'assistant' ? '1px solid var(--color-border)' : 'none',
@@ -327,7 +327,7 @@ export default function AgentChat() {
               padding: '12px 18px',
               background: loading || !input.trim()
                 ? 'var(--color-border)'
-                : 'linear-gradient(135deg, #006233, #00A651)',
+                : 'linear-gradient(135deg, #0dca6b, #0dca6b)',
               color: 'white',
               fontWeight: 800,
               cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',

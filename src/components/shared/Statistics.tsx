@@ -32,7 +32,7 @@ export function ProgressionChart({ data, title }: ProgressionChartProps) {
       padding: 'clamp(16px, 3vw, 20px)',
     }}>
       <h3 style={{
-        fontFamily: 'var(--font-outfit)',
+        fontFamily: 'var(--font-plus-jakarta)',
         fontWeight: 800,
         fontSize: 'clamp(0.9rem, 2vw, 1rem)',
         marginBottom: 16,
@@ -87,7 +87,7 @@ export function ProgressionChart({ data, title }: ProgressionChartProps) {
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>
             Minimum
           </div>
-          <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
+          <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
             {Math.min(...data.map(d => d.points))}
           </div>
         </div>
@@ -95,7 +95,7 @@ export function ProgressionChart({ data, title }: ProgressionChartProps) {
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>
             Moyenne
           </div>
-          <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
+          <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
             {Math.round(data.reduce((a, b) => a + b.points, 0) / data.length)}
           </div>
         </div>
@@ -103,7 +103,7 @@ export function ProgressionChart({ data, title }: ProgressionChartProps) {
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>
             Maximum
           </div>
-          <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
+          <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
             {Math.max(...data.map(d => d.points))}
           </div>
         </div>
@@ -135,7 +135,7 @@ export function StatsGrid({ stats }: { stats: { label: string; value: string | n
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>
             {stat.label}
           </div>
-          <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: 'var(--color-primary)' }}>
+          <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: 'var(--color-primary)' }}>
             {stat.value}
           </div>
         </div>

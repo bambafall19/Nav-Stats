@@ -79,7 +79,7 @@ export function UserProfileEnhanced({ userId }: { userId: string }) {
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
       {/* Header */}
       <div style={{
-        background: 'linear-gradient(135deg, #004d27 0%, #006233 50%, #008a44 100%)',
+        background: 'var(--gradient-hero)',
         borderRadius: 'clamp(16px, 4vw, 24px)',
         padding: 'clamp(20px, 5vw, 32px)',
         marginBottom: 'clamp(24px, 5vw, 32px)',
@@ -106,7 +106,7 @@ export function UserProfileEnhanced({ userId }: { userId: string }) {
           )}
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', fontFamily: 'var(--font-outfit)', fontWeight: 900 }}>
+          <h1 style={{ margin: 0, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900 }}>
             {profile.username}
           </h1>
           <p style={{ margin: '4px 0 0 0', opacity: 0.9, fontSize: 'clamp(0.8rem, 2vw, 0.95rem)' }}>
@@ -133,7 +133,7 @@ export function UserProfileEnhanced({ userId }: { userId: string }) {
 
       {/* Achievements */}
       <div style={{ marginBottom: 'clamp(24px, 5vw, 32px)' }}>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', marginBottom: 16 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', marginBottom: 16 }}>
           🏅 Achievements ({achievements.length})
         </h2>
         <div style={{
@@ -170,7 +170,7 @@ export function UserProfileEnhanced({ userId }: { userId: string }) {
 
       {/* Share */}
       <div style={{ marginBottom: 'clamp(24px, 5vw, 32px)' }}>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', marginBottom: 16 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', marginBottom: 16 }}>
           📤 Partager
         </h2>
         <ShareButtons

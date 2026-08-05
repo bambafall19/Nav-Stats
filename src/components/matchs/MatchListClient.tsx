@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Share2, RefreshCw } from 'lucide-react'
-import CountdownTimer from '@/components/shared/CountdownTimer'
+import { Share2, Search, Clock, Zap, CalendarDays, Info, Moon, Filter } from 'lucide-react'
 import { MATCH_STATUS_LABELS } from '@/lib/constants/matchStatus'
 
 interface Team {
@@ -49,55 +48,45 @@ const EXEMPTE_MAP: Record<number, { nom: string; sigle: string }> = {
 }
 
 const POULE_COLORS: Record<string, string> = {
-  A: '#006233',
+  A: '#0dca6b',
   B: '#1E40AF',
   C: '#B91C1C',
 }
 
-function TeamBadge({ equipe, size = 48 }: { equipe: Team; size?: number }) {
+const STATUS_DOTS: Record<string, string> = {
+  a_venir: 'var(--color-border)',
+  en_cours: '#EF4444',
+  termine: 'var(--color-primary)',
+}
+
+function MiniLogo({ equipe, size = 40 }: { equipe: Team; size?: number }) {
+  const radius = Math.round(size * 0.28)
   if (equipe.logo_url) {
     return (
       <div style={{
-        width: size,
-        height: size,
-        borderRadius: 'var(--radius-md)',
-        overflow: 'hidden',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        border: '2px solid var(--color-border)',
-        flexShrink: 0,
+        width: size, height: size, borderRadius: radius, overflow: 'hidden',
+        flexShrink: 0, border: '1px solid var(--color-border-subtle)',
+        background: 'white',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
       }}>
         <Image
           src={equipe.logo_url}
           alt={equipe.nom}
           width={size}
           height={size}
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: 'var(--radius-md)',
-            objectFit: 'cover',
-          }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       </div>
     )
   }
-
   return (
     <div style={{
-      width: size,
-      height: size,
-      borderRadius: 'var(--radius-md)',
-      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#006233'}, ${equipe.couleur_secondaire || '#FBBF00'})`,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontWeight: 800,
-      color: 'white',
-      fontFamily: 'var(--font-outfit)',
-      fontSize: size < 36 ? '0.65rem' : '0.8rem',
-      flexShrink: 0,
-      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-      border: '2px solid var(--color-border)',
+      width: size, height: size, borderRadius: radius,
+      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#0dca6b'}, ${equipe.couleur_secondaire || '#ffc94d'})`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontWeight: 800, color: 'white', fontSize: size * 0.34,
+      fontFamily: 'var(--font-plus-jakarta)', flexShrink: 0,
+      boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
     }}>
       {equipe.sigle || equipe.nom.charAt(0)}
     </div>
@@ -109,6 +98,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
   const [selectedStatus, setSelectedStatus] = useState<'all' | Match['statut']>('all')
   const [selectedPoule, setSelectedPoule] = useState<'all' | 'A' | 'B' | 'C'>('all')
   const [search, setSearch] = useState('')
+  const [showFilters, setShowFilters] = useState(false)
 
   const normalizedSearch = search.trim().toLowerCase()
   const matchesByJournee = initialMatchs.filter(m => {
@@ -128,363 +118,372 @@ export default function MatchListClient({ initialMatchs }: Props) {
   })
   const sortedDates = Object.keys(matchesByDate).sort()
   const journees = [1, 2, 3, 4, 5]
-  const statusFilters: { value: 'all' | Match['statut']; label: string }[] = [
-    { value: 'all', label: 'Tous' },
-    { value: 'a_venir', label: MATCH_STATUS_LABELS.a_venir },
-    { value: 'en_cours', label: MATCH_STATUS_LABELS.en_cours },
-    { value: 'termine', label: MATCH_STATUS_LABELS.termine },
-  ]
-  const pouleFilters: { value: 'all' | 'A' | 'B' | 'C'; label: string }[] = [
-    { value: 'all', label: 'Poules' },
-    { value: 'A', label: 'A' },
-    { value: 'B', label: 'B' },
-    { value: 'C', label: 'C' },
-  ]
+  const totalTeams = new Set(initialMatchs.map(m => m.equipe_a_id).concat(initialMatchs.map(m => m.equipe_b_id))).size
+
+  const resetFilters = () => {
+    setSelectedJournee('all')
+    setSelectedStatus('all')
+    setSelectedPoule('all')
+    setSearch('')
+  }
+
+  const scrollToDate = (date: string) => {
+    document.getElementById(`date-${date}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const hasActiveFilters = selectedStatus !== 'all' || selectedPoule !== 'all' || selectedJournee !== 'all' || !!search
+  const isActiveJournee = typeof selectedJournee === 'number'
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 0 0 0' }} className="matchs-wrapper">
-      {/* Hero Section */}
-      <div className="matchs-hero" style={{
-        background: 'linear-gradient(135deg, #004d27 0%, #006233 50%, #00A651 100%)',
+    <div style={{ maxWidth: 720, margin: '0 auto' }} className="matchs-wrapper">
+      {/* ====== HEADER ====== */}
+      <div style={{
+        background: 'var(--gradient-hero)',
         borderRadius: 'var(--radius-xl)',
-        padding: 'clamp(14px, 4vw, 22px)',
+        padding: '24px 24px 20px',
         marginBottom: 12,
+        boxShadow: 'var(--shadow-green)',
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: 'var(--shadow-green)',
       }}>
         <div style={{
-          position: 'absolute',
-          top: -50,
-          right: -30,
-          width: 140,
-          height: 140,
-          borderRadius: '50%',
+          position: 'absolute', top: -50, right: -40, width: 180, height: 180, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.06)',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: -70, left: -30, width: 140, height: 140, borderRadius: '50%',
           background: 'rgba(255,255,255,0.05)',
         }} />
-        <div style={{
-          position: 'absolute',
-          bottom: -30,
-          left: -15,
-          width: 100,
-          height: 100,
-          borderRadius: '50%',
-          background: 'rgba(255,215,0,0.06)',
-        }} />
-
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{
-            color: 'white',
-            fontFamily: 'var(--font-outfit)',
-            fontSize: 'clamp(1.3rem, 4vw, 1.8rem)',
-            fontWeight: 900,
-            marginBottom: 6,
-            letterSpacing: '-0.02em',
-            textAlign: 'center',
-          }}>
-            ⚽ Calendrier des Matchs
-          </h1>
-          <p style={{
-            color: 'rgba(255,255,255,0.85)',
-            fontSize: 'clamp(0.78rem, 2vw, 0.88rem)',
-            marginBottom: 14,
-            maxWidth: 500,
-          }}>
-            Calendrier officiel des phases de poules - Navétanes Zone 6 de Khombole
-          </p>
-
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
           <div style={{
-            display: 'flex',
-            gap: 8,
-            flexWrap: 'wrap',
+            width: 40, height: 40, borderRadius: 12,
+            background: 'rgba(255,255,255,0.14)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            border: '1px solid rgba(255,255,255,0.2)',
           }}>
-            <div style={{
-              background: 'rgba(255,255,255,0.12)',
-              backdropFilter: 'blur(10px)',
-              padding: '8px 12px',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid rgba(255,255,255,0.2)',
+            <CalendarDays size={18} color="white" />
+          </div>
+          <div>
+            <h1 style={{
+              fontFamily: 'var(--font-plus-jakarta)',
+              fontSize: '1.5rem', fontWeight: 900,
+              color: 'white',
+              letterSpacing: '-0.02em', lineHeight: 1.1,
             }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
-                {initialMatchs.length}
-              </div>
-              <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 2 }}>
-                Matchs
-              </div>
-            </div>
-            <div style={{
-              background: 'rgba(255,255,255,0.12)',
-              backdropFilter: 'blur(10px)',
-              padding: '8px 12px',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid rgba(255,255,255,0.2)',
-            }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 900, fontFamily: 'var(--font-outfit)', color: 'white', lineHeight: 1 }}>
-                {new Set(initialMatchs.map(m => m.equipe_a_id).concat(initialMatchs.map(m => m.equipe_b_id))).size}
-              </div>
-              <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: 2 }}>
-                Équipes
-              </div>
-            </div>
+              Matchs
+            </h1>
+            <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.75)', marginTop: 2, fontWeight: 600 }}>
+              Navétanes Zone 6 · Khombole 2026
+            </p>
           </div>
         </div>
+
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', gap: 8, marginTop: 14 }}>
+          {[
+            { icon: CalendarDays, value: initialMatchs.length, label: 'matchs' },
+            { icon: Zap, value: totalTeams, label: 'équipes' },
+            { icon: Clock, value: journees.length, label: 'journées' },
+          ].map(stat => (
+            <div key={stat.label} style={{
+              flex: 1,
+              padding: '8px 10px',
+              background: 'rgba(255,255,255,0.12)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid rgba(255,255,255,0.16)',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+            }}>
+              <span style={{
+                fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.95rem',
+                color: 'white', lineHeight: 1,
+              }}>{stat.value}</span>
+              <span style={{ fontSize: '0.56rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                {stat.label}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Filters Section */}
-      <div className="matchs-filter-panel" style={{
+      {/* ====== CONTROL BAR ====== */}
+      <div className="matchs-control" style={{
         background: 'var(--color-surface-card)',
-        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--color-border-subtle)',
+        borderRadius: 14,
         padding: 10,
-        border: '1px solid var(--color-border)',
-        boxShadow: 'var(--shadow-sm)',
-        marginBottom: 12,
+        marginBottom: 10,
+        boxShadow: 'var(--shadow-card)',
       }}>
-        {/* Search */}
-        <div style={{ marginBottom: 10 }}>
-          <input
-            className="input"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="🔍 Rechercher une équipe ou un stade..."
-            aria-label="Rechercher un match"
-            style={{
-              width: '100%',
-              background: 'var(--color-surface)',
-              borderRadius: 10,
-              padding: '10px 12px',
-              border: '1px solid var(--color-border)',
-              fontSize: '0.82rem',
-              fontFamily: 'var(--font-outfit)',
-            }}
-          />
-        </div>
-
-        {/* Status Filters */}
-        <div className="matchs-filter-row" style={{ display: 'flex', gap: 6, marginBottom: 8, overflowX: 'auto', padding: '2px 2px' }}>
-          {statusFilters.map(filter => {
-            const active = selectedStatus === filter.value
-            return (
-              <button
-                key={filter.value}
-                type="button"
-                onClick={() => setSelectedStatus(filter.value)}
-                style={{
-                  flex: '1 0 auto',
-                  padding: '7px 12px',
-                  borderRadius: 12,
-                  border: '1px solid ' + (active ? 'var(--color-primary)' : 'var(--color-border)'),
-                  background: active ? 'rgba(0,98,51,0.08)' : 'var(--color-surface)',
-                  color: active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                  fontWeight: 700,
-                  fontSize: '0.72rem',
-                  cursor: 'pointer',
-                  boxShadow: active ? 'var(--shadow-sm)' : 'none',
-                  transition: 'all 0.2s ease',
-                  whiteSpace: 'nowrap',
-                  fontFamily: 'var(--font-outfit)',
-                }}
-              >
-                {filter.label}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Poule Filters */}
-        <div className="matchs-filter-row" style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '2px 2px' }}>
-          {pouleFilters.map(filter => {
-            const active = selectedPoule === filter.value
-            return (
-              <button
-                key={filter.value}
-                type="button"
-                onClick={() => setSelectedPoule(filter.value)}
-                style={{
-                  flex: '1 0 auto',
-                  padding: '7px 12px',
-                  borderRadius: 12,
-                  border: '1px solid ' + (active ? 'var(--color-primary)' : 'var(--color-border)'),
-                  background: active ? 'rgba(0,98,51,0.08)' : 'var(--color-surface)',
-                  color: active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                  fontWeight: 700,
-                  fontSize: '0.72rem',
-                  cursor: 'pointer',
-                  boxShadow: active ? 'var(--shadow-sm)' : 'none',
-                  transition: 'all 0.2s ease',
-                  whiteSpace: 'nowrap',
-                  fontFamily: 'var(--font-outfit)',
-                }}
-              >
-                {filter.label}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Refresh Button */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Rechercher..."
+              aria-label="Rechercher un match"
+              style={{
+                width: '100%',
+                background: 'var(--color-bg-primary)',
+                borderRadius: 9,
+                padding: '8px 12px 8px 32px',
+                border: '1px solid var(--color-border-subtle)',
+                fontSize: '0.76rem',
+                fontFamily: 'var(--font-plus-jakarta)',
+                outline: 'none',
+              }}
+            />
+          </div>
           <button
             type="button"
-            onClick={() => window.location.reload()}
+            onClick={() => setShowFilters(!showFilters)}
+            aria-label="Filtres"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 5,
-              padding: '5px 10px',
-              borderRadius: 10,
-              border: '1px solid var(--color-border)',
-              background: 'var(--color-surface)',
-              color: 'var(--color-text-secondary)',
-              cursor: 'pointer',
-              fontSize: '0.7rem',
-              fontWeight: 600,
-              fontFamily: 'var(--font-outfit)',
+              display: 'flex', alignItems: 'center', gap: 5,
+              padding: '8px 12px', borderRadius: 9,
+              background: hasActiveFilters ? 'rgba(42,255,160,0.08)' : 'var(--color-bg-primary)',
+              border: '1px solid ' + (hasActiveFilters ? 'rgba(42,255,160,0.3)' : 'var(--color-border-subtle)'),
+              color: hasActiveFilters ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+              fontSize: '0.72rem', fontWeight: 700,
+              fontFamily: 'var(--font-plus-jakarta)', cursor: 'pointer',
             }}
-            aria-label="Actualiser la liste des matchs"
           >
-            <RefreshCw size={12} /> Actualiser
+            <Filter size={13} /> Filtres
+            {hasActiveFilters && (
+              <span style={{
+                width: 16, height: 16, borderRadius: '50%',
+                background: 'var(--color-primary)', color: 'white',
+                fontSize: '0.55rem', fontWeight: 800,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>{1 + (selectedJournee !== 'all' ? 1 : 0) + (selectedPoule !== 'all' ? 1 : 0) + (selectedStatus !== 'all' ? 1 : 0)}</span>
+            )}
           </button>
         </div>
-      </div>
 
-      {/* Journée Tabs */}
-      <div className="journee-tabs" style={{
-        display: 'flex',
-        gap: 6,
-        marginBottom: 14,
-        overflowX: 'auto',
-        WebkitOverflowScrolling: 'touch',
-        scrollbarWidth: 'none',
-        padding: '2px 2px',
-      }}>
-        <button
-          onClick={() => setSelectedJournee('all')}
-          style={{
-            flex: '1 0 auto',
-            padding: '8px 14px',
-            border: 'none',
-            background: selectedJournee === 'all' ? 'var(--gradient-green)' : 'var(--color-surface-card)',
-            color: selectedJournee === 'all' ? 'white' : 'var(--color-text-secondary)',
-            borderRadius: 12,
-            fontSize: '0.76rem',
-            fontWeight: 700,
-            cursor: 'pointer',
-            boxShadow: selectedJournee === 'all' ? 'var(--shadow-green)' : 'var(--shadow-sm)',
-            transition: 'all 0.25s ease',
-            whiteSpace: 'nowrap',
-            minWidth: 72,
-            fontFamily: 'var(--font-outfit)',
-          }}
-        >
-          Toutes
-        </button>
-        {journees.map(j => (
+        {/* Journée selector */}
+        <div style={{
+          display: 'flex', gap: 6, marginTop: 10,
+          overflowX: 'auto', padding: '2px 2px', scrollbarWidth: 'none',
+        }}>
           <button
-            key={j}
-            onClick={() => setSelectedJournee(j)}
+            type="button"
+            onClick={() => setSelectedJournee('all')}
             style={{
-              flex: '1 0 auto',
-              padding: '8px 14px',
+              flex: '1 0 auto', padding: '6px 12px', borderRadius: 9,
               border: 'none',
-              background: selectedJournee === j ? 'var(--gradient-green)' : 'var(--color-surface-card)',
-              color: selectedJournee === j ? 'white' : 'var(--color-text-secondary)',
-              borderRadius: 12,
-              fontSize: '0.76rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: selectedJournee === j ? 'var(--shadow-green)' : 'var(--shadow-sm)',
-              transition: 'all 0.25s ease',
-              whiteSpace: 'nowrap',
-              minWidth: 72,
-              fontFamily: 'var(--font-outfit)',
+              background: selectedJournee === 'all' ? 'var(--gradient-green)' : 'var(--color-bg-primary)',
+              color: selectedJournee === 'all' ? 'white' : 'var(--color-text-secondary)',
+              fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer',
+              fontFamily: 'var(--font-plus-jakarta)',
             }}
           >
-            J{j}
+            Toutes les journées
           </button>
-        ))}
+          {journees.map(j => (
+            <button
+              key={j}
+              type="button"
+              onClick={() => setSelectedJournee(j)}
+              style={{
+                flex: '1 0 auto', padding: '6px 12px', borderRadius: 9,
+                border: 'none',
+                background: selectedJournee === j ? 'var(--gradient-green)' : 'var(--color-bg-primary)',
+                color: selectedJournee === j ? 'white' : 'var(--color-text-secondary)',
+                fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer',
+                fontFamily: 'var(--font-mono)',
+              }}
+            >
+              J{j}
+            </button>
+          ))}
+        </div>
+
+        {/* Advanced filters */}
+        {showFilters && (
+          <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--color-border-subtle)' }}>
+            <div style={{ fontSize: '0.62rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+              Statut
+            </div>
+            <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+              {(['all', 'a_venir', 'en_cours', 'termine'] as const).map(s => {
+                const active = selectedStatus === s
+                const label = s === 'all' ? 'Tous' : MATCH_STATUS_LABELS[s]
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSelectedStatus(s)}
+                    style={{
+                      flex: 1, padding: '6px 8px', borderRadius: 8,
+                      border: '1px solid ' + (active ? 'rgba(42,255,160,0.4)' : 'var(--color-border-subtle)'),
+                      background: active ? 'rgba(42,255,160,0.07)' : 'transparent',
+                      color: active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                      fontSize: '0.68rem', fontWeight: 700, cursor: 'pointer',
+                      fontFamily: 'var(--font-plus-jakarta)', whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
+            <div style={{ fontSize: '0.62rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+              Poule
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {(['all', 'A', 'B', 'C'] as const).map(p => {
+                const active = selectedPoule === p
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setSelectedPoule(p)}
+                    style={{
+                      flex: 1, padding: '6px 8px', borderRadius: 8,
+                      border: '1px solid ' + (active ? 'rgba(42,255,160,0.4)' : 'var(--color-border-subtle)'),
+                      background: active ? 'rgba(42,255,160,0.07)' : 'transparent',
+                      color: active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                      fontSize: '0.68rem', fontWeight: 700, cursor: 'pointer',
+                      fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {p === 'all' ? 'Toutes' : `Poule ${p}`}
+                  </button>
+                )
+              })}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '5px 10px', borderRadius: 8,
+                  background: 'transparent', border: '1px solid var(--color-border-subtle)',
+                  color: 'var(--color-text-secondary)', fontSize: '0.66rem', fontWeight: 600,
+                  fontFamily: 'var(--font-plus-jakarta)', cursor: 'pointer',
+                }}
+              >
+                <Share2 size={11} className="refresh-icon" /> Actualiser
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Exempted Team Banner */}
-      {typeof selectedJournee === 'number' && EXEMPTE_MAP[selectedJournee] && (
+      {/* ====== DAY STRIP ====== */}
+      {sortedDates.length > 0 && (
         <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-          padding: '10px 12px',
-          background: 'rgba(251,191,0,0.06)',
-          border: '1px dashed rgba(251,191,0,0.4)',
-          borderRadius: 10,
-          marginBottom: 14,
-          fontSize: '0.76rem',
-          color: 'var(--color-text-secondary)',
-          fontWeight: 500,
-        }}>
-          <span style={{ fontSize: '1rem' }}>📢</span>
-          <span>
-            Exempté ce tour : <strong style={{ color: '#D97706', fontWeight: 700 }}>ASC {EXEMPTE_MAP[selectedJournee].nom}</strong>
-          </span>
+          display: 'flex', gap: 6, marginBottom: 12,
+          overflowX: 'auto', padding: '2px 2px 6px', scrollbarWidth: 'none',
+        }} className="day-strip">
+          {sortedDates.map(date => {
+            const d = new Date(date)
+            const isToday = date === new Date().toISOString().split('T')[0]
+            const active = matchesByDate[date].length > 0
+            return (
+              <button
+                key={date}
+                type="button"
+                onClick={() => scrollToDate(date)}
+                style={{
+                  flexShrink: 0,
+                  display: 'flex', flexDirection: 'column', alignItems: 'center',
+                  padding: '7px 12px', borderRadius: 10,
+                  background: isToday ? 'rgba(42,255,160,0.08)' : 'var(--color-surface-card)',
+                  border: '1px solid ' + (isToday ? 'rgba(42,255,160,0.35)' : 'var(--color-border-subtle)'),
+                  cursor: 'pointer',
+                  opacity: active ? 1 : 0.5,
+                  boxShadow: isToday ? 'none' : 'var(--shadow-card)',
+                }}
+              >
+                <span style={{
+                  fontSize: '0.5rem', fontWeight: 700, color: isToday ? 'var(--color-primary)' : 'var(--color-text-muted)',
+                  textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.2,
+                }}>
+                  {d.toLocaleDateString('fr-FR', { weekday: 'short' })}
+                </span>
+                <span style={{
+                  fontSize: '0.78rem', fontWeight: 900, lineHeight: 1.3,
+                  color: isToday ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                  fontFamily: 'var(--font-mono)',
+                }}>
+                  {d.getDate()}
+                </span>
+                <span style={{
+                  fontSize: '0.5rem', fontWeight: 600, color: 'var(--color-text-muted)',
+                  textTransform: 'uppercase', letterSpacing: '0.03em',
+                }}>
+                  {d.toLocaleDateString('fr-FR', { month: 'short' })}
+                </span>
+              </button>
+            )
+          })}
         </div>
       )}
 
-      {/* Magal Pause */}
+      {/* ====== NOTICES ====== */}
+      {isActiveJournee && EXEMPTE_MAP[selectedJournee] && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          padding: '9px 12px',
+          background: 'rgba(255,201,77,0.07)',
+          border: '1px solid rgba(255,201,77,0.3)',
+          borderRadius: 10, marginBottom: 10,
+          fontSize: '0.7rem', color: 'var(--color-text-secondary)',
+        }}>
+          <Info size={13} color="var(--color-accent)" style={{ flexShrink: 0 }} />
+          <span>
+            Exempté ce tour : <strong style={{ color: 'var(--color-accent)', fontWeight: 700 }}>ASC {EXEMPTE_MAP[selectedJournee].nom}</strong>
+          </span>
+        </div>
+      )}
       {selectedJournee === 4 && (
         <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 4,
-          padding: '14px',
-          background: 'rgba(0,98,51,0.04)',
-          border: '1px solid rgba(0,98,51,0.1)',
-          borderRadius: 12,
-          marginBottom: 14,
-          textAlign: 'center',
+          display: 'flex', alignItems: 'center', gap: 8,
+          padding: '9px 12px',
+          background: 'rgba(42,255,160,0.05)',
+          border: '1px solid rgba(42,255,160,0.15)',
+          borderRadius: 10, marginBottom: 10,
+          fontSize: '0.7rem',
         }}>
-          <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--color-primary)', fontFamily: 'var(--font-outfit)' }}>
-            🕌 Pause Magal de Touba
-          </span>
-          <span style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', maxWidth: 320, lineHeight: 1.4 }}>
-            Le calendrier observe une pause officielle. Les matchs reprennent le <strong style={{ color: 'var(--color-primary)' }}>03/08/2026</strong>.
+          <Moon size={13} color="var(--color-primary)" style={{ flexShrink: 0 }} />
+          <span style={{ color: 'var(--color-text-secondary)' }}>
+            <strong style={{ color: 'var(--color-primary)', fontWeight: 800 }}>Pause Magal de Touba</strong> — reprise le 03/08/2026
           </span>
         </div>
       )}
 
-      {/* Match Cards */}
+      {/* ====== FIXTURE LIST ====== */}
       {sortedDates.length === 0 ? (
         <div style={{
           background: 'var(--color-surface-card)',
-          border: '1px solid var(--color-border)',
-          borderRadius: 16,
-          padding: '28px 16px',
-          textAlign: 'center',
-          boxShadow: 'var(--shadow-sm)',
+          border: '1px solid var(--color-border-subtle)',
+          borderRadius: 16, padding: '32px 16px', textAlign: 'center',
+          boxShadow: 'var(--shadow-card)',
         }}>
-          <div style={{ fontSize: '2rem', marginBottom: 6 }}>⚽</div>
-          <h3 style={{ fontFamily: 'var(--font-outfit)', marginBottom: 3, fontSize: '0.95rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+          <div style={{
+            width: 48, height: 48, borderRadius: 14,
+            background: 'var(--color-bg-primary)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 10px',
+          }}>
+            <CalendarDays size={22} color="var(--color-text-muted)" />
+          </div>
+          <h3 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '0.9rem', fontWeight: 800, marginBottom: 3 }}>
             Aucun match programmé
           </h3>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem' }}>Revenez bientôt pour le calendrier officiel.</p>
-          {(selectedStatus !== 'all' || selectedPoule !== 'all' || selectedJournee !== 'all' || search) && (
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.74rem', marginBottom: 12 }}>
+            Revenez bientôt pour le calendrier officiel.
+          </p>
+          {hasActiveFilters && (
             <button
               type="button"
+              onClick={resetFilters}
               style={{
-                marginTop: 10,
-                padding: '7px 14px',
-                background: 'var(--gradient-green)',
-                color: 'white',
-                border: 'none',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: 'var(--shadow-green)',
-                fontFamily: 'var(--font-outfit)',
-              }}
-              onClick={() => {
-                setSelectedJournee('all')
-                setSelectedStatus('all')
-                setSelectedPoule('all')
-                setSearch('')
+                padding: '8px 16px', background: 'var(--gradient-green)', color: 'white',
+                border: 'none', borderRadius: 9, fontSize: '0.7rem', fontWeight: 700,
+                cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta)',
               }}
             >
               Réinitialiser les filtres
@@ -492,313 +491,172 @@ export default function MatchListClient({ initialMatchs }: Props) {
           )}
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {sortedDates.map(date => {
             const matches = matchesByDate[date]
             const d = new Date(date)
-            const day = d.toLocaleDateString('fr-FR', { weekday: 'long' })
-            const dayNum = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+            const dayLabel = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
 
             return (
-              <div key={date}>
-                {/* Date Header */}
-                <div className="date-header" style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  marginBottom: 8,
-                }}>
+              <div key={date} id={`date-${date}`} className="fixture-day">
+                {/* Day header */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, padding: '0 2px' }}>
                   <div style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 9,
-                    flexShrink: 0,
+                    width: 30, height: 32, borderRadius: 9, flexShrink: 0,
                     background: 'var(--gradient-green)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: 'var(--shadow-green)',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(42,255,160,0.25)',
                   }}>
-                    <span style={{ fontSize: '0.48rem', fontWeight: 700, color: 'rgba(255,255,255,0.9)', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1 }}>
-                      {day.slice(0, 3)}
+                    <span style={{ fontSize: '0.4rem', fontWeight: 700, color: 'rgba(255,255,255,0.9)', textTransform: 'uppercase', lineHeight: 1 }}>
+                      {dayLabel.slice(0, 3)}
                     </span>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 900, color: 'white', lineHeight: 1.1 }}>{d.getDate()}</span>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 900, color: 'white', lineHeight: 1.1, fontFamily: 'var(--font-mono)' }}>
+                      {d.getDate()}
+                    </span>
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{
-                      fontWeight: 800,
-                      fontSize: '0.8rem',
-                      color: 'var(--color-text-primary)',
-                      fontFamily: 'var(--font-outfit)',
-                      textTransform: 'capitalize',
-                      lineHeight: 1.25,
+                      fontWeight: 800, fontSize: '0.76rem', textTransform: 'capitalize',
+                      color: 'var(--color-text-primary)', fontFamily: 'var(--font-plus-jakarta)', lineHeight: 1.2,
                     }}>
-                      {day} {dayNum}
+                      {dayLabel}
                     </div>
-                    <div style={{ fontSize: '0.62rem', color: 'var(--color-text-muted)', fontWeight: 600, marginTop: 1 }}>
-                      {matches.length} rencontre{matches.length > 1 ? 's' : ''}
+                    <div style={{ fontSize: '0.6rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
+                      {matches.length} rencontre{matches.length > 1 ? 's' : ''} · Journée {matches[0].journee || '?'}
                     </div>
                   </div>
                 </div>
 
-                {/* Match Cards */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {matches.map(m => {
+                {/* Fixture container */}
+                <div style={{
+                  background: 'var(--color-surface-card)',
+                  border: '1px solid var(--color-border-subtle)',
+                  borderRadius: 14,
+                  overflow: 'hidden',
+                  boxShadow: 'var(--shadow-card)',
+                }}>
+                  {matches.map((m, idx) => {
                     const isDone = m.statut === 'termine'
                     const isLive = m.statut === 'en_cours'
                     const isWinA = isDone && (m.score_a ?? 0) > (m.score_b ?? 0)
                     const isWinB = isDone && (m.score_b ?? 0) > (m.score_a ?? 0)
                     const poule = m.equipe_a.poule || 'A'
-                    const pouleColor = POULE_COLORS[poule] || '#006233'
-                    const shareText = `⚽ ${m.equipe_a.nom} vs ${m.equipe_b.nom} sur NavéStats\n📅 ${new Date(m.date_match).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${m.heure_match?.slice(0, 5)}\n👉 https://navestats.site/matchs/${m.id}`
+                    const pouleColor = POULE_COLORS[poule] || '#0dca6b'
+                    const shareText = `${m.equipe_a.nom} vs ${m.equipe_b.nom} sur NavéStats\n${new Date(m.date_match).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${m.heure_match?.slice(0, 5)}\nhttps://navestats.site/matchs/${m.id}`
                     const shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`
 
                     return (
-                      <Link key={m.id} href={`/matchs/${m.id}`} style={{ textDecoration: 'none', display: 'block' }} className="match-card-link">
-                        <div className="match-card" style={{
-                          position: 'relative',
-                          background: 'linear-gradient(135deg, var(--color-surface-card) 0%, var(--color-surface-elevated) 100%)',
-                          borderRadius: 'var(--radius-lg)',
-                          border: '1px solid var(--color-border)',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)',
-                          overflow: 'hidden',
-                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                          cursor: 'pointer',
+                      <Link
+                        key={m.id}
+                        href={`/matchs/${m.id}`}
+                        style={{
+                          textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 12,
+                          padding: '14px 14px',
+                          borderBottom: idx < matches.length - 1 ? '1px solid var(--color-border-subtle)' : 'none',
+                          transition: 'background 0.12s',
                         }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-3px)'
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.06), 0 12px 32px rgba(0,0,0,0.1)'
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)'
-                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)'
-                          }}
-                        >
-                          {/* Top: Poule + Status */}
-                          <div className="match-card-top" style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            padding: '12px 16px',
-                            borderBottom: '1px solid var(--color-border)',
-                            background: 'var(--color-surface)',
+                        className="fixture-row"
+                      >
+                        {/* Time */}
+                        <div style={{
+                          width: 52, flexShrink: 0,
+                          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                        }}>
+                          <span style={{
+                            fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.85rem',
+                            color: isLive ? 'var(--color-red)' : 'var(--color-text-primary)',
+                            lineHeight: 1,
                           }}>
-                            <span style={{
-                              fontSize: '0.68rem',
-                              fontWeight: 800,
-                              color: pouleColor,
-                              background: `${pouleColor}15`,
-                              padding: '3px 10px',
-                              borderRadius: 'var(--radius-full)',
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.04em',
-                            }}>
-                              Poule {poule}
-                            </span>
+                            {m.heure_match?.slice(0, 5)}
+                          </span>
+                          <span style={{
+                            width: 7, height: 7, borderRadius: '50%',
+                            background: STATUS_DOTS[m.statut] || 'var(--color-border)',
+                            animation: isLive ? 'matchPulse 1.4s infinite' : 'none',
+                          }} />
+                        </div>
 
-                            {isLive ? (
-                              <span style={{
-                                fontSize: '0.68rem',
-                                fontWeight: 800,
-                                color: '#EF4444',
-                                background: 'rgba(239,68,68,0.1)',
-                                padding: '3px 10px',
-                                borderRadius: 'var(--radius-full)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 5,
+                        {/* Teams + score */}
+                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 9, flex: 1, justifyContent: 'flex-end', minWidth: 0 }}>
+                            <span style={{
+                              fontSize: '0.8rem', fontWeight: isWinA ? 700 : 500,
+                              color: isWinA ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                            }}>
+                              {m.equipe_a.nom}
+                            </span>
+                            <MiniLogo equipe={m.equipe_a} />
+                          </div>
+
+                          <div style={{
+                            minWidth: 62, textAlign: 'center', flexShrink: 0,
+                          }}>
+                            {isDone || isLive ? (
+                              <div style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 5,
+                                fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '1rem',
+                                padding: '5px 10px', borderRadius: 10,
+                                background: isLive ? 'rgba(239,68,68,0.08)' : 'rgba(42,255,160,0.06)',
                               }}>
-                                <span style={{
-                                  width: 6,
-                                  height: 6,
-                                  borderRadius: '50%',
-                                  background: '#EF4444',
-                                  display: 'inline-block',
-                                  animation: 'pulse 1.5s infinite',
-                                }} />
-                                EN DIRECT
-                              </span>
-                            ) : isDone ? (
-                              <span style={{
-                                fontSize: '0.68rem',
-                                fontWeight: 700,
-                                color: 'var(--color-text-muted)',
-                                background: 'var(--color-surface-elevated)',
-                                padding: '3px 10px',
-                                borderRadius: 'var(--radius-full)',
-                              }}>
-                                ✓ Terminé
-                              </span>
-                            ) : (
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                <CountdownTimer
-                                  targetDate={m.date_match}
-                                  targetTime={m.heure_match || '00:00'}
-                                />
-                                <span style={{
-                                  fontSize: '0.68rem',
-                                  fontWeight: 700,
-                                  color: 'var(--color-primary)',
-                                  background: 'rgba(0,98,51,0.06)',
-                                  padding: '3px 10px',
-                                  borderRadius: 'var(--radius-full)',
-                                }}>
-                                  ⏰ {m.heure_match?.slice(0, 5)}
-                                </span>
+                                <span style={{ color: isWinA ? 'var(--color-primary)' : 'var(--color-text-primary)' }}>{m.score_a ?? 0}</span>
+                                <span style={{ fontSize: '0.55rem', color: 'var(--color-text-muted)' }}>–</span>
+                                <span style={{ color: isWinB ? 'var(--color-primary)' : 'var(--color-text-primary)' }}>{m.score_b ?? 0}</span>
                               </div>
+                            ) : (
+                              <span style={{
+                                fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.75rem',
+                                color: 'var(--color-text-muted)', letterSpacing: '0.1em',
+                              }}>
+                                VS
+                              </span>
                             )}
                           </div>
 
-                          {/* Match Body */}
-                          <div className="match-card-body" style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr auto 1fr',
-                            gap: 6,
-                            alignItems: 'center',
-                            padding: '8px 10px',
-                          }}>
-                            {/* Équipe A */}
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                              <div className="team-badge" style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: 'var(--radius-md)',
-                                overflow: 'hidden',
-                                boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
-                                border: '1.5px solid var(--color-border)',
-                              }}>
-                                <TeamBadge equipe={m.equipe_a} size={30} />
-                              </div>
-                              <span className="team-name" style={{
-                                fontSize: '0.68rem',
-                                fontWeight: isWinA ? 800 : 600,
-                                color: isWinA ? 'var(--color-primary)' : 'var(--color-text-primary)',
-                                textAlign: 'center',
-                                lineHeight: 1.25,
-                                minHeight: 32,
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden',
-                              }}>
-                                {m.equipe_a.nom}
-                              </span>
-                            </div>
-
-                            {/* Score / VS */}
-                            <div className="score-badge" style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: '50%',
-                              background: isLive
-                                ? 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.08))'
-                                : 'linear-gradient(135deg, rgba(0,98,51,0.1), rgba(0,166,81,0.06))',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontWeight: 900,
-                              fontSize: '0.68rem',
-                              color: isLive ? '#EF4444' : 'var(--color-primary)',
-                              border: `1.5px solid ${isLive ? 'rgba(239,68,68,0.25)' : 'rgba(0,98,51,0.18)'}`,
-                              fontFamily: 'var(--font-outfit)',
-                              boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 9, flex: 1, minWidth: 0 }}>
+                            <MiniLogo equipe={m.equipe_b} />
+                            <span style={{
+                              fontSize: '0.8rem', fontWeight: isWinB ? 700 : 500,
+                              color: isWinB ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                             }}>
-                              {isDone || isLive ? (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.68rem' }}>
-                                  <span style={{ fontWeight: 900 }}>{m.score_a ?? 0}</span>
-                                  <span style={{ fontSize: '0.55rem', opacity: 0.6 }}>–</span>
-                                  <span style={{ fontWeight: 900 }}>{m.score_b ?? 0}</span>
-                                </div>
-                              ) : (
-                                <span style={{ fontWeight: 900, fontSize: '0.68rem' }}>VS</span>
-                              )}
-                            </div>
-
-                            {/* Équipe B */}
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                              <div className="team-badge" style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: 'var(--radius-md)',
-                                overflow: 'hidden',
-                                boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
-                                border: '1.5px solid var(--color-border)',
-                              }}>
-                                <TeamBadge equipe={m.equipe_b} size={30} />
-                              </div>
-                              <span className="team-name" style={{
-                                fontSize: '0.68rem',
-                                fontWeight: isWinB ? 800 : 600,
-                                color: isWinB ? 'var(--color-primary)' : 'var(--color-text-primary)',
-                                textAlign: 'center',
-                                lineHeight: 1.25,
-                                minHeight: 32,
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden',
-                              }}>
-                                {m.equipe_b.nom}
-                              </span>
-                            </div>
+                              {m.equipe_b.nom}
+                            </span>
                           </div>
+                        </div>
 
-                          {/* Share Button */}
-                          <button className="share-btn" type="button"
-                            onClick={event => {
-                              event.preventDefault()
-                              event.stopPropagation()
-                              window.open(shareUrl, '_blank', 'noopener,noreferrer')
-                            }}
-                            aria-label="Partager ce match sur WhatsApp"
+                        {/* Right side */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                          <span style={{
+                            fontSize: '0.6rem', fontWeight: 800,
+                            color: pouleColor, background: `${pouleColor}10`,
+                            padding: '4px 9px', borderRadius: 7,
+                            letterSpacing: '0.04em', display: 'none',
+                          }} className="poule-chip">
+                            Poule {poule}
+                          </span>
+                          {isLive && (
+                            <span style={{
+                              fontSize: '0.62rem', fontWeight: 800, color: '#EF4444',
+                              display: 'flex', alignItems: 'center', gap: 4,
+                            }}>
+                              <Zap size={12} /> DIRECT
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={event => { event.preventDefault(); event.stopPropagation(); window.open(shareUrl, '_blank', 'noopener,noreferrer') }}
+                            aria-label="Partager"
                             style={{
-                              position: 'absolute',
-                              top: 6,
-                              right: 6,
-                              width: 28,
-                              height: 28,
-                              borderRadius: '50%',
-                              background: 'var(--color-surface)',
-                              color: 'var(--color-primary)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              border: '1px solid var(--color-border)',
-                              cursor: 'pointer',
-                              transition: 'all 0.15s',
+                              width: 32, height: 32, borderRadius: 9,
+                              background: 'var(--color-bg-primary)', color: 'var(--color-text-muted)',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              border: '1px solid var(--color-border-subtle)', cursor: 'pointer',
+                              flexShrink: 0,
                             }}
                           >
-                            <Share2 size={12} />
+                            <Share2 size={13} />
                           </button>
-
-                          {/* Bottom CTA */}
-                          {m.statut === 'a_venir' && (
-                            <div className="match-card-footer" style={{
-                              borderTop: '1px solid var(--color-border)',
-                              padding: '6px 10px',
-                              display: 'flex',
-                              justifyContent: 'center',
-                              background: 'linear-gradient(135deg, rgba(0,98,51,0.02), rgba(0,166,81,0.02))',
-                            }}>
-                              <span style={{
-                                padding: '6px 14px',
-                                background: 'var(--gradient-green)',
-                                color: 'white',
-                                borderRadius: 'var(--radius-full)',
-                                fontSize: '0.72rem',
-                                fontWeight: 700,
-                                boxShadow: '0 3px 10px rgba(0,98,51,0.2)',
-                                fontFamily: 'var(--font-outfit)',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 3,
-                                letterSpacing: '0.01em',
-                              }}>
-                                🎯 Pronostiquer →
-                              </span>
-                            </div>
-                          )}
                         </div>
                       </Link>
                     )
@@ -809,93 +667,26 @@ export default function MatchListClient({ initialMatchs }: Props) {
           })}
         </div>
       )}
+
       <style>{`
+        @keyframes matchPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+        .refresh-icon { transform: rotate(90deg); }
+        .fixture-row:hover { background: var(--color-bg-primary); }
+        .day-strip::-webkit-scrollbar { display: none; }
+        .journee-selector::-webkit-scrollbar { display: none; }
+        @media (min-width: 641px) {
+          .poule-chip { display: inline-block !important; }
+        }
         @media (max-width: 640px) {
-          .matchs-wrapper {
-            padding-bottom: 96px !important;
-          }
-          .matchs-hero {
-            border-radius: 0 0 16px 16px !important;
-            margin-left: -12px !important;
-            margin-right: -12px !important;
-            margin-bottom: 10px !important;
-            padding: 14px 12px !important;
-          }
-          .matchs-hero h1 {
-            font-size: 1.05rem !important;
-            text-align: left !important;
-            letter-spacing: 0 !important;
-          }
-          .matchs-hero p {
-            text-align: left !important;
-            margin-bottom: 10px !important;
-          }
-          .matchs-filter-panel {
-            position: sticky;
-            top: 0;
-            z-index: 30;
-            margin-left: -8px;
-            margin-right: -8px;
-            padding: 10px !important;
-            border-radius: 12px !important;
-            backdrop-filter: blur(14px);
-          }
-          .matchs-filter-row {
-            scrollbar-width: none;
-          }
-          .matchs-filter-row::-webkit-scrollbar,
-          .journee-tabs::-webkit-scrollbar {
-            display: none;
-          }
-          .journee-tabs {
-            position: sticky;
-            top: 108px;
-            z-index: 25;
-            background: var(--color-bg-primary);
-            padding: 6px 0 8px !important;
-            margin-bottom: 10px !important;
-          }
-          .match-card {
-            padding: 0 !important;
-            border-radius: var(--radius-md) !important;
-          }
-          .match-card-top {
-            padding: 7px 8px !important;
-          }
-          .match-card-body {
-            padding: 8px !important;
-            gap: 4px !important;
-          }
-          .team-badge {
-            width: 26px !important;
-            height: 26px !important;
-          }
-          .team-badge img {
-            width: 26px !important;
-            height: 26px !important;
-          }
-          .score-badge {
-            width: 28px !important;
-            height: 28px !important;
-            font-size: 0.65rem !important;
-          }
-          .team-name {
-            font-size: 0.65rem !important;
-            min-height: 34px !important;
-          }
-          .match-card-footer {
-            padding: 6px 8px !important;
-          }
-          .share-btn {
-            width: 24px !important;
-            height: 24px !important;
-            top: 4px !important;
-            right: 4px !important;
-          }
-          .share-btn svg {
-            width: 10px !important;
-            height: 10px !important;
-          }
+          .matchs-wrapper { padding-bottom: 96px !important; }
+          .matchs-control { position: sticky; top: 0; z-index: 30; margin-left: -8px; margin-right: -8px; backdrop-filter: blur(14px); background: rgba(14,23,19,0.92); }
+          .fixture-day { scroll-margin-top: 180px; }
+        }
+        @media (min-width: 641px) {
+          .fixture-day { scroll-margin-top: 16px; }
         }
       `}</style>
     </div>

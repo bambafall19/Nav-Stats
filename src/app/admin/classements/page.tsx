@@ -92,7 +92,7 @@ export default function AdminClassementsPage() {
   }
 
   const pouleColors: Record<Poule, string> = {
-    A: '#006233',
+    A: '#0dca6b',
     B: '#1E40AF', 
     C: '#B91C1C'
   }
@@ -101,7 +101,7 @@ export default function AdminClassementsPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+          <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
             🏆 Classements par Poule
           </h1>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginTop: 4 }}>

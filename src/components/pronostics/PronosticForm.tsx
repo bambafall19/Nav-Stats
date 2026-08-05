@@ -7,6 +7,8 @@ import FormSubmitButton from '@/components/shared/FormSubmitButton'
 import LinkButton from '@/components/shared/LinkButton'
 import type { Database } from '@/types/database.types'
 import { addToOfflineQueue, getPendingCount, syncOfflineQueue } from '@/lib/offlineQueue'
+import ScoreboardPanel from '@/components/shared/ScoreboardPanel'
+import { Target, LogIn, UserPlus, CheckCircle2, Trophy, WifiOff, RefreshCw, AlertTriangle, Goal, Star, Lock } from 'lucide-react'
 
 type Equipe = Database['public']['Tables']['equipes']['Row']
 type Joueur = Database['public']['Tables']['joueurs']['Row']
@@ -20,6 +22,42 @@ interface Props {
   joueursB: Joueur[]
   userId: string | null
   existingPronostic: Pronostic | null
+}
+
+function TeamTile({ equipe, size = 40 }: { equipe: Equipe; size?: number }) {
+  const inner = equipe.logo_url ? (
+    <img src={equipe.logo_url} alt={equipe.nom}
+      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: size * 0.33 }}
+    />
+  ) : (
+    <div style={{
+      width: '100%', height: '100%',
+      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#0dca6b'}, ${equipe.couleur_secondaire || '#ffc94d'})`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: size * 0.34, fontWeight: 800, color: 'white',
+      fontFamily: 'var(--font-plus-jakarta)', borderRadius: size * 0.33,
+    }}>
+      {equipe.sigle || equipe.nom.charAt(0)}
+    </div>
+  )
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: size * 0.33,
+      overflow: 'hidden', border: '1px solid var(--color-border-subtle)',
+      background: 'var(--color-surface-card)', flexShrink: 0,
+      boxShadow: '0 3px 10px rgba(0,0,0,0.2)',
+    }}>
+      {inner}
+    </div>
+  )
+}
+
+function Label({ children, icon }: { children: React.ReactNode; icon?: React.ReactNode }) {
+  return (
+    <label className="label" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.72rem', letterSpacing: '0.04em' }}>
+      {icon} {children}
+    </label>
+  )
 }
 
 export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, joueursB, userId, existingPronostic }: Props) {
@@ -61,31 +99,61 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
 
   if (!userId) {
     return (
-      <div className="card ai-card" style={{ padding: 32, textAlign: 'center' }}>
-        <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🎯</div>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 8 }}>Faites votre pronostic</h3>
-        <p style={{ color: 'var(--color-text-secondary)', marginBottom: 20, fontSize: '0.9rem' }}>
+      <ScoreboardPanel title="Votre Pronostic" icon={<Target size={14} color="var(--color-primary)" />} bodyStyle={{ padding: 28, textAlign: 'center' }}>
+        <div style={{
+          width: 56, height: 56, borderRadius: 18,
+          background: 'var(--gradient-green-soft)',
+          border: '1px solid rgba(42,255,160,0.25)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 16px',
+          boxShadow: '0 8px 24px rgba(42,255,160,0.12)',
+        }}>
+          <Target size={26} color="var(--color-primary)" />
+        </div>
+        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: 8, fontFamily: 'var(--font-plus-jakarta)' }}>
+          Faites votre pronostic
+        </h3>
+        <p style={{ color: 'var(--color-text-secondary)', marginBottom: 20, fontSize: '0.85rem' }}>
           Connectez-vous pour pronostiquer ce match et gagner des points !
         </p>
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <LinkButton href="/auth/login" variant="primary" size="md">🔑 Connexion</LinkButton>
-          <LinkButton href="/auth/register" variant="secondary" size="md">✨ S&apos;inscrire</LinkButton>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <LinkButton href="/auth/login" variant="primary" size="md">
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><LogIn size={14} /> Connexion</span>
+          </LinkButton>
+          <LinkButton href="/auth/register" variant="secondary" size="md">
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><UserPlus size={14} /> S&apos;inscrire</span>
+          </LinkButton>
         </div>
-      </div>
+      </ScoreboardPanel>
     )
   }
 
   if (existingPronostic && !success) {
+    const isA = existingPronostic.resultat_predit === 'equipe_a'
+    const isB = existingPronostic.resultat_predit === 'equipe_b'
     return (
-      <div className="card" style={{ padding: 24, border: '2px solid rgba(0,166,81,0.3)' }}>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-          <div style={{ fontSize: '2rem', flexShrink: 0 }}>✅</div>
-          <div>
-            <h3 style={{ fontWeight: 700, marginBottom: 8 }}>Votre pronostic est enregistré</h3>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+      <ScoreboardPanel title="Votre Pronostic" icon={<CheckCircle2 size={14} color="var(--color-primary)" />}>
+        <div style={{
+          padding: '16px',
+          borderRadius: 'var(--radius-md)',
+          background: 'var(--gradient-green-soft)',
+          border: '1px solid rgba(42,255,160,0.2)',
+          display: 'flex', alignItems: 'center', gap: 14,
+        }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: 14, flexShrink: 0,
+            background: 'rgba(42,255,160,0.14)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <CheckCircle2 size={22} color="var(--color-primary)" />
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3 style={{ fontWeight: 800, marginBottom: 8, fontSize: '0.95rem', fontFamily: 'var(--font-plus-jakarta)' }}>
+              Votre pronostic est enregistré
+            </h3>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               <span className="badge badge-green">
-                {existingPronostic.resultat_predit === 'equipe_a' ? `Victoire ${equipeA.nom}` :
-                 existingPronostic.resultat_predit === 'equipe_b' ? `Victoire ${equipeB.nom}` : 'Match Nul'}
+                {isA ? `Victoire ${equipeA.nom}` : isB ? `Victoire ${equipeB.nom}` : 'Match Nul'}
               </span>
               {existingPronostic.score_exact && existingPronostic.score_a_predit !== null && existingPronostic.score_b_predit !== null && (
                 <span className="badge badge-blue">
@@ -93,21 +161,25 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
                 </span>
               )}
               {existingPronostic.premier_buteur_id && (
-                <span className="badge badge-gold">⚽ Premier buteur</span>
+                <span className="badge badge-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <Goal size={10} /> Premier buteur
+                </span>
               )}
               {existingPronostic.homme_du_match_predit_id && (
-                <span className="badge badge-green">⭐ Homme du match</span>
+                <span className="badge badge-green" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <Star size={10} /> Homme du match
+                </span>
               )}
             </div>
             {existingPronostic.points_gagnes > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'rgba(251,191,0,0.15)', borderRadius: 'var(--radius-md)' }}>
-                <span>🏆</span>
-                <span style={{ fontWeight: 700, color: '#7a5900' }}>+{existingPronostic.points_gagnes} points gagnés !</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'rgba(255,201,77,0.12)', border: '1px solid rgba(255,201,77,0.3)', borderRadius: 10, marginTop: 10 }}>
+                <Trophy size={14} color="var(--color-accent)" />
+                <span style={{ fontWeight: 700, color: 'var(--color-accent)', fontSize: '0.8rem' }}>+{existingPronostic.points_gagnes} points gagnés !</span>
               </div>
             )}
           </div>
         </div>
-      </div>
+      </ScoreboardPanel>
     )
   }
 
@@ -146,31 +218,34 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
     router.refresh()
   }
 
-  const options: { value: 'equipe_a' | 'nul' | 'equipe_b'; label: string; icon: string; color: string }[] = [
-    { value: 'equipe_a', label: equipeA.nom, icon: '🏆', color: equipeA.couleur_principale },
-    { value: 'nul', label: 'Match Nul', icon: '🤝', color: '#64748B' },
-    { value: 'equipe_b', label: equipeB.nom, icon: '🏆', color: equipeB.couleur_principale },
+  const options: { value: 'equipe_a' | 'nul' | 'equipe_b'; label: string; color: string }[] = [
+    { value: 'equipe_a', label: equipeA.nom, color: equipeA.couleur_principale || '#0dca6b' },
+    { value: 'nul', label: 'Match Nul', color: '#64748B' },
+    { value: 'equipe_b', label: equipeB.nom, color: equipeB.couleur_principale || '#0dca6b' },
   ]
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '11px 12px', borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border)', background: 'var(--color-surface-card)',
+    fontSize: '0.9rem', color: 'var(--color-text-primary)',
+  }
+
   return (
-    <div className="card" style={{ padding: 28 }}>
-      <h3 style={{ fontWeight: 800, fontSize: '1.2rem', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
-        🎯 Votre Pronostic
-      </h3>
-      <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: 24 }}>
-        Choisissez seulement le vainqueur ou le match nul. Victoire trouvée = 3 pts · Nul trouvé = 1 pt.
+    <ScoreboardPanel title="Votre Pronostic" icon={<Target size={14} color="var(--color-primary)" />}>
+      <p style={{ fontSize: '0.76rem', color: 'var(--color-text-secondary)', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <Lock size={12} color="var(--color-text-muted)" /> Choisissez le vainqueur ou le match nul. Victoire trouvée = 3 pts · Nul trouvé = 1 pt.
       </p>
 
       {!isOnline && (
-        <div style={{ padding: '10px 14px', background: 'rgba(251,191,0,0.1)', border: '1px solid rgba(251,191,0,0.3)', borderRadius: 'var(--radius-md)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: '#7a5900' }}>
-          <span>⚠️</span>
+        <div style={{ padding: '10px 14px', background: 'rgba(255,201,77,0.1)', border: '1px solid rgba(255,201,77,0.3)', borderRadius: 10, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.78rem', color: 'var(--color-accent)' }}>
+          <WifiOff size={14} style={{ flexShrink: 0 }} />
           <span>Vous êtes hors ligne. Votre pronostic sera synchronisé automatiquement.</span>
         </div>
       )}
 
       {pendingCount > 0 && isOnline && (
-        <div style={{ padding: '10px 14px', background: 'rgba(0,166,81,0.1)', border: '1px solid rgba(0,166,81,0.3)', borderRadius: 'var(--radius-md)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: 'var(--color-primary)' }}>
-          <span>🔄</span>
+        <div style={{ padding: '10px 14px', background: 'rgba(42,255,160,0.08)', border: '1px solid rgba(42,255,160,0.25)', borderRadius: 10, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.78rem', color: 'var(--color-primary-dark)' }}>
+          <RefreshCw size={14} style={{ flexShrink: 0 }} />
           <span>{pendingCount} pronostic{pendingCount > 1 ? 's' : ''} en attente de synchronisation...</span>
         </div>
       )}
@@ -178,19 +253,32 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
       <form onSubmit={handleSubmit}>
         {/* Choix du résultat */}
         <div style={{ marginBottom: 24 }}>
-          <label className="label">Votre prédiction *</label>
-          <div className="simple-pronostic-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10 }}>
+          <Label>Votre prédiction *</Label>
+          <div className="simple-pronostic-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10, marginTop: 8 }}>
             {options.map(opt => (
               <button
                 key={opt.value}
                 type="button"
                 className={`pronostic-option${resultat === opt.value ? ' selected' : ''}`}
                 onClick={() => setResultat(opt.value)}
-                style={resultat === opt.value ? { borderColor: opt.color, background: `${opt.color}12` } : {}}
+                style={resultat === opt.value ? { borderColor: opt.color, background: `${opt.color}12`, boxShadow: `0 0 0 3px ${opt.color}22, 0 6px 20px ${opt.color}18` } : {}}
                 id={`pronostic-${opt.value}`}
               >
-                <span style={{ fontSize: '1.4rem' }}>{opt.icon}</span>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, textAlign: 'center', color: resultat === opt.value ? opt.color : 'var(--color-text-secondary)', lineHeight: 1.2 }}>
+                {opt.value === 'nul' ? (
+                  <span style={{
+                    width: 34, height: 34, borderRadius: 11, flexShrink: 0,
+                    background: resultat === opt.value ? 'rgba(100,116,139,0.2)' : 'var(--color-bg-primary)',
+                    border: `1px solid ${resultat === opt.value ? '#64748B' : 'var(--color-border-subtle)'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.62rem', fontWeight: 900, color: resultat === opt.value ? '#94a3b8' : 'var(--color-text-muted)',
+                    fontFamily: 'var(--font-mono)',
+                  }}>
+                    N
+                  </span>
+                ) : (
+                  <TeamTile equipe={opt.value === 'equipe_a' ? equipeA : equipeB} size={34} />
+                )}
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, textAlign: 'center', color: resultat === opt.value ? opt.color : 'var(--color-text-secondary)', lineHeight: 1.2 }}>
                   {opt.label}
                 </span>
               </button>
@@ -200,18 +288,18 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
 
         {/* Score exact */}
         <div style={{ marginBottom: 24 }}>
-          <label className="label">Score exact (optionnel)</label>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Label>Score exact (optionnel)</Label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
             <input
               type="number"
               min="0"
               value={scoreA ?? ''}
               onChange={e => setScoreA(e.target.value ? parseInt(e.target.value) : null)}
-              placeholder={equipeA.nom}
+              placeholder={equipeA.sigle || equipeA.nom}
               style={{
-                width: 80, padding: '10px 12px', borderRadius: 'var(--radius-md)',
+                width: 84, padding: '11px 12px', borderRadius: 'var(--radius-md)',
                 border: '1px solid var(--color-border)', background: 'var(--color-surface-card)',
-                textAlign: 'center', fontSize: '1rem', fontFamily: 'var(--font-outfit)', fontWeight: 700
+                textAlign: 'center', fontSize: '1.05rem', fontFamily: 'var(--font-mono)', fontWeight: 800,
               }}
             />
             <span style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>–</span>
@@ -220,11 +308,11 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
               min="0"
               value={scoreB ?? ''}
               onChange={e => setScoreB(e.target.value ? parseInt(e.target.value) : null)}
-              placeholder={equipeB.nom}
+              placeholder={equipeB.sigle || equipeB.nom}
               style={{
-                width: 80, padding: '10px 12px', borderRadius: 'var(--radius-md)',
+                width: 84, padding: '11px 12px', borderRadius: 'var(--radius-md)',
                 border: '1px solid var(--color-border)', background: 'var(--color-surface-card)',
-                textAlign: 'center', fontSize: '1rem', fontFamily: 'var(--font-outfit)', fontWeight: 700
+                textAlign: 'center', fontSize: '1.05rem', fontFamily: 'var(--font-mono)', fontWeight: 800,
               }}
             />
           </div>
@@ -233,15 +321,11 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
         {/* Premier buteur */}
         {joueursA.length > 0 && joueursB.length > 0 && (
           <div style={{ marginBottom: 24 }}>
-            <label className="label">Premier buteur (optionnel)</label>
+            <Label icon={<Goal size={13} color="var(--color-text-muted)" />}>Premier buteur (optionnel)</Label>
             <select
               value={premierButeur || ''}
               onChange={e => setPremierButeur(e.target.value || null)}
-              style={{
-                width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--color-border)', background: 'var(--color-surface-card)',
-                fontSize: '0.9rem', color: 'var(--color-text-primary)'
-              }}
+              style={{ ...inputStyle, marginTop: 8 }}
             >
               <option value="">Sélectionner un joueur</option>
               <optgroup label={equipeA.nom}>
@@ -261,15 +345,11 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
         {/* Homme du match */}
         {joueursA.length > 0 && joueursB.length > 0 && (
           <div style={{ marginBottom: 24 }}>
-            <label className="label">Homme du match (optionnel)</label>
+            <Label icon={<Star size={13} color="var(--color-text-muted)" />}>Homme du match (optionnel)</Label>
             <select
               value={hommeDuMatch || ''}
               onChange={e => setHommeDuMatch(e.target.value || null)}
-              style={{
-                width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--color-border)', background: 'var(--color-surface-card)',
-                fontSize: '0.9rem', color: 'var(--color-text-primary)'
-              }}
+              style={{ ...inputStyle, marginTop: 8 }}
             >
               <option value="">Sélectionner un joueur</option>
               <optgroup label={equipeA.nom}>
@@ -287,18 +367,18 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
         )}
 
         {error && (
-          <div style={{ padding: '12px 16px', background: 'rgba(232,0,45,0.08)', border: '1px solid rgba(232,0,45,0.2)', borderRadius: 'var(--radius-md)', color: 'var(--color-red)', fontSize: '0.875rem', marginBottom: 16 }}>
-            ⚠️ {error}
+          <div style={{ padding: '10px 14px', background: 'rgba(232,0,45,0.06)', border: '1px solid rgba(232,0,45,0.2)', borderRadius: 10, color: 'var(--color-red)', fontSize: '0.78rem', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <AlertTriangle size={14} style={{ flexShrink: 0 }} /> {error}
           </div>
         )}
 
         {success && (
-          <div style={{ padding: '12px 16px', background: 'rgba(0,166,81,0.1)', border: '1px solid rgba(0,166,81,0.3)', borderRadius: 'var(--radius-md)', color: 'var(--color-primary)', fontSize: '0.875rem', marginBottom: 16 }}>
-            ✅ {isOnline ? 'Pronostic enregistré avec succès !' : 'Pronostic enregistré hors ligne. Il sera synchronisé dès que vous serez connecté.'}
+          <div style={{ padding: '10px 14px', background: 'rgba(0,166,81,0.08)', border: '1px solid rgba(0,166,81,0.25)', borderRadius: 10, color: 'var(--color-primary)', fontSize: '0.78rem', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <CheckCircle2 size={14} style={{ flexShrink: 0 }} /> {isOnline ? 'Pronostic enregistré avec succès !' : 'Pronostic enregistré hors ligne. Il sera synchronisé dès que vous serez connecté.'}
           </div>
         )}
 
-        <FormSubmitButton loading={loading} disabled={!resultat} icon="🎯" loadingIcon="⏳" loadingText="Enregistrement...">
+        <FormSubmitButton loading={loading} disabled={!resultat} loadingText="Enregistrement...">
           Valider ma prédiction
         </FormSubmitButton>
       </form>
@@ -316,6 +396,6 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
           }
         }
       `}</style>
-    </div>
+    </ScoreboardPanel>
   )
 }

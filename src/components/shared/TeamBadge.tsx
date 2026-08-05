@@ -30,7 +30,7 @@ const TeamBadge = memo(function TeamBadge({
         gap: '6px',
         fontSize: dims.fontSize,
         fontWeight: 600,
-        color: '#1a1a2e',
+        color: 'var(--color-text-primary)',
       }}
     >
       {logo ? (
@@ -47,13 +47,13 @@ const TeamBadge = memo(function TeamBadge({
             width: dims.width,
             height: dims.height,
             borderRadius: '50%',
-            background: '#e0e0e0',
+            background: 'var(--color-surface-elevated)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '0.6rem',
             fontWeight: 700,
-            color: '#999',
+            color: 'var(--color-text-secondary)',
           }}
         >
           {name.substring(0, 2).toUpperCase()}

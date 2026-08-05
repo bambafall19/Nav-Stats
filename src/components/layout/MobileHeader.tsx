@@ -1,9 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { Search } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
@@ -11,20 +10,24 @@ import NotificationBell from '@/components/shared/NotificationBell'
 type Profile = Database['public']['Tables']['profiles']['Row']
 
 export default function MobileHeader() {
-  const pathname = usePathname()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then((res) => {
-      const user = res.data?.user
-      if (user) {
-        supabase.from('profiles').select('*').eq('id', user.id).single()
-          .then((resProfile) => setProfile(resProfile.data))
+    ;(async () => {
+      try {
+        const res = await supabase.auth.getUser()
+        const user = res.data?.user
+        if (user) {
+          const resProfile = await supabase.from('profiles').select('*').eq('id', user.id).single()
+          setProfile(resProfile.data)
+        }
+      } catch {
+        // Connexion Supabase temporairement indisponible — ignoré silencieusement
       }
-    })
+    })()
   }, [])
 
   const handleSearch = (e: React.FormEvent) => {
@@ -40,89 +43,90 @@ export default function MobileHeader() {
         id="mobile-header"
         style={{
           position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 52,
-          background: 'var(--header-bg)',
-          backdropFilter: 'blur(20px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-          borderBottom: '1px solid var(--header-border)',
-          boxShadow: 'var(--header-shadow)',
+          top: 'calc(10px + env(safe-area-inset-top))',
+          left: 10,
+          right: 10,
+          height: 72,
+          padding: '0 16px',
+          background: 'rgba(0, 0, 0, 0.55)',
+          backdropFilter: 'blur(20px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+          border: '1px solid rgba(255, 255, 255, 0.06)',
+          borderRadius: 24,
           zIndex: 1000,
           display: 'none',
+          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.18)',
         }}
       >
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           height: '100%',
-          padding: '0 14px',
-          gap: 10,
+          width: '100%',
+          gap: 16,
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-            <button
-              onClick={() => setSearchOpen(!searchOpen)}
-              aria-label="Rechercher"
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 10,
-                border: '1px solid var(--color-border)',
-                background: 'var(--color-surface-card)',
-                color: 'var(--color-text-primary)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: 'var(--shadow-sm)',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <Search size={16} />
-            </button>
-
-            {profile && <NotificationBell userId={profile.id} />}
+          {/* Gauche : Notifications */}
+          <div style={{ width: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            {profile
+              ? <NotificationBell userId={profile.id} variant="icon" badgeColor="green" />
+              : <div style={{ width: 44, height: 44 }} />}
           </div>
 
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          {/* Centre : Logo + marque */}
+          <Link href="/" style={{
+            textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            gap: 12, flexShrink: 0,
+          }}>
             <div style={{
-              width: 28,
-              height: 28,
-              borderRadius: 8,
+              width: 40, height: 40, borderRadius: 12,
               background: 'var(--gradient-green)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              flexShrink: 0,
-              boxShadow: '0 3px 10px rgba(0,98,51,0.18)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              overflow: 'hidden', flexShrink: 0,
             }}>
-              <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />
+              <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <span style={{
-              fontFamily: 'var(--font-outfit)',
-              fontWeight: 800,
-              fontSize: '0.95rem',
-              color: 'var(--color-primary)',
-              letterSpacing: '-0.02em',
+              fontFamily: 'var(--font-signature)',
+              fontWeight: 700, fontSize: 34,
+              color: '#FFFFFF',
+              letterSpacing: '-0.01em',
               whiteSpace: 'nowrap',
             }}>NavéStats</span>
           </Link>
+
+          {/* Droite : Recherche */}
+          <div style={{ width: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <button
+              onClick={() => setSearchOpen(!searchOpen)}
+              aria-label="Rechercher"
+              className="header-icon-btn"
+              style={{
+                width: 44, height: 44, borderRadius: '50%',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: searchOpen ? 'rgba(42,255,160,0.12)' : 'rgba(255, 255, 255, 0.06)',
+                color: searchOpen ? 'var(--color-primary)' : '#FFFFFF',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 1px 4px rgba(0, 0, 0, 0.12)',
+                transition: 'transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease',
+              }}
+            >
+              {searchOpen ? <X size={22} /> : <Search size={22} />}
+            </button>
+          </div>
         </div>
 
+        {/* Search dropdown */}
         {searchOpen && (
           <div style={{
-            position: 'absolute',
-            top: 52,
-            left: 0,
-            right: 0,
-            padding: '8px 14px',
-            background: 'var(--color-surface-card)',
-            borderBottom: '1px solid var(--color-border)',
-            boxShadow: 'var(--shadow-md)',
+            position: 'absolute', top: 78, left: 0, right: 0,
+            padding: '8px 10px',
+            background: 'var(--color-surface-elevated)',
+            borderBottom: '1px solid var(--color-border-subtle)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
             zIndex: 1001,
+            borderRadius: '0 0 18px 18px',
             animation: 'slideDown 0.18s ease',
           }}>
             <form onSubmit={handleSearch} style={{ display: 'flex', gap: 6 }}>
@@ -131,47 +135,43 @@ export default function MobileHeader() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Rechercher équipes, matchs, joueurs..."
+                placeholder="Rechercher..."
                 style={{
-                  flex: 1,
-                  padding: '10px 12px',
-                  borderRadius: 10,
-                  border: '1.5px solid var(--color-border)',
+                  flex: 1, padding: '10px 14px', borderRadius: 12,
+                  border: '1px solid var(--color-border-subtle)',
                   background: 'var(--color-bg-secondary)',
                   color: 'var(--color-text-primary)',
-                  fontSize: '15px',
-                  outline: 'none',
+                  fontSize: '0.85rem', outline: 'none',
                   fontFamily: 'var(--font-inter)',
                 }}
               />
-              <button
-                type="submit"
-                style={{
-                  padding: '0 14px',
-                  borderRadius: 10,
-                  background: 'var(--gradient-green)',
-                  color: 'white',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 700,
-                  fontSize: '0.8rem',
-                  fontFamily: 'var(--font-outfit)',
-                  boxShadow: 'var(--shadow-green)',
-                }}
-              >
-                OK
-              </button>
+              <button type="submit" style={{
+                padding: '0 16px', borderRadius: 12,
+                background: 'var(--gradient-green)', color: 'var(--color-text-on-primary)',
+                border: 'none', cursor: 'pointer',
+                fontWeight: 700, fontSize: '0.75rem',
+                fontFamily: 'var(--font-plus-jakarta)',
+              }}>OK</button>
             </form>
           </div>
         )}
       </header>
 
+      {/* Spacer */}
+      <div className="mobile-spacer" style={{ height: 68 }} />
+
       <style>{`
         @media (max-width: 767px) {
           #mobile-header { display: flex !important; }
+          .mobile-spacer { display: block !important; height: calc(82px + env(safe-area-inset-top)) !important; }
         }
         @media (min-width: 768px) {
           #mobile-header { display: none !important; }
+          .mobile-spacer { display: none !important; }
+        }
+        #mobile-header .header-icon-btn:active,
+        #mobile-header #notification-bell:active {
+          transform: scale(0.96);
         }
         @keyframes slideDown {
           from { opacity: 0; transform: translateY(-6px); }

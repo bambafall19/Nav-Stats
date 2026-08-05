@@ -58,7 +58,7 @@ export function UserPreferences({ userId }: { userId: string }) {
 
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)', maxWidth: 600 }}>
-      <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
+      <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
         ⚙️ Préférences
       </h1>
 
@@ -70,7 +70,7 @@ export function UserPreferences({ userId }: { userId: string }) {
         padding: 'clamp(16px, 3vw, 20px)',
         marginBottom: 'clamp(16px, 3vw, 20px)',
       }}>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
           🔔 Notifications
         </h2>
 
@@ -108,7 +108,7 @@ export function UserPreferences({ userId }: { userId: string }) {
         padding: 'clamp(16px, 3vw, 20px)',
         marginBottom: 'clamp(16px, 3vw, 20px)',
       }}>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
           📬 Canaux
         </h2>
 
@@ -144,7 +144,7 @@ export function UserPreferences({ userId }: { userId: string }) {
         padding: 'clamp(16px, 3vw, 20px)',
         marginBottom: 'clamp(16px, 3vw, 20px)',
       }}>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
           🌐 Langue
         </h2>
 
@@ -175,7 +175,7 @@ export function UserPreferences({ userId }: { userId: string }) {
         padding: 'clamp(16px, 3vw, 20px)',
         marginBottom: 'clamp(24px, 5vw, 32px)',
       }}>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
           🔐 Confidentialité
         </h2>
 

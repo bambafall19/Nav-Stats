@@ -57,7 +57,7 @@ export function RankingNotificationListener() {
         <div
           key={notif.id}
           style={{
-            background: notif.type === 'up' ? '#00A651' : '#E74C3C',
+            background: notif.type === 'up' ? '#0dca6b' : '#E74C3C',
             color: 'white',
             padding: 12,
             borderRadius: 8,

@@ -12,8 +12,8 @@ export default function EquipesManagement() {
   const [formData, setFormData] = useState({
     nom: '',
     logo_url: '',
-    couleur_principale: '#006233',
-    couleur_secondaire: '#00A651',
+    couleur_principale: '#0dca6b',
+    couleur_secondaire: '#0dca6b',
     asc_nom: '',
     quartier: '',
     sigle: '',
@@ -46,7 +46,7 @@ export default function EquipesManagement() {
         await supabase.from('equipes').insert([formData])
         addToast('Équipe créée', 'success')
       }
-      setFormData({ nom: '', logo_url: '', couleur_principale: '#006233', couleur_secondaire: '#00A651', asc_nom: '', quartier: '', sigle: '' })
+      setFormData({ nom: '', logo_url: '', couleur_principale: '#0dca6b', couleur_secondaire: '#0dca6b', asc_nom: '', quartier: '', sigle: '' })
       setEditingId(null)
       setShowForm(false)
       fetchEquipes()
@@ -75,14 +75,14 @@ export default function EquipesManagement() {
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', margin: 0 }}>
+        <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', margin: 0 }}>
           🏆 Gestion des Équipes
         </h1>
         <button
           onClick={() => {
             setShowForm(!showForm)
             setEditingId(null)
-            setFormData({ nom: '', logo_url: '', couleur_principale: '#006233', couleur_secondaire: '#00A651', asc_nom: '', quartier: '', sigle: '' })
+            setFormData({ nom: '', logo_url: '', couleur_principale: '#0dca6b', couleur_secondaire: '#0dca6b', asc_nom: '', quartier: '', sigle: '' })
           }}
           style={{
             padding: '10px 16px',

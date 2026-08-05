@@ -37,8 +37,8 @@ export default class ErrorBoundary extends React.Component<Props, State> {
             alignItems: 'center',
             justifyContent: 'center',
             padding: '20px',
-            background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
-            fontFamily: 'var(--font-outfit), system-ui, sans-serif',
+            background: 'linear-gradient(135deg, var(--color-surface-elevated) 0%, var(--color-surface) 100%)',
+            fontFamily: 'var(--font-plus-jakarta), system-ui, sans-serif',
           }}
         >
           <div style={{ textAlign: 'center', maxWidth: '500px' }}>
@@ -47,7 +47,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
               style={{
                 fontSize: '1.8rem',
                 fontWeight: 800,
-                color: '#1a1a2e',
+                color: 'var(--color-text-primary)',
                 marginBottom: '8px',
               }}
             >
@@ -56,7 +56,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
             <p
               style={{
                 fontSize: '0.95rem',
-                color: '#666',
+                color: 'var(--color-text-secondary)',
                 marginBottom: '24px',
                 lineHeight: 1.6,
               }}
@@ -66,16 +66,17 @@ export default class ErrorBoundary extends React.Component<Props, State> {
             </p>
             <div
               style={{
-                background: '#f0f0f0',
+                background: 'var(--color-surface-card)',
                 padding: '12px 16px',
                 borderRadius: '8px',
                 marginBottom: '24px',
                 fontSize: '0.75rem',
-                color: '#999',
+                color: 'var(--color-text-muted)',
                 fontFamily: 'monospace',
                 textAlign: 'left',
                 overflow: 'auto',
                 maxHeight: '150px',
+                border: '1px solid var(--color-border)',
               }}
             >
               {this.state.error?.message || 'Unknown error'}
@@ -86,13 +87,13 @@ export default class ErrorBoundary extends React.Component<Props, State> {
                 display: 'inline-block',
                 padding: '12px 24px',
                 borderRadius: '12px',
-                background: 'linear-gradient(135deg, #00A651 0%, #008c3f 100%)',
+                background: 'var(--gradient-green)',
                 color: 'white',
                 border: 'none',
                 fontWeight: 700,
                 fontSize: '0.9rem',
                 cursor: 'pointer',
-                fontFamily: 'var(--font-outfit), system-ui, sans-serif',
+                fontFamily: 'var(--font-plus-jakarta), system-ui, sans-serif',
               }}
             >
               🏠 Retour à l'accueil

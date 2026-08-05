@@ -89,7 +89,7 @@ export default async function AdminDashboard() {
 
   // Données graphique pronostics (pie)
   const pronoChartData = [
-    { name: 'Victoire A', value: pronoDom, color: '#006233' },
+    { name: 'Victoire A', value: pronoDom, color: '#0dca6b' },
     { name: 'Match Nul', value: pronoNul, color: '#64748B' },
     { name: 'Victoire B', value: pronoExt, color: '#1D4ED8' },
   ]
@@ -108,14 +108,14 @@ export default async function AdminDashboard() {
   }))
 
   const statCards = [
-    { label: 'Utilisateurs', helper: 'comptes créés', value: totalUsers || 0, icon: '👥', color: '#006233', bg: 'rgba(0,98,51,0.12)', trend: '+12%' },
+    { label: 'Utilisateurs', helper: 'comptes créés', value: totalUsers || 0, icon: '👥', color: '#0dca6b', bg: 'rgba(42,255,160,0.12)', trend: '+12%' },
     { label: 'Matchs', helper: 'au calendrier', value: totalMatchs || 0, icon: '⚽', color: '#1D4ED8', bg: 'rgba(29,78,216,0.12)', trend: null },
     { label: 'Pronostics', helper: 'soumis', value: totalPronostics || 0, icon: '🎯', color: '#B45309', bg: 'rgba(180,83,9,0.12)', trend: '+8%' },
     { label: 'Équipes', helper: 'enregistrées', value: totalEquipes || 0, icon: '🛡️', color: '#7C3AED', bg: 'rgba(124,58,237,0.12)', trend: null },
   ]
 
   const quickActions = [
-    { href: '/admin/matchs', icon: '⚽', label: 'Nouveau match', detail: 'Créer une affiche', color: '#006233' },
+    { href: '/admin/matchs', icon: '⚽', label: 'Nouveau match', detail: 'Créer une affiche', color: '#0dca6b' },
     { href: '/admin/resultats', icon: '✅', label: 'Résultats', detail: 'Saisir les scores', color: '#1D4ED8' },
     { href: '/admin/classement', icon: '📊', label: 'Classement', detail: 'Modifier les stats', color: '#B45309' },
     { href: '/admin/notifications', icon: '🔔', label: 'Notifications', detail: 'Alerter la communauté', color: '#7C3AED' },
@@ -171,7 +171,7 @@ export default async function AdminDashboard() {
       {/* Opérations rapides */}
       <section className="admin-ops-grid">
         {[
-          { label: "Matchs aujourd'hui", value: matchsAujourdhui || 0, detail: 'à surveiller', icon: '📅', href: '/admin/matchs', color: '#006233' },
+          { label: "Matchs aujourd'hui", value: matchsAujourdhui || 0, detail: 'à surveiller', icon: '📅', href: '/admin/matchs', color: '#0dca6b' },
           { label: 'Résultats manquants', value: matchsSansResultat.length, detail: 'à compléter', icon: '📝', href: '/admin/resultats', color: '#E53E3E' },
           { label: 'Commentaires', value: recentComments.length, detail: 'dernière activité', icon: '💬', href: '/communaute', color: '#2B6CB0' },
           { label: 'Sans logo', value: equipesSansLogo.length, detail: 'équipes incomplètes', icon: '🛡️', href: '/admin/equipes', color: '#7C3AED' },
@@ -358,8 +358,8 @@ export default async function AdminDashboard() {
           display: grid; gap: 20px; align-items: stretch;
           padding: clamp(28px, 4vw, 40px);
           border-radius: 20px; color: white;
-          background: linear-gradient(135deg, #004d27 0%, #006233 40%, #00883f 70%, #00A651 100%);
-          box-shadow: 0 20px 60px rgba(0,98,51,0.25);
+          background: linear-gradient(135deg, #0b5234 0%, #0dca6b 40%, #00883f 70%, #0dca6b 100%);
+          box-shadow: 0 20px 60px rgba(42,255,160,0.25);
           position: relative; overflow: hidden;
         }
         .admin-hero::before {
@@ -379,7 +379,7 @@ export default async function AdminDashboard() {
           letter-spacing: 0.08em; margin-bottom: 14px; position: relative; z-index: 1;
         }
         .admin-hero h1 {
-          font-family: var(--font-outfit); font-size: clamp(2rem, 4vw, 3rem);
+          font-family: var(--font-plus-jakarta); font-size: clamp(2rem, 4vw, 3rem);
           line-height: 1; font-weight: 950; margin-bottom: 10px; position: relative; z-index: 1;
         }
         .admin-hero p {
@@ -405,7 +405,7 @@ export default async function AdminDashboard() {
           position: relative; z-index: 1;
         }
         .admin-hero-panel span, .admin-hero-panel small { color: rgba(255,255,255,0.75); font-weight: 700; font-size: 0.78rem; }
-        .admin-hero-panel strong { font-family: var(--font-outfit); font-size: 2.8rem; line-height: 1; margin: 8px 0; }
+        .admin-hero-panel strong { font-family: var(--font-plus-jakarta); font-size: 2.8rem; line-height: 1; margin: 8px 0; }
         .admin-stats-grid, .admin-ops-grid, .admin-actions-grid, .admin-main-grid, .admin-bottom-grid { display: grid; gap: 16px; }
         .admin-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .admin-ops-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -420,32 +420,32 @@ export default async function AdminDashboard() {
         .admin-op-card:hover { transform: translateY(-2px); }
         .admin-op-card > span { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem; }
         .admin-op-card strong, .admin-op-card small, .admin-op-card em { display: block; }
-        .admin-op-card strong { font-family: var(--font-outfit); font-size: 1.5rem; line-height: 1; font-style: normal; }
+        .admin-op-card strong { font-family: var(--font-plus-jakarta); font-size: 1.5rem; line-height: 1; font-style: normal; }
         .admin-op-card small { margin-top: 3px; color: var(--color-text-primary); font-weight: 850; font-size: 0.78rem; }
         .admin-op-card em { color: var(--color-text-muted); font-size: 0.7rem; font-style: normal; }
         .admin-stat-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
-        .admin-stat-card strong { display: block; font-family: var(--font-outfit); font-size: 1.9rem; line-height: 1; font-weight: 950; }
+        .admin-stat-card strong { display: block; font-family: var(--font-plus-jakarta); font-size: 1.9rem; line-height: 1; font-weight: 950; }
         .admin-stat-card span { display: block; margin-top: 4px; color: var(--color-text-primary); font-weight: 800; font-size: 0.88rem; }
         .admin-stat-card small { color: var(--color-text-muted); font-size: 0.72rem; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-        .admin-trend { color: #16a34a; background: rgba(22,163,74,0.1); padding: 1px 7px; border-radius: 999px; font-style: normal; font-weight: 800; font-size: 0.68rem; }
+        .admin-trend { color: #0dca6b; background: rgba(42,255,160,0.1); padding: 1px 7px; border-radius: 999px; font-style: normal; font-weight: 800; font-size: 0.68rem; }
         .admin-actions, .admin-panel { padding: 22px; }
         .admin-section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
-        .admin-section-heading h2 { font-family: var(--font-outfit); font-size: 1.08rem; font-weight: 900; color: var(--color-text-primary); margin-bottom: 4px; }
+        .admin-section-heading h2 { font-family: var(--font-plus-jakarta); font-size: 1.08rem; font-weight: 900; color: var(--color-text-primary); margin-bottom: 4px; }
         .admin-section-heading p { color: var(--color-text-muted); font-size: 0.8rem; line-height: 1.4; }
         .admin-actions-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .admin-action-card { display: flex; gap: 12px; align-items: center; padding: 16px; border-radius: 14px; background: var(--color-surface); border: 1px solid transparent; text-decoration: none; color: var(--color-text-primary); transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s; }
-        .admin-action-card:hover { transform: translateY(-2px); border-color: rgba(0,98,51,0.2); box-shadow: 0 6px 20px rgba(0,98,51,0.1); }
+        .admin-action-card:hover { transform: translateY(-2px); border-color: rgba(42,255,160,0.2); box-shadow: 0 6px 20px rgba(42,255,160,0.1); }
         .admin-action-card > span { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.15rem; }
         .admin-action-card strong, .admin-action-card small { display: block; }
         .admin-action-card strong { font-size: 0.9rem; font-weight: 850; }
         .admin-action-card small { margin-top: 2px; color: var(--color-text-muted); font-size: 0.72rem; }
         .admin-pill, .admin-link, .admin-choice, .admin-row-action { border-radius: 999px; font-size: 0.74rem; font-weight: 800; white-space: nowrap; }
-        .admin-link { color: var(--color-primary); text-decoration: none; padding: 7px 13px; background: rgba(0,98,51,0.08); transition: background 0.15s; }
-        .admin-link:hover { background: rgba(0,98,51,0.14); }
+        .admin-link { color: var(--color-primary); text-decoration: none; padding: 7px 13px; background: rgba(42,255,160,0.08); transition: background 0.15s; }
+        .admin-link:hover { background: rgba(42,255,160,0.14); }
         .admin-leaderboard, .admin-list { display: grid; gap: 10px; }
         .admin-leader-row, .admin-match-row, .admin-prono-row, .admin-comment-row, .admin-todo-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--color-surface); }
         .admin-todo-row { color: inherit; text-decoration: none; transition: background 0.15s; }
-        .admin-todo-row:hover { background: rgba(0,98,51,0.05); }
+        .admin-todo-row:hover { background: rgba(42,255,160,0.05); }
         .admin-todo-row > span { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: white; flex-shrink: 0; font-size: 1rem; }
         .admin-rank { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: white; color: var(--color-primary); font-weight: 950; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(15,23,42,0.08); }
         .admin-leader-content { flex: 1; min-width: 0; }
@@ -453,17 +453,17 @@ export default async function AdminDashboard() {
         .admin-leader-content strong, .admin-row-main strong { color: var(--color-text-primary); font-weight: 850; }
         .admin-leader-content span, .admin-row-main span { color: var(--color-text-muted); font-size: 0.74rem; }
         .admin-meter { height: 7px; overflow: hidden; border-radius: 999px; background: #EEF2F7; }
-        .admin-meter i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #006233, #00A651); }
+        .admin-meter i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #0dca6b, #0dca6b); }
         .admin-date-box, .admin-user-dot { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--color-surface); box-shadow: 0 4px 12px rgba(15,23,42,0.06); }
         .admin-date-box { flex-direction: column; }
-        .admin-date-box strong { font-family: var(--font-outfit); line-height: 1; color: var(--color-primary); }
+        .admin-date-box strong { font-family: var(--font-plus-jakarta); line-height: 1; color: var(--color-primary); }
         .admin-date-box span { font-size: 0.6rem; color: var(--color-text-muted); text-transform: uppercase; }
-        .admin-user-dot { color: white; background: linear-gradient(135deg, #006233, #00A651); font-family: var(--font-outfit); font-weight: 900; }
+        .admin-user-dot { color: white; background: linear-gradient(135deg, #0dca6b, #0dca6b); font-family: var(--font-plus-jakarta); font-weight: 900; }
         .admin-row-main { flex: 1; min-width: 0; }
         .admin-row-main strong, .admin-row-main span, .admin-row-main small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .admin-row-main small { color: var(--color-text-secondary); font-size: 0.74rem; }
-        .admin-row-action { padding: 7px 12px; color: var(--color-primary); background: rgba(0,98,51,0.08); text-decoration: none; }
-        .admin-choice { max-width: 150px; overflow: hidden; text-overflow: ellipsis; padding: 7px 10px; color: var(--color-primary); background: rgba(0,98,51,0.08); }
+        .admin-row-action { padding: 7px 12px; color: var(--color-primary); background: rgba(42,255,160,0.08); text-decoration: none; }
+        .admin-choice { max-width: 150px; overflow: hidden; text-overflow: ellipsis; padding: 7px 10px; color: var(--color-primary); background: rgba(42,255,160,0.08); }
         .admin-choice.muted { color: var(--color-text-secondary); background: rgba(100,116,139,0.1); }
         .admin-empty { padding: 28px; text-align: center; color: var(--color-text-muted); font-size: 0.86rem; border-radius: 12px; background: var(--color-surface); }
         @media (min-width: 760px) {

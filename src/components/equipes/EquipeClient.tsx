@@ -20,27 +20,32 @@ export function EquipeClient({ equipe, stats }: EquipeClientProps) {
     <div style={{ display: 'grid', gap: 24 }}>
       {/* En-tête équipe */}
       <div style={{
-        background: `linear-gradient(135deg, ${equipe?.couleur_principale || '#004d27'} 0%, ${equipe?.couleur_secondaire || '#008a44'} 100%)`,
-        borderRadius: 12,
+        background: `linear-gradient(135deg, ${equipe?.couleur_principale || '#0b5234'} 0%, ${equipe?.couleur_secondaire || 'var(--color-primary)'} 100%)`,
+        borderRadius: 'var(--radius-xl)',
         padding: 24,
         color: 'white',
         position: 'relative',
         overflow: 'hidden',
+        boxShadow: 'var(--shadow-green)',
       }}>
         <div style={{ position: 'absolute', top: -40, right: -20, fontSize: 100, opacity: 0.1 }}>⚽</div>
+        <div style={{
+          position: 'absolute', bottom: -60, left: -30, width: 160, height: 160, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.05)',
+        }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 16 }}>
             {equipe?.logo_url ? (
               <img
                 src={equipe.logo_url}
                 alt=""
-                style={{ width: 80, height: 80, borderRadius: 8, objectFit: 'cover', border: '3px solid white' }}
+                style={{ width: 80, height: 80, borderRadius: 'var(--radius-md)', objectFit: 'cover', border: '3px solid white' }}
               />
             ) : (
               <div style={{
                 width: 80,
                 height: 80,
-                borderRadius: 8,
+                borderRadius: 'var(--radius-md)',
                 background: 'rgba(255,255,255,0.2)',
                 display: 'flex',
                 alignItems: 'center',
@@ -52,7 +57,7 @@ export function EquipeClient({ equipe, stats }: EquipeClientProps) {
               </div>
             )}
             <div style={{ flex: 1 }}>
-              <h1 style={{ fontSize: '1.5rem', fontWeight: 900, margin: 0, marginBottom: 4 }}>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: 900, margin: 0, marginBottom: 4, color: 'white' }}>
                 {equipe?.nom}
               </h1>
               <p style={{ margin: 0, opacity: 0.9, fontSize: '0.9rem' }}>
@@ -65,19 +70,19 @@ export function EquipeClient({ equipe, stats }: EquipeClientProps) {
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 12,
+            gap: 10,
             marginBottom: 16,
           }}>
-            <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 8, padding: 12, textAlign: 'center' }}>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Points</div>
+            <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 'var(--radius-md)', padding: 12, textAlign: 'center', border: '1px solid rgba(255,255,255,0.14)' }}>
+              <div style={{ fontSize: '0.78rem', opacity: 0.8, fontWeight: 600 }}>Points</div>
               <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{equipe?.points_classement || 0}</div>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 8, padding: 12, textAlign: 'center' }}>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Matchs</div>
+            <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 'var(--radius-md)', padding: 12, textAlign: 'center', border: '1px solid rgba(255,255,255,0.14)' }}>
+              <div style={{ fontSize: '0.78rem', opacity: 0.8, fontWeight: 600 }}>Matchs</div>
               <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{equipe?.matchs_joues || 0}</div>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 8, padding: 12, textAlign: 'center' }}>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Buts +/-</div>
+            <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 'var(--radius-md)', padding: 12, textAlign: 'center', border: '1px solid rgba(255,255,255,0.14)' }}>
+              <div style={{ fontSize: '0.78rem', opacity: 0.8, fontWeight: 600 }}>Buts +/-</div>
               <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>
                 {(equipe?.buts_marques || 0) - (equipe?.buts_encaisses || 0)}
               </div>
@@ -88,14 +93,18 @@ export function EquipeClient({ equipe, stats }: EquipeClientProps) {
             onClick={() => setShowComparison(!showComparison)}
             style={{
               padding: '8px 16px',
-              borderRadius: 6,
+              borderRadius: 'var(--radius-md)',
               border: '1px solid rgba(255,255,255,0.3)',
-              background: 'transparent',
+              background: 'rgba(255,255,255,0.1)',
               color: 'white',
               cursor: 'pointer',
-              fontWeight: 600,
-              fontSize: '0.85rem',
+              fontWeight: 700,
+              fontSize: '0.82rem',
+              backdropFilter: 'blur(8px)',
+              transition: 'background var(--transition-base)',
             }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
           >
             ⚖️ Comparer
           </button>
@@ -105,9 +114,10 @@ export function EquipeClient({ equipe, stats }: EquipeClientProps) {
       {/* Partage social */}
       <div style={{
         background: 'var(--color-surface-card)',
-        border: '1px solid var(--color-border)',
-        borderRadius: 8,
+        border: '1px solid var(--color-border-subtle)',
+        borderRadius: 'var(--radius-lg)',
         padding: 16,
+        boxShadow: 'var(--shadow-card)',
       }}>
         <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 12 }}>Partager cette équipe</div>
         <SocialShareButtons
@@ -120,9 +130,10 @@ export function EquipeClient({ equipe, stats }: EquipeClientProps) {
       {/* Statistiques détaillées */}
       <div style={{
         background: 'var(--color-surface-card)',
-        border: '1px solid var(--color-border)',
-        borderRadius: 8,
+        border: '1px solid var(--color-border-subtle)',
+        borderRadius: 'var(--radius-lg)',
         padding: 16,
+        boxShadow: 'var(--shadow-card)',
       }}>
         <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 16 }}>📊 Statistiques détaillées</div>
         <TeamStatsChart stats={{
@@ -141,9 +152,10 @@ export function EquipeClient({ equipe, stats }: EquipeClientProps) {
       {/* Résumé */}
       <div style={{
         background: 'var(--color-surface-card)',
-        border: '1px solid var(--color-border)',
-        borderRadius: 8,
+        border: '1px solid var(--color-border-subtle)',
+        borderRadius: 'var(--radius-lg)',
         padding: 16,
+        boxShadow: 'var(--shadow-card)',
       }}>
         <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 16 }}>📈 Résumé</div>
         <div style={{
@@ -153,46 +165,46 @@ export function EquipeClient({ equipe, stats }: EquipeClientProps) {
         }}>
           <div style={{
             background: 'var(--color-surface)',
-            borderRadius: 8,
+            borderRadius: 'var(--radius-md)',
             padding: 12,
             textAlign: 'center',
           }}>
             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>
               Victoires
             </div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#00A651' }}>
+            <div style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--color-primary)' }}>
               {equipe?.victoires || 0}
             </div>
           </div>
           <div style={{
             background: 'var(--color-surface)',
-            borderRadius: 8,
+            borderRadius: 'var(--radius-md)',
             padding: 12,
             textAlign: 'center',
           }}>
             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>
               Nuls
             </div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#FFB81C' }}>
+            <div style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--color-accent)' }}>
               {equipe?.nuls || 0}
             </div>
           </div>
           <div style={{
             background: 'var(--color-surface)',
-            borderRadius: 8,
+            borderRadius: 'var(--radius-md)',
             padding: 12,
             textAlign: 'center',
           }}>
             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>
               Défaites
             </div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#E74C3C' }}>
+            <div style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--color-red)' }}>
               {equipe?.defaites || 0}
             </div>
           </div>
           <div style={{
             background: 'var(--color-surface)',
-            borderRadius: 8,
+            borderRadius: 'var(--radius-md)',
             padding: 12,
             textAlign: 'center',
           }}>
@@ -202,7 +214,7 @@ export function EquipeClient({ equipe, stats }: EquipeClientProps) {
             <div style={{
               fontSize: '1.3rem',
               fontWeight: 900,
-              color: (equipe?.buts_marques || 0) - (equipe?.buts_encaisses || 0) > 0 ? '#00A651' : '#E74C3C',
+              color: (equipe?.buts_marques || 0) - (equipe?.buts_encaisses || 0) > 0 ? 'var(--color-primary)' : 'var(--color-red)',
             }}>
               {(equipe?.buts_marques || 0) - (equipe?.buts_encaisses || 0) > 0 ? '+' : ''}
               {(equipe?.buts_marques || 0) - (equipe?.buts_encaisses || 0)}

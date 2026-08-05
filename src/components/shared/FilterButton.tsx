@@ -25,12 +25,12 @@ export default function FilterButton({
         gap: '6px',
         padding: '10px 14px',
         borderRadius: '12px',
-        border: active ? '2px solid #00A651' : '1.5px solid #e0e0e0',
-        background: active ? 'rgba(0, 166, 81, 0.08)' : '#f8f9fb',
-        color: active ? '#00A651' : '#666',
+        border: active ? '2px solid var(--color-primary)' : '1.5px solid var(--color-border)',
+        background: active ? 'rgba(42,255,160,0.08)' : 'var(--color-surface-card)',
+        color: active ? 'var(--color-primary)' : 'var(--color-text-secondary)',
         fontWeight: active ? 700 : 600,
         fontSize: '0.8rem',
-        fontFamily: 'var(--font-outfit), system-ui, sans-serif',
+        fontFamily: 'var(--font-plus-jakarta), system-ui, sans-serif',
         cursor: 'pointer',
         transition: 'all 0.2s ease',
         minHeight: '44px',
@@ -39,14 +39,14 @@ export default function FilterButton({
       }}
       onMouseEnter={(e) => {
         if (!active) {
-          e.currentTarget.style.borderColor = '#00A651'
-          e.currentTarget.style.background = 'rgba(0, 166, 81, 0.04)'
+          e.currentTarget.style.borderColor = 'var(--color-primary)'
+          e.currentTarget.style.background = 'rgba(42,255,160,0.04)'
         }
       }}
       onMouseLeave={(e) => {
         if (!active) {
-          e.currentTarget.style.borderColor = '#e0e0e0'
-          e.currentTarget.style.background = '#f8f9fb'
+          e.currentTarget.style.borderColor = 'var(--color-border)'
+          e.currentTarget.style.background = 'var(--color-surface-card)'
         }
       }}
     >

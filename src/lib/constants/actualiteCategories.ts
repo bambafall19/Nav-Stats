@@ -19,7 +19,7 @@ export const ACTUALITE_CATEGORY_CONFIG: Record<
   [ACTUALITE_CATEGORIES.ACTUALITE]: {
     label: '📰 Actualité',
     bg: 'rgba(59,130,246,0.1)',
-    color: '#1d4ed8',
+    color: '#2563eb',
   },
   [ACTUALITE_CATEGORIES.ANNONCE]: {
     label: '📢 Annonce',

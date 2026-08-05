@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { TrendingUp } from 'lucide-react'
 import type { Database } from '@/types/database.types'
 import PerformanceChart from '@/components/profil/PerformanceChart'
 import StreakBadge from '@/components/shared/StreakBadge'
+import PageHero from '@/components/shared/PageHero'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 type Pronostic = Database['public']['Tables']['pronostics']['Row'] & {
@@ -109,8 +111,17 @@ export default function PerformanceClient() {
   return (
     <div className="page-content">
       <div className="container-app">
-        <h1 className="section-title" style={{ marginBottom: 4 }}>📈 Mes Performances</h1>
-        <p className="section-subtitle" style={{ marginBottom: 28 }}>Analyse complète de vos pronostics</p>
+        <PageHero
+          icon={TrendingUp}
+          title="Mes performances"
+          subtitle="Analyse complète de vos pronostics, séries et évolution de points."
+          stats={[
+            { value: pronostics.length, label: 'pronostics' },
+            { value: totalCorrect, label: 'corrects' },
+            { value: `${ratio}%`, label: 'ratio' },
+            { value: currentStreak, label: 'série actuelle' },
+          ]}
+        />
 
         <div style={{
           display: 'grid',
@@ -120,15 +131,15 @@ export default function PerformanceClient() {
         }}>
           {[
             { label: 'Pronostics', value: pronostics.length, icon: '🎯', color: 'var(--color-primary)' },
-            { label: 'Corrects', value: totalCorrect, icon: '✅', color: '#00A651' },
-            { label: 'Ratio', value: `${ratio}%`, icon: '📊', color: '#FBBF00' },
-            { label: 'Scores exacts', value: totalScore, icon: '💯', color: '#7C3AED' },
-            { label: 'Série actuelle', value: currentStreak, icon: '🔥', color: currentStreak >= 5 ? '#DC2626' : '#F59E0B' },
-            { label: 'Meilleure série', value: bestStreak, icon: '🏆', color: '#7C3AED' },
+            { label: 'Corrects', value: totalCorrect, icon: '✅', color: 'var(--color-primary-dark)' },
+            { label: 'Ratio', value: `${ratio}%`, icon: '📊', color: 'var(--color-accent-light)' },
+            { label: 'Scores exacts', value: totalScore, icon: '💯', color: 'var(--color-accent-dark)' },
+            { label: 'Série actuelle', value: currentStreak, icon: '🔥', color: currentStreak >= 5 ? 'var(--color-red)' : 'var(--color-accent)' },
+            { label: 'Meilleure série', value: bestStreak, icon: '🏆', color: 'var(--color-accent-dark)' },
           ].map(stat => (
             <div key={stat.label} className="card" style={{ padding: '16px', textAlign: 'center' }}>
               <div style={{ fontSize: '1.5rem', marginBottom: 4 }}>{stat.icon}</div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: stat.color, fontFamily: 'var(--font-outfit)' }}>
+              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: stat.color, fontFamily: 'var(--font-plus-jakarta)' }}>
                 {stat.value}
               </div>
               <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 600, marginTop: 2 }}>

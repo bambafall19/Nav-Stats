@@ -24,9 +24,9 @@ interface MatchData {
 }
 
 const STATUT_LABELS: Record<string, { label: string; color: string; bg: string }> = {
-  a_venir: { label: 'À venir', color: '#006233', bg: 'rgba(0,98,51,0.08)' },
+  a_venir: { label: 'À venir', color: '#0dca6b', bg: 'rgba(42,255,160,0.08)' },
   en_cours: { label: 'En cours', color: '#E8002D', bg: 'rgba(232,0,45,0.08)' },
-  termine: { label: 'Terminé', color: '#64748b', bg: 'rgba(100,116,139,0.08)' },
+  termine: { label: 'Terminé', color: 'var(--color-text-muted)', bg: 'rgba(100,116,139,0.08)' },
 }
 
 const defaultForm = {
@@ -131,7 +131,7 @@ export default function AdminMatchsPage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-outfit)', color: 'var(--color-text-primary)' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-text-primary)' }}>
             ⚽ Gestion des Matchs
           </h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', marginTop: 4 }}>
@@ -148,7 +148,7 @@ export default function AdminMatchsPage() {
             color: showForm ? 'var(--color-text-primary)' : 'white',
             border: showForm ? '1px solid var(--color-border)' : 'none',
             fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer',
-            transition: 'all 0.2s', fontFamily: 'var(--font-outfit)',
+            transition: 'all 0.2s', fontFamily: 'var(--font-plus-jakarta)',
           }}
         >
           {showForm ? '✕ Annuler' : '+ Nouveau Match'}
@@ -170,7 +170,7 @@ export default function AdminMatchsPage() {
 
       {/* Form */}
       {showForm && (
-        <div style={{ background: 'white', borderRadius: 'var(--radius-xl)', border: '1px solid var(--color-border)', padding: 28, marginBottom: 28, boxShadow: 'var(--shadow-md)' }}>
+        <div style={{ background: 'var(--color-surface-elevated)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--color-border)', padding: 28, marginBottom: 28, boxShadow: 'var(--shadow-md)' }}>
           <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 20, color: 'var(--color-text-primary)' }}>
             {editId ? '✏️ Modifier le match' : '➕ Créer un nouveau match'}
           </h2>
@@ -187,7 +187,7 @@ export default function AdminMatchsPage() {
                   value={form.equipe_a_id}
                   onChange={e => setForm(f => ({ ...f, equipe_a_id: e.target.value }))}
                   id="match-equipe-a-select"
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', fontSize: '0.875rem', background: 'white', color: 'var(--color-text-primary)', cursor: 'pointer' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', fontSize: '0.875rem', background: 'var(--color-surface-elevated)', color: 'var(--color-text-primary)', cursor: 'pointer' }}
                 >
                   <option value="">-- Choisir --</option>
                   {equipes.map(e => <option key={e.id} value={e.id}>{e.nom}</option>)}
@@ -204,7 +204,7 @@ export default function AdminMatchsPage() {
                   value={form.equipe_b_id}
                   onChange={e => setForm(f => ({ ...f, equipe_b_id: e.target.value }))}
                   id="match-equipe-b-select"
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', fontSize: '0.875rem', background: 'white', color: 'var(--color-text-primary)', cursor: 'pointer' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', fontSize: '0.875rem', background: 'var(--color-surface-elevated)', color: 'var(--color-text-primary)', cursor: 'pointer' }}
                 >
                   <option value="">-- Choisir --</option>
                   {equipes.map(e => <option key={e.id} value={e.id}>{e.nom}</option>)}
@@ -281,7 +281,7 @@ export default function AdminMatchsPage() {
                   value={form.statut}
                   onChange={e => setForm(f => ({ ...f, statut: e.target.value }))}
                   id="match-statut-select"
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', fontSize: '0.875rem', background: 'white', color: 'var(--color-text-primary)', cursor: 'pointer' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', fontSize: '0.875rem', background: 'var(--color-surface-elevated)', color: 'var(--color-text-primary)', cursor: 'pointer' }}
                 >
                   <option value="a_venir">À venir</option>
                   <option value="en_cours">En cours</option>
@@ -299,7 +299,7 @@ export default function AdminMatchsPage() {
                   padding: '12px 28px', borderRadius: 'var(--radius-full)',
                   background: 'var(--gradient-green)', color: 'white',
                   border: 'none', fontWeight: 700, fontSize: '0.875rem', cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1, transition: 'all 0.2s', fontFamily: 'var(--font-outfit)',
+                  opacity: loading ? 0.7 : 1, transition: 'all 0.2s', fontFamily: 'var(--font-plus-jakarta)',
                 }}
               >
                 {loading ? 'Enregistrement...' : editId ? '✏️ Mettre à jour' : '➕ Créer le match'}
@@ -329,7 +329,7 @@ export default function AdminMatchsPage() {
             onClick={() => setFilterJournee(j)}
             style={{
               padding: '5px 14px', borderRadius: 'var(--radius-full)', fontSize: '0.8rem', fontWeight: 600,
-              background: filterJournee === j ? 'var(--gradient-green)' : 'white',
+              background: filterJournee === j ? 'var(--gradient-green)' : 'var(--color-bg-primary)',
               color: filterJournee === j ? 'white' : 'var(--color-text-secondary)',
               border: '1px solid var(--color-border)', cursor: 'pointer', transition: 'all 0.2s',
             }}
@@ -343,7 +343,7 @@ export default function AdminMatchsPage() {
       </div>
 
       {/* Matchs Table */}
-      <div style={{ background: 'white', borderRadius: 'var(--radius-xl)', border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
+      <div style={{ background: 'var(--color-surface-elevated)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
         {filteredMatchs.length === 0 ? (
           <div style={{ padding: 48, textAlign: 'center', color: 'var(--color-text-muted)' }}>
             <div style={{ fontSize: '3rem', marginBottom: 12 }}>⚽</div>
@@ -364,11 +364,11 @@ export default function AdminMatchsPage() {
               </thead>
               <tbody>
                 {filteredMatchs.map((m, i) => {
-                  const s = STATUT_LABELS[m.statut] || { label: m.statut, color: '#64748b', bg: 'transparent' }
+                  const s = STATUT_LABELS[m.statut] || { label: m.statut, color: 'var(--color-text-muted)', bg: 'transparent' }
                   return (
-                    <tr key={m.id} style={{ borderBottom: '1px solid var(--color-border)', background: i % 2 === 0 ? 'white' : 'rgba(0,0,0,0.01)', transition: 'background 0.15s' }}
-                      onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.03)')}
-                      onMouseOut={e => (e.currentTarget.style.background = i % 2 === 0 ? 'white' : 'rgba(0,0,0,0.01)')}
+                    <tr key={m.id} style={{ borderBottom: '1px solid var(--color-border)', background: i % 2 === 0 ? 'var(--color-surface-card)' : 'var(--color-bg-primary)', transition: 'background 0.15s' }}
+                      onMouseOver={e => (e.currentTarget.style.background = 'rgba(42,255,160,0.03)')}
+                      onMouseOut={e => (e.currentTarget.style.background = i % 2 === 0 ? 'var(--color-surface-card)' : 'var(--color-bg-primary)')}
                     >
                       <td style={{ padding: '12px 16px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary)', whiteSpace: 'nowrap' }}>J{m.journee}</td>
                       <td style={{ padding: '12px 16px', fontSize: '0.8rem', color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>
@@ -407,9 +407,9 @@ export default function AdminMatchsPage() {
                           <button
                             onClick={() => handleEdit(m)}
                             title="Modifier"
-                            style={{ width: 32, height: 32, borderRadius: 'var(--radius-md)', background: 'rgba(0,98,51,0.08)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', transition: 'all 0.2s' }}
-                            onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.18)')}
-                            onMouseOut={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.08)')}
+                            style={{ width: 32, height: 32, borderRadius: 'var(--radius-md)', background: 'rgba(42,255,160,0.08)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', transition: 'all 0.2s' }}
+                            onMouseOver={e => (e.currentTarget.style.background = 'rgba(42,255,160,0.18)')}
+                            onMouseOut={e => (e.currentTarget.style.background = 'rgba(42,255,160,0.08)')}
                           >✏️</button>
                           <button
                             onClick={() => handleDelete(m.id)}

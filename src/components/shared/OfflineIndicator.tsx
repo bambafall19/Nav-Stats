@@ -40,7 +40,7 @@ export default function OfflineIndicator() {
       borderRadius: 999,
       fontSize: '0.8rem',
       fontWeight: 700,
-      fontFamily: 'var(--font-outfit)',
+      fontFamily: 'var(--font-plus-jakarta)',
       display: 'flex',
       alignItems: 'center',
       gap: 8,

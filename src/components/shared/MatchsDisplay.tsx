@@ -82,7 +82,7 @@ export function MatchsDisplay() {
 
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
-      <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
+      <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
         ⚽ Matchs du Jour
       </h1>
 
@@ -95,7 +95,7 @@ export function MatchsDisplay() {
             return (
               <div key={timeSlot}>
                 <h2 style={{
-                  fontFamily: 'var(--font-outfit)',
+                  fontFamily: 'var(--font-plus-jakarta)',
                   fontWeight: 800,
                   fontSize: 'clamp(0.95rem, 3vw, 1.1rem)',
                   marginBottom: 12,
@@ -163,7 +163,7 @@ export function MatchsDisplay() {
                           </div>
                           {match.statut === 'termine' && (
                             <div style={{
-                              fontFamily: 'var(--font-outfit)',
+                              fontFamily: 'var(--font-plus-jakarta)',
                               fontWeight: 900,
                               fontSize: '1.3rem',
                               color: 'var(--color-primary)',
@@ -187,7 +187,7 @@ export function MatchsDisplay() {
                           </div>
                           {match.statut === 'termine' && (
                             <div style={{
-                              fontFamily: 'var(--font-outfit)',
+                              fontFamily: 'var(--font-plus-jakarta)',
                               fontWeight: 900,
                               fontSize: '1.3rem',
                               color: 'var(--color-primary)',

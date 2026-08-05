@@ -82,11 +82,11 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
       {/* Stats Grid */}
       <section className="pronostics-summary-grid" style={{ marginBottom: 28 }}>
         {[
-          { label: 'Points gagnés', value: totalPoints, icon: '🏆', color: '#B45309', bg: 'rgba(180,83,9,0.1)' },
-          { label: 'Pronostics', value: pronostics.length, icon: '🎯', color: '#006233', bg: 'rgba(0,98,51,0.1)' },
-          { label: 'Réussite', value: `${accuracy}%`, icon: '📈', color: '#0F766E', bg: 'rgba(15,118,110,0.1)' },
-          { label: 'Scores exacts', value: scoresExact, icon: '✅', color: '#1D4ED8', bg: 'rgba(29,78,216,0.1)' },
-          { label: 'En attente', value: pending, icon: '⏳', color: '#64748B', bg: 'rgba(100,116,139,0.1)' },
+          { label: 'Points gagnés', value: totalPoints, icon: '🏆', color: '#ffc94d', bg: 'rgba(255,201,77,0.1)' },
+          { label: 'Pronostics', value: pronostics.length, icon: '🎯', color: '#2affa0', bg: 'rgba(42,255,160,0.1)' },
+          { label: 'Réussite', value: `${accuracy}%`, icon: '📈', color: '#34d399', bg: 'rgba(52,211,153,0.1)' },
+          { label: 'Scores exacts', value: scoresExact, icon: '✅', color: '#4da6ff', bg: 'rgba(77,166,255,0.1)' },
+          { label: 'En attente', value: pending, icon: '⏳', color: '#94a3b8', bg: 'rgba(148,163,184,0.1)' },
         ].map(stat => (
           <motion.article
             key={stat.label}
@@ -98,7 +98,7 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
           >
             <div style={{ width: 46, height: 46, borderRadius: 14, background: stat.bg, color: stat.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', flexShrink: 0 }}>{stat.icon}</div>
             <div>
-              <strong style={{ display: 'block', fontFamily: 'var(--font-outfit)', fontSize: '1.6rem', lineHeight: 1, color: stat.color }}>{stat.value}</strong>
+              <strong style={{ display: 'block', fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.6rem', lineHeight: 1, color: stat.color }}>{stat.value}</strong>
               <span style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', fontWeight: 700 }}>{stat.label}</span>
             </div>
           </motion.article>
@@ -113,15 +113,15 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <h2 style={{ fontSize: '1rem', marginBottom: 14, fontFamily: 'var(--font-outfit)', fontWeight: 800 }}>🏅 Comment gagner des points ?</h2>
+        <h2 style={{ fontSize: '1rem', marginBottom: 14, fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800 }}>🏅 Comment gagner des points ?</h2>
         <div className="rules-grid">
           {[
             { label: 'Vainqueur trouvé', value: '+3 pts', color: 'var(--color-primary)' },
-            { label: 'Match nul trouvé', value: '+1 pt', color: '#B45309' },
+            { label: 'Match nul trouvé', value: '+1 pt', color: '#ffc94d' },
           ].map(({ label, value, color }) => (
             <div key={label} style={{ padding: 14, borderRadius: 12, background: 'var(--color-surface)', display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center' }}>
               <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}>{label}</span>
-              <strong style={{ color, fontFamily: 'var(--font-outfit)', whiteSpace: 'nowrap' }}>{value}</strong>
+              <strong style={{ color, fontFamily: 'var(--font-plus-jakarta)', whiteSpace: 'nowrap' }}>{value}</strong>
             </div>
           ))}
         </div>
@@ -138,7 +138,7 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
               background: activeTab === tab.id ? 'var(--color-surface-card)' : 'transparent',
               color: activeTab === tab.id ? 'var(--color-primary)' : 'var(--color-text-secondary)',
               fontWeight: activeTab === tab.id ? 800 : 500,
-              fontFamily: 'var(--font-outfit)',
+              fontFamily: 'var(--font-plus-jakarta)',
               fontSize: '0.82rem',
               boxShadow: activeTab === tab.id ? 'var(--shadow-sm)' : 'none',
               transition: 'all 0.2s ease',
@@ -211,7 +211,7 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
                   <div style={{
                     padding: '6px 14px', borderRadius: 'var(--radius-full)',
                     background: statusBg, color: statusColor,
-                    fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '0.85rem',
+                    fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '0.85rem',
                     flexShrink: 0, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 5,
                   }}>
                     {statusIcon} {isDone ? `${pronostic.points_gagnes || 0} pts` : isLive ? 'Live' : 'En attente'}
@@ -241,12 +241,12 @@ export default function PronosticsClient({ pronostics, totalPoints, corrects, sc
                 {(pronostic.premier_buteur || pronostic.homme_du_match) && (
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
                     {pronostic.premier_buteur && (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: 'rgba(29,78,216,0.08)', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 700, color: '#1D4ED8' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: 'rgba(77,166,255,0.1)', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 700, color: '#4da6ff' }}>
                         ⚽ {pronostic.premier_buteur.prenom} {pronostic.premier_buteur.nom}
                       </span>
                     )}
                     {pronostic.homme_du_match && (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: 'rgba(124,58,237,0.08)', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 700, color: '#7C3AED' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: 'rgba(167,139,250,0.1)', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 700, color: '#a78bfa' }}>
                         ⭐ {pronostic.homme_du_match.prenom} {pronostic.homme_du_match.nom}
                       </span>
                     )}

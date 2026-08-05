@@ -99,7 +99,7 @@ export function PrivateLeagues({ userId }: { userId: string }) {
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', margin: 0 }}>
+        <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', margin: 0 }}>
           🏆 Ligues Privées
         </h1>
         <button
@@ -211,7 +211,7 @@ export function PrivateLeagues({ userId }: { userId: string }) {
               </div>
 
               <div style={{
-                background: 'rgba(0,98,51,0.05)',
+                background: 'rgba(42,255,160,0.05)',
                 borderRadius: 'var(--radius-md)',
                 padding: 8,
                 textAlign: 'center',

@@ -36,7 +36,7 @@ const defaultForm: EquipeForm = {
   nom: '',
   sigle: '',
   poule: 'A',
-  couleur_principale: '#006233',
+  couleur_principale: '#0dca6b',
   couleur_secondaire: '#FBBF00',
   logo_url: '',
   quartier: '',
@@ -132,7 +132,7 @@ export default function AdminEquipesPage() {
       nom: eq.nom,
       sigle: eq.sigle || '',
       poule: eq.poule,
-      couleur_principale: eq.couleur_principale || '#006233',
+      couleur_principale: eq.couleur_principale || '#0dca6b',
       couleur_secondaire: eq.couleur_secondaire || '#FBBF00',
       logo_url: eq.logo_url || '',
       quartier: eq.quartier || '',
@@ -174,7 +174,7 @@ export default function AdminEquipesPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+          <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
             🛡️ Gérer les Équipes (ASC)
           </h1>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginTop: 4 }}>
@@ -217,10 +217,10 @@ export default function AdminEquipesPage() {
             padding: '14px 18px',
             borderRadius: 14,
             border: '1px solid var(--color-border)',
-            background: 'white',
+            background: 'var(--color-surface-elevated)',
             outline: 'none',
             fontSize: '0.9rem',
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
             boxShadow: 'var(--shadow-sm)'
           }}
         />
@@ -233,8 +233,8 @@ export default function AdminEquipesPage() {
           backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center',
           justifyContent: 'center', zIndex: 1000, padding: 20
         }}>
-          <div className="card" style={{ width: '100%', maxWidth: 500, padding: 32, borderRadius: 24, background: 'white', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h2 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.4rem', fontWeight: 800, marginBottom: 24 }}>
+          <div className="card" style={{ width: '100%', maxWidth: 500, padding: 32, borderRadius: 24, background: 'var(--color-surface-elevated)', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.4rem', fontWeight: 800, marginBottom: 24 }}>
               {editId ? '🛡️ Modifier l\'Équipe' : '🛡️ Nouvelle Équipe'}
             </h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -252,7 +252,7 @@ export default function AdminEquipesPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
                   <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-secondary)', display: 'block', marginBottom: 6 }}>Poule *</label>
-                  <select value={form.poule} onChange={e => setForm({ ...form, poule: e.target.value as Poule })} style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'white' }}>
+                  <select value={form.poule} onChange={e => setForm({ ...form, poule: e.target.value as Poule })} style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-surface-elevated)' }}>
                     <option value="A">Poule A</option>
                     <option value="B">Poule B</option>
                     <option value="C">Poule C</option>
@@ -297,7 +297,7 @@ export default function AdminEquipesPage() {
                   type="file"
                   accept="image/png,image/jpeg,image/webp,image/svg+xml"
                   onChange={e => setLogoFile(e.target.files?.[0] || null)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'white' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-surface-elevated)' }}
                 />
                 {(logoFile || form.logo_url) && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10 }}>
@@ -338,11 +338,11 @@ export default function AdminEquipesPage() {
                     {eq.sigle}
                   </div>
                 )}
-                <span className="badge" style={{ background: eq.poule === 'A' ? 'rgba(0,98,51,0.06)' : eq.poule === 'B' ? 'rgba(30,64,175,0.06)' : 'rgba(185,28,28,0.06)', color: eq.poule === 'A' ? '#006233' : eq.poule === 'B' ? '#1E40AF' : '#B91C1C', fontSize: '0.72rem', fontWeight: 800 }}>
+                <span className="badge" style={{ background: eq.poule === 'A' ? 'rgba(42,255,160,0.06)' : eq.poule === 'B' ? 'rgba(30,64,175,0.06)' : 'rgba(185,28,28,0.06)', color: eq.poule === 'A' ? '#0dca6b' : eq.poule === 'B' ? '#1E40AF' : '#B91C1C', fontSize: '0.72rem', fontWeight: 800 }}>
                   Poule {eq.poule}
                 </span>
               </div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, fontFamily: 'var(--font-outfit)', marginBottom: 4 }}>{eq.nom}</h3>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, fontFamily: 'var(--font-plus-jakarta)', marginBottom: 4 }}>{eq.nom}</h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: 12 }}>{eq.asc_nom || 'ASC non spécifiée'}</p>
               {eq.quartier && (
                 <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -353,7 +353,7 @@ export default function AdminEquipesPage() {
 
             <div style={{ display: 'flex', gap: 8, marginTop: 24, borderTop: '1px solid var(--color-border)', paddingTop: 14 }}>
               <button onClick={() => handleEdit(eq)} className="btn btn-sm btn-outline" style={{ flex: 1 }}>✏️ Modifier</button>
-              <button onClick={() => handleDelete(eq.id)} className="btn btn-sm btn-outline" style={{ flex: 1, borderColor: '#FECACA', color: '#EF4444' }}>🗑️ Supprimer</button>
+              <button onClick={() => handleDelete(eq.id)} className="btn btn-sm btn-outline" style={{ flex: 1, borderColor: '#FEE2E2', color: '#EF4444' }}>🗑️ Supprimer</button>
             </div>
           </div>
         ))}

@@ -43,7 +43,7 @@ export default function PerformanceChart({ data }: PerformanceChartProps) {
               borderRadius: 12,
               boxShadow: 'var(--shadow-md)',
             }}
-            labelStyle={{ fontWeight: 700, fontFamily: 'var(--font-outfit)' }}
+            labelStyle={{ fontWeight: 700, fontFamily: 'var(--font-plus-jakarta)' }}
           />
           <Line
             type="monotone"

@@ -104,7 +104,7 @@ export default function AdminResultats() {
 
   return (
     <div>
-      <h1 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.8rem', fontWeight: 800, marginBottom: 8 }}>✅ Valider Résultats</h1>
+      <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.8rem', fontWeight: 800, marginBottom: 8 }}>✅ Valider Résultats</h1>
       <p style={{ color: 'var(--color-text-secondary)', marginBottom: 32 }}>Saisissez les scores des matchs terminés</p>
 
       {success && (
@@ -130,12 +130,12 @@ export default function AdminResultats() {
                   borderBottom: i < matchs.length - 1 ? '1px solid var(--color-border)' : 'none',
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   cursor: 'pointer',
-                  background: selected?.id === m.id ? 'rgba(0,98,51,0.04)' : 'transparent',
+                  background: selected?.id === m.id ? 'rgba(42,255,160,0.04)' : 'transparent',
                   borderLeft: selected?.id === m.id ? '3px solid var(--color-primary)' : '3px solid transparent',
                   transition: 'all 0.2s',
                 }}
                 onClick={() => { setSelected(m); setScoreA(''); setScoreB('') }}
-                onMouseOver={e => { if (selected?.id !== m.id) e.currentTarget.style.background = 'rgba(0,98,51,0.02)' }}
+                onMouseOver={e => { if (selected?.id !== m.id) e.currentTarget.style.background = 'rgba(42,255,160,0.02)' }}
                 onMouseOut={e => { if (selected?.id !== m.id) e.currentTarget.style.background = 'transparent' }}
               >
                 <div>
@@ -160,7 +160,7 @@ export default function AdminResultats() {
             <div className="card" style={{ padding: 32 }}>
               <div style={{ textAlign: 'center', marginBottom: 28 }}>
                 <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: 8 }}>Match sélectionné</p>
-                <h3 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--color-primary)' }}>
+                <h3 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--color-primary)' }}>
                   {selected.equipe_a.nom} vs {selected.equipe_b.nom}
                 </h3>
               </div>
@@ -173,12 +173,12 @@ export default function AdminResultats() {
                     value={scoreA}
                     onChange={e => setScoreA(e.target.value)}
                     className="input"
-                    style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 900, height: 72, fontFamily: 'var(--font-outfit)' }}
+                    style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 900, height: 72, fontFamily: 'var(--font-plus-jakarta)' }}
                     placeholder="0"
                     id="admin-score-a"
                   />
                 </div>
-                <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1.5rem', color: 'var(--color-text-muted)', textAlign: 'center', paddingTop: 24 }}>—</div>
+                <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '1.5rem', color: 'var(--color-text-muted)', textAlign: 'center', paddingTop: 24 }}>—</div>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: 8 }}>{selected.equipe_b.nom}</div>
                   <input
@@ -186,7 +186,7 @@ export default function AdminResultats() {
                     value={scoreB}
                     onChange={e => setScoreB(e.target.value)}
                     className="input"
-                    style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 900, height: 72, fontFamily: 'var(--font-outfit)' }}
+                    style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 900, height: 72, fontFamily: 'var(--font-plus-jakarta)' }}
                     placeholder="0"
                     id="admin-score-b"
                   />

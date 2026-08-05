@@ -66,13 +66,13 @@ export function AdvancedPredictions({ matchId, userId }: { matchId: string; user
       borderRadius: 'var(--radius-lg)',
       padding: 'clamp(16px, 3vw, 20px)',
     }}>
-      <h3 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
+      <h3 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
         🎯 Prédictions Avancées
       </h3>
 
       {/* Match Info */}
       <div style={{
-        background: 'rgba(0,98,51,0.05)',
+        background: 'rgba(42,255,160,0.05)',
         borderRadius: 'var(--radius-md)',
         padding: 12,
         marginBottom: 16,

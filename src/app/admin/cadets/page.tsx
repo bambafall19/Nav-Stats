@@ -172,7 +172,7 @@ export default function AdminCadetsPage() {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28, gap: 12, flexWrap: 'wrap' }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-outfit)', color: 'var(--color-text-primary)' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-text-primary)' }}>
             Calendrier Cadets
           </h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', marginTop: 4 }}>
@@ -205,7 +205,7 @@ export default function AdminCadetsPage() {
       )}
 
       {showForm && (
-        <div style={{ background: 'white', borderRadius: 'var(--radius-xl)', border: '1px solid var(--color-border)', padding: 28, marginBottom: 28, boxShadow: 'var(--shadow-md)' }}>
+        <div style={{ background: 'var(--color-surface-elevated)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--color-border)', padding: 28, marginBottom: 28, boxShadow: 'var(--shadow-md)' }}>
           <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 18 }}>
             {editId ? 'Modifier la rencontre' : 'Ajouter une rencontre'}
           </h2>
@@ -273,7 +273,7 @@ export default function AdminCadetsPage() {
         ))}
       </div>
 
-      <div style={{ background: 'white', borderRadius: 'var(--radius-xl)', border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
+      <div style={{ background: 'var(--color-surface-elevated)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--color-border)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
             <thead>
@@ -297,7 +297,7 @@ export default function AdminCadetsPage() {
                   <td style={tdStyle}>
                     <div style={{ display: 'flex', gap: 8 }}>
                       <button onClick={() => handleEdit(match)} className="btn btn-sm btn-outline">Modifier</button>
-                      <button onClick={() => handleDelete(match.id)} className="btn btn-sm btn-outline" style={{ color: 'var(--color-red)', borderColor: '#FECACA' }}>Supprimer</button>
+                      <button onClick={() => handleDelete(match.id)} className="btn btn-sm btn-outline" style={{ color: 'var(--color-red)', borderColor: '#FEE2E2' }}>Supprimer</button>
                     </div>
                   </td>
                 </tr>
@@ -324,7 +324,7 @@ const inputStyle: React.CSSProperties = {
   padding: '11px 12px',
   borderRadius: 'var(--radius-md)',
   border: '1.5px solid var(--color-border)',
-  background: 'white',
+  background: 'var(--color-surface-elevated)',
   color: 'var(--color-text-primary)',
 }
 

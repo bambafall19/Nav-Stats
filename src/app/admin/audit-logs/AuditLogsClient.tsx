@@ -23,7 +23,7 @@ interface Props {
 
 const ACTION_COLORS: Record<string, string> = {
   INSERT: '#10b981',
-  UPDATE: '#f59e0b',
+  UPDATE: '#ffc94d',
   DELETE: '#ef4444',
   LOGIN: '#3b82f6',
   LOGOUT: '#64748b',
@@ -71,7 +71,7 @@ export default function AuditLogsClient({ initialLogs }: Props) {
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-        <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
+        <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
           📋 Logs d&apos;audit
         </h1>
         <input

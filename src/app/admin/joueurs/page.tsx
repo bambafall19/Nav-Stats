@@ -174,7 +174,7 @@ export default function AdminJoueursPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+          <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
             👤 Gérer les Joueurs
           </h1>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginTop: 4 }}>
@@ -216,10 +216,10 @@ export default function AdminJoueursPage() {
             padding: '14px 18px',
             borderRadius: 14,
             border: '1px solid var(--color-border)',
-            background: 'white',
+            background: 'var(--color-surface-elevated)',
             outline: 'none',
             fontSize: '0.9rem',
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
             boxShadow: 'var(--shadow-sm)'
           }}
         />
@@ -230,10 +230,10 @@ export default function AdminJoueursPage() {
             padding: '14px 18px',
             borderRadius: 14,
             border: '1px solid var(--color-border)',
-            background: 'white',
+            background: 'var(--color-surface-elevated)',
             outline: 'none',
             fontSize: '0.9rem',
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
             boxShadow: 'var(--shadow-sm)'
           }}
         >
@@ -251,8 +251,8 @@ export default function AdminJoueursPage() {
           backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center',
           justifyContent: 'center', zIndex: 1000, padding: 20
         }}>
-          <div className="card" style={{ width: '100%', maxWidth: 500, padding: 32, borderRadius: 24, background: 'white', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h2 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.4rem', fontWeight: 800, marginBottom: 24 }}>
+          <div className="card" style={{ width: '100%', maxWidth: 500, padding: 32, borderRadius: 24, background: 'var(--color-surface-elevated)', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.4rem', fontWeight: 800, marginBottom: 24 }}>
               {editId ? '👤 Modifier le Joueur' : '👤 Nouveau Joueur'}
             </h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -274,7 +274,7 @@ export default function AdminJoueursPage() {
                 </div>
                 <div>
                   <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-secondary)', display: 'block', marginBottom: 6 }}>Poste *</label>
-                  <select value={form.poste} onChange={e => setForm({ ...form, poste: e.target.value as any })} style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'white' }}>
+                  <select value={form.poste} onChange={e => setForm({ ...form, poste: e.target.value as any })} style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-surface-elevated)' }}>
                     <option value="gardien">🧤 Gardien</option>
                     <option value="defenseur">🛡️ Défenseur</option>
                     <option value="milieu">⚙️ Milieu</option>
@@ -285,7 +285,7 @@ export default function AdminJoueursPage() {
 
               <div>
                 <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-secondary)', display: 'block', marginBottom: 6 }}>Équipe de rattachement</label>
-                <select value={form.equipe_id} onChange={e => setForm({ ...form, equipe_id: e.target.value })} style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'white' }}>
+                <select value={form.equipe_id} onChange={e => setForm({ ...form, equipe_id: e.target.value })} style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-surface-elevated)' }}>
                   <option value="">Sélectionner une équipe...</option>
                   {equipes.map(eq => (
                     <option key={eq.id} value={eq.id}>{eq.nom}</option>
@@ -395,7 +395,7 @@ export default function AdminJoueursPage() {
                   <td style={{ padding: '16px 20px', textAlign: 'right' }}>
                     <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                       <button onClick={() => handleEdit(j)} className="btn btn-sm btn-outline" style={{ padding: '6px 10px' }}>✏️</button>
-                      <button onClick={() => handleDelete(j.id)} className="btn btn-sm btn-outline" style={{ padding: '6px 10px', borderColor: '#FECACA', color: '#EF4444' }}>🗑️</button>
+                      <button onClick={() => handleDelete(j.id)} className="btn btn-sm btn-outline" style={{ padding: '6px 10px', borderColor: '#FEE2E2', color: '#EF4444' }}>🗑️</button>
                     </div>
                   </td>
                 </tr>

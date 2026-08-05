@@ -172,7 +172,7 @@ export function GamificationSystem({ userId }: { userId: string }) {
         textAlign: 'center',
       }}>
         <div style={{ fontSize: '2.5rem', marginBottom: 8 }}>🔥</div>
-        <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: 4 }}>
+        <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: 4 }}>
           {streak.current} jours
         </div>
         <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>
@@ -182,7 +182,7 @@ export function GamificationSystem({ userId }: { userId: string }) {
 
       {/* Badges */}
       <div style={{ marginBottom: 'clamp(24px, 5vw, 32px)' }}>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', marginBottom: 16 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', marginBottom: 16 }}>
           🏅 Badges ({badges.filter(b => b.unlocked).length}/{badges.length})
         </h2>
         <div style={{
@@ -194,7 +194,7 @@ export function GamificationSystem({ userId }: { userId: string }) {
             <div
               key={badge.id}
               style={{
-                background: badge.unlocked ? 'var(--color-surface-card)' : 'rgba(0,0,0,0.05)',
+                background: badge.unlocked ? 'var(--color-surface-card)' : 'var(--color-bg-secondary)',
                 border: `2px solid ${badge.unlocked ? 'var(--color-primary)' : 'var(--color-border)'}`,
                 borderRadius: 'clamp(12px, 3vw, 16px)',
                 padding: 'clamp(12px, 2vw, 16px)',
@@ -222,7 +222,7 @@ export function GamificationSystem({ userId }: { userId: string }) {
 
       {/* Challenges */}
       <div style={{ marginBottom: 'clamp(24px, 5vw, 32px)' }}>
-        <h2 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', marginBottom: 16 }}>
+        <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', marginBottom: 16 }}>
           🎯 Défis Actifs
         </h2>
         <div style={{ display: 'grid', gap: 'clamp(12px, 2vw, 16px)' }}>
@@ -260,7 +260,7 @@ export function GamificationSystem({ userId }: { userId: string }) {
 
               {/* Progress bar */}
               <div style={{
-                background: 'rgba(0,98,51,0.1)',
+                background: 'rgba(42,255,160,0.1)',
                 borderRadius: 'var(--radius-full)',
                 height: 8,
                 overflow: 'hidden',

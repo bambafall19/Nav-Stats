@@ -82,7 +82,7 @@ export function PersonalStatsDisplay({ stats }: PersonalStatsProps) {
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 8 }}>
             Série actuelle
           </div>
-          <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#00A651', marginBottom: 4 }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0dca6b', marginBottom: 4 }}>
             {stats.currentStreak}
           </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>

@@ -25,7 +25,7 @@ interface TeamStatsChartProps {
 
 export function TeamStatsChart({ stats }: TeamStatsChartProps) {
   const performanceData = [
-    { name: 'Victoires', value: stats.victoires, color: '#00A651' },
+    { name: 'Victoires', value: stats.victoires, color: '#0dca6b' },
     { name: 'Nuls', value: stats.nuls, color: '#FFB81C' },
     { name: 'Défaites', value: stats.defaites, color: '#E74C3C' },
   ]
@@ -71,7 +71,7 @@ export function TeamStatsChart({ stats }: TeamStatsChartProps) {
           textAlign: 'center',
         }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>Buts +/-</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 900, color: stats.butsMarques - stats.butsEncaisses > 0 ? '#00A651' : '#E74C3C' }}>
+          <div style={{ fontSize: '1.5rem', fontWeight: 900, color: stats.butsMarques - stats.butsEncaisses > 0 ? '#0dca6b' : '#E74C3C' }}>
             {stats.butsMarques - stats.butsEncaisses > 0 ? '+' : ''}{stats.butsMarques - stats.butsEncaisses}
           </div>
         </div>

@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Outfit, Roboto_Mono } from "next/font/google";
-// Note: Aeonik is a commercial font, using Outfit as fallback for headings
+import { Inter, Space_Grotesk, JetBrains_Mono, Dancing_Script } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import PWAInstallBanner from "@/components/shared/PWAInstallBanner";
@@ -20,16 +19,24 @@ const inter = Inter({
   display: "swap",
 });
 
-const outfit = Outfit({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  variable: "--font-display",
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
-const robotoMono = Roboto_Mono({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   display: "swap",
+});
+
+const dancingScript = Dancing_Script({
+  subsets: ["latin"],
+  variable: "--font-signature",
+  display: "swap",
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -56,47 +63,23 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#006233" },
-    { media: "(prefers-color-scheme: dark)", color: "#00A651" },
+    { media: "(prefers-color-scheme: light)", color: "#050a08" },
   ],
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
 };
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${inter.variable} ${outfit.variable} ${robotoMono.variable}`} suppressHydrationWarning>
+    <html lang="fr" className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${dancingScript.variable}`} data-theme="dark" suppressHydrationWarning>
       <head>
         <GoogleTagManager />
         <GoogleAnalytics />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('navestats-theme');
-                  var isDark = false;
-                  if (theme === 'dark') {
-                    isDark = true;
-                  } else if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    isDark = true;
-                  }
-                  if (isDark) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                  } else {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                  }
-                  // Force inline styles to avoid FOUC
-                  document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
-                } catch(e) {}
-              })();
-            `,
-          }}
-        />
       </head>
       <body className="font-inter antialiased">
         <GoogleTagManagerNoScript />

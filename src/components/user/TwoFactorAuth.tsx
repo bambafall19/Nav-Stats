@@ -68,12 +68,12 @@ export function TwoFactorAuth({ userId }: { userId: string }) {
       borderRadius: 'var(--radius-lg)',
       padding: 'clamp(16px, 3vw, 20px)',
     }}>
-      <h3 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
+      <h3 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1rem', marginBottom: 16, marginTop: 0 }}>
         🔐 Authentification à Deux Facteurs
       </h3>
 
       <div style={{
-        background: 'rgba(0,98,51,0.05)',
+        background: 'rgba(42,255,160,0.05)',
         borderRadius: 'var(--radius-md)',
         padding: 12,
         marginBottom: 16,
@@ -121,20 +121,20 @@ export function TwoFactorAuth({ userId }: { userId: string }) {
         <>
           {showBackupCodes && (
             <div style={{
-              background: '#fef3c7',
-              border: '1px solid #fcd34d',
+              background: 'rgba(255,201,77,0.14)',
+              border: '1px solid var(--color-accent)',
               borderRadius: 'var(--radius-md)',
               padding: 12,
               marginBottom: 16,
             }}>
-              <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 8, color: '#92400e' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 8, color: 'var(--color-accent)' }}>
                 ⚠️ Codes de secours
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#78350f', marginBottom: 12 }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: 12 }}>
                 Sauvegardez ces codes dans un endroit sûr. Vous pouvez les utiliser pour accéder à votre compte si vous perdez votre téléphone.
               </div>
               <div style={{
-                background: 'white',
+                background: 'var(--color-surface-elevated)',
                 borderRadius: 'var(--radius-md)',
                 padding: 12,
                 fontFamily: 'monospace',
@@ -154,8 +154,8 @@ export function TwoFactorAuth({ userId }: { userId: string }) {
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  background: '#fcd34d',
-                  color: '#92400e',
+                  background: 'var(--color-accent)',
+                  color: '#0a0f0d',
                   border: 'none',
                   borderRadius: 'var(--radius-md)',
                   cursor: 'pointer',

@@ -161,7 +161,7 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
         <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
           {filtered.length} équipe(s)
         </span>
-        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', background: 'rgba(0,98,51,0.08)', padding: '6px 12px', borderRadius: 8 }}>
+        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', background: 'rgba(42,255,160,0.08)', padding: '6px 12px', borderRadius: 8 }}>
           💡 Glissez-déposez les équipes pour réorganiser
         </div>
       </div>
@@ -184,10 +184,10 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
             <div key={poule} style={{ marginBottom: 32 }}>
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12,
-                padding: '8px 16px', background: 'linear-gradient(90deg, #004d27, #006233)',
+                padding: '8px 16px', background: 'linear-gradient(90deg, #0b5234, #0dca6b)',
                 borderRadius: 10, color: 'white',
               }}>
-                <span style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1rem' }}>
+                <span style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '1rem' }}>
                   🏆 {poule}
                 </span>
                 <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>{pouleEquipes.length} équipe(s)</span>
@@ -197,7 +197,7 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
               <div style={{ overflowX: 'auto', borderRadius: 12, border: '1px solid var(--color-border)' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
                   <thead>
-                    <tr style={{ background: '#f8fafc', borderBottom: '2px solid var(--color-border)' }}>
+                    <tr style={{ background: 'var(--color-surface-elevated)', borderBottom: '2px solid var(--color-border)' }}>
                       <th style={{ ...thStyle, width: 60 }}>#</th>
                       <th style={{ ...thStyle, textAlign: 'left', minWidth: 180 }}>Équipe</th>
                       <th style={thStyle}>J</th>
@@ -230,14 +230,14 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                           onDragEnd={handleDragEnd}
                           style={{
                             borderBottom: '1px solid var(--color-border)',
-                            background: isDragging ? 'rgba(0,98,51,0.05)' : isDragOver ? 'rgba(0,98,51,0.08)' : idx % 2 === 0 ? 'white' : '#fafafa',
+                            background: isDragging ? 'rgba(42,255,160,0.05)' : isDragOver ? 'rgba(42,255,160,0.08)' : idx % 2 === 0 ? 'var(--color-surface-card)' : 'var(--color-bg-primary)',
                             transition: 'all 0.15s',
                             cursor: 'grab',
                             opacity: isDragging ? 0.4 : 1,
                             transform: isDragOver ? 'scale(1.01)' : 'scale(1)',
                           }}
                         >
-                          <td style={{ ...tdStyle, fontWeight: 800, color: idx < 2 ? '#006233' : 'var(--color-text-muted)' }}>
+                          <td style={{ ...tdStyle, fontWeight: 800, color: idx < 2 ? '#0dca6b' : 'var(--color-text-muted)' }}>
                             {idx + 1}
                           </td>
                           <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 700, minWidth: 180 }}>
@@ -262,18 +262,18 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                           <td style={{
                             ...tdStyle,
                             fontWeight: 700,
-                            color: diff > 0 ? '#16a34a' : diff < 0 ? '#dc2626' : 'var(--color-text-muted)',
+                            color: diff > 0 ? '#0dca6b' : diff < 0 ? '#ef4444' : 'var(--color-text-muted)',
                           }}>
                             {diff > 0 ? `+${diff}` : diff}
                           </td>
-                          <td style={{ ...tdStyle, fontWeight: 900, color: '#006233', fontSize: '0.95rem' }}>{pts}</td>
+                          <td style={{ ...tdStyle, fontWeight: 900, color: '#0dca6b', fontSize: '0.95rem' }}>{pts}</td>
                           <td style={{ ...tdStyle, display: 'flex', gap: 6, justifyContent: 'center', width: 120 }}>
                             <button
                               onClick={() => handleSave(eq)}
                               disabled={isSaving}
                               style={{
                                 padding: '6px 10px', borderRadius: 8, border: 'none',
-                                background: isSaved ? '#16a34a' : '#006233',
+                                background: isSaved ? '#0dca6b' : '#0dca6b',
                                 color: 'white', fontWeight: 600, fontSize: '0.75rem',
                                 cursor: isSaving ? 'wait' : 'pointer',
                                 transition: 'all 0.2s', whiteSpace: 'nowrap',
@@ -286,7 +286,7 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                               disabled={isSaving}
                               style={{
                                 padding: '6px 10px', borderRadius: 8, border: 'none',
-                                background: '#dc2626',
+                                background: '#ef4444',
                                 color: 'white', fontWeight: 600, fontSize: '0.75rem',
                                 cursor: isSaving ? 'not-allowed' : 'pointer',
                                 transition: 'all 0.2s', whiteSpace: 'nowrap',
@@ -309,7 +309,7 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
         <div style={{ overflowX: 'auto', borderRadius: 12, border: '1px solid var(--color-border)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '2px solid var(--color-border)' }}>
+              <tr style={{ background: 'var(--color-surface-elevated)', borderBottom: '2px solid var(--color-border)' }}>
                 <th style={thStyle}>#</th>
                 <th style={{ ...thStyle, textAlign: 'left' }}>Équipe</th>
                 <th style={thStyle}>MJ</th>
@@ -344,14 +344,14 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                       onDragEnd={handleDragEnd}
                       style={{
                         borderBottom: '1px solid var(--color-border)',
-                        background: isDragging ? 'rgba(0,98,51,0.05)' : isDragOver ? 'rgba(0,98,51,0.08)' : idx % 2 === 0 ? 'white' : '#fafafa',
+                        background: isDragging ? 'rgba(42,255,160,0.05)' : isDragOver ? 'rgba(42,255,160,0.08)' : idx % 2 === 0 ? 'var(--color-surface-card)' : 'var(--color-bg-primary)',
                         transition: 'all 0.15s',
                         cursor: 'grab',
                         opacity: isDragging ? 0.4 : 1,
                         transform: isDragOver ? 'scale(1.01)' : 'scale(1)',
                       }}
                     >
-                      <td style={{ ...tdStyle, fontWeight: 800, color: idx < 2 ? '#006233' : 'var(--color-text-muted)' }}>{idx + 1}</td>
+                      <td style={{ ...tdStyle, fontWeight: 800, color: idx < 2 ? '#0dca6b' : 'var(--color-text-muted)' }}>{idx + 1}</td>
                       <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 700, minWidth: 180 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <div style={{ fontSize: '0.9rem' }}>⋮⋮</div>
@@ -368,22 +368,22 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
                       <td style={tdStyle}>{eq.defaites}</td>
                       <td style={tdStyle}>{eq.buts_marques}</td>
                       <td style={tdStyle}>{eq.buts_encaisses}</td>
-                      <td style={{ ...tdStyle, fontWeight: 700, color: diff > 0 ? '#16a34a' : diff < 0 ? '#dc2626' : 'var(--color-text-muted)' }}>
+                      <td style={{ ...tdStyle, fontWeight: 700, color: diff > 0 ? '#0dca6b' : diff < 0 ? '#ef4444' : 'var(--color-text-muted)' }}>
                         {diff > 0 ? `+${diff}` : diff}
                       </td>
-                      <td style={{ ...tdStyle, fontWeight: 900, color: '#006233' }}>{pts}</td>
+                      <td style={{ ...tdStyle, fontWeight: 900, color: '#0dca6b' }}>{pts}</td>
                       <td style={{ ...tdStyle, display: 'flex', gap: 6, justifyContent: 'center' }}>
                         <button
                           onClick={() => handleSave(eq)}
                           disabled={isSaving}
-                          style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: isSaved ? '#16a34a' : '#006233', color: 'white', fontWeight: 600, fontSize: '0.75rem', cursor: isSaving ? 'wait' : 'pointer' }}
+                          style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: isSaved ? '#0dca6b' : '#0dca6b', color: 'white', fontWeight: 600, fontSize: '0.75rem', cursor: isSaving ? 'wait' : 'pointer' }}
                         >
                           {isSaving ? '⏳' : isSaved ? '✅' : '💾'}
                         </button>
                         <button
                           onClick={() => handleDelete(eq.id, eq.nom)}
                           disabled={isSaving}
-                          style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: '#dc2626', color: 'white', fontWeight: 600, fontSize: '0.75rem', cursor: isSaving ? 'not-allowed' : 'pointer' }}
+                          style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: '#ef4444', color: 'white', fontWeight: 600, fontSize: '0.75rem', cursor: isSaving ? 'not-allowed' : 'pointer' }}
                         >
                           🗑️
                         </button>
@@ -401,7 +401,7 @@ export function AdminClassementClient({ equipes: initialEquipes }: AdminClasseme
 
 const thStyle: React.CSSProperties = {
   padding: '10px 8px', textAlign: 'center', fontSize: '0.78rem',
-  fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em',
+  fontWeight: 800, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em',
 }
 const tdStyle: React.CSSProperties = {
   padding: '8px 6px', textAlign: 'center', verticalAlign: 'middle',
@@ -409,5 +409,5 @@ const tdStyle: React.CSSProperties = {
 const inputStyle: React.CSSProperties = {
   width: 48, padding: '4px 6px', textAlign: 'center',
   border: '1px solid #e2e8f0', borderRadius: 6, fontSize: '0.82rem',
-  background: 'white', fontWeight: 600, outline: 'none',
+  background: 'var(--color-surface-elevated)', fontWeight: 600, outline: 'none',
 }

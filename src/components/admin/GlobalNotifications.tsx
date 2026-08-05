@@ -46,7 +46,7 @@ export default function GlobalNotifications() {
 
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)', maxWidth: 600 }}>
-      <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
+      <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
         📢 Notifications Globales
       </h1>
 
@@ -146,8 +146,8 @@ export default function GlobalNotifications() {
       </form>
 
       <div style={{
-        background: 'rgba(0,98,51,0.05)',
-        border: '1px solid rgba(0,98,51,0.1)',
+        background: 'rgba(42,255,160,0.05)',
+        border: '1px solid rgba(42,255,160,0.1)',
         borderRadius: 'var(--radius-md)',
         padding: 'clamp(12px, 2vw, 16px)',
         marginTop: 'clamp(16px, 3vw, 20px)',

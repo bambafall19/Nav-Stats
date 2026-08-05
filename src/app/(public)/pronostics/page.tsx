@@ -1,8 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { Target } from 'lucide-react'
 import PronosticsClientWrapper from './PronosticsClientWrapper'
 import type { Metadata } from 'next'
 import MonEspace from '@/components/home/MonEspace'
+import PageHero from '@/components/shared/PageHero'
 
 export const metadata: Metadata = {
   title: 'Mes Pronostics – Navétanes Khombole 2026 | NavéStats',
@@ -41,11 +43,16 @@ export default async function MesPronosticsPage() {
     return (
       <div className="page-content">
         <div className="container-app">
-          <div className="card" style={{ padding: 32, textAlign: 'center' }}>
+          <PageHero
+            icon={Target}
+            title="Mes pronostics"
+            subtitle="Retrouvez vos choix, vos scores exacts et vos points gagnés sur les matchs des Navétanes de Khombole."
+          />
+          <div className="card" style={{ padding: 40, textAlign: 'center' }}>
             <div style={{ fontSize: '2.8rem', marginBottom: 12 }}>🎯</div>
-            <h1 style={{ fontSize: '1.7rem', marginBottom: 8 }}>Mes pronostics</h1>
-            <p style={{ color: 'var(--color-text-secondary)', marginBottom: 22 }}>
-              Connectez-vous pour retrouver vos choix, vos scores exacts et vos points gagnés.
+            <h2 style={{ fontSize: '1.3rem', marginBottom: 8 }}>Connectez-vous pour continuer</h2>
+            <p style={{ color: 'var(--color-text-secondary)', marginBottom: 22, fontSize: '0.88rem' }}>
+              Créez votre compte gratuit pour pronostiquer et grimper dans le classement.
             </p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link href="/auth/login" className="btn btn-primary">Connexion</Link>
@@ -103,7 +110,18 @@ export default async function MesPronosticsPage() {
   return (
     <div className="page-content">
       <div className="container-app" style={{ paddingTop: 28 }}>
-        
+        <PageHero
+          icon={Target}
+          title="Mes pronostics"
+          subtitle="Votre historique de prédictions, vos points et vos scores exacts."
+          stats={[
+            { value: total, label: 'pronostics' },
+            { value: corrects, label: 'corrects' },
+            { value: scoresExact, label: 'exacts' },
+            { value: totalPoints, label: 'points' },
+          ]}
+        />
+
         {profile && (
           <MonEspace 
             profile={profile}

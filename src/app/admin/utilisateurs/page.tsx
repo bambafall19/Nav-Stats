@@ -79,7 +79,7 @@ export default function AdminUtilisateursPage() {
   return (
     <div>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+        <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
           👥 Gérer les Utilisateurs
         </h1>
         <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginTop: 4 }}>
@@ -114,10 +114,10 @@ export default function AdminUtilisateursPage() {
             padding: '14px 18px',
             borderRadius: 14,
             border: '1px solid var(--color-border)',
-            background: 'white',
+            background: 'var(--color-surface-elevated)',
             outline: 'none',
             fontSize: '0.9rem',
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
             boxShadow: 'var(--shadow-sm)'
           }}
         />
@@ -130,8 +130,8 @@ export default function AdminUtilisateursPage() {
           backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center',
           justifyContent: 'center', zIndex: 1000, padding: 20
         }}>
-          <div className="card" style={{ width: '100%', maxWidth: 400, padding: 32, borderRadius: 24, background: 'white' }}>
-            <h2 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.25rem', fontWeight: 800, marginBottom: 16 }}>
+          <div className="card" style={{ width: '100%', maxWidth: 400, padding: 32, borderRadius: 24, background: 'var(--color-surface-elevated)' }}>
+            <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.25rem', fontWeight: 800, marginBottom: 16 }}>
               🎯 Ajuster les Points
             </h2>
             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: 20 }}>
@@ -210,7 +210,7 @@ export default function AdminUtilisateursPage() {
                       fontWeight: 800,
                       padding: '4px 8px',
                       borderRadius: 6,
-                      background: u.is_admin ? 'rgba(0,98,51,0.08)' : 'rgba(0,0,0,0.03)',
+                      background: u.is_admin ? 'rgba(42,255,160,0.08)' : 'rgba(0,0,0,0.03)',
                       color: u.is_admin ? 'var(--color-primary)' : 'var(--color-text-secondary)',
                     }}>
                       {u.is_admin ? 'ADMIN' : 'MEMBER'}

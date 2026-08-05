@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Share2 } from 'lucide-react'
+import { Share2, Clock, CheckCircle2, Zap, MapPin, ChevronRight, Radio } from 'lucide-react'
 import CountdownTimer from '@/components/shared/CountdownTimer'
 import type { Database } from '@/types/database.types'
 
@@ -10,43 +10,23 @@ type Match = Database['public']['Tables']['matchs']['Row'] & {
   equipe_b: Database['public']['Tables']['equipes']['Row']
 }
 
-function TeamLogo({ equipe, size = 48, className }: { equipe: Database['public']['Tables']['equipes']['Row']; size?: number; className?: string }) {
-  const hasMobileClass = className?.includes('match-team-logo') || className?.includes('mobile-team-logo')
+function TeamLogo({ equipe, size = 36 }: { equipe: Database['public']['Tables']['equipes']['Row']; size?: number }) {
   if (equipe.logo_url) {
     return (
-      <img
-        src={equipe.logo_url}
-        alt={equipe.nom}
-        className={className}
-        style={{
-          width: hasMobileClass ? undefined : size,
-          height: hasMobileClass ? undefined : size,
-          borderRadius: 'var(--radius-md)',
-          objectFit: 'cover',
-          flexShrink: 0,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-        }}
+      <img src={equipe.logo_url} alt={equipe.nom}
+        style={{ width: size, height: size, borderRadius: 12, objectFit: 'cover', flexShrink: 0, border: '1px solid var(--color-border-subtle)', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
       />
     )
   }
   return (
-    <div
-      className={className}
-      style={{
-        width: hasMobileClass ? undefined : size,
-        height: hasMobileClass ? undefined : size,
-        borderRadius: 'var(--radius-md)',
-        background: `linear-gradient(135deg, ${equipe.couleur_principale || '#006233'}, ${equipe.couleur_secondaire || '#FBBF00'})`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: hasMobileClass ? undefined : size * 0.4,
-        fontWeight: 800,
-        color: 'white',
-        fontFamily: 'var(--font-outfit)',
-        textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-        flexShrink: 0,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-      }}
-    >
+    <div style={{
+      width: size, height: size, borderRadius: 12,
+      background: `linear-gradient(135deg, ${equipe.couleur_principale || '#0dca6b'}, ${equipe.couleur_secondaire || '#ffc94d'})`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: size * 0.33, fontWeight: 800, color: 'white',
+      fontFamily: 'var(--font-plus-jakarta)', flexShrink: 0,
+      boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+    }}>
       {equipe.sigle || equipe.nom.charAt(0)}
     </div>
   )
@@ -56,219 +36,140 @@ function MatchCard({ match }: { match: Match }) {
   const isLive = match.statut === 'en_cours'
   const isDone = match.statut === 'termine'
   const matchDate = new Date(`${match.date_match}T${match.heure_match}`)
-
   const formatDate = (d: Date) => d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
-  const shareText = `⚽ ${match.equipe_a.nom} vs ${match.equipe_b.nom} sur NavéStats\n📅 ${formatDate(matchDate)} à ${match.heure_match?.slice(0, 5)}\n👉 https://navestats.site/matchs/${match.id}`
+  const shareText = `${match.equipe_a.nom} vs ${match.equipe_b.nom} sur NavéStats\n${formatDate(matchDate)} à ${match.heure_match?.slice(0, 5)}\nhttps://navestats.site/matchs/${match.id}`
   const shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`
 
+  const winA = isDone && (match.score_a ?? 0) > (match.score_b ?? 0)
+  const winB = isDone && (match.score_b ?? 0) > (match.score_a ?? 0)
+
   return (
-    <Link href={`/matchs/${match.id}`} style={{ textDecoration: 'none' }} className="match-card-link">
+    <Link href={`/matchs/${match.id}`} style={{ textDecoration: 'none' }}>
       <div className="match-card" style={{
         background: 'var(--color-surface-card)',
-        borderRadius: 'var(--radius-lg)',
-        padding: 10,
-        border: '1px solid var(--color-border)',
-        boxShadow: 'var(--shadow-sm)',
-        transition: 'all 0.25s ease',
-        position: 'relative',
+        border: '1px solid var(--color-border-subtle)',
+        borderRadius: 'var(--radius-xl)',
         overflow: 'hidden',
+        position: 'relative',
+        transition: 'all var(--transition-base) var(--ease-out)',
+        boxShadow: 'var(--shadow-card)',
       }}>
-        {/* Status badge and date */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8, gap: 6 }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
+        {/* Top accent */}
+        <div style={{
+          height: 3,
+          background: isLive
+            ? 'linear-gradient(90deg, #ff3b3b, #ff6b6b)'
+            : 'linear-gradient(90deg, transparent, var(--color-primary-100), transparent)',
+        }} />
+
+        {/* Status bar */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '8px 14px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
             {isLive ? (
-              <span className="status-live" style={{
-                display: 'inline-block',
-                padding: '3px 10px',
-                borderRadius: 'var(--radius-full)',
-                background: 'rgba(232,0,45,0.12)',
-                color: 'var(--color-red)',
-                fontSize: '0.65rem',
-                fontWeight: 800,
-                letterSpacing: '0.02em',
-              }}>
-                🔴 LIVE
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 999, background: 'rgba(255,59,59,0.12)', color: '#ff5a5a', fontSize: '0.58rem', fontWeight: 800, fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ff3b3b', animation: 'pulse-dot 1.2s infinite' }} /> LIVE
               </span>
             ) : isDone ? (
-              <span style={{
-                display: 'inline-block',
-                padding: '3px 10px',
-                borderRadius: 'var(--radius-full)',
-                background: 'rgba(100,116,139,0.08)',
-                color: 'var(--color-text-muted)',
-                fontSize: '0.65rem',
-                fontWeight: 700,
-              }}>
-                Terminé
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 999, background: 'var(--color-bg-secondary)', color: 'var(--color-text-muted)', fontSize: '0.58rem', fontWeight: 700 }}>
+                <CheckCircle2 size={10} /> Terminé
               </span>
             ) : (
-              <span style={{
-                display: 'inline-block',
-                padding: '3px 10px',
-                borderRadius: 'var(--radius-full)',
-                background: 'rgba(0,166,81,0.08)',
-                color: '#00A651',
-                fontSize: '0.65rem',
-                fontWeight: 700,
-              }}>
-                ⏰ {match.heure_match?.slice(0,5)}
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 999, background: 'rgba(42,255,160,0.08)', color: 'var(--color-primary)', fontSize: '0.58rem', fontWeight: 700 }}>
+                <Clock size={10} /> {match.heure_match?.slice(0, 5)}
               </span>
             )}
-            
-            <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', fontWeight: 600, marginTop: 4 }}>
+            <span style={{ fontSize: '0.56rem', color: 'var(--color-text-muted)', fontWeight: 600, fontFamily: 'var(--font-plus-jakarta)' }}>
               {formatDate(matchDate)} · J{match.journee || '?'}
-            </div>
+            </span>
           </div>
-
-          {/* Share button - touch target */}
           <button
             type="button"
-            onClick={event => {
-              event.preventDefault()
-              event.stopPropagation()
-              window.open(shareUrl, '_blank', 'noopener,noreferrer')
-            }}
-            aria-label="Partager ce match sur WhatsApp"
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: '50%',
-              background: 'rgba(0,98,51,0.06)',
-              color: 'var(--color-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid rgba(0,98,51,0.12)',
-              cursor: 'pointer',
-              flexShrink: 0,
-              transition: 'all 0.2s',
-            }}
+            onClick={event => { event.preventDefault(); event.stopPropagation(); window.open(shareUrl, '_blank', 'noopener,noreferrer') }}
+            aria-label="Partager"
+            style={{ width: 26, height: 26, borderRadius: 8, background: 'var(--color-bg-secondary)', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', flexShrink: 0 }}
           >
-            <Share2 size={15} />
+            <Share2 size={12} />
           </button>
         </div>
 
-        {/* Teams VS */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr auto 1fr',
-          gap: 6,
-          alignItems: 'center',
-          marginBottom: 8,
-        }}>
-          {/* Équipe A */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <div className="team-badge" style={{
-              width: 28,
-              height: 28,
-              borderRadius: 'var(--radius-md)',
-              overflow: 'hidden',
-              boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
-              border: '1.5px solid var(--color-border)',
-            }}>
-              <TeamLogo equipe={match.equipe_a} size={28} />
-            </div>
-            <span className="team-name" style={{
-              fontSize: '0.62rem',
-              fontWeight: 700,
-              textAlign: 'center',
-              color: 'var(--color-text-primary)',
-              lineHeight: 1.2,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              maxWidth: '100%',
-            }}>
-              {match.equipe_a.nom}
-            </span>
-          </div>
-
-          {/* VS / Score */}
-          <div className="vs-badge" style={{
-            width: 26,
-            height: 26,
-            borderRadius: '50%',
-            background: isLive
-              ? 'linear-gradient(135deg, rgba(232,0,45,0.15), rgba(232,0,45,0.08))'
-              : isDone
-              ? 'linear-gradient(135deg, rgba(0,98,51,0.12), rgba(0,166,81,0.08))'
-              : 'linear-gradient(135deg, rgba(0,98,51,0.1), rgba(0,166,81,0.06))',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 900,
-            fontSize: '0.62rem',
-            color: isLive ? 'var(--color-red)' : 'var(--color-primary)',
-            border: `1.5px solid ${isLive ? 'rgba(239,68,68,0.25)' : 'rgba(0,98,51,0.2)'}`,
-            fontFamily: 'var(--font-outfit)',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
-          }}>
-            {isDone || isLive ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.62rem' }}>
-                <span style={{ fontWeight: 900 }}>{match.score_a ?? 0}</span>
-                <span style={{ fontSize: '0.5rem', opacity: 0.7 }}>–</span>
-                <span style={{ fontWeight: 900 }}>{match.score_b ?? 0}</span>
+        {/* Teams + Score */}
+        <div style={{ padding: '6px 14px 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ flex: 1, textAlign: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+                <TeamLogo equipe={match.equipe_a} size={40} />
               </div>
-            ) : (
-              'VS'
-            )}
+              <div style={{
+                fontSize: '0.62rem', fontWeight: 700,
+                color: winA ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}>
+                {match.equipe_a.nom}
+              </div>
+            </div>
+
+            <div style={{ flexShrink: 0, textAlign: 'center' }}>
+              {isDone || isLive ? (
+                <div style={{
+                  padding: '8px 14px', borderRadius: 14,
+                  background: isLive ? 'rgba(255,59,59,0.08)' : 'rgba(42,255,160,0.08)',
+                  border: `1px solid ${isLive ? 'rgba(255,59,59,0.2)' : 'rgba(42,255,160,0.15)'}`,
+                  display: 'flex', alignItems: 'center', gap: 6,
+                }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '1.1rem', color: winA ? 'var(--color-primary)' : 'var(--color-text-primary)' }}>{match.score_a ?? 0}</span>
+                  <span style={{ color: 'var(--color-text-muted)', fontWeight: 600, fontSize: '0.55rem' }}>–</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '1.1rem', color: winB ? 'var(--color-primary)' : 'var(--color-text-primary)' }}>{match.score_b ?? 0}</span>
+                </div>
+              ) : (
+                <div style={{
+                  width: 40, height: 40, borderRadius: 14,
+                  background: 'var(--gradient-hero)',
+                  border: '1px solid var(--color-border-subtle)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: '0.62rem', color: 'var(--color-primary)', letterSpacing: '0.04em' }}>VS</span>
+                </div>
+              )}
+            </div>
+
+            <div style={{ flex: 1, textAlign: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+                <TeamLogo equipe={match.equipe_b} size={40} />
+              </div>
+              <div style={{
+                fontSize: '0.62rem', fontWeight: 700,
+                color: winB ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}>
+                {match.equipe_b.nom}
+              </div>
+            </div>
           </div>
 
-          {/* Équipe B */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <div className="team-badge" style={{
-              width: 28,
-              height: 28,
-              borderRadius: 'var(--radius-md)',
-              overflow: 'hidden',
-              boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
-              border: '1.5px solid var(--color-border)',
-            }}>
-              <TeamLogo equipe={match.equipe_b} size={28} />
+          {match.stade && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, marginTop: 12, fontSize: '0.58rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>
+              <MapPin size={10} /> {match.stade}
             </div>
-            <span className="team-name" style={{
-              fontSize: '0.62rem',
-              fontWeight: 700,
-              textAlign: 'center',
-              color: 'var(--color-text-primary)',
-              lineHeight: 1.2,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              maxWidth: '100%',
-            }}>
-              {match.equipe_b.nom}
-            </span>
-          </div>
+          )}
         </div>
 
-        {/* Countdown + Footer CTA */}
+        {/* Footer CTA */}
         {match.statut === 'a_venir' && (
-          <div className="match-card-footer" style={{
-            marginTop: 6,
-            paddingTop: 6,
-            borderTop: '1px solid var(--color-border)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 4,
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <CountdownTimer targetDate={match.date_match} targetTime={match.heure_match || '00:00:00'} />
-            </div>
-            <div style={{
-              width: '100%',
-              padding: '6px',
-              background: 'var(--gradient-green)',
-              color: 'white',
-              border: 'none',
-              borderRadius: 'var(--radius-full)',
-              fontSize: '0.68rem',
-              fontWeight: 700,
-              textAlign: 'center',
-              boxShadow: 'var(--shadow-green)',
-              fontFamily: 'var(--font-outfit)',
+          <div style={{ padding: '0 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <CountdownTimer targetDate={match.date_match} targetTime={match.heure_match || '00:00:00'} />
+            <div className="match-cta" style={{
+              width: '100%', padding: '10px',
+              background: 'var(--gradient-green)', color: '#0a0f0d',
+              borderRadius: 12, fontSize: '0.66rem', fontWeight: 800, textAlign: 'center',
+              fontFamily: 'var(--font-plus-jakarta)',
+              letterSpacing: '0.04em', textTransform: 'uppercase',
+              boxShadow: '0 6px 18px rgba(42,255,160,0.25)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
             }}>
-              🎯 Pronostiquer
+              <Radio size={12} /> Pronostiquer
             </div>
           </div>
         )}
@@ -280,38 +181,30 @@ function MatchCard({ match }: { match: Match }) {
 export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isToday: boolean }) {
   return (
     <div>
-      <div style={{ textAlign: 'center', marginBottom: 8 }}>
-        <h2 className="section-title" style={{ marginBottom: 1, fontSize: '1rem' }}>
-          {isToday ? '⚽ Matchs du Jour' : '📅 Prochains Matchs'}
-          <span style={{
-            marginLeft: 6,
-            fontSize: '0.58rem',
-            fontWeight: 800,
-            letterSpacing: '0.02em',
-            textTransform: 'uppercase',
-            padding: '2px 7px',
-            borderRadius: 'var(--radius-full)',
-            background: 'rgba(124,58,237,0.08)',
-            color: '#7C3AED',
-            border: '1px solid rgba(124,58,237,0.18)',
-            verticalAlign: 'middle',
-          }}>Cadets</span>
-        </h2>
-        <p className="section-subtitle" style={{ fontSize: '0.68rem' }}>
-          {matchs.length === 0
-            ? 'Aucun match prévu'
-            : `${matchs.length} rencontre${matchs.length > 1 ? 's' : ''}`
-          }
-        </p>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 12, gap: 8 }}>
+        <div>
+          <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2, fontSize: '1rem' }}>
+            <Zap size={17} color="var(--color-primary)" />
+            {isToday ? 'Matchs du Jour' : 'Prochains Matchs'}
+          </h2>
+          <p className="section-subtitle" style={{ fontSize: '0.7rem' }}>
+            {matchs.length === 0 ? 'Aucun match prévu' : `${matchs.length} rencontre${matchs.length > 1 ? 's' : ''}`}
+          </p>
+        </div>
+        {matchs.length > 0 && (
+          <Link href="/matchs" style={{ display: 'flex', alignItems: 'center', gap: 3, color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.72rem', textDecoration: 'none', fontFamily: 'var(--font-plus-jakarta)', whiteSpace: 'nowrap' }}>
+            Voir tout <ChevronRight size={13} />
+          </Link>
+        )}
       </div>
 
       {matchs.length === 0 ? (
-        <div className="card" style={{ padding: 24, textAlign: 'center' }}>
-          <div style={{ fontSize: '1.8rem', marginBottom: 6 }}>⚽</div>
+        <div className="card" style={{ padding: 28, textAlign: 'center' }}>
+          <div style={{ marginBottom: 8, color: 'var(--color-text-muted)' }}><Zap size={24} /></div>
           <p style={{ color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: '0.8rem' }}>Aucun match prévu pour le moment</p>
         </div>
       ) : (
-        <div className="matchs-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
+        <div className="matchs-grid h-scroll" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
           {matchs.map((match, i) => (
             <div key={match.id} style={{ animation: `fadeInUp 0.4s ${i * 0.06}s ease both` }}>
               <MatchCard match={match} />
@@ -320,39 +213,15 @@ export default function MatchsDuJour({ matchs, isToday }: { matchs: Match[]; isT
         </div>
       )}
       <style>{`
-        @media (max-width: 640px) {
-          .matchs-grid {
-            grid-template-columns: 1fr !important;
-            gap: 8px !important;
-          }
-          .match-card {
-            padding: 10px !important;
-          }
-          .match-card .team-badge {
-            width: 30px !important;
-            height: 30px !important;
-          }
-          .match-card .team-badge img {
-            width: 30px !important;
-            height: 30px !important;
-          }
-          .match-card .vs-badge {
-            width: 28px !important;
-            height: 28px !important;
-            font-size: 0.65rem !important;
-          }
-          .match-card .team-name {
-            font-size: 0.68rem !important;
-          }
-          .match-card-footer {
-            padding-top: 8px !important;
-            margin-top: 8px !important;
-          }
-          .match-card-footer > div {
-            padding: 7px !important;
-            font-size: 0.72rem !important;
-          }
+        @media (max-width: 767px) {
+          .matchs-grid.h-scroll > * { flex: 0 0 84% !important; }
         }
+        @media (max-width: 640px) {
+          .matchs-grid { grid-template-columns: 1fr !important; }
+        }
+        .match-card:hover { box-shadow: var(--shadow-card-hover) !important; transform: translateY(-3px) scale(1.01); }
+        .match-card:hover .match-cta { filter: brightness(1.08); }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
       `}</style>
     </div>
   )

@@ -69,7 +69,7 @@ export default function ModerationPanel() {
 
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
-      <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
+      <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
         🛡️ Modération
       </h1>
 
@@ -103,7 +103,7 @@ export default function ModerationPanel() {
               key={report.id}
               style={{
                 background: 'var(--color-surface-card)',
-                border: `2px solid ${report.status === 'pending' ? '#f59e0b' : '#10b981'}`,
+                border: `2px solid ${report.status === 'pending' ? '#ffc94d' : '#10b981'}`,
                 borderRadius: 'var(--radius-lg)',
                 padding: 'clamp(12px, 2vw, 16px)',
               }}
@@ -121,8 +121,8 @@ export default function ModerationPanel() {
                   </div>
                 </div>
                 <div style={{
-                  background: report.status === 'pending' ? '#fef3c7' : '#d1fae5',
-                  color: report.status === 'pending' ? '#92400e' : '#065f46',
+                  background: report.status === 'pending' ? 'rgba(255,201,77,0.14)' : 'rgba(42,255,160,0.14)',
+                  color: report.status === 'pending' ? 'var(--color-accent)' : 'var(--color-primary)',
                   padding: '4px 10px',
                   borderRadius: 'var(--radius-full)',
                   fontSize: '0.75rem',
@@ -157,7 +157,7 @@ export default function ModerationPanel() {
                     onClick={() => handleResolveReport(report.id, 'warn')}
                     style={{
                       padding: '8px 12px',
-                      background: '#f59e0b',
+                      background: '#ffc94d',
                       color: 'white',
                       border: 'none',
                       borderRadius: 'var(--radius-md)',

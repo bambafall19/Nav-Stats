@@ -31,7 +31,7 @@ export default function ImageOptimized({
           style={{
             position: 'absolute',
             inset: 0,
-            background: '#e0e0e0',
+            background: 'var(--color-surface-card)',
             animation: 'pulse 2s infinite',
             zIndex: 1,
           }}

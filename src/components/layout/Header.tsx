@@ -1,28 +1,32 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
+import { Search, Target, BarChart3, Settings, LogOut, LayoutDashboard, ShieldCheck, ChevronRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
-import ThemeToggle from '@/components/shared/ThemeToggle'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
-const navLinks = [
-  { href: '/', label: 'Accueil', icon: '\u{1F3E0}' },
-  { href: '/matchs', label: 'Matchs', icon: '\u26BD' },
-  { href: '/cadets', label: 'Cadets', icon: '\u{1F4C5}' },
-  { href: '/classements', label: 'Classements', icon: '\u{1F3C6}' },
-  { href: '/statistiques', label: 'Stats', icon: '\u{1F4CA}' },
-  { href: '/communaute', label: 'Chat', icon: '\u{1F4AC}' },
-]
+type FollowedTeam = {
+  equipe_id: string
+  equipes: {
+    id: string
+    nom: string
+    sigle: string | null
+    logo_url: string | null
+    couleur_principale: string
+  } | null
+}
 
 export default function Header() {
-  const pathname = usePathname()
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [followedTeams, setFollowedTeams] = useState<FollowedTeam[]>([])
   const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const menuRef = useRef<HTMLDivElement>(null)
   const supabase = createClient() as any
 
@@ -32,8 +36,21 @@ export default function Header() {
       if (user) {
         supabase.from('profiles').select('*').eq('id', user.id).single()
           .then((r: any) => setProfile(r.data))
+          .catch(() => {})
+        supabase.from('team_follows')
+          .select('equipe_id, equipes(id, nom, sigle, logo_url, couleur_principale)')
+          .eq('user_id', user.id)
+          .limit(3)
+          .then((r: any) => { if (r.data) setFollowedTeams(r.data) })
+          .catch(() => {})
       }
-    })
+    }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   useEffect(() => {
@@ -49,186 +66,292 @@ export default function Header() {
     window.location.href = '/'
   }
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`
+    }
+  }
+
   return (
-    <header
-      style={{
-        position: 'relative', top: 0, left: 0, right: 0,
-        height: 56,
-        background: 'var(--header-bg)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        borderBottom: '1px solid var(--header-border)',
-        boxShadow: 'var(--header-shadow)',
-      }}
-    >
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        height: '100%', paddingLeft: 12, paddingRight: 12,
-        maxWidth: 1200, margin: '0 auto', gap: 8,
-      }}>
-        {/* Logo */}
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: 9,
-            background: 'var(--gradient-green)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            overflow: 'hidden', flexShrink: 0,
-            boxShadow: '0 4px 12px rgba(0,98,51,0.25)',
-          }}>
-            <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 9 }} />
-          </div>
-          <span className="logo-text" style={{
-            fontFamily: 'var(--font-outfit)', fontWeight: 800,
-            fontSize: '1.15rem', color: 'var(--color-primary)',
-            letterSpacing: '-0.03em',
-          }}>NavéStats</span>
-        </Link>
-
-        {/* Navigation horizontale */}
-        <nav className="top-nav" style={{
-          display: 'flex', alignItems: 'center', gap: 2,
-          flex: 1, justifyContent: 'center',
+    <>
+      <header
+        id="main-header"
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          zIndex: 100,
+          height: 64,
+          background: scrolled ? 'rgba(8,14,11,0.82)' : 'rgba(8,14,11,0.5)',
+          backdropFilter: 'blur(20px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+          borderBottom: scrolled ? '1px solid var(--color-border-subtle)' : '1px solid transparent',
+          boxShadow: scrolled ? 'var(--header-shadow)' : 'none',
+          transition: 'all 0.3s ease',
+        }}
+      >
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: '100%',
+          padding: '0 24px',
+          maxWidth: 1280,
+          margin: '0 auto',
+          gap: 20,
         }}>
-          {navLinks.map(link => {
-            const isActive = pathname === link.href
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  padding: '6px 10px', borderRadius: 8,
-                  fontSize: '0.78rem', fontWeight: isActive ? 600 : 500,
-                  color: isActive ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                  background: isActive ? 'rgba(0,98,51,0.07)' : 'transparent',
-                  textDecoration: 'none',
-                  transition: 'all 0.15s',
-                  whiteSpace: 'nowrap',
-                  fontFamily: 'var(--font-outfit), sans-serif',
-                }}
-                onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'var(--color-surface-elevated)' }}
-                onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
-              >
-                <span className="nav-icon" style={{ fontSize: '0.9rem' }}>{link.icon}</span>
-                <span className="nav-label">{link.label}</span>
-              </Link>
-            )
-          })}
-        </nav>
-
-        {/* Actions droite */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-          <ThemeToggle />
-          {profile && <NotificationBell userId={profile.id} />}
-          
-          {/* Admin link if admin */}
-          {profile?.is_admin && (
-            <Link 
-              href="/admin" 
+          {/* Search bar */}
+          <form onSubmit={handleSearch} className="header-search" style={{
+            flex: 1,
+            maxWidth: 420,
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '0 14px',
+            height: 40,
+            borderRadius: 999,
+            background: searchOpen ? 'var(--color-surface)' : 'var(--color-bg-secondary)',
+            border: searchOpen ? '1.5px solid var(--color-primary)' : '1.5px solid transparent',
+            boxShadow: searchOpen ? '0 0 0 4px rgba(42,255,160,0.12), 0 0 20px rgba(42,255,160,0.1)' : 'none',
+            transition: 'all 0.2s',
+          }}>
+            <Search size={16} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setSearchOpen(true)}
+              onBlur={() => setSearchOpen(false)}
+              placeholder="Rechercher un match, une équipe, un joueur..."
+              aria-label="Rechercher"
               style={{
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--gradient-gold)',
-                color: '#5a3800',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                boxShadow: 'var(--shadow-gold)',
+                flex: 1,
+                background: 'transparent',
+                border: 'none',
+                outline: 'none',
+                fontSize: '0.82rem',
+                color: 'var(--color-text-primary)',
+                fontFamily: 'var(--font-inter)',
               }}
-            >
-              ⚙️ Admin
-            </Link>
-          )}
+            />
+            <kbd style={{
+              fontSize: '0.6rem', color: 'var(--color-text-muted)',
+              padding: '2px 6px', borderRadius: 6,
+              background: 'var(--color-surface-hover)',
+              border: '1px solid var(--color-border-subtle)',
+              fontFamily: 'var(--font-mono)',
+              display: 'inline-flex', alignItems: 'center', gap: 2,
+              flexShrink: 0,
+            }}><span style={{ fontSize: '0.72rem' }}>⌘</span>K</kbd>
+          </form>
 
-          {profile ? (
-            <div ref={menuRef} style={{ position: 'relative' }}>
-              <button onClick={() => setMenuOpen(!menuOpen)}
-                style={{
-                  width: 32, height: 32, borderRadius: '50%', border: '2px solid var(--color-border)',
-                  background: 'var(--gradient-gold)', cursor: 'pointer', overflow: 'hidden',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '0.65rem', fontWeight: 700, color: '#5a3800', padding: 0,
-                }}
-                aria-label="Menu"
+          {/* Right actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            {profile && <NotificationBell userId={profile.id} />}
+
+            {profile?.is_admin && (
+              <Link href="/admin" style={{
+                padding: '5px 10px', borderRadius: 8,
+                background: 'var(--color-accent-50)', color: 'var(--color-accent)',
+                fontSize: '0.68rem', fontWeight: 700,
+                textDecoration: 'none',
+                display: 'flex', alignItems: 'center', gap: 4,
+                fontFamily: 'var(--font-display)',
+                border: '1px solid rgba(255,201,77,0.22)',
+                transition: 'background 0.15s',
+              }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,201,77,0.16)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'var(--color-accent-50)'}
               >
-                {profile.avatar_url
-                  ? <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : profile.username.charAt(0).toUpperCase()
-                }
-              </button>
-              {menuOpen && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                  minWidth: 170, padding: 6, zIndex: 200,
-                  background: 'var(--color-surface-card)',
-                  borderRadius: 14, border: '1px solid var(--color-border)',
-                  boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
-                  animation: 'fadeSlide 0.15s ease',
-                }}>
-                  <div style={{ padding: '6px 10px 4px', borderBottom: '1px solid var(--color-border)', marginBottom: 2 }}>
-                    <div style={{ fontSize: '0.8rem', fontWeight: 600 }}>{profile.username}</div>
-                    <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{profile.points} pts</div>
-                  </div>
-                  <Link href={`/profil/${profile.id}`} onClick={() => setMenuOpen(false)}
-                    style={{ display: 'block', padding: '7px 10px', borderRadius: 8, textDecoration: 'none', color: 'var(--color-text-primary)', fontSize: '0.8rem', fontWeight: 500 }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-elevated)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                  >{'\u{1F464}'} Mon Profil</Link>
-                  <Link href="/pronostics" onClick={() => setMenuOpen(false)}
-                    style={{ display: 'block', padding: '7px 10px', borderRadius: 8, textDecoration: 'none', color: 'var(--color-text-primary)', fontSize: '0.8rem', fontWeight: 500 }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-elevated)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                  >{'\u{1F4CA}'} Mes Pronostics</Link>
-                  {profile.is_admin && (
-                    <Link href="/admin" onClick={() => setMenuOpen(false)}
-                      style={{ display: 'block', padding: '7px 10px', borderRadius: 8, textDecoration: 'none', color: 'var(--color-primary)', fontSize: '0.8rem', fontWeight: 600 }}
-                      onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-elevated)'}
+                <Settings size={12} />
+                Admin
+              </Link>
+            )}
+
+            {profile ? (
+              <div ref={menuRef} style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  style={{
+                    width: 32, height: 32, borderRadius: 8,
+                    border: '1.5px solid var(--color-border-subtle)',
+                    background: profile.avatar_url ? 'transparent' : 'var(--color-primary-50)',
+                    cursor: 'pointer', overflow: 'hidden',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.65rem', fontWeight: 700,
+                    color: 'var(--color-primary)', padding: 0,
+                    transition: 'all 0.15s',
+                  }}
+                  aria-label="Menu"
+                >
+                  {profile.avatar_url
+                    ? <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : profile.username.charAt(0).toUpperCase()
+                  }
+                </button>
+                {menuOpen && (
+                  <div style={{
+                    position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                    minWidth: 230, padding: 6, zIndex: 200,
+                    background: 'var(--color-surface-elevated)',
+                    borderRadius: 14,
+                    border: '1px solid var(--color-border-subtle)',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)',
+                    animation: 'fadeSlide 0.15s ease',
+                  }}>
+                    <div style={{ padding: '10px 12px 8px', borderBottom: '1px solid var(--color-border-subtle)', marginBottom: 4 }}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 700, fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>{profile.username}</div>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--color-primary)', fontFamily: 'var(--font-mono)' }}>{profile.points} pts</div>
+                    </div>
+
+                    {/* Compétition */}
+                    <Link href="/classements" onClick={() => setMenuOpen(false)} style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '8px 10px', borderRadius: 10, textDecoration: 'none',
+                      background: 'var(--gradient-green-soft)',
+                      border: '1px solid rgba(42,255,160,0.18)',
+                      margin: '0 2px 6px',
+                      transition: 'background 0.12s',
+                    }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(42,255,160,0.4)'}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(42,255,160,0.18)'}
+                    >
+                      <div style={{
+                        width: 30, height: 30, borderRadius: 9,
+                        background: 'var(--gradient-green)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                        boxShadow: '0 4px 14px rgba(42,255,160,0.3)',
+                      }}>
+                        <ShieldCheck size={15} color="var(--color-text-on-primary)" strokeWidth={2.2} />
+                      </div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.72rem', fontFamily: 'var(--font-display)', lineHeight: 1.2 }}>Navétanes · Zone 6</div>
+                        <div style={{ color: 'var(--color-text-muted)', fontSize: '0.62rem', fontFamily: 'var(--font-display)' }}>Khombole · Saison 2026</div>
+                      </div>
+                      <ChevronRight size={14} color="var(--color-text-muted)" style={{ flexShrink: 0 }} />
+                    </Link>
+
+                    {/* Mes équipes */}
+                    {followedTeams.length > 0 && (
+                      <>
+                        <div style={{
+                          fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase',
+                          letterSpacing: '0.08em', color: 'var(--color-text-muted)',
+                          fontFamily: 'var(--font-display)',
+                          padding: '4px 10px 2px',
+                        }}>Mes équipes</div>
+                        {followedTeams.map(t => {
+                          const team = t.equipes
+                          if (!team) return null
+                          return (
+                            <Link key={t.equipe_id} href={`/equipes/${team.id}`} onClick={() => setMenuOpen(false)}
+                              style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '7px 10px', borderRadius: 8, textDecoration: 'none', transition: 'background 0.12s' }}
+                              onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-hover)'}
+                              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                            >
+                              <span style={{
+                                width: 24, height: 24, borderRadius: 7,
+                                background: team.couleur_principale || 'var(--color-primary)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '0.52rem', fontWeight: 800, color: 'white',
+                                fontFamily: 'var(--font-display)', overflow: 'hidden', flexShrink: 0,
+                              }}>
+                                {team.logo_url
+                                  ? <img src={team.logo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                  : (team.sigle || team.nom.slice(0, 3)).toUpperCase()
+                                }
+                              </span>
+                              <span style={{
+                                flex: 1, minWidth: 0, color: 'var(--color-text-secondary)',
+                                fontSize: '0.74rem', fontWeight: 600, fontFamily: 'var(--font-display)',
+                                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                              }}>{team.nom}</span>
+                              <ChevronRight size={12} color="var(--color-text-muted)" style={{ flexShrink: 0 }} />
+                            </Link>
+                          )
+                        })}
+                        <div style={{ height: 1, background: 'var(--color-border-subtle)', margin: '4px 0' }} />
+                      </>
+                    )}
+                    <Link href={`/profil/${profile.id}`} onClick={() => setMenuOpen(false)}
+                      style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, textDecoration: 'none', color: 'var(--color-text-primary)', fontSize: '0.78rem', fontWeight: 500, transition: 'background 0.12s' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-hover)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >{'\u{1F6E1}\uFE0F'} Admin</Link>
-                  )}
-                  <div style={{ height: 1, background: 'var(--color-border)', margin: '4px 0' }} />
-                  <button onClick={handleSignOut}
-                    style={{ display: 'block', width: '100%', padding: '7px 10px', borderRadius: 8, color: 'var(--color-red)', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 500, textAlign: 'left' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(232,0,45,0.06)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                  >{'\u{1F6AA}'} Déconnexion</button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Link href="/auth/login" style={{
-              display: 'inline-flex', alignItems: 'center',
-              padding: '5px 12px', fontSize: '0.75rem', fontWeight: 600,
-              fontFamily: 'var(--font-outfit), sans-serif',
-              borderRadius: 20, textDecoration: 'none',
-              border: '1px solid var(--color-border)',
-              color: 'var(--color-text-primary)',
-              height: 30, transition: 'all 0.2s',
-            }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-elevated)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >{'\u{1F511}'} Se connecter</Link>
-          )}
+                    >
+                      <Target size={14} /> Mon Profil
+                    </Link>
+                    <Link href="/pronostics" onClick={() => setMenuOpen(false)}
+                      style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, textDecoration: 'none', color: 'var(--color-text-primary)', fontSize: '0.78rem', fontWeight: 500, transition: 'background 0.12s' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-hover)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <BarChart3 size={14} /> Mes Pronostics
+                    </Link>
+                    {profile.is_admin && (
+                      <Link href="/admin" onClick={() => setMenuOpen(false)}
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, textDecoration: 'none', color: 'var(--color-primary)', fontSize: '0.78rem', fontWeight: 600, transition: 'background 0.12s' }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-hover)'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                      >
+                        <LayoutDashboard size={14} /> Admin
+                      </Link>
+                    )}
+                    <div style={{ height: 1, background: 'var(--color-border-subtle)', margin: '4px 0' }} />
+                    <button onClick={handleSignOut} style={{
+                      display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8,
+                      color: 'var(--color-red)', background: 'transparent', border: 'none', cursor: 'pointer',
+                      fontSize: '0.78rem', fontWeight: 500, textAlign: 'left', width: '100%', transition: 'background 0.12s',
+                    }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--color-red-light)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <LogOut size={14} /> Déconnexion
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link href="/auth/login" style={{
+                display: 'inline-flex', alignItems: 'center',
+                padding: '7px 16px', fontSize: '0.75rem', fontWeight: 600,
+                fontFamily: 'var(--font-display)',
+                borderRadius: 8, textDecoration: 'none',
+                background: 'var(--gradient-green)', color: 'var(--color-text-on-primary)',
+                transition: 'all 0.2s',
+                boxShadow: 'var(--shadow-green)',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(42,255,160,0.35)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = 'var(--shadow-green)'; e.currentTarget.style.transform = 'translateY(0)' }}
+              >Se connecter</Link>
+            )}
+          </div>
         </div>
-      </div>
+      </header>
+
+      {/* Spacer */}
+      <div className="desktop-spacer" />
 
       <style>{`
-        @media (max-width: 640px) {
-          header { display: none !important; }
-          .nav-label { display: none !important; }
-          .nav-icon { font-size: 1.1rem !important; }
-          .top-nav { gap: 0 !important; }
-          .top-nav a { padding: 6px 8px !important; }
-          .logo-text { font-size: 0.85rem !important; }
-        }
+        .desktop-spacer { height: 64px; display: block; }
+        .header-search:hover { border-color: var(--color-border) !important; }
+        .header-search:focus-within { border-color: var(--color-primary) !important; box-shadow: 0 0 0 4px rgba(42,255,160,0.12) !important; background: var(--color-surface) !important; }
         @keyframes fadeSlide {
           from { opacity: 0; transform: translateY(-4px) scale(0.96); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
+        @media (max-width: 767px) {
+          #main-header { display: none !important; }
+          .desktop-spacer { display: none !important; }
+        }
+        @media (min-width: 768px) {
+          #main-header {
+            display: block !important;
+            left: 0;
+          }
+        }
       `}</style>
-    </header>
+    </>
   )
 }

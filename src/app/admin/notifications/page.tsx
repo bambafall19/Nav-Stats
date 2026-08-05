@@ -118,7 +118,7 @@ export default function AdminNotificationsPage() {
   }
 
   const typeColor: Record<string, string> = {
-    match: '#006233',
+    match: '#0dca6b',
     resultat: '#D97706',
     classement: '#1D4ED8',
     badge: '#7C3AED',
@@ -129,7 +129,7 @@ export default function AdminNotificationsPage() {
     <div className="admin-notifications">
       {/* Header */}
       <div className="admin-header" style={{
-        background: 'linear-gradient(135deg, #006233 0%, #00A651 100%)',
+        background: 'linear-gradient(135deg, #0dca6b 0%, #0dca6b 100%)',
         borderRadius: 20,
         padding: 'clamp(24px, 4vw, 40px)',
         marginBottom: 32,
@@ -140,7 +140,7 @@ export default function AdminNotificationsPage() {
         <div style={{ position: 'absolute', top: -20, right: -20, fontSize: 100, opacity: 0.1 }}>🔔</div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
           <div>
-            <h1 style={{ fontFamily: 'var(--font-outfit)', fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', fontWeight: 900, marginBottom: 8 }}>
+            <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', fontWeight: 900, marginBottom: 8 }}>
               🔔 Gestion des Notifications
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', maxWidth: 600 }}>
@@ -151,8 +151,8 @@ export default function AdminNotificationsPage() {
             onClick={() => setShowForm(!showForm)}
             className="btn btn-lg"
             style={{
-              background: 'white',
-              color: '#006233',
+              background: 'var(--color-surface-elevated)',
+              color: '#0dca6b',
               fontWeight: 800,
               boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
             }}
@@ -190,11 +190,11 @@ export default function AdminNotificationsPage() {
         }}>
           <div className="admin-form-card" style={{
             width: '100%', maxWidth: 600, padding: 32, borderRadius: 24,
-            background: 'white', maxHeight: '90vh', overflowY: 'auto',
+            background: 'var(--color-surface-elevated)', maxHeight: '90vh', overflowY: 'auto',
             boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <h2 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.5rem', fontWeight: 800 }}>
+              <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.5rem', fontWeight: 800 }}>
                 📢 Nouvelle Notification
               </h2>
               <button 
@@ -222,7 +222,7 @@ export default function AdminNotificationsPage() {
                   style={{
                     width: '100%', padding: '14px 16px', borderRadius: 12,
                     border: '2px solid var(--color-border)', fontSize: '0.9rem',
-                    fontFamily: 'var(--font-outfit)', outline: 'none'
+                    fontFamily: 'var(--font-plus-jakarta)', outline: 'none'
                   }}
                 />
               </div>
@@ -240,7 +240,7 @@ export default function AdminNotificationsPage() {
                   style={{
                     width: '100%', padding: '14px 16px', borderRadius: 12,
                     border: '2px solid var(--color-border)', fontSize: '0.9rem',
-                    fontFamily: 'var(--font-outfit)', outline: 'none', resize: 'vertical'
+                    fontFamily: 'var(--font-plus-jakarta)', outline: 'none', resize: 'vertical'
                   }}
                 />
               </div>
@@ -256,7 +256,7 @@ export default function AdminNotificationsPage() {
                     style={{
                       width: '100%', padding: '14px 16px', borderRadius: 12,
                       border: '2px solid var(--color-border)', fontSize: '0.9rem',
-                      fontFamily: 'var(--font-outfit)', background: 'white', outline: 'none'
+                      fontFamily: 'var(--font-plus-jakarta)', background: 'var(--color-surface-elevated)', outline: 'none'
                     }}
                   >
                     <option value="annonce">📢 Annonce</option>
@@ -279,7 +279,7 @@ export default function AdminNotificationsPage() {
                     style={{
                       width: '100%', padding: '14px 16px', borderRadius: 12,
                       border: '2px solid var(--color-border)', fontSize: '0.9rem',
-                      fontFamily: 'var(--font-outfit)', outline: 'none'
+                      fontFamily: 'var(--font-plus-jakarta)', outline: 'none'
                     }}
                   />
                 </div>
@@ -316,14 +316,14 @@ export default function AdminNotificationsPage() {
         marginBottom: 32
       }}>
         <div className="admin-stat-card" style={{
-          background: 'white',
+          background: 'var(--color-surface-elevated)',
           padding: 20,
           borderRadius: 16,
           border: '1px solid var(--color-border)',
           boxShadow: 'var(--shadow-sm)'
         }}>
           <div style={{ fontSize: '2rem', marginBottom: 8 }}>📊</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--color-primary)', fontFamily: 'var(--font-outfit)' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--color-primary)', fontFamily: 'var(--font-plus-jakarta)' }}>
             {notifications.length}
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
@@ -332,14 +332,14 @@ export default function AdminNotificationsPage() {
         </div>
 
         <div className="admin-stat-card" style={{
-          background: 'white',
+          background: 'var(--color-surface-elevated)',
           padding: 20,
           borderRadius: 16,
           border: '1px solid var(--color-border)',
           boxShadow: 'var(--shadow-sm)'
         }}>
           <div style={{ fontSize: '2rem', marginBottom: 8 }}>👥</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1D4ED8', fontFamily: 'var(--font-outfit)' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1D4ED8', fontFamily: 'var(--font-plus-jakarta)' }}>
             {new Set(notifications.map(n => n.user_id)).size}
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
@@ -348,14 +348,14 @@ export default function AdminNotificationsPage() {
         </div>
 
         <div className="admin-stat-card" style={{
-          background: 'white',
+          background: 'var(--color-surface-elevated)',
           padding: 20,
           borderRadius: 16,
           border: '1px solid var(--color-border)',
           boxShadow: 'var(--shadow-sm)'
         }}>
           <div style={{ fontSize: '2rem', marginBottom: 8 }}>⚡</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D97706', fontFamily: 'var(--font-outfit)' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D97706', fontFamily: 'var(--font-plus-jakarta)' }}>
             {notifications.filter(n => n.type === 'match').length}
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
@@ -367,7 +367,7 @@ export default function AdminNotificationsPage() {
       {/* Notifications List */}
       <div className="admin-notifications-list">
         <div style={{
-          background: 'white',
+          background: 'var(--color-surface-elevated)',
           borderRadius: 16,
           border: '1px solid var(--color-border)',
           overflow: 'hidden',
@@ -380,7 +380,7 @@ export default function AdminNotificationsPage() {
             justifyContent: 'space-between',
             alignItems: 'center'
           }}>
-            <h2 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.1rem', fontWeight: 800 }}>
+            <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.1rem', fontWeight: 800 }}>
               📋 Historique des notifications
             </h2>
             <button 
@@ -420,15 +420,15 @@ export default function AdminNotificationsPage() {
                     alignItems: 'flex-start',
                     transition: 'background 0.2s'
                   }}
-                  onMouseOver={e => (e.currentTarget.style.background = 'rgba(0,98,51,0.02)')}
+                  onMouseOver={e => (e.currentTarget.style.background = 'rgba(42,255,160,0.02)')}
                   onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
                 >
                   <div style={{
                     width: 44,
                     height: 44,
                     borderRadius: 12,
-                    background: `${typeColor[notif.type] || '#006233'}20`,
-                    color: typeColor[notif.type] || '#006233',
+                    background: `${typeColor[notif.type] || '#0dca6b'}20`,
+                    color: typeColor[notif.type] || '#0dca6b',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -481,7 +481,7 @@ export default function AdminNotificationsPage() {
                         fontWeight: 700,
                         padding: '4px 10px',
                         borderRadius: 6,
-                        background: 'rgba(0,98,51,0.08)',
+                        background: 'rgba(42,255,160,0.08)',
                         color: 'var(--color-primary)',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'

@@ -91,7 +91,7 @@ export function NotificationCenter() {
       case 'resultat': return '#FFD700'
       case 'classement': return '#3b82f6'
       case 'badge': return '#a855f7'
-      case 'annonce': return '#f59e0b'
+      case 'annonce': return '#ffc94d'
       default: return 'var(--color-text-muted)'
     }
   }
@@ -124,7 +124,7 @@ export function NotificationCenter() {
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', margin: 0 }}>
+        <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', margin: 0 }}>
           🔔 Notifications ({notifications.length})
         </h1>
         {notifications.length > 0 && (
@@ -213,7 +213,7 @@ export function NotificationCenter() {
                       transition: 'all 0.15s',
                     }}
                     title="Supprimer"
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = 'var(--color-red)' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,77,90,0.12)'; e.currentTarget.style.color = 'var(--color-red)' }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--color-text-muted)' }}
                   >
                     ✕

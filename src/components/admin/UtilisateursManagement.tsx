@@ -65,7 +65,7 @@ export default function UtilisateursManagement() {
 
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
-      <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
+      <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
         👥 Gestion des Utilisateurs
       </h1>
 
@@ -145,7 +145,7 @@ export default function UtilisateursManagement() {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
+                    <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '1rem', color: 'var(--color-primary)' }}>
                       {user.points}
                     </div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>

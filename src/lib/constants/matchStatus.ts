@@ -20,5 +20,5 @@ export const MATCH_STATUS_LABELS: Record<MatchStatus, string> = {
 export const MATCH_STATUS_COLORS: Record<MatchStatus, string> = {
   [MATCH_STATUSES.COMING]: '#6366f1',
   [MATCH_STATUSES.LIVE]: '#ef4444',
-  [MATCH_STATUSES.FINISHED]: '#22c55e',
+  [MATCH_STATUSES.FINISHED]: '#10b981',
 }

@@ -98,22 +98,24 @@ export default async function ClassementsPage() {
       <div className="page-content">
         <div className="container-app">
           <div style={{
-            background: 'linear-gradient(135deg, #004d27 0%, #006233 50%, #008a44 100%)',
-            borderRadius: 'clamp(16px, 4vw, 24px)',
+            background: 'var(--gradient-hero)',
+            borderRadius: 'var(--radius-xl)',
             padding: 'clamp(20px, 5vw, 32px)',
             marginBottom: 'clamp(20px, 5vw, 32px)',
+            boxShadow: 'var(--shadow-green)',
           }}>
-            <h1 style={{ color: 'white', fontSize: 'clamp(1.3rem, 5vw, 2rem)', fontFamily: 'var(--font-outfit)', fontWeight: 900, margin: 0 }}>
+            <h1 style={{ color: 'white', fontSize: 'clamp(1.3rem, 5vw, 2rem)', fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, margin: 0 }}>
               🏆 Classements
             </h1>
           </div>
           <div style={{
             background: 'var(--color-surface-card)',
             border: '1px solid var(--color-border)',
-            borderRadius: 'clamp(12px, 3vw, 16px)',
+            borderRadius: 'var(--radius-xl)',
             padding: 'clamp(24px, 5vw, 32px)',
             textAlign: 'center',
             color: 'var(--color-text-muted)',
+            boxShadow: 'var(--shadow-card)',
           }}>
             <p>Une erreur s&apos;est produite lors du chargement des classements. Veuillez réessayer dans quelques instants.</p>
             <Link href="/" style={{ color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>

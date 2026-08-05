@@ -235,7 +235,7 @@ export default function AdminActualitesPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+          <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
             📢 Publier une Annonce / Actualité
           </h1>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginTop: 4 }}>
@@ -288,10 +288,10 @@ export default function AdminActualitesPage() {
             padding: '14px 18px',
             borderRadius: 14,
             border: '1px solid var(--color-border)',
-            background: 'white',
+            background: 'var(--color-surface-elevated)',
             outline: 'none',
             fontSize: '0.9rem',
-            fontFamily: 'var(--font-outfit)',
+            fontFamily: 'var(--font-plus-jakarta)',
             boxShadow: 'var(--shadow-sm)'
           }}
         />
@@ -304,8 +304,8 @@ export default function AdminActualitesPage() {
           backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center',
           justifyContent: 'center', zIndex: 1000, padding: 20
         }}>
-          <div className="card" style={{ width: '100%', maxWidth: 600, padding: 32, borderRadius: 24, background: 'white', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h2 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.4rem', fontWeight: 800, marginBottom: 24 }}>
+          <div className="card" style={{ width: '100%', maxWidth: 600, padding: 32, borderRadius: 24, background: 'var(--color-surface-elevated)', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h2 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.4rem', fontWeight: 800, marginBottom: 24 }}>
               {editId ? '📢 Modifier l\'Annonce' : '📢 Nouvelle Annonce'}
             </h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -317,7 +317,7 @@ export default function AdminActualitesPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
                   <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-secondary)', display: 'block', marginBottom: 6 }}>Catégorie *</label>
-                  <select value={form.categorie} onChange={e => setForm({ ...form, categorie: e.target.value as any })} style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'white' }}>
+                  <select value={form.categorie} onChange={e => setForm({ ...form, categorie: e.target.value as any })} style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-surface-elevated)' }}>
                     <option value="annonce">📢 Annonce officielle</option>
                     <option value="actualite">📰 Actualité</option>
                     <option value="resultat">⚽ Résultat du match</option>
@@ -346,8 +346,8 @@ export default function AdminActualitesPage() {
                     onClick={generateWithAI}
                     disabled={aiLoading}
                     style={{
-                      border: '1px solid rgba(0,98,51,0.25)',
-                      background: 'rgba(0,98,51,0.08)',
+                      border: '1px solid rgba(42,255,160,0.25)',
+                      background: 'rgba(42,255,160,0.08)',
                       color: 'var(--color-primary)',
                       borderRadius: 8,
                       padding: '6px 10px',
@@ -399,7 +399,7 @@ export default function AdminActualitesPage() {
                     fontWeight: 700,
                     padding: '2px 6px',
                     borderRadius: 4,
-                    background: art.est_publie ? 'rgba(0,98,51,0.06)' : 'rgba(232,0,45,0.06)',
+                    background: art.est_publie ? 'rgba(42,255,160,0.06)' : 'rgba(232,0,45,0.06)',
                     color: art.est_publie ? 'var(--color-primary)' : 'var(--color-red)'
                   }}>
                     {art.est_publie ? 'En Ligne' : 'Brouillon'}
@@ -408,7 +408,7 @@ export default function AdminActualitesPage() {
                     📅 {new Date(art.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </span>
                 </div>
-                <h3 style={{ fontFamily: 'var(--font-outfit)', fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 8 }}>
+                <h3 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-text-primary)', marginBottom: 8 }}>
                   {art.titre}
                 </h3>
                 <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -418,7 +418,7 @@ export default function AdminActualitesPage() {
 
               <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
                 <button onClick={() => handleEdit(art)} className="btn btn-sm btn-outline">✏️ Éditer</button>
-                <button onClick={() => handleDelete(art.id)} className="btn btn-sm btn-outline" style={{ borderColor: '#FECACA', color: '#EF4444' }}>🗑️ Supprimer</button>
+                <button onClick={() => handleDelete(art.id)} className="btn btn-sm btn-outline" style={{ borderColor: '#FEE2E2', color: '#EF4444' }}>🗑️ Supprimer</button>
               </div>
             </div>
           </div>

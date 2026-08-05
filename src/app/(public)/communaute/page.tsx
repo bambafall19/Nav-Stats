@@ -64,13 +64,20 @@ export default async function CommunautePage() {
           padding: 32,
           marginBottom: 32,
           textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: 'var(--shadow-green)',
         }}>
-          <h1 style={{ color: 'white', fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontFamily: 'var(--font-outfit)', fontWeight: 900, marginBottom: 8 }}>
-            💬 Communauté NavéStats
-          </h1>
-          <p style={{ color: 'rgba(255,255,255,0.8)', maxWidth: 500, margin: '0 auto', fontSize: '0.9rem' }}>
-            Discutez des matchs, partagez vos analyses et votez pour vos joueurs préférés !
-          </p>
+          <div style={{ position: 'absolute', top: -60, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
+          <div style={{ position: 'absolute', bottom: -70, left: -20, width: 160, height: 160, borderRadius: '50%', background: 'rgba(251,191,36,0.08)' }} />
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <h1 style={{ color: 'white', fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, marginBottom: 8 }}>
+              💬 Communauté NavéStats
+            </h1>
+            <p style={{ color: 'rgba(255,255,255,0.8)', maxWidth: 500, margin: '0 auto', fontSize: '0.9rem' }}>
+              Discutez des matchs, partagez vos analyses et votez pour vos joueurs préférés !
+            </p>
+          </div>
         </div>
 
         <div style={{ display: 'grid', gap: 32 }} className="comm-grid">
@@ -110,7 +117,7 @@ export default async function CommunautePage() {
                         <div style={{
                           display: 'inline-flex', alignItems: 'center', gap: 6,
                           padding: '4px 10px',
-                          background: 'rgba(0,98,51,0.06)',
+                          background: 'rgba(42,255,160,0.06)',
                           borderRadius: 'var(--radius-full)',
                           marginBottom: 12,
                           fontSize: '0.75rem',

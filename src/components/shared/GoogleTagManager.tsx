@@ -3,6 +3,10 @@ import Script from 'next/script'
 const GTM_ID = 'GTM-KZWDQKDH'
 
 export default function GoogleTagManager() {
+  // Ne charger le GTM qu'en production (évite les erreurs réseau en dev)
+  if (process.env.NODE_ENV !== 'production') {
+    return null
+  }
   return (
     <>
       <Script

@@ -48,7 +48,7 @@ export function PronosticsHistory({ userId }: { userId: string }) {
 
   return (
     <div style={{ padding: 'clamp(16px, 3vw, 24px)' }}>
-      <h1 style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
+      <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', marginBottom: 24 }}>
         📋 Historique des Pronostics
       </h1>
 
@@ -67,7 +67,7 @@ export function PronosticsHistory({ userId }: { userId: string }) {
           textAlign: 'center',
         }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>Total</div>
-          <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: 'var(--color-primary)' }}>
+          <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: 'var(--color-primary)' }}>
             {stats.total}
           </div>
         </div>
@@ -79,7 +79,7 @@ export function PronosticsHistory({ userId }: { userId: string }) {
           textAlign: 'center',
         }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>Réussis</div>
-          <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: '#10b981' }}>
+          <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: '#10b981' }}>
             {stats.correct}
           </div>
         </div>
@@ -91,7 +91,7 @@ export function PronosticsHistory({ userId }: { userId: string }) {
           textAlign: 'center',
         }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>Échoués</div>
-          <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: '#ef4444' }}>
+          <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: '#ef4444' }}>
             {stats.incorrect}
           </div>
         </div>
@@ -103,7 +103,7 @@ export function PronosticsHistory({ userId }: { userId: string }) {
           textAlign: 'center',
         }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>Taux</div>
-          <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: 'var(--color-primary)' }}>
+          <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: 'var(--color-primary)' }}>
             {stats.successRate}%
           </div>
         </div>
@@ -180,7 +180,7 @@ export function PronosticsHistory({ userId }: { userId: string }) {
                 </div>
 
                 <div style={{ textAlign: 'right', minWidth: 50 }}>
-                  <div style={{ fontFamily: 'var(--font-outfit)', fontWeight: 900, fontSize: '1rem', color: p.is_correct ? '#10b981' : '#ef4444' }}>
+                  <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '1rem', color: p.is_correct ? '#10b981' : '#ef4444' }}>
                     {p.points_earned || 0}
                   </div>
                   <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
