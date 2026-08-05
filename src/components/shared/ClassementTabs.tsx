@@ -25,15 +25,21 @@ export function ClassementTabs({ pronostiqueurs, equipes, quartiers, asc }: Clas
   return (
     <div>
       <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        gap: 8,
         overflowX: 'auto',
         marginBottom: 16,
         paddingBottom: 6,
         WebkitOverflowScrolling: 'touch',
         scrollbarWidth: 'none',
+        maxWidth: '100%',
       }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 8,
+          width: 'max-content',
+          minWidth: '100%',
+          margin: '0 auto',
+        }}>
         {tabs.map(tab => {
           const active = activeTab === tab.id
           return (
@@ -67,9 +73,10 @@ export function ClassementTabs({ pronostiqueurs, equipes, quartiers, asc }: Clas
             </button>
           )
         })}
+        </div>
       </div>
 
-      <div>
+      <div style={{ width: '100%', minWidth: 0 }}>
         {activeTab === 'pronostiqueurs' && pronostiqueurs}
         {activeTab === 'equipes' && equipes}
         {activeTab === 'quartiers' && quartiers}

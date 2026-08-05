@@ -233,7 +233,7 @@ export function ClassementsClient({
 
     return (
       <>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', minWidth: 0 }}>
           {data.map((item, idx) => {
             const i = idx + (currentPage - 1) * itemsPerPage
             const rank = i + 1
@@ -249,12 +249,16 @@ export function ClassementsClient({
               <Link
                 key={item?.id || idx}
                 href={isEquipes ? `/equipes/${item?.id}` : `/profil/${item?.id}`}
-                style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+                style={{ textDecoration: 'none', color: 'inherit', display: 'block', width: '100%', maxWidth: '100%' }}
               >
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: 14,
+                  width: '100%',
+                  maxWidth: '100%',
+                  boxSizing: 'border-box',
+                  minWidth: 0,
                   padding: '17px 18px',
                   borderRadius: 18,
                   background: podium ? podium.cardBg : 'rgba(255, 255, 255, 0.05)',
@@ -338,18 +342,30 @@ export function ClassementsClient({
         {!isEquipes && totalPages > 1 && (
           <div style={{
             position: 'sticky',
-            bottom: 84,
+            bottom: 92,
             zIndex: 5,
             marginTop: 8,
-            background: 'linear-gradient(to top, var(--color-bg-primary) 58%, rgba(5, 10, 8, 0))',
-            paddingTop: 10,
-            paddingBottom: 4,
+            width: '100%',
+            maxWidth: '100%',
           }}>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
+            <div style={{
+              background: 'rgba(5, 10, 8, 0.88)',
+              backdropFilter: 'blur(14px) saturate(150%)',
+              WebkitBackdropFilter: 'blur(14px) saturate(150%)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: 18,
+              boxShadow: '0 10px 32px rgba(0, 0, 0, 0.42)',
+              padding: '8px 12px',
+              maxWidth: '100%',
+              width: '100%',
+              boxSizing: 'border-box',
+            }}>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
           </div>
         )}
       </>
@@ -359,7 +375,7 @@ export function ClassementsClient({
   const renderAggregated = (rows: AggregatedRow[], label: string, subLabel: (r: AggregatedRow) => string) => {
     const maxPoints = Math.max(...rows.map(r => r?.points || 0), 1)
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', minWidth: 0 }}>
         {rows.map((r, i) => {
           const rank = i + 1
           const podium = rank <= 3 ? PODIUM_STYLES[rank] : null
@@ -369,6 +385,10 @@ export function ClassementsClient({
               display: 'flex',
               alignItems: 'center',
               gap: 14,
+              width: '100%',
+              maxWidth: '100%',
+              boxSizing: 'border-box',
+              minWidth: 0,
               padding: '16px 18px',
               borderRadius: 18,
               background: podium ? podium.cardBg : 'rgba(255, 255, 255, 0.05)',
@@ -428,10 +448,13 @@ export function ClassementsClient({
   }
 
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div style={{ display: 'grid', gap: 24, width: '100%', minWidth: 0, maxWidth: '100%' }}>
       {/* Hero Section */}
       <div className="hero-gradient" style={{
         borderRadius: 24,
+        width: '100%',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
         padding: 'clamp(14px, 3vw, 22px)',
         boxShadow: 'var(--shadow-green)',
         border: '1px solid rgba(42,255,160,0.14)',

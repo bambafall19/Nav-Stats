@@ -784,6 +784,7 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     display: flex;
     justify-content: center;
+    overflow-x: clip;
     padding-top: calc(var(--nav-height) + 24px);
     padding-bottom: 128px;
     min-height: 100vh;
@@ -799,7 +800,7 @@ h1, h2, h3, h4, h5, h6 {
   @media (max-width: 767px), (hover: none) and (pointer: coarse) {
     :root {
       --nav-height: 0px;
-      --app-pad: 14px;
+      --app-pad: 16px;
     }
 
     * {
@@ -878,7 +879,7 @@ h1, h2, h3, h4, h5, h6 {
 
   @media (max-width: 640px) {
     .container-app {
-      padding: 0 12px;
+      padding: 0 16px;
     }
 
     .matchs-wrapper {

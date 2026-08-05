@@ -56,7 +56,7 @@ export default function BottomNav() {
           left: 0,
           right: 0,
           margin: '0 auto',
-          width: '84%',
+          width: 'calc(100% - 32px)',
           maxWidth: 400,
           height: 46,
           background: 'rgba(17, 17, 17, 0.9)',
@@ -186,7 +186,7 @@ export default function BottomNav() {
               right: 0 !important;
               margin: 0 auto !important;
               transform: none !important;
-              width: 84% !important;
+              width: calc(100% - 32px) !important;
               max-width: 400px !important;
               height: 46px !important;
               border-radius: 22px !important;

@@ -27,8 +27,10 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
       justifyContent: 'center',
       alignItems: 'center',
       gap: 8,
-      marginTop: 20,
+      marginTop: 0,
       flexWrap: 'wrap',
+      maxWidth: '100%',
+      minWidth: 0,
     }}>
       <button
         onClick={() => onPageChange(currentPage - 1)}
