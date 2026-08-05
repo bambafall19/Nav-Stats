@@ -232,6 +232,7 @@ export default function NotificationsScreen() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [refreshing, setRefreshing] = useState(false)
   const [pull, setPull] = useState(0)
+  const [openNotif, setOpenNotif] = useState<Notification | null>(null)
   const pullStartY = useRef<number | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const instanceId = useRef(`notif-page-${useId().replace(/[^a-zA-Z0-9]/g, '')}`)
@@ -328,6 +329,15 @@ export default function NotificationsScreen() {
 
   const handleOpen = (n: Notification) => {
     markOneRead(n)
+    setOpenNotif(n)
+  }
+
+  const handleCloseDetail = () => {
+    setOpenNotif(null)
+  }
+
+  const handleOpenLink = (n: Notification) => {
+    setOpenNotif(null)
     if (n.lien) router.push(n.lien)
   }
 
@@ -628,6 +638,136 @@ export default function NotificationsScreen() {
               </button>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de détail */}
+      <AnimatePresence>
+        {openNotif && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleCloseDetail}
+              style={{
+                position: 'fixed', inset: 0, zIndex: 40,
+                background: 'rgba(0, 0, 0, 0.6)',
+                backdropFilter: 'blur(6px)',
+                WebkitBackdropFilter: 'blur(6px)',
+              }}
+            />
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+              style={{
+                position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 41,
+                background: '#111516',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderBottom: 'none',
+                borderTopLeftRadius: 24, borderTopRightRadius: 24,
+                boxShadow: '0 -8px 40px rgba(0, 0, 0, 0.5)',
+                padding: `16px 20px calc(20px + env(safe-area-inset-bottom))`,
+                maxHeight: '85dvh',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
+              }}
+            >
+              {(() => {
+                const meta = TYPE_META[openNotif.type] || { icon: <Bell size={20} strokeWidth={2} />, color: '#9CA3AF' }
+                return (
+                  <div style={{ maxWidth: 560, margin: '0 auto' }}>
+                    <div style={{
+                      width: 44, height: 5, borderRadius: 999,
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      margin: '0 auto 18px',
+                    }} />
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                      <div style={{
+                        width: 46, height: 46, borderRadius: 15, flexShrink: 0,
+                        background: `${meta.color}1A`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: meta.color,
+                      }}>
+                        {meta.icon}
+                      </div>
+                      <button
+                        onClick={handleCloseDetail}
+                        aria-label="Fermer"
+                        style={{
+                          flexShrink: 0, width: 40, height: 40, borderRadius: '50%', cursor: 'pointer',
+                          background: 'rgba(255, 255, 255, 0.06)', color: '#9CA3AF',
+                          border: '1px solid rgba(255, 255, 255, 0.08)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 16, marginBottom: 6 }}>
+                      <h2 style={{
+                        margin: 0, fontSize: 18, fontWeight: 800, letterSpacing: '-0.01em',
+                        color: '#FFFFFF', fontFamily: 'var(--font-display), sans-serif',
+                        lineHeight: 1.3,
+                      }}>
+                        {openNotif.titre}
+                      </h2>
+                      {!openNotif.est_lue && (
+                        <span style={{
+                          flexShrink: 0, fontSize: 10, fontWeight: 800,
+                          color: '#04120A', background: '#22C55E',
+                          padding: '2px 8px', borderRadius: 999,
+                        }}>Nouveau</span>
+                      )}
+                    </div>
+
+                    <p style={{
+                      margin: '4px 0 0', fontSize: 12.5, fontWeight: 500, color: '#6B7280',
+                      fontFamily: 'var(--font-inter)',
+                    }}>
+                      {new Date(openNotif.created_at).toLocaleString('fr-FR', {
+                        weekday: 'long', day: 'numeric', month: 'long',
+                        hour: '2-digit', minute: '2-digit',
+                      })}
+                    </p>
+
+                    <div style={{
+                      marginTop: 18, padding: 16, borderRadius: 18,
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.06)',
+                    }}>
+                      <p style={{
+                        margin: 0, fontSize: 15, lineHeight: 1.7, color: '#E5E7EB',
+                        fontFamily: 'var(--font-inter)', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                      }}>
+                        {openNotif.message}
+                      </p>
+                    </div>
+
+                    {openNotif.lien && (
+                      <button
+                        onClick={() => handleOpenLink(openNotif)}
+                        style={{
+                          marginTop: 18, width: '100%', height: 50, borderRadius: 16, cursor: 'pointer',
+                          background: '#22C55E', color: '#04120A', border: 'none',
+                          fontSize: 14.5, fontWeight: 800, fontFamily: 'var(--font-inter)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                        }}
+                      >
+                        Voir le lien <ArrowLeft style={{ transform: 'rotate(180deg)' }} size={18} />
+                      </button>
+                    )}
+                  </div>
+                )
+              })()}
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
