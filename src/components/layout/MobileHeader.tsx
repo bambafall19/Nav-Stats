@@ -64,10 +64,9 @@ export default function MobileHeader() {
           justifyContent: 'center',
           height: '100%',
           width: '100%',
-          gap: 16,
         }}>
           {/* Gauche : Notifications */}
-          <div style={{ width: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
             {profile
               ? <NotificationBell userId={profile.id} variant="icon" badgeColor="green" />
               : <div style={{ width: 44, height: 44 }} />}
@@ -95,8 +94,8 @@ export default function MobileHeader() {
             }}>NavéStats</span>
           </Link>
 
-          {/* Droite : Recherche */}
-          <div style={{ width: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          {/* Droite : Recherche + Profil */}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               aria-label="Rechercher"
@@ -114,6 +113,22 @@ export default function MobileHeader() {
             >
               {searchOpen ? <X size={22} /> : <Search size={22} />}
             </button>
+
+            {profile ? (
+              <Link href={`/profil/${profile.id}`} aria-label="Mon profil" style={{
+                width: 40, height: 40, borderRadius: '50%',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: profile.avatar_url ? 'transparent' : 'rgba(42, 255, 160, 0.12)',
+                overflow: 'hidden',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 15, fontWeight: 700, color: 'var(--color-primary)',
+                textDecoration: 'none', flexShrink: 0,
+              }}>
+                {profile.avatar_url
+                  ? <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : profile.username.charAt(0).toUpperCase()}
+              </Link>
+            ) : null}
           </div>
         </div>
 
