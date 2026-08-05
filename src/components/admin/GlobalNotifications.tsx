@@ -7,7 +7,6 @@ import { useToast } from '@/components/shared/Toast'
 export default function GlobalNotifications() {
   const [message, setMessage] = useState('')
   const [title, setTitle] = useState('')
-  const [type, setType] = useState<'info' | 'warning' | 'success'>('info')
   const [sending, setSending] = useState(false)
   const supabase = createClient() as any
   const { addToast } = useToast()
@@ -26,17 +25,16 @@ export default function GlobalNotifications() {
       for (const user of users || []) {
         await supabase.from('notifications').insert({
           user_id: user.id,
-          title,
+          titre: title,
           message,
-          type,
-          read: false,
+          type: 'annonce',
+          est_lue: false,
         })
       }
 
       addToast(`Notification envoyée à ${users?.length || 0} utilisateurs`, 'success')
       setTitle('')
       setMessage('')
-      setType('info')
     } catch (error) {
       addToast('Erreur lors de l\'envoi', 'error')
     } finally {
@@ -101,29 +99,6 @@ export default function GlobalNotifications() {
               resize: 'vertical',
             }}
           />
-        </div>
-
-        <div>
-          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: 6, color: 'var(--color-text-muted)' }}>
-            Type
-          </label>
-          <select
-            value={type}
-            onChange={e => setType(e.target.value as any)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-md)',
-              fontSize: '0.9rem',
-              background: 'var(--color-surface)',
-              color: 'var(--color-text-primary)',
-            }}
-          >
-            <option value="info">ℹ️ Information</option>
-            <option value="warning">⚠️ Avertissement</option>
-            <option value="success">✓ Succès</option>
-          </select>
         </div>
 
         <button

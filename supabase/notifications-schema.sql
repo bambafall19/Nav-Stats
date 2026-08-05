@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS notifications (
   message TEXT NOT NULL,
   type TEXT NOT NULL DEFAULT 'annonce',
   lien TEXT,
-  lu BOOLEAN DEFAULT false,
+  est_lue BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 

@@ -260,7 +260,9 @@ export default function NotificationsScreen() {
     let channel: any = null // eslint-disable-line @typescript-eslint/no-explicit-any
     ;(async () => {
       const { data: { user } } = await client.auth.getUser()
-      if (!active || !user) return
+      if (!active) return
+      fetchNotifications()
+      if (!user) return
       channel = client
         .channel(instanceId.current)
         .on('postgres_changes', {
@@ -538,7 +540,7 @@ export default function NotificationsScreen() {
                 {filter === 'systeme' && 'Aucune notification système'}
               </p>
               <p style={{ margin: '6px 0 0', fontSize: 13.5, color: '#9CA3AF' }}>
-                {filter === 'all' && 'Vous êtes à jour. Les notifications arriveront ici.'}
+                {filter === 'all' && 'Vous êtes à jour.'}
                 {filter === 'unread' && 'Tout est lu.'}
                 {filter === 'matchs' && 'Les matchs et résultats apparaîtront ici.'}
                 {filter === 'systeme' && 'Les annonces et classements apparaîtront ici.'}

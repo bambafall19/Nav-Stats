@@ -46,7 +46,7 @@ export function NotificationCenter() {
     try {
       await supabase
         .from('notifications')
-        .update({ dismissed: true })
+        .delete()
         .eq('id', notificationId)
 
       setNotifications(notifications.filter(n => n.id !== notificationId))
@@ -63,9 +63,8 @@ export function NotificationCenter() {
 
       await supabase
         .from('notifications')
-        .update({ dismissed: true })
+        .delete()
         .eq('user_id', user.id)
-        .eq('dismissed', false)
 
       setNotifications([])
       addToast('Toutes les notifications supprimées', 'success')
@@ -179,7 +178,7 @@ export function NotificationCenter() {
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: 4, color: 'var(--color-text-primary)' }}>
-                      {notif.title}
+                      {notif.titre}
                     </div>
                     <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: 8, lineHeight: 1.5 }}>
                       {notif.message}
