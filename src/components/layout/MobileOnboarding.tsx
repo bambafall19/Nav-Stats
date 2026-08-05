@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 import { Bell, Search, Tv, Calendar, Trophy, BarChart3, ArrowRight } from 'lucide-react'
 
 const FEATURES = [
@@ -11,10 +12,31 @@ const FEATURES = [
   { Icon: BarChart3, title: 'Statistiques' },
 ]
 
+const SEEN_KEY = 'navestats-onboarding-seen'
+
 export default function MobileOnboarding() {
-  const [phase, setPhase] = useState<'show' | 'fading' | 'hidden'>('show')
+  const [phase, setPhase] = useState<'hidden' | 'show' | 'fading'>('hidden')
+
+  useEffect(() => {
+    let active = true
+    const supabase = createClient()
+    ;(async () => {
+      let seen = false
+      try { seen = localStorage.getItem(SEEN_KEY) === '1' } catch { /* ignore */ }
+      if (seen) return
+      const { data } = await supabase.auth.getSession()
+      if (!active) return
+      if (data.session) {
+        try { localStorage.setItem(SEEN_KEY, '1') } catch { /* ignore */ }
+        return
+      }
+      setPhase('show')
+    })()
+    return () => { active = false }
+  }, [])
 
   const handleDismiss = () => {
+    try { localStorage.setItem(SEEN_KEY, '1') } catch { /* ignore */ }
     setPhase('fading')
     setTimeout(() => setPhase('hidden'), 400)
   }
