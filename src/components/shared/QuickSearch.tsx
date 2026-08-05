@@ -35,7 +35,7 @@ export function QuickSearch({ onSearch, onSelect }: QuickSearchProps) {
   }, [onSearch])
 
   return (
-    <div style={{ position: 'relative', marginBottom: 0 }}>
+    <div style={{ position: 'relative', marginBottom: 0, width: '100%', minWidth: 0, maxWidth: '100%' }}>
       <div style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '12px 16px', borderRadius: 14,

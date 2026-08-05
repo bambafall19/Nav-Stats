@@ -35,6 +35,7 @@ export default async function ClassementsPage() {
       console.error('Classement error:', classementError)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     classementGeneral = (rawClassement || []) as any[]
 
     // Classement par quartier
@@ -59,7 +60,9 @@ export default async function ClassementsPage() {
       console.error('Équipes error:', equipesError)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const equipeByAsc: Record<string, any> = {}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(equipes || []).forEach((eq: any) => {
       if (eq?.asc_nom && !equipeByAsc[eq.asc_nom]) equipeByAsc[eq.asc_nom] = eq
     })
@@ -87,6 +90,7 @@ export default async function ClassementsPage() {
       console.error('Équipes classement error:', equipesClassementError)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     equipesRanked = (rawEquipes || []) as any[]
   } catch (error) {
     console.error('Classements page error:', error)
@@ -96,7 +100,13 @@ export default async function ClassementsPage() {
   if (fetchError) {
     return (
       <div className="page-content">
-        <div className="container-app">
+        <div style={{
+          width: '100%',
+          maxWidth: 480,
+          margin: '0 auto',
+          padding: '0 16px',
+          boxSizing: 'border-box',
+        }}>
           <div style={{
             background: 'var(--gradient-hero)',
             borderRadius: 'var(--radius-xl)',
@@ -128,11 +138,21 @@ export default async function ClassementsPage() {
   }
 
   return (
-    <ClassementsClientWrapper
-      classementGeneral={classementGeneral}
-      classementQuartier={classementQuartier}
-      classementASC={classementASC}
-      equipesRanked={equipesRanked}
-    />
+    <div className="page-content">
+      <div style={{
+        width: '100%',
+        maxWidth: 480,
+        margin: '0 auto',
+        padding: '0 16px',
+        boxSizing: 'border-box',
+      }}>
+        <ClassementsClientWrapper
+          classementGeneral={classementGeneral}
+          classementQuartier={classementQuartier}
+          classementASC={classementASC}
+          equipesRanked={equipesRanked}
+        />
+      </div>
+    </div>
   )
 }

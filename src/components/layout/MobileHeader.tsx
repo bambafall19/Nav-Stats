@@ -44,8 +44,8 @@ export default function MobileHeader() {
         style={{
           position: 'fixed',
           top: 'calc(10px + env(safe-area-inset-top))',
-          left: 10,
-          right: 10,
+          left: 16,
+          right: 16,
           height: 72,
           padding: '0 16px',
           background: 'rgba(0, 0, 0, 0.55)',

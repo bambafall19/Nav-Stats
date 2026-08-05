@@ -23,7 +23,7 @@ export function ClassementTabs({ pronostiqueurs, equipes, quartiers, asc }: Clas
   ]
 
   return (
-    <div>
+    <div style={{ width: '100%', minWidth: 0, maxWidth: '100%' }}>
       <div style={{
         overflowX: 'auto',
         marginBottom: 16,

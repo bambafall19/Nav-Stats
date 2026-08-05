@@ -454,6 +454,7 @@ export function ClassementsClient({
         borderRadius: 24,
         width: '100%',
         maxWidth: '100%',
+        minWidth: 0,
         boxSizing: 'border-box',
         padding: 'clamp(14px, 3vw, 22px)',
         boxShadow: 'var(--shadow-green)',
@@ -518,9 +519,11 @@ export function ClassementsClient({
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
             gap: 8,
             maxWidth: 520,
+            width: '100%',
+            minWidth: 0,
             margin: '0 auto',
           }}>
             {[
@@ -537,12 +540,16 @@ export function ClassementsClient({
                 border: '1px solid rgba(255,255,255,0.12)',
                 boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                minWidth: 0,
+                width: '100%',
+                boxSizing: 'border-box',
+                overflow: 'hidden',
               }}>
                 <Icon size={14} color={i === 0 ? 'var(--color-primary)' : 'var(--color-accent)'} />
-                <div style={{ fontSize: 'clamp(0.9rem, 2.6vw, 1.1rem)', fontWeight: 900, fontFamily: 'var(--font-plus-jakarta)', color: 'white', lineHeight: 1 }}>
+                <div style={{ fontSize: 'clamp(0.9rem, 2.6vw, 1.1rem)', fontWeight: 900, fontFamily: 'var(--font-plus-jakarta)', color: 'white', lineHeight: 1, whiteSpace: 'nowrap' }}>
                   {value}
                 </div>
-                <div style={{ fontSize: '0.52rem', color: 'rgba(255,255,255,0.75)', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                <div style={{ fontSize: '0.52rem', color: 'rgba(255,255,255,0.75)', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {label}
                 </div>
               </div>
