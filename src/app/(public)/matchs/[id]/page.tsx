@@ -26,9 +26,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!match) return { title: 'Match – NavéStats' }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const m = match as any
+  const teamA = m.equipe_a?.nom || 'Équipe A'
+  const teamB = m.equipe_b?.nom || 'Équipe B'
+  const url = `https://navestats.site/matchs/${id}`
   return {
-    title: `${m.equipe_a?.nom} vs ${m.equipe_b?.nom} – NavéStats`,
-    description: `Pronostiquez et analysez le match du ${m.date_match} à ${m.heure_match}`,
+    title: `${teamA} vs ${teamB}`,
+    description: `Pronostiquez et analysez le match ${teamA} vs ${teamB} du ${m.date_match} à ${m.heure_match} — NavéStats`,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${teamA} vs ${teamB} – NavéStats`,
+      description: `Pronostiquez ${teamA} vs ${teamB} et gagnez des points !`,
+      type: "article",
+      url,
+      siteName: "NavéStats",
+      images: [
+        {
+          url: "/og.png",
+          width: 1200,
+          height: 630,
+          alt: `NavéStats – ${teamA} vs ${teamB}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${teamA} vs ${teamB} – NavéStats`,
+      description: `Pronostiquez ${teamA} vs ${teamB} et gagnez des points !`,
+      images: ["/og.png"],
+    },
   }
 }
 
@@ -187,6 +212,27 @@ export default async function MatchDetailPage({ params }: Props) {
 
         {/* Match Hero Card en temps réel */}
         <MatchHeroClient initialMatch={m} />
+
+        {/* Données structurées SportsEvent */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SportsEvent",
+              name: `${equipeA.nom} vs ${equipeB.nom}`,
+              startDate: m.date_match ? `${m.date_match}T${m.heure_match || "00:00"}:00` : undefined,
+              location: {
+                "@type": "Place",
+                name: m.stade || "Khombole",
+              },
+              homeTeam: { "@type": "SportsTeam", name: equipeA.nom },
+              awayTeam: { "@type": "SportsTeam", name: equipeB.nom },
+              eventStatus: m.statut === "termine" ? "https://schema.org/EventScheduled" : "https://schema.org/EventScheduled",
+              url: `https://navestats.site/matchs/${match.id}`,
+            }),
+          }}
+        />
 
         {/* Content grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }} className="detail-grid">

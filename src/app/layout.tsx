@@ -41,7 +41,11 @@ const dancingScript = Dancing_Script({
 });
 
 export const metadata: Metadata = {
-  title: "NavéStats – Pronostics & Statistiques Navétanes Khombole",
+  metadataBase: new URL("https://navestats.site"),
+  title: {
+    default: "NavéStats – Pronostics & Statistiques Navétanes Khombole",
+    template: "%s · NavéStats",
+  },
   description:
     "La première plateforme communautaire dédiée aux pronostics et statistiques des Navétanes de Khombole. Pronostique les matchs, gagne des points et grimpe dans le classement !",
   keywords: ["navétanes", "khombole", "football", "pronostics", "statistiques", "sénégal"],
@@ -51,12 +55,32 @@ export const metadata: Metadata = {
     apple: "/icons/icon-192.png",
   },
   openGraph: {
-    title: "NavéStats – Pronostics Navétanes Khombole",
-    description: "Plateforme communautaire de pronostics et statistiques des Navétanes de Khombole",
+    title: "NavéStats – Pronostics & Statistiques Navétanes Khombole",
+    description: "Plateforme communautaire de pronostics et statistiques des Navétanes de Khombole. Pronostique, gagne des points, grimpe au classement !",
     type: "website",
     locale: "fr_FR",
+    url: "/",
+    siteName: "NavéStats",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "NavéStats – Pronostics & Statistiques Navétanes Khombole",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NavéStats – Pronostics & Statistiques Navétanes Khombole",
+    description: "Pronostics, scores et classements des Navétanes de Khombole. Rejoins la communauté !",
+    images: ["/og.png"],
   },
   manifest: "/manifest.json",
+  robots: {
+    index: true,
+    follow: true,
+  },
   verification: {
     google: "rIn2jCO3ijj7ERy1CEzbX57druczxj1ZbLv52lwcx88",
   },
@@ -81,6 +105,30 @@ export default function RootLayout({
       <head>
         <GoogleTagManager />
         <GoogleAnalytics />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "WebSite",
+                  name: "NavéStats",
+                  url: "https://navestats.site",
+                  description: "Pronostics, scores et statistiques des Navétanes de Khombole (Zone 6).",
+                  inLanguage: ["fr", "wo"],
+                },
+                {
+                  "@type": "Organization",
+                  name: "NavéStats",
+                  url: "https://navestats.site",
+                  logo: "https://navestats.site/icons/icon-512.png",
+                  sameAs: [],
+                },
+              ],
+            }),
+          }}
+        />
       </head>
       <body className="font-inter antialiased">
         <GoogleTagManagerNoScript />

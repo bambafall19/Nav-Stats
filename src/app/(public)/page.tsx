@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     siteName: 'NavéStats',
     images: [
       {
-        url: 'https://navestats.site/og-home.jpg',
+        url: 'https://navestats.site/og.png',
         width: 1200,
         height: 630,
         alt: 'NavéStats - Pronostics Football Khombole',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'NavéStats – Pronostics Navétanes Khombole',
     description: 'Rejoignez la communauté NavéStats et pronostiquez les matchs des Navétanes de Khombole',
-    images: ['https://navestats.site/og-home.jpg'],
+    images: ['https://navestats.site/og.png'],
   },
 }
 
@@ -35,19 +35,10 @@ export const jsonLd = {
   name: 'NavéStats',
   description: 'Plateforme communautaire de pronostics et statistiques des Navétanes de Khombole',
   url: 'https://navestats.site',
-  potentialMatch: {
-    '@type': 'SportsEvent',
-    name: 'Navétanes de Khombole 2026',
-    sport: 'Football',
-    location: {
-      '@type': 'Place',
-      name: 'Stade de Khombole',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Khombole',
-        addressCountry: 'SN',
-      },
-    },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://navestats.site/matchs?q={search_term_string}',
+    'query-input': 'required name=search_term_string',
   },
   publisher: {
     '@type': 'Organization',
@@ -55,10 +46,10 @@ export const jsonLd = {
     url: 'https://navestats.site',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://navestats.site/logo.png',
+      url: 'https://navestats.site/icons/icon-512.png',
     },
   },
-  inLanguage: 'fr-FR',
+  inLanguage: ['fr-FR', 'wo-SN'],
 }
 
 export const dynamic = 'force-dynamic'
@@ -159,7 +150,12 @@ export default async function HomePage() {
   const matchAleUne = ((displayMatchs || []) as any[]).find((m: any) => m.statut === 'a_venir') || displayMatchs?.[0] || null
 
   return (
-    <HomeClient
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <HomeClient
       matchCount={displayMatchs.length}
       userCount={totalPronostiqueurs || 0}
       isAuthenticated={!!user}
@@ -196,5 +192,6 @@ export default async function HomePage() {
       cadetsToday={!!(cadetsDuJour && cadetsDuJour.length > 0)}
       matchAleUne={matchAleUne}
     />
+    </>
   )
 }
