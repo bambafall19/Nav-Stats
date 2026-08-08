@@ -48,6 +48,20 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [step, setStep] = useState(1)
   const [ascs, setAscs] = useState<string[]>([])
+  const [refCode, setRefCode] = useState('')
+
+  useEffect(() => {
+    const ref = new URLSearchParams(window.location.search).get('ref')
+    if (ref) {
+      const code = ref.trim().toUpperCase()
+      setRefCode(code)
+      try {
+        localStorage.setItem('navestats_pending_ref', code)
+      } catch {
+        // ignore
+      }
+    }
+  }, [])
 
   useEffect(() => {
     let active = true
@@ -154,6 +168,19 @@ export default function RegisterPage() {
         quartier: form.quartier,
         asc_nom: form.asc_nom || null,
       }).eq('id', data.user.id)
+    }
+
+    // Appliquer le code de parrainage (si présent) — best effort
+    if (refCode) {
+      try {
+        await fetch('/api/referral', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: refCode }),
+        })
+      } catch {
+        // réessayé via ReferralAutoApply après connexion
+      }
     }
 
     router.push('/')

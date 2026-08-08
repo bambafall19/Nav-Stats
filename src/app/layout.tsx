@@ -13,6 +13,7 @@ import { ToastProvider } from "@/components/shared/Toast";
 import { PageTransitionLayout } from "@/components/shared/PageTransition";
 import { MatchNotificationService } from "@/components/shared/MatchNotificationService";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
+import { ReferralAutoApply } from "@/components/shared/ReferralAutoApply";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -136,6 +137,7 @@ export default function RootLayout({
           <ErrorBoundary>
             <LanguageProvider>
               <MatchNotificationService />
+              <ReferralAutoApply />
               <PageTransitionLayout>
                 {children}
               </PageTransitionLayout>

@@ -82,6 +82,7 @@ export default async function ProfilPage({ params }: Props) {
           followers={followers}
           isFollowing={isFollowing}
           onFollowChange={handleFollowChange}
+          currentUserId={currentUser?.id || null}
         />
       </div>
     </div>

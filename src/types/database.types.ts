@@ -15,11 +15,24 @@ export type Database = {
           total_pronostics: number
           pronostics_corrects: number
           is_admin: boolean
+          code_parrainage: string | null
+          parraine_par: string | null
           created_at: string
           updated_at: string
         }
         Insert: Omit<Database['public']['Tables']['profiles']['Row'], 'created_at' | 'updated_at'>
         Update: Partial<Database['public']['Tables']['profiles']['Insert']>
+      }
+      parrainages: {
+        Row: {
+          id: string
+          parrain_id: string
+          filleul_id: string
+          points: number
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['parrainages']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['parrainages']['Insert']>
       }
       equipes: {
         Row: {

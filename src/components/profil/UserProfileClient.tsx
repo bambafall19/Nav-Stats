@@ -5,12 +5,14 @@ import { BadgesDisplay, ACHIEVEMENT_BADGES } from '@/components/shared/BadgesDis
 import { SocialShareButtons } from '@/components/shared/SocialShareButtons'
 import { FollowButton, FollowersList } from '@/components/shared/FollowSystem'
 import { ComparisonChart } from '@/components/shared/ComparisonChart'
+import ReferralCard from '@/components/profil/ReferralCard'
 
 interface UserProfileClientProps {
   user: any
   followers: any[]
   isFollowing: boolean
   onFollowChange: (userId: string, isFollowing: boolean) => Promise<void>
+  currentUserId: string | null
 }
 
 export function UserProfileClient({
@@ -18,6 +20,7 @@ export function UserProfileClient({
   followers,
   isFollowing: initialFollowing,
   onFollowChange,
+  currentUserId,
 }: UserProfileClientProps) {
   const [showComparison, setShowComparison] = useState(false)
   const [comparisonUser, setComparisonUser] = useState<any>(null)
@@ -149,6 +152,9 @@ export function UserProfileClient({
           url={shareUrl}
         />
       </div>
+
+      {/* Parrainage — uniquement sur son propre profil */}
+      {currentUserId === user?.id && <ReferralCard />}
 
       {/* Badges */}
       <div style={{
