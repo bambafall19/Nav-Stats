@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import {
   LayoutDashboard, Shield, Users, Target, Calendar, Trophy,
-  CheckCircle, UserCheck, Newspaper, Bell, ArrowLeft, BarChart3,
+  CheckCircle, UserCheck, Newspaper, Bell, ArrowLeft, BarChart3, Handshake,
 } from 'lucide-react'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -25,6 +25,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: '/admin/resultats', icon: CheckCircle, label: 'Résultats' },
     { href: '/admin/utilisateurs', icon: Users, label: 'Utilisateurs' },
     { href: '/admin/actualites', icon: Newspaper, label: 'Actualités' },
+    { href: '/admin/partenaires', icon: Handshake, label: 'Partenaires' },
     { href: '/admin/notifications', icon: Bell, label: 'Notifications' },
   ]
 

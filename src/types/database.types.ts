@@ -34,6 +34,21 @@ export type Database = {
         Insert: Omit<Database['public']['Tables']['parrainages']['Row'], 'id' | 'created_at'>
         Update: Partial<Database['public']['Tables']['parrainages']['Insert']>
       }
+      partenaires: {
+        Row: {
+          id: string
+          nom: string
+          logo_url: string | null
+          description: string | null
+          lien_url: string | null
+          niveau: 'or' | 'argent' | 'bronze'
+          actif: boolean
+          ordre: number
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['partenaires']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['partenaires']['Insert']>
+      }
       equipes: {
         Row: {
           id: string

@@ -143,6 +143,14 @@ export default async function HomePage() {
     .order('points_classement', { ascending: false })
     .limit(5)
 
+  // Partenaires / sponsors actifs
+  const { data: partenaires } = await supabase
+    .from('partenaires')
+    .select('*')
+    .eq('actif', true)
+    .order('ordre')
+    .limit(10)
+
   const displayMatchs = (matchsDuJour && matchsDuJour.length > 0) ? matchsDuJour : (prochainsMatchs || [])
   const displayCadets = (cadetsDuJour && cadetsDuJour.length > 0) ? cadetsDuJour : (prochainsCadets || [])
   const isToday = matchsDuJour && matchsDuJour.length > 0
@@ -191,6 +199,7 @@ export default async function HomePage() {
       displayCadets={displayCadets}
       cadetsToday={!!(cadetsDuJour && cadetsDuJour.length > 0)}
       matchAleUne={matchAleUne}
+      partenaires={(partenaires || [])}
     />
     </>
   )

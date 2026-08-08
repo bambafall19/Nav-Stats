@@ -9,6 +9,7 @@ import StatsDashboard from '@/components/home/StatsDashboard'
 import TopPronostiqueurs from '@/components/home/TopPronostiqueurs'
 import MatchAleUne from '@/components/home/MatchAleUne'
 import CadetsDuJour from '@/components/home/CadetsDuJour'
+import Partenaires from '@/components/home/Partenaires'
 import ScrollReveal from '@/components/shared/ScrollReveal'
 import { CalendarDays, MessageCircle, ShieldCheck, Trophy, BarChart3 } from 'lucide-react'
 import type { Database } from '@/types/database.types'
@@ -34,6 +35,7 @@ type HomePronostiqueur = {
   avatar_url?: string
 }
 type HomeActualite = Database['public']['Tables']['actualites']['Row']
+type HomePartenaire = Database['public']['Tables']['partenaires']['Row']
 
 type HomeStats = {
   totalPronostics: number
@@ -96,6 +98,7 @@ interface HomeClientProps {
   displayCadets?: HomeCadetMatch[]
   cadetsToday?: boolean
   matchAleUne?: HomeMatch | null
+  partenaires?: HomePartenaire[]
 }
 
 export default function HomeClient({
@@ -112,6 +115,7 @@ export default function HomeClient({
   displayCadets = [],
   cadetsToday = false,
   matchAleUne = null,
+  partenaires = [],
 }: HomeClientProps) {
   return (
     <div className="page-content">
@@ -243,6 +247,15 @@ export default function HomeClient({
             </ScrollReveal>
           </section>
         )}
+
+        {/* Partenaires */}
+        {partenaires.length > 0 && (
+          <section id="partenaires-section" style={{ marginTop: 28 }}>
+            <ScrollReveal direction="up" delay={0}>
+              <Partenaires partenaires={partenaires} />
+            </ScrollReveal>
+          </section>
+        )}
       </div>
     </div>
 
@@ -264,6 +277,7 @@ export default function HomeClient({
         #matchs-section { order: 4; margin-bottom: 12px !important; }
         #cadets-section { order: 6; margin-top: 0 !important; margin-bottom: 12px !important; }
         #top-pros-section { order: 7; margin-top: 0 !important; margin-bottom: 12px !important; }
+        #partenaires-section { order: 10; margin-top: 0 !important; margin-bottom: 12px !important; }
         #resultats-section { order: 8; margin-bottom: 12px !important; }
         #actualites-section { order: 9; display: none; }
 

@@ -90,6 +90,16 @@ export const translations = {
       tabsAsc: 'Somme des points de tous les membres de l\'ASC, et nombre de membres.',
       offlineData: 'Mode hors-ligne — données du {date}',
     },
+    partenaires: {
+      title: 'Partenaires',
+      subtitle: 'Les partenaires qui soutiennent les Navétanes de Khombole',
+      tierOr: 'Partenaire Or',
+      tierArgent: 'Partenaire Argent',
+      tierBronze: 'Partenaire Bronze',
+      devenir: 'Devenez partenaire',
+      devenirDesc: 'Votre logo ici — visibilité sur toute la saison',
+      visiter: 'Visiter le site',
+    },
     common: {
       loading: 'Chargement...',
       close: 'Fermer',
@@ -201,6 +211,16 @@ export const translations = {
       tabsQuartiers: 'Dencu point yi bu lépp ci diwaan bi, ak nit ñi.',
       tabsAsc: 'Dencu point yi bu lépp ci ASC bi, ak nit ñi.',
       offlineData: 'Mode hors-ligne — data yi ci {date}',
+    },
+    partenaires: {
+      title: 'Partenaire yi',
+      subtitle: 'Ñi ngi wàllu ci Navétanes yu Khombole',
+      tierOr: 'Partenaire Or',
+      tierArgent: 'Partenaire Argent',
+      tierBronze: 'Partenaire Bronze',
+      devenir: 'Ndeel partenaire',
+      devenirDesc: 'Sa logo fi — mën a gise ci saison bi lépp',
+      visiter: 'Wàllu ca jimbug web bi',
     },
     common: {
       loading: 'Yëg la...',
