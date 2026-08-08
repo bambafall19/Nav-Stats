@@ -1,7 +1,7 @@
 // NavéStats Service Worker - Offline support
-const CACHE_NAME = 'navestats-v2'
-const STATIC_CACHE = 'navestats-static-v2'
-const DYNAMIC_CACHE = 'navestats-dynamic-v2'
+const CACHE_NAME = 'navestats-v3'
+const STATIC_CACHE = 'navestats-static-v3'
+const DYNAMIC_CACHE = 'navestats-dynamic-v3'
 
 const STATIC_URLS = [
   '/',
