@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { Trophy, Users, Shield, Home } from 'lucide-react'
+import { Trophy, Users, Home } from 'lucide-react'
 import { Pagination } from '@/components/shared/Pagination'
 import { AdvancedFilters, FilterOptions } from '@/components/shared/AdvancedFilters'
 import { ClassementTabs } from '@/components/shared/ClassementTabs'
@@ -12,7 +12,7 @@ import { SkeletonList } from '@/components/shared/Skeleton'
 import { useT } from '@/lib/i18n/LanguageProvider'
 import { ClassementPdfExport } from '@/components/shared/ClassementPdfExport'
 
-interface RankedRow {
+export interface RankedRow {
   id?: string
   username?: string
   nom?: string
@@ -27,18 +27,17 @@ interface RankedRow {
   pronostics_corrects?: number | null
 }
 
-interface AggregatedRow {
+export interface AggregatedRow {
   quartier?: string
   asc?: string
   points: number
   membres: number
 }
 
-interface ClassementsClientProps {
+export interface ClassementsClientProps {
   classementGeneral: RankedRow[]
   classementQuartier: AggregatedRow[]
   classementASC: AggregatedRow[]
-  equipesRanked: RankedRow[]
   isLoading?: boolean
 }
 
@@ -127,12 +126,11 @@ export function ClassementsClient({
   classementGeneral,
   classementQuartier,
   classementASC,
-  equipesRanked,
   isLoading = false,
 }: ClassementsClientProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [filters, setFilters] = useState<FilterOptions>({})
-  const [activeTab, setActiveTab] = useState<'pronostiqueurs' | 'equipes' | 'quartiers' | 'asc'>('pronostiqueurs')
+  const [activeTab, setActiveTab] = useState<'pronostiqueurs' | 'quartiers' | 'asc'>('pronostiqueurs')
   const itemsPerPage = 12
   const t = useT()
 
@@ -164,18 +162,6 @@ export function ClassementsClient({
   // Données pour l'export PDF selon l'onglet actif
   const exportData = useMemo(() => {
     switch (activeTab) {
-      case 'equipes':
-        return {
-          title: `${t('classements.title')} – ${t('classements.equipes')}`,
-          columns: ['#', t('classements.equipes'), t('classements.quartiers') + ' / ASC', t('classements.matchsJoues'), t('classements.pts')],
-          rows: equipesRanked.map((eq, i) => [
-            i + 1,
-            eq?.nom || '—',
-            eq?.quartier || eq?.asc_nom || '—',
-            eq?.matchs_joues || 0,
-            eq?.points_classement || 0,
-          ]),
-        }
       case 'quartiers':
         return {
           title: `${t('classements.title')} – ${t('classements.quartiers')}`,
@@ -195,7 +181,7 @@ export function ClassementsClient({
           rows: classementGeneral.map((u, i) => [i + 1, u?.username || '—', u?.quartier || '—', u?.points || 0]),
         }
     }
-  }, [activeTab, classementGeneral, classementQuartier, classementASC, equipesRanked, t])
+  }, [activeTab, classementGeneral, classementQuartier, classementASC, t])
 
   const handleSearch = async (query: string): Promise<SearchResult[]> => {
     const results: SearchResult[] = []
@@ -212,30 +198,14 @@ export function ClassementsClient({
       }
     })
 
-    equipesRanked.forEach(eq => {
-      if (eq?.nom?.toLowerCase().includes(query.toLowerCase())) {
-        results.push({
-          id: eq.id ?? '',
-          name: eq.nom,
-          type: 'equipe',
-          avatar: eq.logo_url ?? undefined,
-          points: eq.points_classement,
-        })
-      }
-    })
-
     return results.slice(0, 10)
   }
 
   const handleSelectSearch = (result: SearchResult) => {
-    if (result.type === 'pronostiqueur') {
-      window.location.href = `/profil/${result.id}`
-    } else {
-      window.location.href = `/equipes/${result.id}`
-    }
+    window.location.href = `/profil/${result.id}`
   }
 
-  const renderClassementList = (data: RankedRow[], isEquipes = false) => {
+  const renderClassementList = (data: RankedRow[]) => {
     if (isLoading) {
       return <SkeletonList count={5} />
     }
@@ -269,7 +239,7 @@ export function ClassementsClient({
       )
     }
 
-    const maxPoints = Math.max(...data.map(item => isEquipes ? (item?.points_classement || 0) : (item?.points || 0)), 1)
+    const maxPoints = Math.max(...data.map(item => (item?.points || 0)), 1)
 
     return (
       <>
@@ -278,9 +248,9 @@ export function ClassementsClient({
             const i = idx + (currentPage - 1) * itemsPerPage
             const rank = i + 1
             const podium = rank <= 3 ? PODIUM_STYLES[rank] : null
-            const points = isEquipes ? (item?.points_classement || 0) : (item?.points || 0)
+            const points = item?.points || 0
             const totalPronos = item?.total_pronostics || 0
-            const pct = !isEquipes && totalPronos > 0 && (item?.pronostics_corrects ?? 0) >= 0
+            const pct = totalPronos > 0 && (item?.pronostics_corrects ?? 0) >= 0
               ? Math.round(((item?.pronostics_corrects || 0) / totalPronos) * 100)
               : null
             const barWidth = Math.round((points / maxPoints) * 100)
@@ -288,7 +258,7 @@ export function ClassementsClient({
             return (
               <Link
                 key={item?.id || idx}
-                href={isEquipes ? `/equipes/${item?.id}` : `/profil/${item?.id}`}
+                href={`/profil/${item?.id}`}
                 style={{ textDecoration: 'none', color: 'inherit', display: 'block', width: '100%', maxWidth: '100%' }}
               >
                 <div style={{
@@ -322,20 +292,18 @@ export function ClassementsClient({
                   )}
                   <RankBadge rank={rank} />
 
-                  {isEquipes && item?.logo_url ? (
-                    <img src={item.logo_url} alt="" className="mobile-team-logo" />
-                  ) : !isEquipes && item?.avatar_url ? (
+                  {item?.avatar_url ? (
                     <img src={item.avatar_url} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '1px solid rgba(255, 255, 255, 0.1)' }} />
                   ) : (
                     <div className="mobile-team-logo-fallback" style={{
-                      background: isEquipes ? 'var(--gradient-gold)' : 'var(--gradient-green)',
+                      background: 'var(--gradient-green)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: isEquipes ? '#2b1b00' : '#0a0f0d',
+                      color: '#0a0f0d',
                       fontSize: '0.9rem',
                     }}>
-                      {isEquipes ? '⚽' : '👤'}
+                      👤
                     </div>
                   )}
 
@@ -346,12 +314,10 @@ export function ClassementsClient({
                       color: podium ? podium.text : 'var(--color-text-primary)',
                       fontFamily: 'var(--font-plus-jakarta)',
                     }}>
-                      {isEquipes ? item?.nom : item?.username}
+                      {item?.username}
                     </div>
                     <div style={{ fontSize: '0.74rem', color: 'var(--color-text-muted)', marginTop: 3 }}>
-                      {isEquipes
-                        ? (item?.quartier || item?.asc_nom || '—')
-                        : (item?.quartier || '—')}
+                      {item?.quartier || '—'}
                     </div>
                     <div className="progress-bar" style={{ height: 4, marginTop: 8, maxWidth: 220 }}>
                       <div className="progress-fill" style={{ width: `${barWidth}%`, background: podium ? podium.bg : undefined }} />
@@ -362,15 +328,13 @@ export function ClassementsClient({
                     <div style={{ fontWeight: 800, fontSize: '1.08rem', color: 'var(--color-primary)', fontFamily: 'var(--font-plus-jakarta)' }}>
                       {points}
                       <span style={{ fontSize: '0.64rem', color: 'var(--color-text-muted)', fontWeight: 600, marginLeft: 3 }}>
-                        {isEquipes ? t('classements.pts') : t('classements.pts')}
+                        {t('classements.pts')}
                       </span>
                     </div>
                     <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 600, marginTop: 2 }}>
-                      {isEquipes
-                        ? `${item?.matchs_joues || 0} ${t('classements.matchsJoues')}`
-                        : (pct !== null
-                            ? <span style={{ color: pct >= 60 ? 'var(--color-primary)' : 'var(--color-text-muted)', fontWeight: 700 }}>{pct}% {t('classements.reussite')}</span>
-                            : `${totalPronos} ${t('classements.prono')}`)}
+                      {pct !== null
+                        ? <span style={{ color: pct >= 60 ? 'var(--color-primary)' : 'var(--color-text-muted)', fontWeight: 700 }}>{pct}% {t('classements.reussite')}</span>
+                        : `${totalPronos} ${t('classements.prono')}`}
                     </div>
                   </div>
                 </div>
@@ -379,7 +343,7 @@ export function ClassementsClient({
           })}
         </div>
 
-        {!isEquipes && totalPages > 1 && (
+        {totalPages > 1 && (
           <div style={{
             position: 'sticky',
             bottom: 92,
@@ -568,7 +532,7 @@ export function ClassementsClient({
           }}>
             {[
               { icon: Users, value: classementGeneral.length, label: t('classements.pronostiqueurs') },
-              { icon: Shield, value: equipesRanked.length, label: t('classements.equipes') },
+              { icon: Trophy, value: classementASC.length, label: t('classements.asc') },
               { icon: Home, value: classementQuartier.length, label: t('classements.quartiers') },
             ].map(({ icon: Icon, value, label }, i) => (
               <div key={label} style={{
@@ -621,12 +585,6 @@ export function ClassementsClient({
             />
             <TabSubtitle text={t('classements.tabsPronos')} />
             {renderClassementList(paginatedClassement)}
-          </div>
-        )}
-        equipes={(
-          <div>
-            <TabSubtitle text={t('classements.tabsEquipes')} />
-            {renderClassementList(equipesRanked, true)}
           </div>
         )}
         quartiers={(

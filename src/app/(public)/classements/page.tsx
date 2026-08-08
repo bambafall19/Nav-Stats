@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import ClassementsClientWrapper from './ClassementsClientWrapper'
+import type { AggregatedRow, RankedRow } from '@/components/classements/ClassementsClient'
 
 export const metadata: Metadata = {
   title: 'Classements – NavéStats',
@@ -11,14 +12,9 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function ClassementsPage() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let classementGeneral: any[] = []
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let classementQuartier: any[] = []
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let classementASC: any[] = []
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let equipesRanked: any[] = []
+  let classementGeneral: RankedRow[] = []
+  let classementQuartier: AggregatedRow[] = []
+  let classementASC: AggregatedRow[] = []
   let fetchError = false
 
   try {
@@ -35,8 +31,7 @@ export default async function ClassementsPage() {
       console.error('Classement error:', classementError)
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    classementGeneral = (rawClassement || []) as any[]
+    classementGeneral = (rawClassement || []) as RankedRow[]
 
     // Classement par quartier
     const quartiersMap: Record<string, { points: number; membres: number }> = {}
@@ -51,22 +46,6 @@ export default async function ClassementsPage() {
       .map(([q, v]) => ({ quartier: q, ...v }))
       .sort((a, b) => b.points - a.points)
 
-    // Fetch équipes
-    const { data: equipes, error: equipesError } = await supabase
-      .from('equipes')
-      .select('nom, logo_url, asc_nom, couleur_principale, couleur_secondaire, sigle')
-
-    if (equipesError) {
-      console.error('Équipes error:', equipesError)
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const equipeByAsc: Record<string, any> = {}
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(equipes || []).forEach((eq: any) => {
-      if (eq?.asc_nom && !equipeByAsc[eq.asc_nom]) equipeByAsc[eq.asc_nom] = eq
-    })
-
     // Classement par ASC
     const ascMap: Record<string, { points: number; membres: number }> = {}
     classementGeneral.forEach(u => {
@@ -79,19 +58,6 @@ export default async function ClassementsPage() {
     classementASC = Object.entries(ascMap)
       .map(([asc, v]) => ({ asc, ...v }))
       .sort((a, b) => b.points - a.points)
-
-    // Fetch équipes classement
-    const { data: rawEquipes, error: equipesClassementError } = await supabase
-      .from('equipes')
-      .select('*')
-      .order('points_classement', { ascending: false })
-
-    if (equipesClassementError) {
-      console.error('Équipes classement error:', equipesClassementError)
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    equipesRanked = (rawEquipes || []) as any[]
   } catch (error) {
     console.error('Classements page error:', error)
     fetchError = true
@@ -150,7 +116,6 @@ export default async function ClassementsPage() {
           classementGeneral={classementGeneral}
           classementQuartier={classementQuartier}
           classementASC={classementASC}
-          equipesRanked={equipesRanked}
         />
       </div>
     </div>

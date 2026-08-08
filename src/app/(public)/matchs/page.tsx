@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import MatchsClientWrapper from './MatchsClientWrapper'
 import type { Metadata } from 'next'
+import { defaultCadetMatches, type CadetEquipe, type CadetMatch } from '@/lib/cadets'
+import type { Match } from '@/components/matchs/MatchListClient'
 
 export const metadata: Metadata = {
   title: 'Calendrier des Matchs – Navétanes Khombole 2026 | NavéStats',
@@ -12,7 +14,7 @@ export const metadata: Metadata = {
     siteName: 'NavéStats',
     images: [
       {
-        url: 'https://navestats.site/og-matchs.jpg',
+        url: 'https://navestats.site/og.png',
         width: 1200,
         height: 630,
         alt: 'NavéStats - Calendrier des Matchs',
@@ -25,7 +27,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Calendrier des Matchs – Navétanes Khombole',
     description: 'Suivez les matchs des Navétanes de Khombole en temps réel sur NavéStats',
-    images: ['https://navestats.site/og-matchs.jpg'],
+    images: ['https://navestats.site/og.png'],
   },
 }
 
@@ -55,17 +57,42 @@ export const jsonLd = {
   sport: 'Football',
 }
 
-export default async function MatchsPage() {
+export default async function MatchsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const { cat } = await searchParams
   const supabase = await createClient()
 
-  // Fetch all matches with team data
-  const { data: rawMatchs } = await supabase
-    .from('matchs')
-    .select(`*, equipe_a:equipes!matchs_equipe_a_id_fkey(*), equipe_b:equipes!matchs_equipe_b_id_fkey(*)`)
-    .order('date_match', { ascending: true })
-    .order('heure_match', { ascending: true })
+  // Fetch all senior matches with team data
+  const [{ data: rawMatchs }, { data: dbCadets, error: cadetsError }, { data: cadetEquipes }] = await Promise.all([
+    supabase
+      .from('matchs')
+      .select(`*, equipe_a:equipes!matchs_equipe_a_id_fkey(*), equipe_b:equipes!matchs_equipe_b_id_fkey(*)`)
+      .order('date_match', { ascending: true })
+      .order('heure_match', { ascending: true }),
+    supabase
+      .from('cadet_matchs')
+      .select(`
+        id, journee, date_match, poule, equipe_a_id, equipe_b_id, equipe_a, equipe_b, terrain, ordre,
+        equipe_a_info:equipes!cadet_matchs_equipe_a_id_fkey(id, nom, sigle, logo_url, couleur_principale, couleur_secondaire, quartier, asc_nom),
+        equipe_b_info:equipes!cadet_matchs_equipe_b_id_fkey(id, nom, sigle, logo_url, couleur_principale, couleur_secondaire, quartier, asc_nom)
+      `)
+      .order('journee')
+      .order('date_match')
+      .order('ordre'),
+    supabase
+      .from('equipes')
+      .select('id, nom, sigle, logo_url, couleur_principale, couleur_secondaire, quartier, asc_nom')
+      .order('nom'),
+  ])
 
-  const matchs = (rawMatchs || []) as any[]
+  const matchs = (rawMatchs || []) as Match[]
+  const cadetMatches: CadetMatch[] = !cadetsError && dbCadets?.length ? dbCadets as CadetMatch[] : defaultCadetMatches
+  const journees = [...new Set(cadetMatches.map(match => match.journee))]
+  const equipesList: CadetEquipe[] = (cadetEquipes || []) as CadetEquipe[]
+  const catTab = cat === 'cadets' ? 'cadets' : 'senior'
 
   return (
     <div className="page-content">
@@ -76,7 +103,14 @@ export default async function MatchsPage() {
       />
 
       <div className="container-app">
-        <MatchsClientWrapper initialMatchs={matchs} />
+        <MatchsClientWrapper
+          key={catTab}
+          initialTab={catTab}
+          initialMatchs={matchs}
+          cadetMatches={cadetMatches}
+          equipesList={equipesList}
+          journees={journees}
+        />
       </div>
     </div>
   )

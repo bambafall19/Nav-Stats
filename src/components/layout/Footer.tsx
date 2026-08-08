@@ -1,25 +1,19 @@
 'use client'
 
 import Link from 'next/link'
-import { Trophy, Target, BarChart3, MessageCircle, Calendar, Mail, MapPin, ArrowUp } from 'lucide-react'
+import { Trophy, Target, BarChart3, MessageCircle, Home, Mail, MapPin, ArrowUp } from 'lucide-react'
 import { useT } from '@/lib/i18n/LanguageProvider'
 
 const footerNav = [
-  { href: '/', labelKey: 'nav.accueil', icon: Trophy },
+  { href: '/', labelKey: 'nav.accueil', icon: Home },
   { href: '/matchs', labelKey: 'nav.matchs', icon: Target },
-  { href: '/cadets', labelKey: 'nav.cadets', icon: Calendar },
-  { href: '/classements', labelKey: 'nav.classements', icon: BarChart3 },
+  { href: '/classements', labelKey: 'nav.classements', icon: Trophy },
   { href: '/statistiques', labelKey: 'nav.senior', icon: BarChart3 },
   { href: '/communaute', labelKey: 'nav.chat', icon: MessageCircle },
 ]
 
 const footerLinks = [
-  { href: '/matchs', labelKey: 'footer.matchsDuJour' },
   { href: '/pronostics', labelKey: 'footer.mesPronostics' },
-  { href: '/cadets', labelKey: 'footer.championnatCadets' },
-  { href: '/classements', labelKey: 'footer.classementGeneral' },
-  { href: '/statistiques', labelKey: 'nav.senior' },
-  { href: '/communaute', labelKey: 'footer.communaute' },
   { href: '/auth/register', labelKey: 'footer.creerCompte' },
   { href: '/auth/login', labelKey: 'footer.seConnecter' },
 ]

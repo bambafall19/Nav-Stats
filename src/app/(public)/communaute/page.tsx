@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     siteName: 'NavéStats',
     images: [
       {
-        url: 'https://navestats.site/og-communaute.jpg',
+        url: 'https://navestats.site/og.png',
         width: 1200,
         height: 630,
         alt: 'NavéStats - Communauté',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Communauté – Navétanes Khombole',
     description: 'Rejoignez les discussions de la communauté NavéStats',
-    images: ['https://navestats.site/og-communaute.jpg'],
+    images: ['https://navestats.site/og.png'],
   },
 }
 

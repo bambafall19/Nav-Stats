@@ -1,14 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Users, Shield, Home, Trophy } from 'lucide-react'
+import { Users, Home, Trophy } from 'lucide-react'
 import { useT } from '@/lib/i18n/LanguageProvider'
 
-type TabType = 'pronostiqueurs' | 'equipes' | 'quartiers' | 'asc'
+type TabType = 'pronostiqueurs' | 'quartiers' | 'asc'
 
 interface ClassementTabsProps {
   pronostiqueurs: React.ReactNode
-  equipes: React.ReactNode
   quartiers: React.ReactNode
   asc: React.ReactNode
   activeTab?: TabType
@@ -17,7 +16,6 @@ interface ClassementTabsProps {
 
 export function ClassementTabs({
   pronostiqueurs,
-  equipes,
   quartiers,
   asc,
   activeTab: controlledActiveTab,
@@ -35,7 +33,6 @@ export function ClassementTabs({
 
   const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
     { id: 'pronostiqueurs', label: t('classements.pronostiqueurs'), icon: <Users size={15} /> },
-    { id: 'equipes', label: t('classements.equipes'), icon: <Shield size={15} /> },
     { id: 'quartiers', label: t('classements.quartiers'), icon: <Home size={15} /> },
     { id: 'asc', label: t('classements.asc'), icon: <Trophy size={15} /> },
   ]
@@ -96,7 +93,6 @@ export function ClassementTabs({
 
       <div style={{ width: '100%', minWidth: 0 }}>
         {activeTab === 'pronostiqueurs' && pronostiqueurs}
-        {activeTab === 'equipes' && equipes}
         {activeTab === 'quartiers' && quartiers}
         {activeTab === 'asc' && asc}
       </div>

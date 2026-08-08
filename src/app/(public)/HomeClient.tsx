@@ -130,7 +130,7 @@ export default function HomeClient({
             }}>
               {[
                 { href: '/matchs', Icon: ShieldCheck, label: 'Matchs', color: '#2affa0', bg: 'linear-gradient(135deg, rgba(42,255,160,0.10), rgba(42,255,160,0.22))' },
-                { href: '/cadets', Icon: CalendarDays, label: 'Cadets', color: '#ffc94d', bg: 'linear-gradient(135deg, rgba(255,201,77,0.10), rgba(255,201,77,0.20))' },
+                { href: '/matchs?cat=cadets', Icon: CalendarDays, label: 'Cadets', color: '#ffc94d', bg: 'linear-gradient(135deg, rgba(255,201,77,0.10), rgba(255,201,77,0.20))' },
                 { href: '/classements', Icon: Trophy, label: 'Classement', color: '#ffd97d', bg: 'linear-gradient(135deg, rgba(255,201,77,0.14), rgba(255,201,77,0.26))' },
                 { href: '/statistiques', Icon: BarChart3, label: 'Stats', color: '#4da6ff', bg: 'linear-gradient(135deg, rgba(77,166,255,0.14), rgba(77,166,255,0.24))' },
                 { href: '/communaute', Icon: MessageCircle, label: 'Chat', color: '#ff4d5a', bg: 'linear-gradient(135deg, rgba(255,77,90,0.12), rgba(255,77,90,0.22))' },

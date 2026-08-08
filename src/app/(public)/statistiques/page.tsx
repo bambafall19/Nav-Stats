@@ -1,23 +1,24 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
-import { BarChart3, CalendarDays, ClipboardList, Shield, Target, Trophy, Zap } from 'lucide-react'
+import Link from 'next/link'
+import { BarChart3, Shield, Target, Trophy, Zap } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Senior – Navétanes Khombole 2026 | NavéStats',
+  title: 'Statistiques – Navétanes Khombole 2026 | NavéStats',
   description: 'Classements officiels des Poules A, B, C, statistiques des joueurs, top buteurs et performances des équipes des Navétanes de Khombole saison 2026.',
   openGraph: {
-    title: 'Senior – Navétanes Khombole 2026',
+    title: 'Statistiques – Navétanes Khombole 2026',
     description: 'Consultez les classements des poules et statistiques des équipes et joueurs',
     url: 'https://navestats.site/statistiques',
     siteName: 'NavéStats',
-    images: [{ url: 'https://navestats.site/og-statistiques.jpg', width: 1200, height: 630, alt: 'NavéStats - Senior' }],
+    images: [{ url: 'https://navestats.site/og.png', width: 1200, height: 630, alt: 'NavéStats - Statistiques' }],
     type: 'website', locale: 'fr_FR',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Senior – Navétanes Khombole',
+    title: 'Statistiques – Navétanes Khombole',
     description: 'Classements et statistiques des Navétanes de Khombole',
-    images: ['https://navestats.site/og-statistiques.jpg'],
+    images: ['https://navestats.site/og.png'],
   },
 }
 
@@ -44,15 +45,6 @@ interface Match {
 }
 
 const MEDALS = ['🥇', '🥈', '🥉']
-
-function formatMatchDate(date: string) {
-  const d = new Date(`${date}T12:00:00`)
-  return {
-    day: d.toLocaleDateString('fr-FR', { day: 'numeric' }),
-    month: d.toLocaleDateString('fr-FR', { month: 'short' }),
-    full: d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }),
-  }
-}
 
 type TeamLike = Pick<Team, 'nom' | 'couleur_principale' | 'couleur_secondaire' | 'sigle' | 'logo_url'>
 
@@ -348,15 +340,6 @@ export default async function StatistiquesPage() {
     .limit(20)
   const matchsTermines = (rawMatchs || []) as Match[]
 
-  // Fetch upcoming matches
-  const { data: rawUpcoming } = await supabase
-    .from('matchs')
-    .select('*, equipe_a:equipes!matchs_equipe_a_id_fkey(*), equipe_b:equipes!matchs_equipe_b_id_fkey(*)')
-    .in('statut', ['a_venir', 'en_cours'])
-    .order('date_match', { ascending: true })
-    .limit(10)
-  const matchsAVenir = (rawUpcoming || []) as Match[]
-
   // Poules
   const pouleA = teams.filter(t => t.poule === 'A')
   const pouleB = teams.filter(t => t.poule === 'B')
@@ -411,7 +394,7 @@ export default async function StatistiquesPage() {
               color: 'white', fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900,
               fontSize: 'clamp(1.3rem, 4vw, 1.9rem)', marginBottom: 4, letterSpacing: '-0.02em',
             }}>
-              Senior
+              Statistiques
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 'clamp(0.72rem, 2vw, 0.85rem)' }}>
               {teams.length} équipes · {totalMatchsJoues} matchs joués · {totalButs} buts marqués
@@ -460,114 +443,35 @@ export default async function StatistiquesPage() {
               </div>
             ))}
 
-            {/* Derniers résultats */}
-            {matchsTermines.length > 0 && (
-              <div style={{ marginBottom: 32 }}>
-                <SectionTitle icon={<ClipboardList size={16} />} title="Derniers Résultats" color="var(--color-primary)" sub="Les matchs terminés" />
-                <div className="card" style={{ overflow: 'hidden' }}>
-                  {matchsTermines.slice(0, 8).map((m, i) => {
-                    const scoreA = m.score_a ?? 0
-                    const scoreB = m.score_b ?? 0
-                    const winA = scoreA > scoreB
-                    const winB = scoreB > scoreA
-                    const draw = scoreA === scoreB
-                    const { day, month } = formatMatchDate(m.date_match)
-                    return (
-                      <div key={m.id} className="row-hover" style={{
-                        display: 'flex', alignItems: 'center', gap: 10,
-                        padding: '10px 14px',
-                        borderBottom: i < Math.min(matchsTermines.length, 8) - 1 ? '1px solid var(--color-border-subtle)' : 'none',
-                      }}>
-                        <div style={{
-                          width: 46, flexShrink: 0, textAlign: 'center',
-                          background: 'var(--color-surface)', borderRadius: 'var(--radius-sm)',
-                          padding: '4px 2px', border: '1px solid var(--color-border-subtle)',
-                        }}>
-                          <div style={{ fontWeight: 900, fontSize: '0.82rem', fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-text-primary)', lineHeight: 1 }}>{day}</div>
-                          <div style={{ fontSize: '0.55rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>{month}</div>
-                        </div>
-
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
-                          <span style={{ fontWeight: winA ? 800 : 600, fontSize: '0.85rem', textAlign: 'right', color: winA ? 'var(--color-primary)' : 'var(--color-text-primary)' }}>{m.equipe_a?.nom}</span>
-                          <TeamLogo team={m.equipe_a} size={26} radius="var(--radius-sm)" />
-                        </div>
-
-                        <div style={{
-                          background: draw ? 'var(--color-surface)' : 'var(--gradient-green)',
-                          borderRadius: 'var(--radius-md)', padding: '5px 14px',
-                          fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '0.95rem',
-                          color: draw ? 'var(--color-text-secondary)' : 'var(--color-text-on-primary)',
-                          display: 'flex', gap: 8, flexShrink: 0,
-                          boxShadow: draw ? 'none' : 'var(--shadow-green)',
-                        }}>
-                          <span>{scoreA}</span>
-                          <span style={{ opacity: 0.5 }}>:</span>
-                          <span>{scoreB}</span>
-                        </div>
-
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <TeamLogo team={m.equipe_b} size={26} radius="var(--radius-sm)" />
-                          <span style={{ fontWeight: winB ? 800 : 600, fontSize: '0.85rem', color: winB ? 'var(--color-primary)' : 'var(--color-text-primary)' }}>{m.equipe_b?.nom}</span>
-                        </div>
-                      </div>
-                    )
-                  })}
+            {/* Lien vers les matchs */}
+            <div style={{ marginBottom: 32 }}>
+              <Link
+                href="/matchs"
+                className="card row-hover"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 14,
+                  padding: '16px 18px', textDecoration: 'none',
+                }}
+              >
+                <div style={{
+                  width: 44, height: 44, borderRadius: 'var(--radius-md)', flexShrink: 0,
+                  background: 'linear-gradient(135deg, #E8002D, #ff6b6b)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1.2rem', boxShadow: '0 4px 14px rgba(232,0,45,0.3)',
+                }}>
+                  ⚽
                 </div>
-              </div>
-            )}
-
-            {/* Prochains matchs */}
-            {matchsAVenir.length > 0 && (
-              <div>
-                <SectionTitle icon={<CalendarDays size={16} />} title="Prochains Matchs" color="var(--color-accent)" sub="Le programme à venir" />
-                <div className="card" style={{ overflow: 'hidden' }}>
-                  {matchsAVenir.map((m, i) => {
-                    const { day, month } = formatMatchDate(m.date_match)
-                    return (
-                      <div key={m.id} className="row-hover" style={{
-                        display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px',
-                        borderBottom: i < matchsAVenir.length - 1 ? '1px solid var(--color-border-subtle)' : 'none',
-                      }}>
-                        <div style={{
-                          width: 46, flexShrink: 0, textAlign: 'center',
-                          background: 'var(--color-accent-50)', borderRadius: 'var(--radius-sm)',
-                          padding: '4px 2px', border: '1px solid rgba(255,201,77,0.22)',
-                        }}>
-                          <div style={{ fontWeight: 900, fontSize: '0.82rem', fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-accent)', lineHeight: 1 }}>{day}</div>
-                          <div style={{ fontSize: '0.55rem', color: 'var(--color-accent-dark)', fontWeight: 700, textTransform: 'uppercase' }}>{month}</div>
-                        </div>
-
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
-                          <span style={{ fontWeight: 600, fontSize: '0.85rem', textAlign: 'right' }}>{m.equipe_a?.nom}</span>
-                          <TeamLogo team={m.equipe_a} size={26} radius="var(--radius-sm)" />
-                        </div>
-
-                        <div style={{
-                          width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
-                          background: 'linear-gradient(135deg, #E8002D, #ff6b6b)',
-                          color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.62rem', fontWeight: 900, fontFamily: 'var(--font-plus-jakarta)',
-                          boxShadow: '0 3px 12px rgba(232,0,45,0.3)',
-                        }}>
-                          VS
-                        </div>
-
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <TeamLogo team={m.equipe_b} size={26} radius="var(--radius-sm)" />
-                          <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>{m.equipe_b?.nom}</span>
-                        </div>
-
-                        {m.heure_match && (
-                          <span className="badge badge-gray" style={{ flexShrink: 0, fontSize: '0.6rem', fontFamily: 'var(--font-mono)' }}>
-                            {m.heure_match}
-                          </span>
-                        )}
-                      </div>
-                    )
-                  })}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 800, fontSize: '0.95rem', fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-text-primary)' }}>
+                    Voir les matchs
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginTop: 1 }}>
+                    Résultats, calendrier et scores en direct
+                  </div>
                 </div>
-              </div>
-            )}
+                <span style={{ color: 'var(--color-primary)', fontWeight: 900, flexShrink: 0 }}>→</span>
+              </Link>
+            </div>
           </div>
 
           {/* Sidebar */}

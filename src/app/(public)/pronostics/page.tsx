@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: 'NavéStats',
     images: [
       {
-        url: 'https://navestats.site/og-pronostics.jpg',
+        url: 'https://navestats.site/og.png',
         width: 1200,
         height: 630,
         alt: 'NavéStats - Mes Pronostics',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Mes Pronostics – Navétanes Khombole',
     description: 'Suivez vos pronostics et vos performances',
-    images: ['https://navestats.site/og-pronostics.jpg'],
+    images: ['https://navestats.site/og.png'],
   },
 }
 

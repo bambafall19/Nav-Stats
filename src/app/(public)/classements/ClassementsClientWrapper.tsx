@@ -1,14 +1,14 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { ClassementsClient } from '@/components/classements/ClassementsClient'
+import { ClassementsClient, type ClassementsClientProps } from '@/components/classements/ClassementsClient'
 import { useT } from '@/lib/i18n/LanguageProvider'
 
 const CACHE_KEY = 'navestats_classements_offline_v1'
 
-type CachedData = { savedAt: number; data: any }
+type CachedData = { savedAt: number; data: ClassementsClientProps }
 
-function readOfflineCache(): { data: any; savedAt: number } | null {
+function readOfflineCache(): CachedData | null {
   if (typeof window === 'undefined' || navigator.onLine) return null
   try {
     const raw = localStorage.getItem(CACHE_KEY)
@@ -22,10 +22,10 @@ function readOfflineCache(): { data: any; savedAt: number } | null {
   return null
 }
 
-export default function ClassementsClientWrapper(props: any) {
+export default function ClassementsClientWrapper(props: ClassementsClientProps) {
   const t = useT()
 
-  const [cached] = useState<{ data: any; savedAt: number } | null>(() => readOfflineCache())
+  const [cached] = useState<CachedData | null>(() => readOfflineCache())
 
   useEffect(() => {
     if (navigator.onLine) {
@@ -37,7 +37,7 @@ export default function ClassementsClientWrapper(props: any) {
     }
   }, [props])
 
-  const data = cached?.data ?? props
+  const data: ClassementsClientProps = cached?.data ?? props
   const cachedDate = useMemo(() => (cached ? new Date(cached.savedAt) : null), [cached])
 
   return (

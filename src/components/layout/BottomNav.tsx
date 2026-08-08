@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import {
-  Home, Trophy, Target, BarChart3, Calendar, MessageCircle,
+  Home, Trophy, Target, BarChart3, MessageCircle,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/LanguageProvider'
@@ -12,7 +12,6 @@ import { useT } from '@/lib/i18n/LanguageProvider'
 const mobileNavLinks = [
   { href: '/', labelKey: 'nav.accueil', Icon: Home },
   { href: '/matchs', labelKey: 'nav.matchs', Icon: Target },
-  { href: '/cadets', labelKey: 'nav.cadets', Icon: Calendar },
   { href: '/classements', labelKey: 'nav.classements', Icon: Trophy },
   { href: '/statistiques', labelKey: 'nav.senior', Icon: BarChart3 },
   { href: '/communaute', labelKey: 'nav.chat', Icon: MessageCircle },
@@ -21,7 +20,6 @@ const mobileNavLinks = [
 const desktopNavLinks = [
   { href: '/', labelKey: 'nav.accueil', Icon: Home },
   { href: '/matchs', labelKey: 'nav.matchs', Icon: Target, live: true },
-  { href: '/cadets', labelKey: 'nav.cadets', Icon: Calendar },
   { href: '/classements', labelKey: 'nav.classements', Icon: Trophy },
   { href: '/statistiques', labelKey: 'nav.senior', Icon: BarChart3 },
   { href: '/communaute', labelKey: 'nav.chat', Icon: MessageCircle },

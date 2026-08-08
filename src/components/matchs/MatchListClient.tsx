@@ -20,7 +20,7 @@ interface Team {
   asc_nom: string | null
 }
 
-interface Match {
+export interface Match {
   id: string
   equipe_a_id: string
   equipe_b_id: string

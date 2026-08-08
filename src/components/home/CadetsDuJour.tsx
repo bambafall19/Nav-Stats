@@ -52,7 +52,7 @@ export default function CadetsDuJour({ matchs, isToday }: { matchs: CadetMatch[]
           </h2>
           <p className="section-subtitle" style={{ fontSize: '0.7rem' }}>Championnat National des Pronostiqueurs CNP 2026</p>
         </div>
-        <Link href="/cadets" style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.72rem', textDecoration: 'none', fontFamily: 'var(--font-plus-jakarta)', whiteSpace: 'nowrap' }}>
+        <Link href="/matchs?cat=cadets" style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.72rem', textDecoration: 'none', fontFamily: 'var(--font-plus-jakarta)', whiteSpace: 'nowrap' }}>
           Voir tout <ArrowRight size={13} />
         </Link>
       </div>
