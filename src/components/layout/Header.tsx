@@ -6,6 +6,8 @@ import { Search, Target, BarChart3, Settings, LogOut, LayoutDashboard, ShieldChe
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
+import LanguageSwitcher from '@/components/shared/LanguageSwitcher'
+import { useT } from '@/lib/i18n/LanguageProvider'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -29,6 +31,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('')
   const menuRef = useRef<HTMLDivElement>(null)
   const supabase = createClient() as any
+  const t = useT()
 
   useEffect(() => {
     supabase.auth.getUser().then((res: any) => {
@@ -123,7 +126,7 @@ export default function Header() {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchOpen(true)}
               onBlur={() => setSearchOpen(false)}
-              placeholder="Rechercher un match, une équipe, un joueur..."
+              placeholder={t('header.search')}
               aria-label="Rechercher"
               style={{
                 flex: 1,
@@ -148,6 +151,8 @@ export default function Header() {
 
           {/* Right actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <LanguageSwitcher />
+
             {profile && <NotificationBell userId={profile.id} />}
 
             {profile?.is_admin && (
@@ -227,8 +232,8 @@ export default function Header() {
                         <ShieldCheck size={15} color="var(--color-text-on-primary)" strokeWidth={2.2} />
                       </div>
                       <div style={{ minWidth: 0, flex: 1 }}>
-                        <div style={{ color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.72rem', fontFamily: 'var(--font-display)', lineHeight: 1.2 }}>Navétanes · Zone 6</div>
-                        <div style={{ color: 'var(--color-text-muted)', fontSize: '0.62rem', fontFamily: 'var(--font-display)' }}>Khombole · Saison 2026</div>
+                        <div style={{ color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.72rem', fontFamily: 'var(--font-display)', lineHeight: 1.2 }}>{t('header.competition')}</div>
+                        <div style={{ color: 'var(--color-text-muted)', fontSize: '0.62rem', fontFamily: 'var(--font-display)' }}>{t('header.season')}</div>
                       </div>
                       <ChevronRight size={14} color="var(--color-text-muted)" style={{ flexShrink: 0 }} />
                     </Link>
@@ -241,7 +246,7 @@ export default function Header() {
                           letterSpacing: '0.08em', color: 'var(--color-text-muted)',
                           fontFamily: 'var(--font-display)',
                           padding: '4px 10px 2px',
-                        }}>Mes équipes</div>
+                        }}>{t('header.myTeams')}</div>
                         {followedTeams.map(t => {
                           const team = t.equipes
                           if (!team) return null
@@ -280,14 +285,14 @@ export default function Header() {
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-hover)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
-                      <Target size={14} /> Mon Profil
+                      <Target size={14} /> {t('header.myProfile')}
                     </Link>
                     <Link href="/pronostics" onClick={() => setMenuOpen(false)}
                       style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, textDecoration: 'none', color: 'var(--color-text-primary)', fontSize: '0.78rem', fontWeight: 500, transition: 'background 0.12s' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--color-surface-hover)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
-                      <BarChart3 size={14} /> Mes Pronostics
+                      <BarChart3 size={14} /> {t('header.myPronostics')}
                     </Link>
                     {profile.is_admin && (
                       <Link href="/admin" onClick={() => setMenuOpen(false)}
@@ -307,7 +312,7 @@ export default function Header() {
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--color-red-light)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
-                      <LogOut size={14} /> Déconnexion
+                      <LogOut size={14} /> {t('header.signOut')}
                     </button>
                   </div>
                 )}
@@ -324,7 +329,7 @@ export default function Header() {
               }}
                 onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(42,255,160,0.35)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
                 onMouseLeave={e => { e.currentTarget.style.boxShadow = 'var(--shadow-green)'; e.currentTarget.style.transform = 'translateY(0)' }}
-              >Se connecter</Link>
+              >{t('header.signIn')}</Link>
             )}
           </div>
         </div>

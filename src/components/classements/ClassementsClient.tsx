@@ -9,6 +9,8 @@ import { ClassementTabs } from '@/components/shared/ClassementTabs'
 import { QuickSearch } from '@/components/shared/QuickSearch'
 import type { SearchResult } from '@/components/shared/QuickSearch'
 import { SkeletonList } from '@/components/shared/Skeleton'
+import { useT } from '@/lib/i18n/LanguageProvider'
+import { ClassementPdfExport } from '@/components/shared/ClassementPdfExport'
 
 interface RankedRow {
   id?: string
@@ -130,7 +132,9 @@ export function ClassementsClient({
 }: ClassementsClientProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [filters, setFilters] = useState<FilterOptions>({})
+  const [activeTab, setActiveTab] = useState<'pronostiqueurs' | 'equipes' | 'quartiers' | 'asc'>('pronostiqueurs')
   const itemsPerPage = 12
+  const t = useT()
 
   // Extraire quartiers et ASC uniques
   const quartiers = useMemo(() => {
@@ -156,6 +160,42 @@ export function ClassementsClient({
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   )
+
+  // Données pour l'export PDF selon l'onglet actif
+  const exportData = useMemo(() => {
+    switch (activeTab) {
+      case 'equipes':
+        return {
+          title: `${t('classements.title')} – ${t('classements.equipes')}`,
+          columns: ['#', t('classements.equipes'), t('classements.quartiers') + ' / ASC', t('classements.matchsJoues'), t('classements.pts')],
+          rows: equipesRanked.map((eq, i) => [
+            i + 1,
+            eq?.nom || '—',
+            eq?.quartier || eq?.asc_nom || '—',
+            eq?.matchs_joues || 0,
+            eq?.points_classement || 0,
+          ]),
+        }
+      case 'quartiers':
+        return {
+          title: `${t('classements.title')} – ${t('classements.quartiers')}`,
+          columns: ['#', t('classements.quartiers'), t('classements.membres'), t('classements.pts')],
+          rows: classementQuartier.map((q, i) => [i + 1, q?.quartier || '—', q?.membres || 0, q?.points || 0]),
+        }
+      case 'asc':
+        return {
+          title: `${t('classements.title')} – ASC`,
+          columns: ['#', 'ASC', t('classements.membres'), t('classements.pts')],
+          rows: classementASC.map((a, i) => [i + 1, a?.asc || '—', a?.membres || 0, a?.points || 0]),
+        }
+      default:
+        return {
+          title: `${t('classements.title')} – ${t('classements.pronostiqueurs')}`,
+          columns: ['#', t('classements.pronostiqueurs'), t('classements.quartiers'), t('classements.pts')],
+          rows: classementGeneral.map((u, i) => [i + 1, u?.username || '—', u?.quartier || '—', u?.points || 0]),
+        }
+    }
+  }, [activeTab, classementGeneral, classementQuartier, classementASC, equipesRanked, t])
 
   const handleSearch = async (query: string): Promise<SearchResult[]> => {
     const results: SearchResult[] = []
@@ -220,10 +260,10 @@ export function ClassementsClient({
             color: 'var(--color-text-primary)',
             marginBottom: 6,
           }}>
-            Aucun résultat
+            {t('classements.aucunResultat')}
           </h3>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.88rem', maxWidth: 320, margin: '0 auto' }}>
-            Aucune donnée disponible pour le moment. Revenez plus tard !
+            {t('classements.aucunResultatDesc')}
           </p>
         </div>
       )
@@ -322,15 +362,15 @@ export function ClassementsClient({
                     <div style={{ fontWeight: 800, fontSize: '1.08rem', color: 'var(--color-primary)', fontFamily: 'var(--font-plus-jakarta)' }}>
                       {points}
                       <span style={{ fontSize: '0.64rem', color: 'var(--color-text-muted)', fontWeight: 600, marginLeft: 3 }}>
-                        {isEquipes ? 'pts' : 'pts'}
+                        {isEquipes ? t('classements.pts') : t('classements.pts')}
                       </span>
                     </div>
                     <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 600, marginTop: 2 }}>
                       {isEquipes
-                        ? `${item?.matchs_joues || 0} MJ`
+                        ? `${item?.matchs_joues || 0} ${t('classements.matchsJoues')}`
                         : (pct !== null
-                            ? <span style={{ color: pct >= 60 ? 'var(--color-primary)' : 'var(--color-text-muted)', fontWeight: 700 }}>{pct}% réussite</span>
-                            : `${totalPronos} prono`)}
+                            ? <span style={{ color: pct >= 60 ? 'var(--color-primary)' : 'var(--color-text-muted)', fontWeight: 700 }}>{pct}% {t('classements.reussite')}</span>
+                            : `${totalPronos} ${t('classements.prono')}`)}
                     </div>
                   </div>
                 </div>
@@ -438,7 +478,7 @@ export function ClassementsClient({
                 boxShadow: podium ? podium.glow : 'none',
               }}>
                 {r?.points}
-                <span style={{ fontSize: '0.6rem', color: podium ? 'rgba(0,0,0,0.6)' : 'var(--color-text-muted)', fontWeight: 600, marginLeft: 3 }}>pts</span>
+                <span style={{ fontSize: '0.6rem', color: podium ? 'rgba(0,0,0,0.6)' : 'var(--color-text-muted)', fontWeight: 600, marginLeft: 3 }}>{t('classements.pts')}</span>
               </div>
             </div>
           )
@@ -494,7 +534,7 @@ export function ClassementsClient({
             marginBottom: 8,
           }}>
             <Trophy size={11} />
-            Classement général
+            {t('classements.general')}
           </span>
           <h1 style={{
             color: 'white',
@@ -504,7 +544,7 @@ export function ClassementsClient({
             marginBottom: 2,
             letterSpacing: '-0.02em',
           }}>
-            Classements
+            {t('classements.title')}
           </h1>
           <p style={{
             color: 'rgba(255,255,255,0.8)',
@@ -514,7 +554,7 @@ export function ClassementsClient({
             marginLeft: 'auto',
             marginRight: 'auto',
           }}>
-            Pronostiqueurs, équipes, quartiers et ASC — tout le palmarès du NavéStats
+            {t('classements.heroSub')}
           </p>
 
           <div style={{
@@ -527,9 +567,9 @@ export function ClassementsClient({
             margin: '0 auto',
           }}>
             {[
-              { icon: Users, value: classementGeneral.length, label: 'Pronostiqueurs' },
-              { icon: Shield, value: equipesRanked.length, label: 'Équipes' },
-              { icon: Home, value: classementQuartier.length, label: 'Quartiers' },
+              { icon: Users, value: classementGeneral.length, label: t('classements.pronostiqueurs') },
+              { icon: Shield, value: equipesRanked.length, label: t('classements.equipes') },
+              { icon: Home, value: classementQuartier.length, label: t('classements.quartiers') },
             ].map(({ icon: Icon, value, label }, i) => (
               <div key={label} style={{
                 background: 'rgba(255,255,255,0.06)',
@@ -555,6 +595,14 @@ export function ClassementsClient({
               </div>
             ))}
           </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 14 }}>
+            <ClassementPdfExport
+              title={exportData.title}
+              columns={exportData.columns}
+              rows={exportData.rows}
+            />
+          </div>
         </div>
       </div>
 
@@ -563,6 +611,7 @@ export function ClassementsClient({
 
       {/* Tabs */}
       <ClassementTabs
+        onTabChange={setActiveTab}
         pronostiqueurs={(
           <div style={{ display: 'grid', gap: 16 }}>
             <AdvancedFilters
@@ -570,26 +619,26 @@ export function ClassementsClient({
               ascs={ascs}
               onFilterChange={setFilters}
             />
-            <TabSubtitle text="Classé par points de pronostics gagnés. Cliquez sur un joueur pour voir son profil." />
+            <TabSubtitle text={t('classements.tabsPronos')} />
             {renderClassementList(paginatedClassement)}
           </div>
         )}
         equipes={(
           <div>
-            <TabSubtitle text="Classement des équipes par points de compétition, avec leur nombre de matchs joués." />
+            <TabSubtitle text={t('classements.tabsEquipes')} />
             {renderClassementList(equipesRanked, true)}
           </div>
         )}
         quartiers={(
           <div>
-            <TabSubtitle text="Somme des points de tous les pronostiqueurs du quartier, et nombre de membres." />
-            {renderAggregated(classementQuartier, 'Quartier', r => `${r?.membres || 0} membres`)}
+            <TabSubtitle text={t('classements.tabsQuartiers')} />
+            {renderAggregated(classementQuartier, 'Quartier', r => `${r?.membres || 0} ${t('classements.membres')}`)}
           </div>
         )}
         asc={(
           <div>
-            <TabSubtitle text="Somme des points de tous les membres de l'ASC, et nombre de membres." />
-            {renderAggregated(classementASC, 'ASC', r => `${r?.membres || 0} membres`)}
+            <TabSubtitle text={t('classements.tabsAsc')} />
+            {renderAggregated(classementASC, 'ASC', r => `${r?.membres || 0} ${t('classements.membres')}`)}
           </div>
         )}
       />

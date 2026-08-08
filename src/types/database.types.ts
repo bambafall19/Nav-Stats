@@ -275,6 +275,18 @@ export type Database = {
         Insert: Omit<Database['public']['Tables']['notification_preferences']['Row'], 'updated_at'>
         Update: Partial<Database['public']['Tables']['notification_preferences']['Insert']>
       }
+      match_reminders: {
+        Row: {
+          id: string
+          user_id: string
+          match_id: string
+          remind_at: string
+          sent: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['match_reminders']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['match_reminders']['Insert']>
+      }
     }
   }
 }

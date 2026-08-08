@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useT } from '@/lib/i18n/LanguageProvider'
 
 export default function PushNotificationManager() {
   const [isSupported, setIsSupported] = useState(false)
@@ -9,6 +10,7 @@ export default function PushNotificationManager() {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [permission, setPermission] = useState<NotificationPermission>('default')
   const [dismissed, setDismissed] = useState(false)
+  const t = useT()
 
   useEffect(() => {
     // Check if user already dismissed the popup
@@ -51,7 +53,7 @@ export default function PushNotificationManager() {
       setPermission(permission)
       
       if (permission !== 'granted') {
-        alert('Vous devez autoriser les notifications pour recevoir les alertes')
+        alert(t('notifications.permissionDenied'))
         return
       }
 
@@ -59,7 +61,7 @@ export default function PushNotificationManager() {
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
       
       if (!vapidPublicKey) {
-        alert('Les notifications ne sont pas configurées. Contactez l\'administrateur.')
+        alert(t('notifications.notConfigured'))
         return
       }
 
@@ -114,7 +116,7 @@ export default function PushNotificationManager() {
           }
         }
       } else {
-        alert('Connectez-vous pour recevoir les notifications sur tous vos appareils.')
+        alert(t('notifications.authRequired'))
         return
       }
 
@@ -122,7 +124,7 @@ export default function PushNotificationManager() {
       localStorage.setItem('push_dismissed', 'true')
       setDismissed(true)
       
-      alert('Notifications activées avec succès !')
+      alert(t('notifications.enable'))
     } catch {
       console.error('Erreur subscription push')
       alert('Erreur lors de l\'activation des notifications. Veuillez réessayer.')
@@ -195,10 +197,10 @@ export default function PushNotificationManager() {
             }}>🔔</div>
             <div>
               <h4 style={{ fontSize: '0.85rem', fontWeight: 700, margin: 0 }}>
-                Notifications push
+                {t('notifications.push')}
               </h4>
               <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: '2px 0 0 0' }}>
-                Alertes matchs en temps réel
+                {t('notifications.alerts')}
               </p>
             </div>
           </div>
@@ -217,7 +219,7 @@ export default function PushNotificationManager() {
             className="btn btn-ghost btn-sm"
             style={{ width: '100%', justifyContent: 'center', fontSize: '0.75rem' }}
           >
-            Plus tard
+            {t('notifications.later')}
           </button>
         </div>
       ) : (
@@ -237,7 +239,7 @@ export default function PushNotificationManager() {
         >
           <span style={{ fontSize: '1rem' }}>✅</span>
           <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-primary)' }}>
-            Notifications actives
+            {t('notifications.active')}
           </span>
         </div>
       )}

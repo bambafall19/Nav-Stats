@@ -5,6 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Share2, Search, Clock, Zap, CalendarDays, Info, Moon, Filter } from 'lucide-react'
 import { MATCH_STATUS_LABELS } from '@/lib/constants/matchStatus'
+import { useT } from '@/lib/i18n/LanguageProvider'
+import MatchReminderBell from '@/components/matchs/MatchReminderBell'
 
 interface Team {
   id: string
@@ -99,6 +101,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
   const [selectedPoule, setSelectedPoule] = useState<'all' | 'A' | 'B' | 'C'>('all')
   const [search, setSearch] = useState('')
   const [showFilters, setShowFilters] = useState(false)
+  const t = useT()
 
   const normalizedSearch = search.trim().toLowerCase()
   const matchesByJournee = initialMatchs.filter(m => {
@@ -171,19 +174,19 @@ export default function MatchListClient({ initialMatchs }: Props) {
               color: 'white',
               letterSpacing: '-0.02em', lineHeight: 1.1,
             }}>
-              Matchs
+              {t('matchs.title')}
             </h1>
             <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.75)', marginTop: 2, fontWeight: 600 }}>
-              Navétanes Zone 6 · Khombole 2026
+              {t('matchs.subtitle')}
             </p>
           </div>
         </div>
 
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', gap: 8, marginTop: 14 }}>
           {[
-            { icon: CalendarDays, value: initialMatchs.length, label: 'matchs' },
-            { icon: Zap, value: totalTeams, label: 'équipes' },
-            { icon: Clock, value: journees.length, label: 'journées' },
+            { icon: CalendarDays, value: initialMatchs.length, label: t('matchs.statMatchs') },
+            { icon: Zap, value: totalTeams, label: t('matchs.statEquipes') },
+            { icon: Clock, value: journees.length, label: t('matchs.statJournees') },
           ].map(stat => (
             <div key={stat.label} style={{
               flex: 1,
@@ -220,8 +223,8 @@ export default function MatchListClient({ initialMatchs }: Props) {
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Rechercher..."
-              aria-label="Rechercher un match"
+              placeholder={t('matchs.search')}
+              aria-label={t('matchs.search')}
               style={{
                 width: '100%',
                 background: 'var(--color-bg-primary)',
@@ -248,7 +251,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
               fontFamily: 'var(--font-plus-jakarta)', cursor: 'pointer',
             }}
           >
-            <Filter size={13} /> Filtres
+            <Filter size={13} /> {t('matchs.filters')}
             {hasActiveFilters && (
               <span style={{
                 width: 16, height: 16, borderRadius: '50%',
@@ -277,7 +280,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
               fontFamily: 'var(--font-plus-jakarta)',
             }}
           >
-            Toutes les journées
+            {t('matchs.allJournees')}
           </button>
           {journees.map(j => (
             <button
@@ -307,7 +310,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
             <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
               {(['all', 'a_venir', 'en_cours', 'termine'] as const).map(s => {
                 const active = selectedStatus === s
-                const label = s === 'all' ? 'Tous' : MATCH_STATUS_LABELS[s]
+                const label = s === 'all' ? t('matchs.tous') : MATCH_STATUS_LABELS[s]
                 return (
                   <button
                     key={s}
@@ -347,7 +350,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
                       fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap',
                     }}
                   >
-                    {p === 'all' ? 'Toutes' : `Poule ${p}`}
+                    {p === 'all' ? t('matchs.toutes') : `Poule ${p}`}
                   </button>
                 )
               })}
@@ -364,7 +367,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
                   fontFamily: 'var(--font-plus-jakarta)', cursor: 'pointer',
                 }}
               >
-                <Share2 size={11} className="refresh-icon" /> Actualiser
+                <Share2 size={11} className="refresh-icon" /> {t('matchs.actualiser')}
               </button>
             </div>
           </div>
@@ -434,7 +437,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
         }}>
           <Info size={13} color="var(--color-accent)" style={{ flexShrink: 0 }} />
           <span>
-            Exempté ce tour : <strong style={{ color: 'var(--color-accent)', fontWeight: 700 }}>ASC {EXEMPTE_MAP[selectedJournee].nom}</strong>
+            {t('matchs.exempte')} <strong style={{ color: 'var(--color-accent)', fontWeight: 700 }}>ASC {EXEMPTE_MAP[selectedJournee].nom}</strong>
           </span>
         </div>
       )}
@@ -449,7 +452,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
         }}>
           <Moon size={13} color="var(--color-primary)" style={{ flexShrink: 0 }} />
           <span style={{ color: 'var(--color-text-secondary)' }}>
-            <strong style={{ color: 'var(--color-primary)', fontWeight: 800 }}>Pause Magal de Touba</strong> — reprise le 03/08/2026
+            <strong style={{ color: 'var(--color-primary)', fontWeight: 800 }}>{t('matchs.pauseMagal')}</strong>
           </span>
         </div>
       )}
@@ -471,10 +474,10 @@ export default function MatchListClient({ initialMatchs }: Props) {
             <CalendarDays size={22} color="var(--color-text-muted)" />
           </div>
           <h3 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '0.9rem', fontWeight: 800, marginBottom: 3 }}>
-            Aucun match programmé
+            {t('matchs.aucunMatch')}
           </h3>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.74rem', marginBottom: 12 }}>
-            Revenez bientôt pour le calendrier officiel.
+            {t('matchs.aucunMatchDesc')}
           </p>
           {hasActiveFilters && (
             <button
@@ -486,7 +489,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
                 cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta)',
               }}
             >
-              Réinitialiser les filtres
+              {t('matchs.resetFilters')}
             </button>
           )}
         </div>
@@ -522,7 +525,7 @@ export default function MatchListClient({ initialMatchs }: Props) {
                       {dayLabel}
                     </div>
                     <div style={{ fontSize: '0.6rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-                      {matches.length} rencontre{matches.length > 1 ? 's' : ''} · Journée {matches[0].journee || '?'}
+                      {matches.length} {t('matchs.rencontres')}{matches.length > 1 ? 's' : ''} · {t('matchs.journee')} {matches[0].journee || '?'}
                     </div>
                   </div>
                 </div>
@@ -640,13 +643,13 @@ export default function MatchListClient({ initialMatchs }: Props) {
                               fontSize: '0.62rem', fontWeight: 800, color: '#EF4444',
                               display: 'flex', alignItems: 'center', gap: 4,
                             }}>
-                              <Zap size={12} /> DIRECT
+                              <Zap size={12} /> {t('matchs.direct')}
                             </span>
                           )}
                           <button
                             type="button"
                             onClick={event => { event.preventDefault(); event.stopPropagation(); window.open(shareUrl, '_blank', 'noopener,noreferrer') }}
-                            aria-label="Partager"
+                            aria-label={t('matchs.partager')}
                             style={{
                               width: 32, height: 32, borderRadius: 9,
                               background: 'var(--color-bg-primary)', color: 'var(--color-text-muted)',
@@ -657,6 +660,13 @@ export default function MatchListClient({ initialMatchs }: Props) {
                           >
                             <Share2 size={13} />
                           </button>
+                          {m.statut === 'a_venir' && (
+                            <MatchReminderBell
+                              matchId={m.id}
+                              dateMatch={m.date_match}
+                              heureMatch={m.heure_match}
+                            />
+                          )}
                         </div>
                       </Link>
                     )

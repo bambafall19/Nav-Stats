@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useT } from '@/lib/i18n/LanguageProvider'
 
 export default function OfflineIndicator() {
   const [isOnline, setIsOnline] = useState(true)
   const [show, setShow] = useState(false)
+  const t = useT()
 
   useEffect(() => {
     setIsOnline(navigator.onLine)
@@ -50,7 +52,7 @@ export default function OfflineIndicator() {
       color: 'white',
     }}>
       <span>{isOnline ? '✅' : '📡'}</span>
-      <span>{isOnline ? 'Connecté' : 'Mode hors-ligne — données en cache'}</span>
+      <span>{isOnline ? t('common.connecte') : t('common.offline')}</span>
       <style>{`
         @keyframes slideDown {
           from { opacity: 0; transform: translateX(-50%) translateY(-10px); }

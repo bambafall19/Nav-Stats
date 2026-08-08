@@ -7,23 +7,24 @@ import {
   Home, Trophy, Target, BarChart3, Calendar, MessageCircle,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { useT } from '@/lib/i18n/LanguageProvider'
 
 const mobileNavLinks = [
-  { href: '/', label: 'Accueil', Icon: Home },
-  { href: '/matchs', label: 'Matchs', Icon: Target },
-  { href: '/cadets', label: 'Cadets', Icon: Calendar },
-  { href: '/classements', label: 'Classements', Icon: Trophy },
-  { href: '/statistiques', label: 'Senior', Icon: BarChart3 },
-  { href: '/communaute', label: 'Chat', Icon: MessageCircle },
+  { href: '/', labelKey: 'nav.accueil', Icon: Home },
+  { href: '/matchs', labelKey: 'nav.matchs', Icon: Target },
+  { href: '/cadets', labelKey: 'nav.cadets', Icon: Calendar },
+  { href: '/classements', labelKey: 'nav.classements', Icon: Trophy },
+  { href: '/statistiques', labelKey: 'nav.senior', Icon: BarChart3 },
+  { href: '/communaute', labelKey: 'nav.chat', Icon: MessageCircle },
 ]
 
 const desktopNavLinks = [
-  { href: '/', label: 'Accueil', Icon: Home },
-  { href: '/matchs', label: 'Matchs', Icon: Target, live: true },
-  { href: '/cadets', label: 'Cadets', Icon: Calendar },
-  { href: '/classements', label: 'Classements', Icon: Trophy },
-  { href: '/statistiques', label: 'Senior', Icon: BarChart3 },
-  { href: '/communaute', label: 'Chat', Icon: MessageCircle },
+  { href: '/', labelKey: 'nav.accueil', Icon: Home },
+  { href: '/matchs', labelKey: 'nav.matchs', Icon: Target, live: true },
+  { href: '/cadets', labelKey: 'nav.cadets', Icon: Calendar },
+  { href: '/classements', labelKey: 'nav.classements', Icon: Trophy },
+  { href: '/statistiques', labelKey: 'nav.senior', Icon: BarChart3 },
+  { href: '/communaute', labelKey: 'nav.chat', Icon: MessageCircle },
 ]
 
 const ACTIVE_BLUE = '#2563EB'
@@ -31,6 +32,7 @@ const ACTIVE_BLUE = '#2563EB'
 export default function BottomNav() {
   const pathname = usePathname()
   const [liveCount, setLiveCount] = useState(0)
+  const t = useT()
 
   useEffect(() => {
     const supabase = createClient()
@@ -81,12 +83,12 @@ export default function BottomNav() {
               className="mobile-nav-item"
               data-active={isActive ? 'true' : 'false'}
               aria-current={isActive ? 'page' : undefined}
-              aria-label={link.label}
+              aria-label={t(link.labelKey)}
             >
               <span className="mobile-nav-icon-wrap" data-active={isActive ? 'true' : 'false'}>
                 <Icon size={18} strokeWidth={isActive ? 2.2 : 1.9} className="mobile-nav-icon" />
               </span>
-              <span className="mobile-nav-label">{link.label}</span>
+              <span className="mobile-nav-label">{t(link.labelKey)}</span>
             </Link>
           )
         })}
@@ -149,7 +151,7 @@ export default function BottomNav() {
                 }}
               >
                 <Icon size={16} strokeWidth={isActive ? 2.4 : 1.9} />
-                <span>{link.label}</span>
+                <span>{t(link.labelKey)}</span>
                 {link.live && liveCount > 0 && (
                   <span className="desktop-nav-live" style={{
                     display: 'inline-flex', alignItems: 'center', gap: 4,

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Users, Shield, Home, Trophy } from 'lucide-react'
+import { useT } from '@/lib/i18n/LanguageProvider'
 
 type TabType = 'pronostiqueurs' | 'equipes' | 'quartiers' | 'asc'
 
@@ -10,16 +11,33 @@ interface ClassementTabsProps {
   equipes: React.ReactNode
   quartiers: React.ReactNode
   asc: React.ReactNode
+  activeTab?: TabType
+  onTabChange?: (tab: TabType) => void
 }
 
-export function ClassementTabs({ pronostiqueurs, equipes, quartiers, asc }: ClassementTabsProps) {
-  const [activeTab, setActiveTab] = useState<TabType>('pronostiqueurs')
+export function ClassementTabs({
+  pronostiqueurs,
+  equipes,
+  quartiers,
+  asc,
+  activeTab: controlledActiveTab,
+  onTabChange,
+}: ClassementTabsProps) {
+  const [internalTab, setInternalTab] = useState<TabType>('pronostiqueurs')
+  const t = useT()
+
+  const activeTab = controlledActiveTab ?? internalTab
+
+  const setTab = (tab: TabType) => {
+    setInternalTab(tab)
+    onTabChange?.(tab)
+  }
 
   const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
-    { id: 'pronostiqueurs', label: 'Pronostiqueurs', icon: <Users size={15} /> },
-    { id: 'equipes', label: 'Équipes', icon: <Shield size={15} /> },
-    { id: 'quartiers', label: 'Quartiers', icon: <Home size={15} /> },
-    { id: 'asc', label: 'ASC', icon: <Trophy size={15} /> },
+    { id: 'pronostiqueurs', label: t('classements.pronostiqueurs'), icon: <Users size={15} /> },
+    { id: 'equipes', label: t('classements.equipes'), icon: <Shield size={15} /> },
+    { id: 'quartiers', label: t('classements.quartiers'), icon: <Home size={15} /> },
+    { id: 'asc', label: t('classements.asc'), icon: <Trophy size={15} /> },
   ]
 
   return (
@@ -45,7 +63,7 @@ export function ClassementTabs({ pronostiqueurs, equipes, quartiers, asc }: Clas
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => setTab(tab.id)}
               style={{
                 flexShrink: 0,
                 display: 'inline-flex',

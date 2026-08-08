@@ -6,6 +6,8 @@ import { Search, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
+import LanguageSwitcher from '@/components/shared/LanguageSwitcher'
+import { useT } from '@/lib/i18n/LanguageProvider'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -13,6 +15,7 @@ export default function MobileHeader() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const t = useT()
 
   useEffect(() => {
     const supabase = createClient()
@@ -95,8 +98,10 @@ export default function MobileHeader() {
             }}>NavéStats</span>
           </Link>
 
-          {/* Droite : Recherche + Profil */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10 }}>
+          {/* Droite : Langue + Recherche + Profil */}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
+            <LanguageSwitcher compact />
+
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               aria-label="Rechercher"
@@ -151,7 +156,7 @@ export default function MobileHeader() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Rechercher..."
+                placeholder={t('header.searchShort')}
                 style={{
                   flex: 1, padding: '10px 14px', borderRadius: 12,
                   border: '1px solid var(--color-border-subtle)',

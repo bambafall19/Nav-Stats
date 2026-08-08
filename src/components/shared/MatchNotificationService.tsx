@@ -8,6 +8,7 @@ export function MatchNotificationService() {
     const checkNotifications = async () => {
       try {
         await fetch('/api/notifications/match-check', { method: 'POST' })
+        await fetch('/api/notifications/reminder-check')
       } catch (error) {
         console.error('Error checking match notifications:', error)
       }

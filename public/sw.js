@@ -1,7 +1,7 @@
 // NavéStats Service Worker - Offline support
-const CACHE_NAME = 'navestats-v1'
-const STATIC_CACHE = 'navestats-static-v1'
-const DYNAMIC_CACHE = 'navestats-dynamic-v1'
+const CACHE_NAME = 'navestats-v2'
+const STATIC_CACHE = 'navestats-static-v2'
+const DYNAMIC_CACHE = 'navestats-dynamic-v2'
 
 const STATIC_URLS = [
   '/',
@@ -120,7 +120,18 @@ self.addEventListener('notificationclick', (event) => {
   )
 })
 
-// Fetch - network first, cache fallback for pages; cache first for static
+// Key pages served from cache first (instant load) and refreshed in background
+// so they remain available offline. Everything else stays network-first.
+const CACHE_FIRST_PAGES = ['/classements', '/matchs', '/']
+
+function putInCache(request, response) {
+  if (response && response.ok) {
+    const clone = response.clone()
+    caches.open(DYNAMIC_CACHE).then((cache) => cache.put(request, clone))
+  }
+}
+
+// Fetch - offline-first for key pages, cache fallback otherwise
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
   
@@ -141,8 +152,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       caches.match(event.request).then((cached) => {
         return cached || fetch(event.request).then((response) => {
-          const clone = response.clone()
-          caches.open(DYNAMIC_CACHE).then((cache) => cache.put(event.request, clone))
+          putInCache(event.request, response)
           return response
         })
       })
@@ -150,12 +160,25 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Pages - network first, fallback to cache
+  // Key pages - cache first (stale-while-revalidate), great for offline
+  if (CACHE_FIRST_PAGES.includes(url.pathname)) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        const fetchPromise = fetch(event.request).then((response) => {
+          putInCache(event.request, response)
+          return response
+        }).catch(() => null)
+        return cached || fetchPromise
+      })
+    )
+    return
+  }
+
+  // Other pages - network first, fallback to cache
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        const clone = response.clone()
-        caches.open(DYNAMIC_CACHE).then((cache) => cache.put(event.request, clone))
+        putInCache(event.request, response)
         return response
       })
       .catch(() => {

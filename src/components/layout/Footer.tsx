@@ -2,29 +2,31 @@
 
 import Link from 'next/link'
 import { Trophy, Target, BarChart3, MessageCircle, Calendar, Mail, MapPin, ArrowUp } from 'lucide-react'
+import { useT } from '@/lib/i18n/LanguageProvider'
 
 const footerNav = [
-  { href: '/', label: 'Accueil', icon: Trophy },
-  { href: '/matchs', label: 'Matchs', icon: Target },
-  { href: '/cadets', label: 'Cadets', icon: Calendar },
-  { href: '/classements', label: 'Classements', icon: BarChart3 },
-  { href: '/statistiques', label: 'Senior', icon: BarChart3 },
-  { href: '/communaute', label: 'Chat', icon: MessageCircle },
+  { href: '/', labelKey: 'nav.accueil', icon: Trophy },
+  { href: '/matchs', labelKey: 'nav.matchs', icon: Target },
+  { href: '/cadets', labelKey: 'nav.cadets', icon: Calendar },
+  { href: '/classements', labelKey: 'nav.classements', icon: BarChart3 },
+  { href: '/statistiques', labelKey: 'nav.senior', icon: BarChart3 },
+  { href: '/communaute', labelKey: 'nav.chat', icon: MessageCircle },
 ]
 
 const footerLinks = [
-  { href: '/matchs', label: 'Matchs du jour' },
-  { href: '/pronostics', label: 'Mes pronostics' },
-  { href: '/cadets', label: 'Championnat cadets' },
-  { href: '/classements', label: 'Classement général' },
-  { href: '/statistiques', label: 'Senior' },
-  { href: '/communaute', label: 'Communauté' },
-  { href: '/auth/register', label: 'Créer un compte' },
-  { href: '/auth/login', label: 'Se connecter' },
+  { href: '/matchs', labelKey: 'footer.matchsDuJour' },
+  { href: '/pronostics', labelKey: 'footer.mesPronostics' },
+  { href: '/cadets', labelKey: 'footer.championnatCadets' },
+  { href: '/classements', labelKey: 'footer.classementGeneral' },
+  { href: '/statistiques', labelKey: 'nav.senior' },
+  { href: '/communaute', labelKey: 'footer.communaute' },
+  { href: '/auth/register', labelKey: 'footer.creerCompte' },
+  { href: '/auth/login', labelKey: 'footer.seConnecter' },
 ]
 
 export default function Footer() {
   const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+  const t = useT()
 
   return (
     <footer className="site-footer" style={{
@@ -64,8 +66,7 @@ export default function Footer() {
               }}>NavéStats</span>
             </div>
             <p style={{ fontSize: '0.78rem', lineHeight: 1.6, marginBottom: 16, maxWidth: 320 }}>
-              La plateforme communautaire de pronostics et statistiques des Navétanes de Khombole.
-              Pronostiquez, gagnez des points et grimpez au classement.
+              {t('footer.description')}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.72rem' }}>
@@ -84,7 +85,7 @@ export default function Footer() {
               fontSize: '0.72rem', fontWeight: 800,
               color: 'white', textTransform: 'uppercase',
               letterSpacing: '0.08em', marginBottom: 14,
-            }}>Navigation</h4>
+            }}>{t('footer.navigation')}</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
               {footerNav.map(link => (
                 <li key={link.href}>
@@ -96,7 +97,7 @@ export default function Footer() {
                     onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary)'}
                     onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
                   >
-                    <link.icon size={12} opacity={0.6} /> {link.label}
+                    <link.icon size={12} opacity={0.6} /> {t(link.labelKey)}
                   </Link>
                 </li>
               ))}
@@ -110,10 +111,10 @@ export default function Footer() {
               fontSize: '0.72rem', fontWeight: 800,
               color: 'white', textTransform: 'uppercase',
               letterSpacing: '0.08em', marginBottom: 14,
-            }}>Liens utiles</h4>
+            }}>{t('footer.links')}</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
               {footerLinks.map(link => (
-                <li key={link.href + link.label}>
+                <li key={link.href + link.labelKey}>
                   <Link href={link.href} style={{
                     color: 'rgba(255,255,255,0.7)', fontSize: '0.76rem',
                     textDecoration: 'none',
@@ -122,7 +123,7 @@ export default function Footer() {
                     onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary)'}
                     onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
                   >
-                    {link.label}
+                    {t(link.labelKey)}
                   </Link>
                 </li>
               ))}
@@ -156,7 +157,7 @@ export default function Footer() {
             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(42,255,160,0.2)'; e.currentTarget.style.color = '#fff' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)' }}
           >
-            Haut de page <ArrowUp size={12} />
+            {t('footer.hautDePage')} <ArrowUp size={12} />
           </button>
         </div>
       </div>
