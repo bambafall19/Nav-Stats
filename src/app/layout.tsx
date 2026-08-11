@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono, Dancing_Script } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import PWAInstallBanner from "@/components/shared/PWAInstallBanner";
+import MandatoryInstallGate from "@/components/shared/MandatoryInstallGate";
 import OfflineIndicator from "@/components/shared/OfflineIndicator";
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import { FCMProvider } from "@/components/shared/FCMProvider";
@@ -141,7 +141,7 @@ export default function RootLayout({
               <PageTransitionLayout>
                 {children}
               </PageTransitionLayout>
-              <PWAInstallBanner />
+              <MandatoryInstallGate />
               <OfflineIndicator />
               <FCMProvider />
             </LanguageProvider>

@@ -11,7 +11,7 @@ import MatchAleUne from '@/components/home/MatchAleUne'
 import CadetsDuJour from '@/components/home/CadetsDuJour'
 import Partenaires from '@/components/home/Partenaires'
 import ScrollReveal from '@/components/shared/ScrollReveal'
-import { CalendarDays, MessageCircle, ShieldCheck, Trophy, BarChart3 } from 'lucide-react'
+import { CalendarDays, MessageCircle, ShieldCheck, Trophy, BarChart3, Share2, Crown, Target, ArrowRight, Users } from 'lucide-react'
 import type { Database } from '@/types/database.types'
 
 type HomeMatch = Database['public']['Tables']['matchs']['Row'] & {
@@ -88,6 +88,7 @@ interface HomeClientProps {
   matchCount: number
   userCount: number
   isAuthenticated: boolean
+  myRank?: number | null
   displayMatchs: HomeMatch[]
   derniersResultats: HomeMatch[]
   isToday: boolean
@@ -105,6 +106,7 @@ export default function HomeClient({
   matchCount,
   userCount,
   isAuthenticated,
+  myRank = null,
   displayMatchs,
   derniersResultats = [],
   isToday,
@@ -122,6 +124,47 @@ export default function HomeClient({
       <div className="container-app">
         <HeroSection matchCount={matchCount} userCount={userCount} isAuthenticated={isAuthenticated} />
 
+        {isAuthenticated && myRank && myRank > 0 && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap',
+            padding: '14px 18px', marginBottom: 16,
+            background: 'linear-gradient(135deg, rgba(255,201,77,0.10), rgba(255,201,77,0.05))',
+            border: '1px solid rgba(255,201,77,0.3)',
+            borderRadius: 'var(--radius-lg)',
+          }}>
+            <div style={{
+              width: 42, height: 42, borderRadius: 13, flexShrink: 0,
+              background: 'rgba(255,201,77,0.16)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Crown size={20} color="var(--color-accent)" />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 800, fontSize: '0.9rem', fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-text-primary)' }}>
+                Vous êtes <span style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-mono)' }}>#{myRank}</span> sur {userCount} pronostiqueurs
+              </div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', marginTop: 1 }}>
+                Continuez à pronostiquer pour grimper dans le classement !
+              </div>
+            </div>
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(`Je suis #${myRank} sur ${userCount} pronostiqueurs sur NavéStats ! 🏆 Prouvez que vous êtes le meilleur et rejoignez-moi sur https://navestats.site`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 7,
+                padding: '9px 14px', borderRadius: 'var(--radius-md)',
+                background: 'var(--gradient-green)', color: 'white',
+                fontSize: '0.74rem', fontWeight: 700,
+                fontFamily: 'var(--font-plus-jakarta)', textDecoration: 'none',
+                boxShadow: 'var(--shadow-green)', whiteSpace: 'nowrap',
+              }}
+            >
+              <Share2 size={13} /> Partager mon rang
+            </a>
+          </div>
+        )}
+
         <div className="home-flow" style={{ paddingTop: 10, paddingBottom: 24 }}>
 
         {/* Quick Actions — clean icon tiles, no photos */}
@@ -136,6 +179,7 @@ export default function HomeClient({
                 { href: '/matchs', Icon: ShieldCheck, label: 'Matchs', color: '#2affa0', bg: 'linear-gradient(135deg, rgba(42,255,160,0.10), rgba(42,255,160,0.22))' },
                 { href: '/matchs?cat=cadets', Icon: CalendarDays, label: 'Cadets', color: '#ffc94d', bg: 'linear-gradient(135deg, rgba(255,201,77,0.10), rgba(255,201,77,0.20))' },
                 { href: '/classements', Icon: Trophy, label: 'Classement', color: '#ffd97d', bg: 'linear-gradient(135deg, rgba(255,201,77,0.14), rgba(255,201,77,0.26))' },
+                { href: '/ligues', Icon: Users, label: 'Ligues', color: '#ff8a4c', bg: 'linear-gradient(135deg, rgba(255,138,76,0.14), rgba(255,138,76,0.24))' },
                 { href: '/statistiques', Icon: BarChart3, label: 'Stats', color: '#4da6ff', bg: 'linear-gradient(135deg, rgba(77,166,255,0.14), rgba(77,166,255,0.24))' },
                 { href: '/communaute', Icon: MessageCircle, label: 'Chat', color: '#ff4d5a', bg: 'linear-gradient(135deg, rgba(255,77,90,0.12), rgba(255,77,90,0.22))' },
               ].map((action) => (
@@ -179,6 +223,47 @@ export default function HomeClient({
             </div>
           </ScrollReveal>
         </section>
+
+        {/* CTA Mes pronos du jour */}
+        <ScrollReveal direction="up" delay={30} className="home-pronos-cta">
+          <Link href="/matchs" style={{ textDecoration: 'none', display: 'block', marginBottom: 16 }}>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap',
+              padding: '18px 20px',
+              background: 'linear-gradient(120deg, rgba(42,255,160,0.12), rgba(42,255,160,0.04))',
+              border: '1px solid rgba(42,255,160,0.25)',
+              borderRadius: 'var(--radius-lg)',
+              transition: 'all var(--transition-base) var(--ease-out)',
+            }}>
+              <div style={{
+                width: 48, height: 48, borderRadius: 15, flexShrink: 0,
+                background: 'var(--gradient-green)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: 'var(--shadow-green)',
+              }}>
+                <Target size={22} color="white" />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 800, fontSize: '0.95rem', fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-text-primary)' }}>
+                  Mes pronos du jour
+                </div>
+                <div style={{ fontSize: '0.74rem', color: 'var(--color-text-secondary)', marginTop: 2 }}>
+                  {matchCount > 0 ? `${matchCount} match${matchCount > 1 ? 's' : ''} à pronostiquer maintenant` : 'Pronostiquez les prochains matchs et gagnez des points'}
+                </div>
+              </div>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '10px 16px', borderRadius: 'var(--radius-md)',
+                background: 'var(--gradient-green)', color: 'white',
+                fontSize: '0.78rem', fontWeight: 700,
+                fontFamily: 'var(--font-plus-jakarta)',
+                boxShadow: 'var(--shadow-green)', whiteSpace: 'nowrap',
+              }}>
+                Jouer maintenant <ArrowRight size={13} />
+              </div>
+            </div>
+          </Link>
+        </ScrollReveal>
 
         {/* Match à la une */}
         {matchAleUne && (
@@ -272,6 +357,7 @@ export default function HomeClient({
         .home-sidebar { display: contents !important; }
 
         .home-quick { order: 1; margin-bottom: 12px !important; }
+        .home-pronos-cta { order: 2; margin-bottom: 12px !important; }
         .home-featured { order: 3; margin-bottom: 12px !important; }
         .home-stats { order: 5; margin-bottom: 12px !important; }
         #matchs-section { order: 4; margin-bottom: 12px !important; }

@@ -55,8 +55,8 @@ export default async function MesPronosticsPage() {
               Créez votre compte gratuit pour pronostiquer et grimper dans le classement.
             </p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link href="/auth/login" className="btn btn-primary">Connexion</Link>
-              <Link href="/auth/register" className="btn btn-outline">S'inscrire</Link>
+              <Link href="/auth/login?redirect=%2Fpronostics" className="btn btn-primary">Connexion</Link>
+              <Link href="/auth/register?redirect=%2Fpronostics" className="btn btn-outline">S'inscrire</Link>
             </div>
           </div>
         </div>
@@ -71,7 +71,7 @@ export default async function MesPronosticsPage() {
       premier_buteur:joueurs!pronostics_premier_buteur_id_fkey(nom, prenom),
       homme_du_match:joueurs!pronostics_homme_du_match_predit_id_fkey(nom, prenom),
       match:matchs(
-        id, date_match, heure_match, statut, score_a, score_b, homme_du_match_id,
+        id, date_match, heure_match, statut, score_a, score_b, journee, homme_du_match_id,
         equipe_a:equipes!matchs_equipe_a_id_fkey(nom, sigle, logo_url, couleur_principale),
         equipe_b:equipes!matchs_equipe_b_id_fkey(nom, sigle, logo_url, couleur_principale)
       )
@@ -107,6 +107,21 @@ export default async function MesPronosticsPage() {
   const pending = pronostics.filter(p => p.match?.statut !== 'termine').length
   const accuracy = total > 0 ? Math.round((corrects / total) * 100) : 0
 
+  // Série (streak) : journées consécutives avec au moins un pronostic, en partant de la plus récente
+  const journees = [...new Set(
+    pronostics
+      .map(p => p.match?.journee)
+      .filter((j): j is number => typeof j === 'number' && j > 0)
+  )].sort((a, b) => a - b)
+  let streak = 0
+  if (journees.length > 0) {
+    let expected = journees[journees.length - 1]
+    for (let i = journees.length - 1; i >= 0; i--) {
+      if (journees[i] === expected) { streak++; expected-- }
+      else break
+    }
+  }
+
   return (
     <div className="page-content">
       <div className="container-app" style={{ paddingTop: 28 }}>
@@ -127,6 +142,7 @@ export default async function MesPronosticsPage() {
             profile={profile}
             recentPronostics={pronostics.slice(0, 5)}
             pronosticsToMake={pronosticsToMake}
+            streak={streak}
           />
         )}
 

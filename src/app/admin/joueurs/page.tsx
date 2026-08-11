@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import CsvImporter, { type CsvImportResult } from '@/components/admin/CsvImporter'
 
 interface Equipe {
   id: string
@@ -160,6 +161,53 @@ export default function AdminJoueursPage() {
     setForm(defaultForm)
     setEditId(null)
     setShowForm(false)
+  }
+
+  const POSTE_MAP: Record<string, string> = {
+    gardien: 'gardien',
+    gardin: 'gardien',
+    defenseur: 'defenseur',
+    défenseur: 'defenseur',
+    def: 'defenseur',
+    milieu: 'milieu',
+    milieux: 'milieu',
+    attaquant: 'attaquant',
+    avant: 'attaquant',
+    att: 'attaquant',
+  }
+
+  const handleJoueursImport = async (rows: Record<string, string>[]): Promise<CsvImportResult> => {
+    const teamByName = new Map(equipes.map(e => [e.nom.trim().toLowerCase(), e.id]))
+    const errors: string[] = []
+    const toInsert: any[] = []
+    let inserted = 0
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i]
+      const nom = (row['nom'] || row['nom complet'] || row['nomcomplet'] || '').trim()
+      if (!nom) { errors.push(`Ligne ${i + 2} : nom manquant.`); continue }
+
+      const equipeName = (row['equipe'] || '').trim().toLowerCase()
+      const equipeId = equipeName ? teamByName.get(equipeName) : null
+      if (equipeName && !equipeId) { errors.push(`Ligne ${i + 2} : équipe « ${row['equipe']} » introuvable.`); continue }
+
+      const posteRaw = (row['poste'] || '').trim().toLowerCase()
+      const numRaw = row['numero'] || row['numero maillot'] || row['num']
+      toInsert.push({
+        nom,
+        prenom: (row['prenom'] || '').trim() || null,
+        equipe_id: equipeId || null,
+        numero_maillot: numRaw ? Number(numRaw) || null : null,
+        poste: POSTE_MAP[posteRaw] || null,
+      })
+    }
+
+    if (toInsert.length > 0) {
+      const { data, error } = await supabase.from('joueurs').insert(toInsert).select('id')
+      if (error) errors.push(error.message)
+      else inserted = data?.length || 0
+    }
+    return { inserted, errors }
   }
 
   const filteredJoueurs = joueurs.filter(j => {
@@ -334,6 +382,22 @@ export default function AdminJoueursPage() {
           </div>
         </div>
       )}
+
+      {/* Import CSV */}
+      <div style={{ marginBottom: 24 }}>
+        <CsvImporter
+          title="Import CSV — Joueurs"
+          description="Importez un effectif complet (équipe, nom, prénom, poste, numéro de maillot). L’équipe est reconnue par son nom."
+          expectedHeaders={['equipe', 'nom', 'prenom', 'poste', 'numero']}
+          templateHeaders={['equipe', 'nom', 'prenom', 'poste', 'numero']}
+          sampleRows={[
+            ['ONCAV Khombole', 'Mané', 'Sadio', 'attaquant', 10],
+            ['ASC Senghor', 'Diallo', 'Moussa', 'gardien', 1],
+          ]}
+          onImport={handleJoueursImport}
+          onSuccess={() => fetchData()}
+        />
+      </div>
 
       {/* Players List Table */}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>

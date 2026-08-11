@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Trophy } from 'lucide-react'
 import ClassementsClientWrapper from './ClassementsClientWrapper'
 import type { AggregatedRow, RankedRow } from '@/components/classements/ClassementsClient'
 
@@ -117,6 +118,35 @@ export default async function ClassementsPage() {
           classementQuartier={classementQuartier}
           classementASC={classementASC}
         />
+
+        <Link href="/ligues" style={{ textDecoration: 'none', display: 'block', marginTop: 16 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 13,
+            padding: '16px 18px',
+            background: 'var(--color-surface-card)',
+            border: '1px solid var(--color-border-subtle)',
+            borderRadius: 'var(--radius-lg)',
+            boxShadow: 'var(--shadow-card)',
+            transition: 'all var(--transition-base) var(--ease-out)',
+          }}>
+            <div style={{
+              width: 42, height: 42, borderRadius: 13, flexShrink: 0,
+              background: 'var(--gradient-green)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: 'var(--shadow-green)',
+            }}>
+              <Trophy size={20} color="white" />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 800, fontSize: '0.9rem', fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-text-primary)' }}>
+                Mes ligues privées
+              </div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', marginTop: 1 }}>
+                Créez ou rejoignez une ligue et défiez vos amis
+              </div>
+            </div>
+            <span style={{ color: 'var(--color-text-muted)' }}>›</span>
+          </div>
+        </Link>
       </div>
     </div>
   )

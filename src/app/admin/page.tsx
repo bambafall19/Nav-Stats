@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import { AdminDashboardCharts } from '@/components/admin/AdminDashboardCharts'
+import SystemHealth from '@/components/admin/SystemHealth'
 
 export const metadata: Metadata = { title: 'Admin - NavéStats' }
 
@@ -37,6 +38,7 @@ export default async function AdminDashboard() {
     { data: matchsSansResultatRaw },
     { data: topEquipesRaw },
     { data: matchsEnCoursRaw },
+    { count: pendingReports },
   ] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('matchs').select('*', { count: 'exact', head: true }),
@@ -52,6 +54,7 @@ export default async function AdminDashboard() {
     supabase.from('matchs').select('id, date_match, equipe_a:equipes!matchs_equipe_a_id_fkey(nom), equipe_b:equipes!matchs_equipe_b_id_fkey(nom)').eq('statut', 'termine').or('score_a.is.null,score_b.is.null').limit(5),
     supabase.from('equipes').select('nom, points_classement, victoires, matchs_joues').order('points_classement', { ascending: false }).limit(8),
     supabase.from('matchs').select('*, equipe_a:equipes!matchs_equipe_a_id_fkey(nom,sigle,couleur_principale), equipe_b:equipes!matchs_equipe_b_id_fkey(nom,sigle,couleur_principale)').eq('statut', 'en_cours').limit(3),
+    supabase.from('match_reports').select('*', { count: 'exact', head: true }).eq('statut', 'pending'),
   ])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -174,7 +177,7 @@ export default async function AdminDashboard() {
           { label: "Matchs aujourd'hui", value: matchsAujourdhui || 0, detail: 'à surveiller', icon: '📅', href: '/admin/matchs', color: '#0dca6b' },
           { label: 'Résultats manquants', value: matchsSansResultat.length, detail: 'à compléter', icon: '📝', href: '/admin/resultats', color: '#E53E3E' },
           { label: 'Commentaires', value: recentComments.length, detail: 'dernière activité', icon: '💬', href: '/communaute', color: '#2B6CB0' },
-          { label: 'Sans logo', value: equipesSansLogo.length, detail: 'équipes incomplètes', icon: '🛡️', href: '/admin/equipes', color: '#7C3AED' },
+          { label: 'Reports', value: pendingReports || 0, detail: 'à modérer', icon: '🚩', href: '/admin/reports', color: '#B45309' },          { label: 'Sans logo', value: equipesSansLogo.length, detail: 'équipes incomplètes', icon: '🛡️', href: '/admin/equipes', color: '#7C3AED' },
         ].map(card => (
           <a key={card.label} href={card.href} className="admin-op-card">
             <span style={{ background: `${card.color}18`, color: card.color }}>{card.icon}</span>
@@ -345,11 +348,25 @@ export default async function AdminDashboard() {
                 </div>
               </a>
             ))}
-            {matchsSansResultat.length === 0 && equipesSansLogo.length === 0 && (
+            {matchsSansResultat.length === 0 && equipesSansLogo.length === 0 && (pendingReports || 0) === 0 && (
               <EmptyPanel text="Rien à signaler pour le moment ✅" />
+            )}
+            {(pendingReports || 0) > 0 && (
+              <a href="/admin/reports" className="admin-todo-row">
+                <span>🚩</span>
+                <div className="admin-row-main">
+                  <strong>{pendingReports || 0} report{(pendingReports || 0) > 1 ? 's' : ''} de match à modérer</strong>
+                  <small>Scores, dates ou lieux à vérifier</small>
+                </div>
+              </a>
             )}
           </div>
         </div>
+      </section>
+
+      {/* Santé du système */}
+      <section className="admin-panel">
+        <SystemHealth />
       </section>
 
       <style>{`

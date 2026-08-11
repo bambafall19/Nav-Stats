@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -53,6 +53,14 @@ export default function LoginPage() {
   const [resetLoading, setResetLoading] = useState(false)
   const [resetSent, setResetSent] = useState(false)
   const [resetError, setResetError] = useState('')
+  const [redirect, setRedirect] = useState('/')
+
+  useEffect(() => {
+    const target = new URLSearchParams(window.location.search).get('redirect')
+    if (target && target.startsWith('/') && !target.startsWith('//') && !target.startsWith('/\\')) {
+      setRedirect(target)
+    }
+  }, [])
 
   function isPhoneNumber(val: string) {
     const clean = val.replace(/[\s\-\+\(\)]/g, '')
@@ -71,7 +79,7 @@ export default function LoginPage() {
     if (isPhoneNumber(loginEmail)) loginEmail = buildPhoneEmail(loginEmail)
     const { error: err } = await supabase.auth.signInWithPassword({ email: loginEmail, password })
     if (err) { setError('Identifiant ou mot de passe incorrect.'); setLoading(false); return }
-    router.push('/')
+    router.push(redirect)
     router.refresh()
   }
 
@@ -114,7 +122,7 @@ export default function LoginPage() {
         <Link href="/" className={styles.backButton} aria-label="Retour">
           <ArrowLeft size={20} color="#FFFFFF" />
         </Link>
-        <Link href="/auth/register" className={styles.registerPill}>
+        <Link href={`/auth/register${redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className={styles.registerPill}>
           Créer un compte
         </Link>
       </header>
@@ -221,7 +229,7 @@ export default function LoginPage() {
 
       <footer className={styles.footer}>
         <span className={styles.footerText}>Vous n&apos;avez pas de compte ?</span>
-        <Link href="/auth/register" className={styles.footerLink}>Créer un compte →</Link>
+        <Link href={`/auth/register${redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className={styles.footerLink}>Créer un compte →</Link>
       </footer>
 
       {showResetModal && (

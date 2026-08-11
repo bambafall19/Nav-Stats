@@ -8,7 +8,7 @@ import LinkButton from '@/components/shared/LinkButton'
 import type { Database } from '@/types/database.types'
 import { addToOfflineQueue, getPendingCount, syncOfflineQueue } from '@/lib/offlineQueue'
 import ScoreboardPanel from '@/components/shared/ScoreboardPanel'
-import { Target, LogIn, UserPlus, CheckCircle2, Trophy, WifiOff, RefreshCw, AlertTriangle, Goal, Star, Lock } from 'lucide-react'
+import { Target, LogIn, UserPlus, CheckCircle2, Trophy, WifiOff, RefreshCw, AlertTriangle, Goal, Star, Lock, Timer } from 'lucide-react'
 
 type Equipe = Database['public']['Tables']['equipes']['Row']
 type Joueur = Database['public']['Tables']['joueurs']['Row']
@@ -22,6 +22,7 @@ interface Props {
   joueursB: Joueur[]
   userId: string | null
   existingPronostic: Pronostic | null
+  clotureAt?: string | null
 }
 
 function TeamTile({ equipe, size = 40 }: { equipe: Equipe; size?: number }) {
@@ -60,7 +61,7 @@ function Label({ children, icon }: { children: React.ReactNode; icon?: React.Rea
   )
 }
 
-export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, joueursB, userId, existingPronostic }: Props) {
+export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, joueursB, userId, existingPronostic, clotureAt }: Props) {
   const router = useRouter()
   const supabase = createClient() as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -76,6 +77,16 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
   const [error, setError] = useState('')
   const [isOnline, setIsOnline] = useState(true)
   const [pendingCount, setPendingCount] = useState(() => getPendingCount())
+  const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const clotureDate = clotureAt ? new Date(clotureAt) : null
+  const msToClose = clotureDate ? clotureDate.getTime() - now : Infinity
+  const isClosed = !!clotureDate && msToClose <= 0
 
   useEffect(() => {
     const updateStatus = () => setIsOnline(navigator.onLine)
@@ -117,13 +128,35 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
           Connectez-vous pour pronostiquer ce match et gagner des points !
         </p>
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <LinkButton href="/auth/login" variant="primary" size="md">
+          <LinkButton href={`/auth/login?redirect=${encodeURIComponent(`/matchs/${matchId}`)}`} variant="primary" size="md">
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><LogIn size={14} /> Connexion</span>
           </LinkButton>
-          <LinkButton href="/auth/register" variant="secondary" size="md">
+          <LinkButton href={`/auth/register?redirect=${encodeURIComponent(`/matchs/${matchId}`)}`} variant="secondary" size="md">
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><UserPlus size={14} /> S&apos;inscrire</span>
           </LinkButton>
         </div>
+      </ScoreboardPanel>
+    )
+  }
+
+  if (isClosed && !existingPronostic) {
+    return (
+      <ScoreboardPanel title="Votre Pronostic" icon={<Lock size={14} color="var(--color-accent)" />} bodyStyle={{ padding: 28, textAlign: 'center' }}>
+        <div style={{
+          width: 56, height: 56, borderRadius: 18,
+          background: 'rgba(255,201,77,0.12)',
+          border: '1px solid rgba(255,201,77,0.3)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 16px',
+        }}>
+          <Lock size={26} color="var(--color-accent)" />
+        </div>
+        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: 8, fontFamily: 'var(--font-plus-jakarta)' }}>
+          Pronostics fermés
+        </h3>
+        <p style={{ color: 'var(--color-text-secondary)', marginBottom: 0, fontSize: '0.85rem' }}>
+          Le match commence dans moins de 15 minutes. Les pronostics ne peuvent plus être modifiés.
+        </p>
       </ScoreboardPanel>
     )
   }
@@ -133,6 +166,17 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
     const isB = existingPronostic.resultat_predit === 'equipe_b'
     return (
       <ScoreboardPanel title="Votre Pronostic" icon={<CheckCircle2 size={14} color="var(--color-primary)" />}>
+        {isClosed && (
+          <div style={{
+            padding: '10px 14px', borderRadius: 'var(--radius-md)',
+            background: 'rgba(255,201,77,0.1)', border: '1px solid rgba(255,201,77,0.3)',
+            display: 'flex', alignItems: 'center', gap: 8,
+            fontSize: '0.78rem', color: 'var(--color-accent)', marginBottom: 14,
+          }}>
+            <Lock size={14} style={{ flexShrink: 0 }} />
+            <span>Les pronostics sont fermés. Ce pronostic est définitif.</span>
+          </div>
+        )}
         <div style={{
           padding: '16px',
           borderRadius: 'var(--radius-md)',
@@ -185,6 +229,7 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (isClosed) { setError('Les pronostics sont fermés pour ce match.'); return }
     if (!resultat) { setError('Veuillez choisir un résultat'); return }
     setLoading(true)
     setError('')
@@ -235,6 +280,24 @@ export default function PronosticForm({ matchId, equipeA, equipeB, joueursA, jou
       <p style={{ fontSize: '0.76rem', color: 'var(--color-text-secondary)', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 6 }}>
         <Lock size={12} color="var(--color-text-muted)" /> Choisissez le vainqueur ou le match nul. Victoire trouvée = 3 pts · Nul trouvé = 1 pt.
       </p>
+
+      {clotureDate && msToClose > 0 && msToClose <= 24 * 60 * 60 * 1000 && (
+        <div style={{
+          padding: '10px 14px', borderRadius: 10,
+          background: 'rgba(255,201,77,0.1)', border: '1px solid rgba(255,201,77,0.3)',
+          marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8,
+          fontSize: '0.78rem', color: 'var(--color-accent)', fontWeight: 700,
+          fontVariantNumeric: 'tabular-nums',
+        }}>
+          <Timer size={14} style={{ flexShrink: 0 }} />
+          <span>
+            Fermeture dans{' '}
+            {msToClose > 3600000
+              ? `${Math.floor(msToClose / 3600000)}h ${Math.floor((msToClose % 3600000) / 60000)}m`
+              : `${Math.floor(msToClose / 60000)}m ${Math.floor((msToClose % 60000) / 1000)}s`}
+          </span>
+        </div>
+      )}
 
       {!isOnline && (
         <div style={{ padding: '10px 14px', background: 'rgba(255,201,77,0.1)', border: '1px solid rgba(255,201,77,0.3)', borderRadius: 10, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.78rem', color: 'var(--color-accent)' }}>

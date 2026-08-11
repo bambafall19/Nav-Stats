@@ -68,14 +68,18 @@ export default function AdminClassementsPage() {
   const handleSave = async (equipe: Equipe) => {
     const values = editValues[equipe.id] || {}
     setLoading(true)
-    
+
+    const victoires = values.victoires ?? equipe.victoires ?? 0
+    const nuls = values.nuls ?? equipe.nuls ?? 0
+    const pointsAuto = victoires * 3 + nuls
+
     const { error } = await supabase
       .from('equipes')
       .update({
-        points_classement: values.points_classement ?? equipe.points_classement,
+        points_classement: pointsAuto,
         matchs_joues: values.matchs_joues ?? equipe.matchs_joues,
-        victoires: values.victoires ?? equipe.victoires,
-        nuls: values.nuls ?? equipe.nuls,
+        victoires,
+        nuls,
         defaites: values.defaites ?? equipe.defaites,
         buts_marques: values.buts_marques ?? equipe.buts_marques,
         buts_encaisses: values.buts_encaisses ?? equipe.buts_encaisses,
@@ -105,7 +109,7 @@ export default function AdminClassementsPage() {
             🏆 Classements par Poule
           </h1>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginTop: 4 }}>
-            Modifiez les statistiques et points des équipes dans chaque poule
+            Modifiez les statistiques — les points (V×3+N) se recalculent automatiquement
           </p>
         </div>
 
@@ -158,7 +162,7 @@ export default function AdminClassementsPage() {
           <tbody>
             {equipes.map((eq, index) => {
               const diff = (editValues[eq.id]?.buts_marques ?? eq.buts_marques ?? 0) - (editValues[eq.id]?.buts_encaisses ?? eq.buts_encaisses ?? 0)
-              const points = editValues[eq.id]?.points_classement ?? eq.points_classement ?? 0
+              const points = (editValues[eq.id]?.victoires ?? eq.victoires ?? 0) * 3 + (editValues[eq.id]?.nuls ?? eq.nuls ?? 0)
               const mj = editValues[eq.id]?.matchs_joues ?? eq.matchs_joues ?? 0
               
               return (
@@ -228,13 +232,9 @@ export default function AdminClassementsPage() {
                   <td style={{ fontWeight: 600, color: diff > 0 ? 'var(--color-primary)' : diff < 0 ? 'var(--color-red)' : 'var(--color-text-muted)' }}>
                     {diff > 0 ? '+' : ''}{diff}
                   </td>
-                  <td>
-                    <input
-                      type="number" min="0"
-                      value={points}
-                      onChange={e => handleInputChange(eq.id, 'points_classement', parseInt(e.target.value) || 0)}
-                      style={{ width: 50, padding: '4px 6px', border: '1px solid var(--color-border)', borderRadius: 6, textAlign: 'center', fontWeight: 700 }}
-                    />
+                  <td style={{ textAlign: 'center' }}>
+                    <span style={{ fontWeight: 800, color: 'var(--color-primary)', fontSize: '1rem' }}>{points}</span>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', display: 'block' }}>V×3+N</span>
                   </td>
                   <td>
                     <button

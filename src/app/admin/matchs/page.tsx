@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import CsvImporter, { type CsvImportResult } from '@/components/admin/CsvImporter'
 
 interface Equipe {
   id: string
@@ -125,6 +126,45 @@ export default function AdminMatchsPage() {
 
   const filteredMatchs = filterJournee === 'all' ? matchs : matchs.filter(m => m.journee === filterJournee)
   const journees = [...new Set(matchs.map(m => m.journee))].sort((a, b) => a - b)
+
+  const handleMatchsImport = async (rows: Record<string, string>[]): Promise<CsvImportResult> => {
+    const teamByName = new Map(equipes.map(e => [e.nom.trim().toLowerCase(), e.id]))
+    const errors: string[] = []
+    const toInsert: any[] = []
+    let inserted = 0
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i]
+      const eqA = (row['equipe a'] || row['equipea'] || '').trim().toLowerCase()
+      const eqB = (row['equipe b'] || row['equipeb'] || '').trim().toLowerCase()
+      const idA = teamByName.get(eqA)
+      const idB = teamByName.get(eqB)
+
+      if (!row['date']) { errors.push(`Ligne ${i + 2} : date manquante.`); continue }
+      if (!idA || !idB) {
+        errors.push(`Ligne ${i + 2} : équipe introuvable (${row['equipe a'] || row['equipea'] || '?'} vs ${row['equipe b'] || row['equipeb'] || '?'}).`)
+        continue
+      }
+      if (idA === idB) { errors.push(`Ligne ${i + 2} : même équipe des deux côtés.`); continue }
+
+      toInsert.push({
+        date_match: row['date'],
+        heure_match: (row['heure'] || '15:00').padStart(5, '0').slice(0, 5),
+        stade: row['stade'] || 'Stade de Khombole',
+        journee: Number(row['journee']) || 1,
+        statut: 'a_venir',
+        equipe_a_id: idA,
+        equipe_b_id: idB,
+      })
+    }
+
+    if (toInsert.length > 0) {
+      const { data, error } = await supabase.from('matchs').insert(toInsert).select('id')
+      if (error) errors.push(error.message)
+      else inserted = data?.length || 0
+    }
+    return { inserted, errors }
+  }
 
   return (
     <div>
@@ -319,6 +359,22 @@ export default function AdminMatchsPage() {
           </form>
         </div>
       )}
+
+      {/* Import CSV */}
+      <div style={{ marginBottom: 20 }}>
+        <CsvImporter
+          title="Import CSV — Matchs"
+          description="Importez plusieurs matchs d’un coup (date, heure, stade, journée, équipes par nom)."
+          expectedHeaders={['date', 'heure', 'stade', 'journee', 'equipe a', 'equipe b']}
+          templateHeaders={['date', 'heure', 'stade', 'journee', 'equipe a', 'equipe b']}
+          sampleRows={[
+            ['2026-08-15', '15:00', 'Stade de Khombole', 1, 'ONCAV Khombole', 'ASC Senghor'],
+            ['2026-08-15', '17:00', 'Stade de Khombole', 1, 'Jeunesse Darou', 'Espoir Khombole'],
+          ]}
+          onImport={handleMatchsImport}
+          onSuccess={() => fetchData()}
+        />
+      </div>
 
       {/* Filter by journée */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>

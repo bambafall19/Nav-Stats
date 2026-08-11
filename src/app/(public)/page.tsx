@@ -113,6 +113,17 @@ export default async function HomePage() {
     .from('profiles')
     .select('*', { count: 'exact', head: true })
 
+  // Rang du joueur connecté (basé sur les points)
+  let myRank: number | null = null
+  if (user) {
+    const { data: ranked } = await supabase
+      .from('profiles')
+      .select('id')
+      .order('points', { ascending: false })
+    const idx = ((ranked || []) as { id: string }[]).findIndex(p => p.id === user.id)
+    if (idx >= 0) myRank = idx + 1
+  }
+
   // Stats globales pour le dashboard
   const { count: totalMatchs } = await supabase
     .from('matchs')
@@ -167,6 +178,7 @@ export default async function HomePage() {
       matchCount={displayMatchs.length}
       userCount={totalPronostiqueurs || 0}
       isAuthenticated={!!user}
+      myRank={myRank}
       displayMatchs={displayMatchs}
       derniersResultats={((derniersResultats || []) as any[])}
       isToday={isToday || false}

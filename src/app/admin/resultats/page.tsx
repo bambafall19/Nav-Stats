@@ -5,8 +5,17 @@ import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 
 type Equipe = Database['public']['Tables']['equipes']['Row']
+type EquipeUpdate = Database['public']['Tables']['equipes']['Update']
 type Match = Database['public']['Tables']['matchs']['Row'] & {
   equipe_a: Equipe; equipe_b: Equipe
+}
+
+type ResultStat = 'victoire' | 'nul' | 'defaite'
+
+function resultFor(scoreFor: number, scoreAgainst: number): ResultStat {
+  if (scoreFor > scoreAgainst) return 'victoire'
+  if (scoreFor < scoreAgainst) return 'defaite'
+  return 'nul'
 }
 
 export default function AdminResultats() {
@@ -17,95 +26,195 @@ export default function AdminResultats() {
   const [scoreB, setScoreB] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState('')
+  const [tab, setTab] = useState<'attente' | 'valides'>('attente')
 
-  useEffect(() => {
+  const loadMatchs = () =>
     supabase
       .from('matchs')
       .select(`*, equipe_a:equipes!matchs_equipe_a_id_fkey(*), equipe_b:equipes!matchs_equipe_b_id_fkey(*)`)
-      .in('statut', ['a_venir', 'en_cours'])
+      .in('statut', ['a_venir', 'en_cours', 'termine'])
       .order('date_match')
-      .then((res: any) => setMatchs(res.data || []))
-  }, [])
+      .then((res: { data: Match[] | null }) => {
+        const data = res.data || []
+        setMatchs(data)
+
+        // Présélection via ?match=xxx (lien du dashboard admin)
+        const id = new URLSearchParams(window.location.search).get('match')
+        if (id) {
+          const m = data.find((x: Match) => x.id === id)
+          if (m) {
+            setSelected(m)
+            setScoreA(m.score_a != null ? String(m.score_a) : '')
+            setScoreB(m.score_b != null ? String(m.score_b) : '')
+          }
+          const url = new URL(window.location.href)
+          url.searchParams.delete('match')
+          window.history.replaceState({}, '', url.toString())
+        }
+      })
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { loadMatchs() }, [])
+
+  const pending = matchs.filter(m => m.statut !== 'termine' || m.score_a === null || m.score_b === null)
+  const valides = matchs.filter(m => m.statut === 'termine' && m.score_a !== null && m.score_b !== null)
+
+  async function reverseStats(m: Match) {
+    const sA = m.score_a ?? 0
+    const sB = m.score_b ?? 0
+    const { data: eqA } = await supabase.from('equipes').select('*').eq('id', m.equipe_a_id).single()
+    const { data: eqB } = await supabase.from('equipes').select('*').eq('id', m.equipe_b_id).single()
+
+    if (eqA) {
+      const res = resultFor(sA, sB)
+      const up: EquipeUpdate = {
+        matchs_joues: Math.max(0, (eqA.matchs_joues || 0) - 1),
+        buts_marques: Math.max(0, (eqA.buts_marques || 0) - sA),
+        buts_encaisses: Math.max(0, (eqA.buts_encaisses || 0) - sB),
+      }
+      if (res === 'victoire') up.victoires = Math.max(0, (eqA.victoires || 0) - 1)
+      else if (res === 'nul') up.nuls = Math.max(0, (eqA.nuls || 0) - 1)
+      else up.defaites = Math.max(0, (eqA.defaites || 0) - 1)
+      up.points_classement = (up.victoires || 0) * 3 + (up.nuls || 0)
+      await supabase.from('equipes').update(up).eq('id', eqA.id)
+    }
+
+    if (eqB) {
+      const res = resultFor(sB, sA)
+      const up: EquipeUpdate = {
+        matchs_joues: Math.max(0, (eqB.matchs_joues || 0) - 1),
+        buts_marques: Math.max(0, (eqB.buts_marques || 0) - sB),
+        buts_encaisses: Math.max(0, (eqB.buts_encaisses || 0) - sA),
+      }
+      if (res === 'victoire') up.victoires = Math.max(0, (eqB.victoires || 0) - 1)
+      else if (res === 'nul') up.nuls = Math.max(0, (eqB.nuls || 0) - 1)
+      else up.defaites = Math.max(0, (eqB.defaites || 0) - 1)
+      up.points_classement = (up.victoires || 0) * 3 + (up.nuls || 0)
+      await supabase.from('equipes').update(up).eq('id', eqB.id)
+    }
+  }
+
+  async function applyStats(m: Match, sA: number, sB: number) {
+    const { data: eqA } = await supabase.from('equipes').select('*').eq('id', m.equipe_a_id).single()
+    const { data: eqB } = await supabase.from('equipes').select('*').eq('id', m.equipe_b_id).single()
+
+    if (eqA) {
+      const res = resultFor(sA, sB)
+      const up: EquipeUpdate = {
+        matchs_joues: (eqA.matchs_joues || 0) + 1,
+        buts_marques: (eqA.buts_marques || 0) + sA,
+        buts_encaisses: (eqA.buts_encaisses || 0) + sB,
+      }
+      if (res === 'victoire') up.victoires = (eqA.victoires || 0) + 1
+      else if (res === 'nul') up.nuls = (eqA.nuls || 0) + 1
+      else up.defaites = (eqA.defaites || 0) + 1
+      up.points_classement = (up.victoires || 0) * 3 + (up.nuls || 0)
+      await supabase.from('equipes').update(up).eq('id', eqA.id)
+    }
+
+    if (eqB) {
+      const res = resultFor(sB, sA)
+      const up: EquipeUpdate = {
+        matchs_joues: (eqB.matchs_joues || 0) + 1,
+        buts_marques: (eqB.buts_marques || 0) + sB,
+        buts_encaisses: (eqB.buts_encaisses || 0) + sA,
+      }
+      if (res === 'victoire') up.victoires = (eqB.victoires || 0) + 1
+      else if (res === 'nul') up.nuls = (eqB.nuls || 0) + 1
+      else up.defaites = (eqB.defaites || 0) + 1
+      up.points_classement = (up.victoires || 0) * 3 + (up.nuls || 0)
+      await supabase.from('equipes').update(up).eq('id', eqB.id)
+    }
+  }
 
   async function handleValidate() {
     if (!selected) return
     setLoading(true)
 
+    const scoreAInt = parseInt(scoreA) || 0
+    const scoreBInt = parseInt(scoreB) || 0
+
     const { error } = await supabase
       .from('matchs')
       .update({
         statut: 'termine',
-        score_a: parseInt(scoreA) || 0,
-        score_b: parseInt(scoreB) || 0,
+        score_a: scoreAInt,
+        score_b: scoreBInt,
       })
       .eq('id', selected.id)
 
     if (!error) {
-      // Update team standings
       try {
-        const scoreAInt = parseInt(scoreA) || 0
-        const scoreBInt = parseInt(scoreB) || 0
-
-        // Determine result: win/loss/draw
-        let resultA = '', resultB = ''
-        if (scoreAInt > scoreBInt) { resultA = 'victoire'; resultB = 'defaite' }
-        else if (scoreAInt < scoreBInt) { resultA = 'defaite'; resultB = 'victoire' }
-        else { resultA = 'nul'; resultB = 'nul' }
-
-        // Direct stats update: fetch current stats and modify
-        const { data: eqA } = await supabase.from('equipes').select('*').eq('id', selected.equipe_a_id).single()
-        const { data: eqB } = await supabase.from('equipes').select('*').eq('id', selected.equipe_b_id).single()
-        
-        if (eqA) {
-          const updateA: any = { 
-            matchs_joues: (eqA.matchs_joues || 0) + 1,
-            buts_marques: (eqA.buts_marques || 0) + scoreAInt,
-            buts_encaisses: (eqA.buts_encaisses || 0) + scoreBInt,
-          }
-          if (resultA === 'victoire') updateA.victoires = (eqA.victoires || 0) + 1
-          else if (resultA === 'nul') updateA.nuls = (eqA.nuls || 0) + 1
-          else updateA.defaites = (eqA.defaites || 0) + 1
-          updateA.points_classement = (updateA.victoires || 0) * 3 + (updateA.nuls || 0)
-
-          await supabase.from('equipes').update(updateA).eq('id', selected.equipe_a_id)
+        // Annule l'ancien score s'il existait, puis applique le nouveau
+        if (selected.statut === 'termine' && selected.score_a !== null && selected.score_b !== null) {
+          await reverseStats(selected)
         }
-
-        if (eqB) {
-          const updateB: any = { 
-            matchs_joues: (eqB.matchs_joues || 0) + 1,
-            buts_marques: (eqB.buts_marques || 0) + scoreBInt,
-            buts_encaisses: (eqB.buts_encaisses || 0) + scoreAInt,
-          }
-          if (resultB === 'victoire') updateB.victoires = (eqB.victoires || 0) + 1
-          else if (resultB === 'nul') updateB.nuls = (eqB.nuls || 0) + 1
-          else updateB.defaites = (eqB.defaites || 0) + 1
-          updateB.points_classement = (updateB.victoires || 0) * 3 + (updateB.nuls || 0)
-
-          await supabase.from('equipes').update(updateB).eq('id', selected.equipe_b_id)
-        }
-
-        setSuccess(`Résultat validé : ${selected.equipe_a.nom} ${scoreA} – ${scoreB} ${selected.equipe_b.nom} — Classement mis à jour !`)
+        await applyStats(selected, scoreAInt, scoreBInt)
+        setSuccess(`Résultat validé : ${selected.equipe_a.nom} ${scoreAInt} – ${scoreBInt} ${selected.equipe_b.nom} — Classement mis à jour !`)
       } catch (statsError) {
         console.error('Erreur mise à jour stats:', statsError)
-        setSuccess(`Résultat validé : ${selected.equipe_a.nom} ${scoreA} – ${scoreB} ${selected.equipe_b.nom}`)
+        setSuccess(`Résultat validé : ${selected.equipe_a.nom} ${scoreAInt} – ${scoreBInt} ${selected.equipe_b.nom}`)
       }
-      
+
       setSelected(null); setScoreA(''); setScoreB('')
-      // Refresh
-      const { data } = await supabase
-        .from('matchs')
-        .select(`*, equipe_a:equipes!matchs_equipe_a_id_fkey(*), equipe_b:equipes!matchs_equipe_b_id_fkey(*)`)
-        .in('statut', ['a_venir', 'en_cours'])
-        .order('date_match')
-      setMatchs(data as any || [])
+      await loadMatchs()
     }
     setLoading(false)
   }
 
+  const selectMatch = (m: Match) => {
+    setSelected(m)
+    setScoreA(m.score_a != null ? String(m.score_a) : '')
+    setScoreB(m.score_b != null ? String(m.score_b) : '')
+  }
+
+  const renderRow = (m: Match, i: number, isPending: boolean) => (
+    <div key={m.id}
+      style={{
+        padding: '16px 20px',
+        borderBottom: i < (isPending ? pending : valides).length - 1 ? '1px solid var(--color-border)' : 'none',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        cursor: 'pointer',
+        background: selected?.id === m.id ? 'rgba(42,255,160,0.04)' : 'transparent',
+        borderLeft: selected?.id === m.id ? '3px solid var(--color-primary)' : '3px solid transparent',
+        transition: 'all 0.2s',
+      }}
+      onClick={() => selectMatch(m)}
+      onMouseOver={e => { if (selected?.id !== m.id) e.currentTarget.style.background = 'rgba(42,255,160,0.02)' }}
+      onMouseOut={e => { if (selected?.id !== m.id) e.currentTarget.style.background = 'transparent' }}
+    >
+      <div>
+        <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: 4 }}>
+          {m.equipe_a.nom} vs {m.equipe_b.nom}
+        </div>
+        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+          {new Date(m.date_match).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+          {m.heure_match && ` à ${m.heure_match.slice(0, 5)}`}
+          {m.statut === 'en_cours' && <span className="status-live" style={{ marginLeft: 8, display: 'inline-flex' }}>LIVE</span>}
+        </div>
+      </div>
+      {isPending ? (
+        <span style={{ fontSize: '0.8rem', color: 'var(--color-primary)', fontWeight: 600 }}>Saisir →</span>
+      ) : (
+        <span style={{
+          fontSize: '0.9rem', fontWeight: 800, color: 'var(--color-text-primary)',
+          fontFamily: 'var(--font-mono)', background: 'rgba(42,255,160,0.08)',
+          padding: '4px 12px', borderRadius: 8,
+        }}>
+          {m.score_a} – {m.score_b}
+        </span>
+      )}
+    </div>
+  )
+
+  const list = tab === 'attente' ? pending : valides
+
   return (
     <div>
       <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.8rem', fontWeight: 800, marginBottom: 8 }}>✅ Valider Résultats</h1>
-      <p style={{ color: 'var(--color-text-secondary)', marginBottom: 32 }}>Saisissez les scores des matchs terminés</p>
+      <p style={{ color: 'var(--color-text-secondary)', marginBottom: 32 }}>
+        Saisissez les scores des matchs terminés — le classement des poules A/B/C se met à jour automatiquement
+      </p>
 
       {success && (
         <div style={{ padding: '14px 20px', background: 'rgba(0,166,81,0.1)', border: '1px solid rgba(0,166,81,0.3)', borderRadius: 'var(--radius-md)', color: 'var(--color-primary)', marginBottom: 24, fontWeight: 500 }}>
@@ -116,46 +225,51 @@ export default function AdminResultats() {
       <div style={{ display: 'grid', gap: 32 }} className="resultats-grid">
         {/* Liste matchs */}
         <div>
-          <h2 style={{ fontWeight: 700, marginBottom: 16, fontSize: '1rem' }}>Matchs en attente</h2>
-          <div className="card" style={{ overflow: 'hidden' }}>
-            {matchs.length === 0 ? (
-              <div style={{ padding: 40, textAlign: 'center', color: 'var(--color-text-muted)' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: 8 }}>✅</div>
-                <p>Tous les matchs ont leur résultat</p>
-              </div>
-            ) : matchs.map((m, i) => (
-              <div key={m.id}
-                style={{
-                  padding: '16px 20px',
-                  borderBottom: i < matchs.length - 1 ? '1px solid var(--color-border)' : 'none',
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  cursor: 'pointer',
-                  background: selected?.id === m.id ? 'rgba(42,255,160,0.04)' : 'transparent',
-                  borderLeft: selected?.id === m.id ? '3px solid var(--color-primary)' : '3px solid transparent',
-                  transition: 'all 0.2s',
-                }}
-                onClick={() => { setSelected(m); setScoreA(''); setScoreB('') }}
-                onMouseOver={e => { if (selected?.id !== m.id) e.currentTarget.style.background = 'rgba(42,255,160,0.02)' }}
-                onMouseOut={e => { if (selected?.id !== m.id) e.currentTarget.style.background = 'transparent' }}
-              >
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: 4 }}>
-                    {m.equipe_a.nom} vs {m.equipe_b.nom}
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                    {new Date(m.date_match).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à {m.heure_match?.slice(0,5)}
-                    {m.statut === 'en_cours' && <span className="status-live" style={{ marginLeft: 8, display: 'inline-flex' }}>LIVE</span>}
-                  </div>
-                </div>
-                <span style={{ fontSize: '0.8rem', color: 'var(--color-primary)', fontWeight: 600 }}>Saisir →</span>
-              </div>
-            ))}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            <button
+              onClick={() => setTab('attente')}
+              className={tab === 'attente' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+            >
+              À saisir ({pending.length})
+            </button>
+            <button
+              onClick={() => setTab('valides')}
+              className={tab === 'valides' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+            >
+              Validés ({valides.length})
+            </button>
           </div>
+
+          <h2 style={{ fontWeight: 700, marginBottom: 16, fontSize: '1rem' }}>
+            {tab === 'attente' ? 'Matchs en attente' : 'Résultats validés'}
+          </h2>
+          <div className="card" style={{ overflow: 'hidden' }}>
+            {list.length === 0 ? (
+              <div style={{ padding: 40, textAlign: 'center', color: 'var(--color-text-muted)' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: 8 }}>
+                  {tab === 'attente' ? '✅' : '⚽'}
+                </div>
+                <p>
+                  {tab === 'attente'
+                    ? 'Tous les matchs ont leur résultat'
+                    : 'Aucun résultat validé pour le moment'}
+                </p>
+              </div>
+            ) : list.map((m, i) => renderRow(m, i, tab === 'attente'))}
+          </div>
+
+          {tab === 'valides' && valides.length > 0 && (
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: 12 }}>
+              💡 Cliquez sur un résultat pour corriger le score — le classement sera recalculé.
+            </p>
+          )}
         </div>
 
         {/* Score form */}
         <div>
-          <h2 style={{ fontWeight: 700, marginBottom: 16, fontSize: '1rem' }}>Saisir le score</h2>
+          <h2 style={{ fontWeight: 700, marginBottom: 16, fontSize: '1rem' }}>
+            {selected?.statut === 'termine' && selected.score_a !== null ? 'Corriger le score' : 'Saisir le score'}
+          </h2>
           {selected ? (
             <div className="card" style={{ padding: 32 }}>
               <div style={{ textAlign: 'center', marginBottom: 28 }}>
@@ -202,12 +316,12 @@ export default function AdminResultats() {
                   disabled={loading || !scoreA || !scoreB}
                   id="validate-result-btn"
                 >
-                  {loading ? '⏳ Validation...' : '✅ Valider le Résultat'}
+                  {loading ? '⏳ Validation...' : selected.statut === 'termine' ? '🔄 Corriger le Résultat' : '✅ Valider le Résultat'}
                 </button>
               </div>
 
               <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'center', marginTop: 16 }}>
-                ⚠️ La validation calculera automatiquement les points des pronostiqueurs
+                ⚠️ La validation mettra à jour automatiquement les stats des équipes dans les poules A/B/C
               </p>
             </div>
           ) : (

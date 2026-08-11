@@ -196,6 +196,21 @@ export default async function MatchDetailPage({ params }: Props) {
 
   const isAvenir = match.statut === 'a_venir'
 
+  // Fermeture des pronostics : 15 minutes avant le coup d'envoi
+  let clotureAt: string | null = null
+  if (isAvenir && m.date_match && m.heure_match) {
+    const parts = String(m.heure_match).split(':').map(Number)
+    const hours = parts[0] || 0
+    const minutes = parts[1] || 0
+    const base = new Date(`${m.date_match}T00:00:00`)
+    if (!isNaN(base.getTime())) {
+      const localStart = new Date(base.getFullYear(), base.getMonth(), base.getDate(), hours, minutes, 0)
+      if (!isNaN(localStart.getTime())) {
+        clotureAt = new Date(localStart.getTime() - 15 * 60 * 1000).toISOString()
+      }
+    }
+  }
+
   return (
     <div className="page-content">
       <div className="container-app">
@@ -247,6 +262,7 @@ export default async function MatchDetailPage({ params }: Props) {
               joueursB={joueursB || []}
               userId={user?.id || null}
               existingPronostic={monPronostic}
+              clotureAt={clotureAt}
             />
           )}
 

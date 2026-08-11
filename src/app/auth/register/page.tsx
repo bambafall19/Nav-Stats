@@ -49,9 +49,11 @@ export default function RegisterPage() {
   const [step, setStep] = useState(1)
   const [ascs, setAscs] = useState<string[]>([])
   const [refCode, setRefCode] = useState('')
+  const [redirect, setRedirect] = useState('/')
 
   useEffect(() => {
-    const ref = new URLSearchParams(window.location.search).get('ref')
+    const params = new URLSearchParams(window.location.search)
+    const ref = params.get('ref')
     if (ref) {
       const code = ref.trim().toUpperCase()
       setRefCode(code)
@@ -60,6 +62,10 @@ export default function RegisterPage() {
       } catch {
         // ignore
       }
+    }
+    const target = params.get('redirect')
+    if (target && target.startsWith('/') && !target.startsWith('//') && !target.startsWith('/\\')) {
+      setRedirect(target)
     }
   }, [])
 
@@ -183,7 +189,7 @@ export default function RegisterPage() {
       }
     }
 
-    router.push('/')
+    router.push(redirect)
     router.refresh()
   }
 
@@ -214,7 +220,7 @@ export default function RegisterPage() {
         <Link href="/" className={styles.backButton} aria-label="Retour">
           <ArrowLeft size={20} color="#FFFFFF" />
         </Link>
-        <Link href="/auth/login" className={styles.loginPill}>
+        <Link href={`/auth/login${redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className={styles.loginPill}>
           Se connecter
         </Link>
       </header>
@@ -439,7 +445,7 @@ export default function RegisterPage() {
 
       <footer className={styles.footer}>
         <span className={styles.footerText}>Vous avez déjà un compte ?</span>
-        <Link href="/auth/login" className={styles.footerLink}>Se connecter →</Link>
+        <Link href={`/auth/login${redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className={styles.footerLink}>Se connecter →</Link>
       </footer>
     </div>
   )

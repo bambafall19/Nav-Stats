@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { User, BarChart3, Target, ArrowRight, CheckCircle2, Clock, Trophy, TrendingUp, ChevronRight } from 'lucide-react'
+import { User, BarChart3, Target, ArrowRight, CheckCircle2, Clock, Trophy, TrendingUp, ChevronRight, Flame } from 'lucide-react'
 
 type Pronostic = {
   id: string
@@ -34,9 +34,10 @@ type Props = {
   }
   recentPronostics: Pronostic[]
   pronosticsToMake: number
+  streak?: number
 }
 
-export default function MonEspace({ profile, recentPronostics, pronosticsToMake }: Props) {
+export default function MonEspace({ profile, recentPronostics, pronosticsToMake, streak = 0 }: Props) {
   const [tab, setTab] = useState<'apercu' | 'pronostics'>('apercu')
 
   const accuracy = profile.total_pronostics > 0 ? Math.round((profile.pronostics_corrects / profile.total_pronostics) * 100) : 0
@@ -48,6 +49,7 @@ export default function MonEspace({ profile, recentPronostics, pronosticsToMake 
   const stats = [
     { label: 'Pronostics', value: profile.total_pronostics || 0, icon: Target, color: 'var(--color-primary)' },
     { label: 'Réussite', value: `${accuracy}%`, icon: TrendingUp, color: 'var(--color-accent)' },
+    ...(streak > 0 ? [{ label: 'Série', value: `${streak}J`, icon: Flame, color: '#ff8a4c' }] : []),
     { label: 'En attente', value: pending, icon: Clock, color: 'var(--color-text-muted)' },
   ]
 
@@ -95,6 +97,18 @@ export default function MonEspace({ profile, recentPronostics, pronosticsToMake 
                   border: '1px solid rgba(255,201,77,0.3)',
                 }}>
                   <Trophy size={11} /> #{profile.rang}
+                </span>
+              )}
+              {streak > 0 && (
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                  background: 'rgba(255,87,34,0.18)',
+                  color: '#ffb74d', fontSize: '0.64rem', fontWeight: 800,
+                  padding: '3px 10px', borderRadius: 999,
+                  fontFamily: 'var(--font-mono)',
+                  border: '1px solid rgba(255,138,76,0.35)',
+                }}>
+                  <span aria-hidden>🔥</span> {streak} J
                 </span>
               )}
               <span style={{
@@ -155,7 +169,7 @@ export default function MonEspace({ profile, recentPronostics, pronosticsToMake 
       <div style={{ padding: '20px 24px' }}>
         {tab === 'apercu' && (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 18 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 18 }} className="mon-espace-stats-grid">
               {stats.map(s => (
                 <div key={s.label} className="mon-espace-stat" style={{
                   textAlign: 'center',
@@ -286,6 +300,9 @@ export default function MonEspace({ profile, recentPronostics, pronosticsToMake 
       <style>{`
         .mon-espace-stat:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
         .mon-espace-profile-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+        @media (max-width: 640px) {
+          .mon-espace-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
         @media (max-width: 480px) {
           .mon-espace-section .mon-espace-stat { padding: 12px 6px !important; }
         }
