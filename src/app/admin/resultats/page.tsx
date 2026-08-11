@@ -27,6 +27,8 @@ export default function AdminResultats() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState('')
   const [tab, setTab] = useState<'attente' | 'valides'>('attente')
+  const [liveScores, setLiveScores] = useState<Record<string, { a: number; b: number }>>({})
+  const [savingId, setSavingId] = useState<string | null>(null)
 
   const loadMatchs = () =>
     supabase
@@ -37,6 +39,17 @@ export default function AdminResultats() {
       .then((res: { data: Match[] | null }) => {
         const data = res.data || []
         setMatchs(data)
+
+        // Initialiser les scores du direct
+        setLiveScores(prev => {
+          const next = { ...prev }
+          data.forEach((m: Match) => {
+            if (m.statut === 'en_cours') {
+              next[m.id] = { a: m.score_a ?? 0, b: m.score_b ?? 0 }
+            }
+          })
+          return next
+        })
 
         // Présélection via ?match=xxx (lien du dashboard admin)
         const id = new URLSearchParams(window.location.search).get('match')
@@ -127,13 +140,7 @@ export default function AdminResultats() {
     }
   }
 
-  async function handleValidate() {
-    if (!selected) return
-    setLoading(true)
-
-    const scoreAInt = parseInt(scoreA) || 0
-    const scoreBInt = parseInt(scoreB) || 0
-
+  async function finalizeMatch(m: Match, scoreAInt: number, scoreBInt: number) {
     const { error } = await supabase
       .from('matchs')
       .update({
@@ -141,25 +148,76 @@ export default function AdminResultats() {
         score_a: scoreAInt,
         score_b: scoreBInt,
       })
-      .eq('id', selected.id)
+      .eq('id', m.id)
 
     if (!error) {
       try {
         // Annule l'ancien score s'il existait, puis applique le nouveau
-        if (selected.statut === 'termine' && selected.score_a !== null && selected.score_b !== null) {
-          await reverseStats(selected)
+        if (m.statut === 'termine' && m.score_a !== null && m.score_b !== null) {
+          await reverseStats(m)
         }
-        await applyStats(selected, scoreAInt, scoreBInt)
-        setSuccess(`Résultat validé : ${selected.equipe_a.nom} ${scoreAInt} – ${scoreBInt} ${selected.equipe_b.nom} — Classement mis à jour !`)
+        await applyStats(m, scoreAInt, scoreBInt)
+        return `Résultat validé : ${m.equipe_a.nom} ${scoreAInt} – ${scoreBInt} ${m.equipe_b.nom} — Classement mis à jour !`
       } catch (statsError) {
         console.error('Erreur mise à jour stats:', statsError)
-        setSuccess(`Résultat validé : ${selected.equipe_a.nom} ${scoreAInt} – ${scoreBInt} ${selected.equipe_b.nom}`)
+        return `Résultat validé : ${m.equipe_a.nom} ${scoreAInt} – ${scoreBInt} ${m.equipe_b.nom}`
       }
+    }
+    return null
+  }
 
+  async function handleValidate() {
+    if (!selected) return
+    setLoading(true)
+
+    const scoreAInt = parseInt(scoreA) || 0
+    const scoreBInt = parseInt(scoreB) || 0
+
+    const msg = await finalizeMatch(selected, scoreAInt, scoreBInt)
+    if (msg) {
+      setSuccess(msg)
       setSelected(null); setScoreA(''); setScoreB('')
       await loadMatchs()
     }
     setLoading(false)
+  }
+
+  // ===== Scores en direct =====
+  const liveMatchs = matchs.filter(m => m.statut === 'en_cours')
+
+  const stepLive = (m: Match, team: 'a' | 'b', delta: number) => {
+    setLiveScores(prev => {
+      const cur = prev[m.id] || { a: m.score_a ?? 0, b: m.score_b ?? 0 }
+      const next = { ...prev, [m.id]: { ...cur } }
+      next[m.id][team] = Math.max(0, cur[team] + delta)
+      return next
+    })
+  }
+
+  async function saveLiveScore(m: Match) {
+    const s = liveScores[m.id]
+    if (!s) return
+    setSavingId(m.id)
+    const { error } = await supabase
+      .from('matchs')
+      .update({ score_a: s.a, score_b: s.b })
+      .eq('id', m.id)
+    if (!error) {
+      setSuccess(`Score en direct mis à jour : ${m.equipe_a.nom} ${s.a} – ${s.b} ${m.equipe_b.nom}`)
+    }
+    setSavingId(null)
+  }
+
+  async function finishLive(m: Match) {
+    const s = liveScores[m.id] || { a: m.score_a ?? 0, b: m.score_b ?? 0 }
+    setSavingId(m.id)
+    const msg = await finalizeMatch(m, s.a, s.b)
+    if (msg) {
+      setSuccess(msg)
+      setLiveScores(prev => { const next = { ...prev }; delete next[m.id]; return next })
+      await loadMatchs()
+    }
+    setSavingId(null)
   }
 
   const selectMatch = (m: Match) => {
@@ -219,6 +277,70 @@ export default function AdminResultats() {
       {success && (
         <div style={{ padding: '14px 20px', background: 'rgba(0,166,81,0.1)', border: '1px solid rgba(0,166,81,0.3)', borderRadius: 'var(--radius-md)', color: 'var(--color-primary)', marginBottom: 24, fontWeight: 500 }}>
           ✅ {success}
+        </div>
+      )}
+
+      {/* ===== Scores en direct ===== */}
+      {liveMatchs.length > 0 && (
+        <div className="card" style={{ overflow: 'hidden', marginBottom: 32, border: '1px solid rgba(255,77,90,0.25)' }}>
+          <div style={{
+            padding: '12px 18px',
+            background: 'rgba(255,77,90,0.07)',
+            borderBottom: '1px solid var(--color-border-subtle)',
+            display: 'flex', alignItems: 'center', gap: 10,
+          }}>
+            <span style={{
+              width: 9, height: 9, borderRadius: '50%', background: '#ff4d5a', flexShrink: 0,
+              boxShadow: '0 0 0 0 rgba(255,77,90,0.7)', animation: 'livePulse 1.4s infinite',
+            }} />
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--color-text-primary)' }}>Scores en direct</div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)' }}>
+                {liveMatchs.length} match{liveMatchs.length > 1 ? 's' : ''} en cours — ajustez les scores en temps réel
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gap: 12, padding: 16 }} className="live-grid">
+            {liveMatchs.map(m => {
+              const s = liveScores[m.id] || { a: m.score_a ?? 0, b: m.score_b ?? 0 }
+              const busy = savingId === m.id
+              return (
+                <div key={m.id} style={{
+                  padding: 14, borderRadius: 'var(--radius-md)',
+                  background: 'var(--color-surface-card)', border: '1px solid var(--color-border-subtle)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
+                    <span className="status-live" style={{ display: 'inline-flex' }}>LIVE</span>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
+                      {m.equipe_a.nom} vs {m.equipe_b.nom}
+                    </span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 12, alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                      <button className="btn btn-outline btn-sm" style={{ minWidth: 34, padding: '4px 8px' }} onClick={() => stepLive(m, 'a', -1)} disabled={busy}>−</button>
+                      <span style={{ fontSize: '1.6rem', fontWeight: 900, fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-primary)', minWidth: 40, textAlign: 'center' }}>{s.a}</span>
+                      <button className="btn btn-outline btn-sm" style={{ minWidth: 34, padding: '4px 8px' }} onClick={() => stepLive(m, 'a', 1)} disabled={busy}>+</button>
+                    </div>
+                    <span style={{ color: 'var(--color-text-muted)', fontWeight: 900 }}>—</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                      <button className="btn btn-outline btn-sm" style={{ minWidth: 34, padding: '4px 8px' }} onClick={() => stepLive(m, 'b', -1)} disabled={busy}>−</button>
+                      <span style={{ fontSize: '1.6rem', fontWeight: 900, fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-primary)', minWidth: 40, textAlign: 'center' }}>{s.b}</span>
+                      <button className="btn btn-outline btn-sm" style={{ minWidth: 34, padding: '4px 8px' }} onClick={() => stepLive(m, 'b', 1)} disabled={busy}>+</button>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                    <button className="btn btn-primary btn-sm" style={{ flex: 1 }} disabled={busy} onClick={() => saveLiveScore(m)}>
+                      {busy ? '⏳…' : '💾 Mettre à jour'}
+                    </button>
+                    <button className="btn btn-outline btn-sm" style={{ flex: 1 }} disabled={busy} onClick={() => finishLive(m)}>
+                      🏁 Terminer
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
 
@@ -335,6 +457,12 @@ export default function AdminResultats() {
 
       <style>{`
         @media (min-width: 900px) { .resultats-grid { grid-template-columns: 1fr 1fr !important; } }
+        @media (min-width: 760px) { .live-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
+        @keyframes livePulse {
+          0% { box-shadow: 0 0 0 0 rgba(255,77,90,0.6); }
+          70% { box-shadow: 0 0 0 10px rgba(255,77,90,0); }
+          100% { box-shadow: 0 0 0 0 rgba(255,77,90,0); }
+        }
       `}</style>
     </div>
   )

@@ -16,6 +16,7 @@ export default function SystemHealth() {
     { label: 'Base de données Supabase', detail: 'Vérification de la connexion…', ok: null },
     { label: 'API / API Health', detail: 'Test de l’endpoint…', ok: null },
     { label: 'Environment', detail: 'Lecture de la configuration…', ok: null },
+    { label: 'Connexions sociales (OAuth)', detail: 'Test des fournisseurs Google / Facebook…', ok: null },
   ])
   const [stats, setStats] = useState<{ label: string; value: string; icon: string }[]>([])
   const [checking, setChecking] = useState(true)
@@ -26,6 +27,7 @@ export default function SystemHealth() {
       { label: 'Base de données Supabase', detail: 'Vérification de la connexion…', ok: null },
       { label: 'API / API Health', detail: 'Test de l’endpoint…', ok: null },
       { label: 'Environment', detail: 'Lecture de la configuration…', ok: null },
+      { label: 'Connexions sociales (OAuth)', detail: 'Test des fournisseurs Google / Facebook…', ok: null },
     ]
     setChecks(next)
 
@@ -59,6 +61,39 @@ export default function SystemHealth() {
     } catch (e: any) {
       next[1] = { label: 'API / API Health', detail: 'Endpoint injoignable', ok: false, hint: e?.message }
       next[2] = { label: 'Environment', detail: 'Indisponible', ok: false, hint: e?.message }
+    }
+
+    try {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      if (supabaseUrl && anonKey) {
+        const res = await fetch(`${supabaseUrl}/auth/v1/settings`, {
+          headers: { apikey: anonKey },
+          cache: 'no-store',
+        })
+        if (res.ok) {
+          const json = await res.json()
+          const providers = (json?.external || {}) as Record<string, boolean>
+          const enabled = Object.entries(providers)
+            .filter(([, v]) => !!v)
+            .map(([k]) => k)
+          const google = providers.google, facebook = providers.facebook
+          next[3] = {
+            label: 'Connexions sociales (OAuth)',
+            detail: enabled.length > 0 ? `Activés : ${enabled.join(', ')}` : 'Aucun fournisseur activé',
+            ok: !!(google || facebook),
+            hint: !(google || facebook)
+              ? 'Activez Google et/ou Facebook dans Supabase → Authentication → Providers'
+              : `Google ${google ? '✓' : '✗'} · Facebook ${facebook ? '✓' : '✗'}`,
+          }
+        } else {
+          next[3] = { label: 'Connexions sociales (OAuth)', detail: `Erreur HTTP ${res.status}`, ok: false }
+        }
+      } else {
+        next[3] = { label: 'Connexions sociales (OAuth)', detail: 'Env manquants', ok: false }
+      }
+    } catch (e: any) {
+      next[3] = { label: 'Connexions sociales (OAuth)', detail: 'Impossible de lire les réglages', ok: false, hint: e?.message }
     }
 
     setChecks([...next])

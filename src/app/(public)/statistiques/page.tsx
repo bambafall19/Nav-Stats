@@ -94,8 +94,9 @@ function SectionTitle({ icon, title, color, sub }: { icon: React.ReactNode; titl
   )
 }
 
-function StandingsTable({ pouleTeams, color, bg, name }: { pouleTeams: Team[]; color: string; bg: string; name: string }) {
-  const qualifiedCount = name === 'Poule A' ? 2 : 3
+function StandingsTable({ pouleTeams, color, bg, name, mode = 'poule' }: { pouleTeams: Team[]; color: string; bg: string; name: string; mode?: 'poule' | 'general' }) {
+  const isGeneral = mode === 'general'
+  const qualifiedCount = isGeneral ? 0 : (name === 'Poule A' ? 2 : 3)
   const maxPoints = Math.max(...pouleTeams.map(t => t.points_classement || 0), 1)
 
   return (
@@ -106,23 +107,25 @@ function StandingsTable({ pouleTeams, color, bg, name }: { pouleTeams: Team[]; c
         borderBottom: '1px solid var(--color-border-subtle)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: 'var(--radius-sm)', flexShrink: 0,
-            background: `linear-gradient(135deg, ${color}, ${color}bb)`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 900, fontSize: '0.95rem', color: 'white', fontFamily: 'var(--font-plus-jakarta)',
-            boxShadow: `0 4px 12px ${color}40`,
-          }}>
-            {name.replace('Poule ', '')}
-          </div>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-text-primary)' }}>{name}</div>
-            <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>
-              {pouleTeams.length} équipe{pouleTeams.length > 1 ? 's' : ''} · Top {qualifiedCount} qualifié{pouleTeams.length > 1 ? 'es' : ''}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 'var(--radius-sm)', flexShrink: 0,
+              background: `linear-gradient(135deg, ${color}, ${color}bb)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 900, fontSize: '0.95rem', color: 'white', fontFamily: 'var(--font-plus-jakarta)',
+              boxShadow: `0 4px 12px ${color}40`,
+            }}>
+              {isGeneral ? '🏆' : name.replace('Poule ', '')}
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', fontFamily: 'var(--font-plus-jakarta)', color: 'var(--color-text-primary)' }}>{name}</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>
+                {isGeneral
+                  ? `${pouleTeams.length} équipes · toutes poules confondues`
+                  : `${pouleTeams.length} équipe${pouleTeams.length > 1 ? 's' : ''} · Top ${qualifiedCount} qualifié${pouleTeams.length > 1 ? 'es' : ''}`}
+              </div>
             </div>
           </div>
-        </div>
         <span className="badge" style={{
           background: `${color}1f`, color, border: `1px solid ${color}40`,
           fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.6rem',
@@ -138,6 +141,7 @@ function StandingsTable({ pouleTeams, color, bg, name }: { pouleTeams: Team[]; c
               <tr style={{ background: bg }}>
                 <th style={{ color, fontWeight: 800, width: 52, fontFamily: 'var(--font-plus-jakarta)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>#</th>
                 <th style={{ color, fontWeight: 800, fontFamily: 'var(--font-plus-jakarta)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Équipe</th>
+                {isGeneral && <th style={{ color, fontWeight: 800, width: 54, textAlign: 'center', fontFamily: 'var(--font-plus-jakarta)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Poule</th>}
                 <th style={{ textAlign: 'center', width: 40, fontFamily: 'var(--font-plus-jakarta)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)' }}>MJ</th>
                 <th style={{ textAlign: 'center', width: 42, fontFamily: 'var(--font-plus-jakarta)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)' }}>V</th>
                 <th style={{ textAlign: 'center', width: 42, fontFamily: 'var(--font-plus-jakarta)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)' }}>N</th>
@@ -196,6 +200,15 @@ function StandingsTable({ pouleTeams, color, bg, name }: { pouleTeams: Team[]; c
                         </div>
                       </div>
                     </td>
+                    {isGeneral && (
+                      <td style={{ textAlign: 'center' }}>
+                        <span className="badge" style={{
+                          background: `${color}12`, color, border: `1px solid ${color}38`,
+                          fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '0.62rem',
+                          minWidth: 28, justifyContent: 'center',
+                        }}>Poule {eq.poule}</span>
+                      </td>
+                    )}
                     <td style={{ textAlign: 'center', fontSize: '0.85rem', fontFamily: 'var(--font-mono)', color: 'var(--color-text-secondary)' }}>{eq.matchs_joues}</td>
                     <td style={{ textAlign: 'center' }}>
                       <span className="standings-stat" style={{ background: 'rgba(42,255,160,0.08)', color: 'var(--color-primary)', border: '1px solid rgba(42,255,160,0.16)' }}>{eq.victoires}</span>
@@ -228,7 +241,7 @@ function StandingsTable({ pouleTeams, color, bg, name }: { pouleTeams: Team[]; c
                 )
               })}
               {pouleTeams.length === 0 && (
-                <tr><td colSpan={10} style={{ padding: 32, textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Aucune équipe dans cette poule</td></tr>
+                <tr><td colSpan={isGeneral ? 11 : 10} style={{ padding: 32, textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Aucune équipe dans cette poule</td></tr>
               )}
             </tbody>
           </table>
@@ -282,6 +295,14 @@ function StandingsTable({ pouleTeams, color, bg, name }: { pouleTeams: Team[]; c
                       <span className="mobile-team-name">
                         {isLeader && <span style={{ fontSize: '0.7rem', marginRight: 3 }}>👑</span>}
                         {eq.nom}
+                        {isGeneral && (
+                          <span style={{
+                            display: 'inline-block', marginLeft: 6, padding: '1px 5px',
+                            borderRadius: 6, fontSize: '0.5rem', fontWeight: 900, verticalAlign: 'middle',
+                            color, background: `${color}14`, border: `1px solid ${color}38`,
+                            fontFamily: 'var(--font-plus-jakarta)',
+                          }}>P{eq.poule}</span>
+                        )}
                       </span>
                     </th>
                     <td>{eq.matchs_joues}</td>
@@ -436,6 +457,12 @@ export default async function StatistiquesPage() {
         <div style={{ display: 'grid', gap: 32 }} className="stats-page-grid">
           {/* Poules */}
           <div>
+            {/* Classement général (toutes poules) */}
+            <div style={{ marginBottom: 4 }}>
+              <SectionTitle icon={<Trophy size={16} />} title="Classement général" color="#f0a800" sub="Toutes les poules confondues" />
+              <StandingsTable pouleTeams={teams} color="#f0a800" bg="rgba(255,201,77,0.04)" name="Classement général" mode="general" />
+            </div>
+
             {poules.map(p => (
               <div key={p.name}>
                 <SectionTitle icon={<Shield size={16} />} title={p.name} color={p.color} sub="Classement officiel de la poule" />

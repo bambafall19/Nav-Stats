@@ -14,6 +14,7 @@ export default function LanguageSwitcher({ compact = false }: { compact?: boolea
       onClick={toggle}
       aria-label="Changer de langue / Change language"
       title={language === 'fr' ? 'Wolof' : 'Français'}
+      className="language-switcher-btn"
       style={{
         display: 'inline-flex',
         alignItems: 'center',

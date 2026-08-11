@@ -1,7 +1,15 @@
 // NavéStats Service Worker - Offline support
-const CACHE_NAME = 'navestats-v3'
-const STATIC_CACHE = 'navestats-static-v3'
-const DYNAMIC_CACHE = 'navestats-dynamic-v3'
+// Version v4 — ajoute un cache-busting par ?v= (voir NEXT_PUBLIC_APP_VERSION)
+const CACHE_NAME = 'navestats-v4'
+const STATIC_CACHE = 'navestats-static-v4'
+const DYNAMIC_CACHE = 'navestats-dynamic-v4'
+
+// Permet de recevoir l'ordre de sauter l'ancienne version (envoyé par l'app)
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting()
+  }
+})
 
 const STATIC_URLS = [
   '/',

@@ -6,6 +6,7 @@ import MobileHeader from '@/components/layout/MobileHeader'
 import Footer from '@/components/layout/Footer'
 import BottomNav from '@/components/layout/BottomNav'
 import MobileOnboarding from '@/components/layout/MobileOnboarding'
+import PushNotificationManager from '@/components/shared/PushNotificationManager'
 
 interface PublicLayoutClientProps {
   children: React.ReactNode
@@ -28,6 +29,7 @@ export default function PublicLayoutClient({ children }: PublicLayoutClientProps
       </motion.main>
       <Footer />
       <BottomNav />
+      <PushNotificationManager />
     </>
   )
 }

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Loader2, BellRing, BellOff, Ban } from 'lucide-react'
 
+const SW_URL = `/sw.js?v=${process.env.NEXT_PUBLIC_APP_VERSION || '1'}`
+
 interface PushNotifButtonProps {
   matchId?: string
   matchLabel?: string
@@ -29,7 +31,7 @@ export default function PushNotifButton({ matchId, matchLabel }: PushNotifButton
         setStatus('subscribed')
         // Register service worker
         if ('serviceWorker' in navigator) {
-          await navigator.serviceWorker.register('/sw.js')
+          await navigator.serviceWorker.register(SW_URL)
         }
         // Show confirmation notification
         new Notification('NavéStats – Notifications activées !', {

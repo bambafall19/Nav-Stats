@@ -33,6 +33,10 @@ export const translations = {
       enableHint: 'Activez les notifications pour recevoir vos rappels.',
       permissionDenied: 'Vous devez autoriser les notifications pour recevoir les alertes',
       notConfigured: 'Les notifications ne sont pas configurées. Contactez l\'administrateur.',
+      iosTitle: 'Sur iPhone 📲',
+      iosHint: 'Pour recevoir les alertes, ajoutez NavéStats à l\'écran d\'accueil puis ouvrez-la depuis celui-ci.',
+      subscribeError: 'Erreur lors de l\'activation des notifications. Veuillez réessayer.',
+      saveError: 'Erreur lors de l\'enregistrement de votre abonnement.',
     },
     matchs: {
       title: 'Matchs',
@@ -155,6 +159,10 @@ export const translations = {
       enableHint: 'Ressal xibaar yi ngir jël say fattal.',
       permissionDenied: 'War nga jëlel xibaar yi ngir jël ay alert',
       notConfigured: 'Xibaar yi duñu dellu ci jëfandikukat bi. Yobbu ci mbind mi.',
+      iosTitle: 'Ci iPhone 📲',
+      iosHint: 'Ngir jël xibaar yi, defal NavéStats ci écran d\'accueil bi ndax ubbi ko ci boobu rekk.',
+      subscribeError: 'Solo am na ci ressali xibaar yi. Jotaleew.',
+      saveError: 'Solo am na ci sàf abonnement bi.',
     },
     matchs: {
       title: 'Macc',

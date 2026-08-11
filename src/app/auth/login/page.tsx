@@ -85,9 +85,14 @@ export default function LoginPage() {
 
   async function handleOAuth(provider: 'google' | 'facebook') {
     setLoading(true); setError('')
+    const callbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirect)}`
     const { error: err } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${window.location.origin}/auth/callback` }
+      options: {
+        redirectTo: callbackUrl,
+        // Google : demande du refresh_token + consentement pour un accès durable
+        queryParams: provider === 'google' ? { access_type: 'offline', prompt: 'consent' } : undefined,
+      }
     })
     if (err) {
       const message = err.message.toLowerCase().includes('unsupported provider')

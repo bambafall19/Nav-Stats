@@ -1,12 +1,20 @@
 {
+  "id": "/",
   "name": "NavéStats",
   "short_name": "NavéStats",
   "description": "Plateforme communautaire de pronostics Navétanes Khombole",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#050a08",
   "theme_color": "#050a08",
   "orientation": "portrait",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -19,6 +27,59 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Matchs",
+      "short_name": "Matchs",
+      "description": "Calendrier et scores en direct",
+      "url": "/matchs",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Classements",
+      "short_name": "Classements",
+      "description": "Classement des pronostiqueurs et ASC",
+      "url": "/classements",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Pronostics",
+      "short_name": "Pronostics",
+      "description": "Mes pronostics",
+      "url": "/pronostics",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/stadium/stadium1.jpg",
+      "sizes": "1024x672",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Suivez les Navétanes de Khombole en direct"
+    },
+    {
+      "src": "/stadium/stadium2.jpg",
+      "sizes": "1024x678",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Scores et résultats en temps réel"
+    },
+    {
+      "src": "/stadium/stadium3.jpg",
+      "sizes": "1024x677",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Pronostiquez et gagnez des points"
+    },
+    {
+      "src": "/stadium/stadium4.jpg",
+      "sizes": "1024x585",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Rejoignez la communauté NavéStats"
     }
   ],
   "categories": ["sports", "entertainment"],

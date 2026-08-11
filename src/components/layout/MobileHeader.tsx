@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher'
+import ThemeToggle from '@/components/shared/ThemeToggle'
 import { useT } from '@/lib/i18n/LanguageProvider'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -89,7 +90,7 @@ export default function MobileHeader() {
             }}>
               <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
-            <span style={{
+            <span className="mobile-brand-text" style={{
               fontFamily: 'var(--font-signature)',
               fontWeight: 700, fontSize: 26,
               color: '#FFFFFF',
@@ -100,6 +101,7 @@ export default function MobileHeader() {
 
           {/* Droite : Langue + Recherche + Profil */}
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
+            <ThemeToggle compact />
             <LanguageSwitcher compact />
 
             <button

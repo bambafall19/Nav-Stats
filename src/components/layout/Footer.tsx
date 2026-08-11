@@ -53,7 +53,7 @@ export default function Footer() {
               }}>
                 <img src="/logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 10 }} />
               </div>
-              <span style={{
+              <span className="footer-brand" style={{
                 fontFamily: 'var(--font-plus-jakarta)',
                 fontWeight: 800, fontSize: '1.15rem',
                 color: 'white', letterSpacing: '-0.03em',
@@ -133,12 +133,13 @@ export default function Footer() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           gap: 12, flexWrap: 'wrap',
         }}>
-          <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)' }}>
+          <span className="footer-copy" style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)' }}>
             © 2026 NavéStats · Navétanes de Khombole
           </span>
           <button
             onClick={scrollTop}
             aria-label="Retour en haut"
+            className="scroll-top-btn"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 5,
               padding: '6px 12px', borderRadius: 8,

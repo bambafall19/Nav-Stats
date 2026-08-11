@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher'
+import ThemeToggle from '@/components/shared/ThemeToggle'
 import { useT } from '@/lib/i18n/LanguageProvider'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -151,6 +152,7 @@ export default function Header() {
 
           {/* Right actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <ThemeToggle />
             <LanguageSwitcher />
 
             {profile && <NotificationBell userId={profile.id} />}
