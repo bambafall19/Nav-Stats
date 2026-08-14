@@ -140,11 +140,19 @@ export function MatchHeroClient({ initialMatch }: MatchHeroClientProps) {
 
         {/* Score */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-          {isDone || isLive ? (
+          {isDone && match.forfait ? (
+            <span style={{
+              fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900,
+              fontSize: 'clamp(0.7rem, 3vw, 1rem)', color: '#ffc94d',
+              letterSpacing: '0.08em',
+            }}>
+              FORFAIT
+            </span>
+          ) : isDone || isLive ? (
             <>
-              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 'clamp(1.5rem, 6vw, 2.1rem)', color: '#00ff88', lineHeight: 1 }}>{match.score_a}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 'clamp(1.5rem, 6vw, 2.1rem)', color: '#00ff88', lineHeight: 1 }}>{match.score_a ?? 0}</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '1rem', color: 'rgba(0,255,136,0.5)' }}>:</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 'clamp(1.5rem, 6vw, 2.1rem)', color: '#00ff88', lineHeight: 1 }}>{match.score_b}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 'clamp(1.5rem, 6vw, 2.1rem)', color: '#00ff88', lineHeight: 1 }}>{match.score_b ?? 0}</span>
             </>
           ) : (
             <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: 'clamp(1.1rem, 4vw, 1.5rem)', color: 'rgba(0,255,136,0.6)', letterSpacing: '0.1em' }}>VS</span>

@@ -9,6 +9,10 @@ export type CadetMatch = {
   equipe_b: string
   terrain: string
   ordre: string | null
+  score_a?: number | null
+  score_b?: number | null
+  statut?: string
+  forfait?: string | null
   equipe_a_info?: CadetEquipe | null
   equipe_b_info?: CadetEquipe | null
 }

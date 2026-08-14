@@ -12,6 +12,10 @@ type CadetForm = {
   equipe_b_id: string
   terrain: string
   ordre: string
+  statut: string
+  score_a: string
+  score_b: string
+  forfait: string
 }
 
 const defaultForm: CadetForm = {
@@ -22,6 +26,10 @@ const defaultForm: CadetForm = {
   equipe_b_id: '',
   terrain: '',
   ordre: '',
+  statut: 'a_venir',
+  score_a: '',
+  score_b: '',
+  forfait: '',
 }
 
 export default function AdminCadetsPage() {
@@ -41,7 +49,7 @@ export default function AdminCadetsPage() {
       supabase
         .from('cadet_matchs')
         .select(`
-          id, journee, date_match, poule, equipe_a_id, equipe_b_id, equipe_a, equipe_b, terrain, ordre,
+          id, journee, date_match, poule, equipe_a_id, equipe_b_id, equipe_a, equipe_b, terrain, ordre, score_a, score_b, statut, forfait,
           equipe_a_info:equipes!cadet_matchs_equipe_a_id_fkey(id, nom, sigle, logo_url, couleur_principale, couleur_secondaire, quartier, asc_nom),
           equipe_b_info:equipes!cadet_matchs_equipe_b_id_fkey(id, nom, sigle, logo_url, couleur_principale, couleur_secondaire, quartier, asc_nom)
         `)
@@ -80,6 +88,10 @@ export default function AdminCadetsPage() {
       equipe_b_id: match.equipe_b_id || '',
       terrain: match.terrain,
       ordre: match.ordre || '',
+      statut: match.statut || 'a_venir',
+      score_a: match.score_a != null ? String(match.score_a) : '',
+      score_b: match.score_b != null ? String(match.score_b) : '',
+      forfait: match.forfait || '',
     })
     setEditId(match.id || null)
     setShowForm(true)
@@ -102,6 +114,10 @@ export default function AdminCadetsPage() {
     setLoading(true)
     setMessage(null)
 
+    const isTermine = form.statut === 'termine'
+    const isForfait = isTermine && !!form.forfait
+    const hasScores = isTermine && !isForfait && form.score_a !== '' && form.score_b !== ''
+
     const payload = {
       journee: Number(form.journee),
       date_match: form.date_match,
@@ -112,6 +128,10 @@ export default function AdminCadetsPage() {
       equipe_b: equipeB.nom,
       terrain: form.terrain.trim(),
       ordre: form.ordre.trim() || null,
+      statut: form.statut,
+      forfait: isForfait ? form.forfait : null,
+      score_a: hasScores ? Number(form.score_a) : null,
+      score_b: hasScores ? Number(form.score_b) : null,
     }
 
     const { error } = editId
@@ -243,6 +263,45 @@ export default function AdminCadetsPage() {
               <Field label="Ordre">
                 <input value={form.ordre} onChange={e => setForm({ ...form, ordre: e.target.value })} placeholder="1ere H, 2e H..." style={inputStyle} />
               </Field>
+              <Field label="Statut">
+                <select value={form.statut} onChange={e => setForm({ ...form, statut: e.target.value })} style={inputStyle}>
+                  <option value="a_venir">À venir</option>
+                  <option value="en_cours">En cours</option>
+                  <option value="termine">Terminé</option>
+                </select>
+              </Field>
+              <Field label="Score Équipe A">
+                <input
+                  type="number" min="0"
+                  value={form.score_a}
+                  onChange={e => setForm({ ...form, score_a: e.target.value })}
+                  placeholder="0"
+                  disabled={form.statut !== 'termine' || !!form.forfait}
+                  style={{ ...inputStyle, opacity: form.statut !== 'termine' || !!form.forfait ? 0.5 : 1 }}
+                />
+              </Field>
+              <Field label="Score Équipe B">
+                <input
+                  type="number" min="0"
+                  value={form.score_b}
+                  onChange={e => setForm({ ...form, score_b: e.target.value })}
+                  placeholder="0"
+                  disabled={form.statut !== 'termine' || !!form.forfait}
+                  style={{ ...inputStyle, opacity: form.statut !== 'termine' || !!form.forfait ? 0.5 : 1 }}
+                />
+              </Field>
+              <Field label="Forfait">
+                <select
+                  value={form.forfait}
+                  onChange={e => setForm({ ...form, forfait: e.target.value })}
+                  disabled={form.statut !== 'termine'}
+                  style={{ ...inputStyle, opacity: form.statut !== 'termine' ? 0.5 : 1 }}
+                >
+                  <option value="">Aucun</option>
+                  <option value="a">{equipes.find(equipe => equipe.id === form.equipe_a_id)?.nom || 'Équipe A'} (forfait)</option>
+                  <option value="b">{equipes.find(equipe => equipe.id === form.equipe_b_id)?.nom || 'Équipe B'} (forfait)</option>
+                </select>
+              </Field>
             </div>
             <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
               <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? 'Enregistrement...' : 'Sauvegarder'}</button>
@@ -278,7 +337,7 @@ export default function AdminCadetsPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
             <thead>
               <tr style={{ background: 'var(--color-surface)' }}>
-                {['J', 'Date', 'Poule', 'Rencontre', 'Terrain', 'Ordre', 'Actions'].map(header => (
+                {['J', 'Date', 'Poule', 'Rencontre', 'Résultat', 'Terrain', 'Ordre', 'Actions'].map(header => (
                   <th key={header} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>{header}</th>
                 ))}
               </tr>
@@ -291,6 +350,31 @@ export default function AdminCadetsPage() {
                   <td style={tdStyle}>{match.poule}</td>
                   <td style={{ ...tdStyle, fontWeight: 800, color: 'var(--color-text-primary)' }}>
                     {match.equipe_a_info?.nom || match.equipe_a} vs {match.equipe_b_info?.nom || match.equipe_b}
+                  </td>
+                  <td style={tdStyle}>
+                    {match.statut === 'termine' && match.forfait ? (
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 5,
+                        padding: '3px 10px', borderRadius: 'var(--radius-full)',
+                        background: 'rgba(255,201,77,0.1)', border: '1px solid rgba(255,201,77,0.35)',
+                        color: 'var(--color-accent)', fontWeight: 800, fontSize: '0.75rem',
+                      }}>
+                        Forfait {match.forfait === 'a' ? (match.equipe_a_info?.nom || match.equipe_a) : (match.equipe_b_info?.nom || match.equipe_b)}
+                      </span>
+                    ) : match.statut === 'termine' && match.score_a != null ? (
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 5,
+                        padding: '3px 10px', borderRadius: 'var(--radius-full)',
+                        background: 'rgba(42,255,160,0.08)', border: '1px solid rgba(42,255,160,0.2)',
+                        color: 'var(--color-primary)', fontWeight: 800, fontSize: '0.8rem', fontFamily: 'var(--font-mono)',
+                      }}>
+                        {match.score_a} – {match.score_b}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
+                        {match.statut === 'en_cours' ? 'En cours' : match.statut === 'a_venir' ? 'À venir' : '-'}
+                      </span>
+                    )}
                   </td>
                   <td style={tdStyle}>{match.terrain}</td>
                   <td style={tdStyle}>{match.ordre || '-'}</td>

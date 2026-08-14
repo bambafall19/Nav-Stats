@@ -104,6 +104,7 @@ export type Database = {
           journee: number | null
           phase: 'phase_groupe' | 'quart_finale' | 'demi_finale' | 'finale'
           statut: 'a_venir' | 'en_cours' | 'termine' | 'reporte'
+          forfait: string | null
           score_a: number | null
           score_b: number | null
           buteurs_a: string[] | null
@@ -130,6 +131,10 @@ export type Database = {
           equipe_b: string
           terrain: string
           ordre: string | null
+          score_a: number | null
+          score_b: number | null
+          statut: string
+          forfait: string | null
           created_at: string
           updated_at: string
           equipe_a_info?: Database['public']['Tables']['equipes']['Row'] | null

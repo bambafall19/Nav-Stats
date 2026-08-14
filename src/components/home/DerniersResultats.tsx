@@ -62,11 +62,12 @@ export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {matchs.map((match) => {
+            const isForfait = !!match.forfait
             const scoreA = match.score_a ?? 0
             const scoreB = match.score_b ?? 0
-            const isWinA = scoreA > scoreB
-            const isWinB = scoreB > scoreA
-            const draw = scoreA === scoreB
+            const isWinA = isForfait ? match.forfait === 'b' : scoreA > scoreB
+            const isWinB = isForfait ? match.forfait === 'a' : scoreB > scoreA
+            const draw = !isForfait && scoreA === scoreB
             const matchDate = new Date(match.date_match)
 
             return (
@@ -110,20 +111,29 @@ export default function DerniersResultats({ matchs }: { matchs: Match[] }) {
                   <div style={{
                     display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0,
                     padding: '5px 12px', borderRadius: 12,
-                    background: draw ? 'var(--color-bg-secondary)' : 'rgba(42,255,160,0.08)',
-                    border: `1px solid ${draw ? 'var(--color-border-subtle)' : 'rgba(42,255,160,0.15)'}`,
+                    background: isForfait ? 'rgba(255,201,77,0.1)' : draw ? 'var(--color-bg-secondary)' : 'rgba(42,255,160,0.08)',
+                    border: `1px solid ${isForfait ? 'rgba(255,201,77,0.35)' : draw ? 'var(--color-border-subtle)' : 'rgba(42,255,160,0.15)'}`,
                   }}>
-                    <span style={{
-                      fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.9rem',
-                      color: isWinA ? 'var(--color-primary)' : 'var(--color-text-primary)',
-                      lineHeight: 1,
-                    }}>{scoreA}</span>
-                    <span style={{ color: 'var(--color-text-muted)', fontWeight: 600, fontSize: '0.5rem' }}>–</span>
-                    <span style={{
-                      fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.9rem',
-                      color: isWinB ? 'var(--color-primary)' : 'var(--color-text-primary)',
-                      lineHeight: 1,
-                    }}>{scoreB}</span>
+                    {isForfait ? (
+                      <span style={{
+                        fontSize: '0.62rem', fontWeight: 900, color: 'var(--color-accent)',
+                        fontFamily: 'var(--font-plus-jakarta)', letterSpacing: '0.03em', whiteSpace: 'nowrap',
+                      }}>
+                        FORFAIT
+                      </span>
+                    ) : (<>
+                      <span style={{
+                        fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.9rem',
+                        color: isWinA ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                        lineHeight: 1,
+                      }}>{scoreA}</span>
+                      <span style={{ color: 'var(--color-text-muted)', fontWeight: 600, fontSize: '0.5rem' }}>–</span>
+                      <span style={{
+                        fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.9rem',
+                        color: isWinB ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                        lineHeight: 1,
+                      }}>{scoreB}</span>
+                    </>)}
                   </div>
 
                   <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }}>

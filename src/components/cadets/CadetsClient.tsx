@@ -454,25 +454,62 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
                                 </span>
                               </div>
 
-                              {/* VS Badge */}
-                              <div style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: '50%',
-                                background: 'linear-gradient(135deg, #E8002D, #ff6b6b)',
-                                color: 'white',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '0.6rem',
-                                fontWeight: 900,
-                                fontFamily: 'var(--font-plus-jakarta)',
-                                boxShadow: '0 2px 10px rgba(232,0,45,0.3)',
-                                flexShrink: 0,
-                                letterSpacing: '0.02em',
-                              }}>
-                                VS
-                              </div>
+                              {/* VS / Score / Forfait */}
+                              {match.statut === 'termine' && match.forfait ? (
+                                <span style={{
+                                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                                  padding: '6px 10px', borderRadius: 'var(--radius-md)',
+                                  background: 'rgba(255,201,77,0.12)', border: '1px solid rgba(255,201,77,0.35)',
+                                  color: 'var(--color-accent)', fontSize: '0.6rem', fontWeight: 900,
+                                  fontFamily: 'var(--font-plus-jakarta)', letterSpacing: '0.02em',
+                                  flexShrink: 0, textAlign: 'center', lineHeight: 1.2,
+                                }}>
+                                  FORFAIT
+                                </span>
+                              ) : match.statut === 'termine' && match.score_a != null ? (
+                                <div style={{
+                                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                                  padding: '6px 12px', borderRadius: 'var(--radius-md)',
+                                  background: 'rgba(42,255,160,0.08)', border: '1px solid rgba(42,255,160,0.2)',
+                                  fontFamily: 'var(--font-mono)', fontWeight: 900, fontSize: '0.85rem',
+                                  color: 'var(--color-text-primary)', flexShrink: 0,
+                                }}>
+                                  <span style={{ color: (match.score_a ?? 0) > (match.score_b ?? 0) ? 'var(--color-primary)' : 'var(--color-text-primary)' }}>{match.score_a}</span>
+                                  <span style={{ fontSize: '0.55rem', color: 'var(--color-text-muted)' }}>–</span>
+                                  <span style={{ color: (match.score_b ?? 0) > (match.score_a ?? 0) ? 'var(--color-primary)' : 'var(--color-text-primary)' }}>{match.score_b}</span>
+                                </div>
+                              ) : match.statut === 'en_cours' ? (
+                                <span style={{
+                                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                                  padding: '5px 10px', borderRadius: 'var(--radius-full)',
+                                  background: 'rgba(232,0,45,0.1)', border: '1px solid rgba(232,0,45,0.3)',
+                                  color: 'var(--color-red)', fontSize: '0.55rem', fontWeight: 800,
+                                  fontFamily: 'var(--font-plus-jakarta)', letterSpacing: '0.04em',
+                                  flexShrink: 0, whiteSpace: 'nowrap',
+                                }}>
+                                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-red)', animation: 'cadetLivePulse 1.4s infinite' }} />
+                                  DIRECT
+                                </span>
+                              ) : (
+                                <div style={{
+                                  width: 30,
+                                  height: 30,
+                                  borderRadius: '50%',
+                                  background: 'linear-gradient(135deg, #E8002D, #ff6b6b)',
+                                  color: 'white',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: '0.6rem',
+                                  fontWeight: 900,
+                                  fontFamily: 'var(--font-plus-jakarta)',
+                                  boxShadow: '0 2px 10px rgba(232,0,45,0.3)',
+                                  flexShrink: 0,
+                                  letterSpacing: '0.02em',
+                                }}>
+                                  VS
+                                </div>
+                              )}
 
                               {/* Équipe B */}
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, justifyContent: 'flex-end' }}>
@@ -551,6 +588,10 @@ export default function CadetsClient({ cadetMatches, equipesList, journees }: Ca
       </div>
 
       <style>{`
+        @keyframes cadetLivePulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
         .journee-section {
           scroll-margin-top: 140px;
         }

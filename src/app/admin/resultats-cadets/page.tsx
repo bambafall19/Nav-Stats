@@ -1,27 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { Database } from '@/types/database.types'
+import type { CadetMatch, CadetEquipe } from '@/lib/cadets'
 
-type Equipe = Database['public']['Tables']['equipes']['Row']
-type EquipeUpdate = Database['public']['Tables']['equipes']['Update']
-type Match = Database['public']['Tables']['matchs']['Row'] & {
-  equipe_a: Equipe; equipe_b: Equipe
+type CadetMatchWithTeams = CadetMatch & {
+  equipe_a_info?: CadetEquipe | null
+  equipe_b_info?: CadetEquipe | null
 }
 
-type ResultStat = 'victoire' | 'nul' | 'defaite'
-
-function resultFor(scoreFor: number, scoreAgainst: number): ResultStat {
-  if (scoreFor > scoreAgainst) return 'victoire'
-  if (scoreFor < scoreAgainst) return 'defaite'
-  return 'nul'
-}
-
-export default function AdminResultats() {
+export default function AdminResultatsCadets() {
   const supabase = createClient() as any
-  const [matchs, setMatchs] = useState<Match[]>([])
-  const [selected, setSelected] = useState<Match | null>(null)
+  const [matchs, setMatchs] = useState<CadetMatchWithTeams[]>([])
+  const [selected, setSelected] = useState<CadetMatchWithTeams | null>(null)
   const [scoreA, setScoreA] = useState('')
   const [scoreB, setScoreB] = useState('')
   const [forfaitSide, setForfaitSide] = useState('')
@@ -33,29 +24,33 @@ export default function AdminResultats() {
 
   const loadMatchs = () =>
     supabase
-      .from('matchs')
-      .select(`*, equipe_a:equipes!matchs_equipe_a_id_fkey(*), equipe_b:equipes!matchs_equipe_b_id_fkey(*)`)
-      .in('statut', ['a_venir', 'en_cours', 'termine'])
+      .from('cadet_matchs')
+      .select(`
+        id, journee, date_match, poule, terrain, ordre, equipe_a_id, equipe_b_id,
+        equipe_a, equipe_b, score_a, score_b, statut, forfait,
+        equipe_a_info:equipes!cadet_matchs_equipe_a_id_fkey(id, nom, sigle, couleur_principale),
+        equipe_b_info:equipes!cadet_matchs_equipe_b_id_fkey(id, nom, sigle, couleur_principale)
+      `)
+      .order('journee')
       .order('date_match')
-      .then((res: { data: Match[] | null }) => {
+      .order('ordre')
+      .then((res: { data: CadetMatchWithTeams[] | null }) => {
         const data = res.data || []
         setMatchs(data)
 
-        // Initialiser les scores du direct
         setLiveScores(prev => {
           const next = { ...prev }
-          data.forEach((m: Match) => {
+          data.forEach((m: CadetMatchWithTeams) => {
             if (m.statut === 'en_cours') {
-              next[m.id] = { a: m.score_a ?? 0, b: m.score_b ?? 0 }
+              next[m.id!] = { a: m.score_a ?? 0, b: m.score_b ?? 0 }
             }
           })
           return next
         })
 
-        // Présélection via ?match=xxx (lien du dashboard admin)
         const id = new URLSearchParams(window.location.search).get('match')
         if (id) {
-          const m = data.find((x: Match) => x.id === id)
+          const m = data.find((x: CadetMatchWithTeams) => x.id === id)
           if (m) {
             setSelected(m)
             setScoreA(m.score_a != null ? String(m.score_a) : '')
@@ -73,133 +68,18 @@ export default function AdminResultats() {
 
   const pending = matchs.filter(m => m.statut !== 'termine' || (!m.forfait && (m.score_a === null || m.score_b === null)))
   const valides = matchs.filter(m => m.statut === 'termine' && (m.forfait || (m.score_a !== null && m.score_b !== null)))
+  const liveMatchs = matchs.filter(m => m.statut === 'en_cours')
 
-  async function reverseForfaitStats(m: Match, forfaitSide: string) {
-    const winner = forfaitSide === 'a' ? m.equipe_b : m.equipe_a
-    const loser = forfaitSide === 'a' ? m.equipe_a : m.equipe_b
-    const { data: eqWinner } = await supabase.from('equipes').select('*').eq('id', winner.id).single()
-    const { data: eqLoser } = await supabase.from('equipes').select('*').eq('id', loser.id).single()
-
-    if (eqWinner) {
-      const up: EquipeUpdate = {
-        matchs_joues: Math.max(0, (eqWinner.matchs_joues || 0) - 1),
-        victoires: Math.max(0, (eqWinner.victoires || 0) - 1),
-      }
-      up.points_classement = (up.victoires || 0) * 3 + (eqWinner.nuls || 0)
-      await supabase.from('equipes').update(up).eq('id', eqWinner.id)
-    }
-
-    if (eqLoser) {
-      const up: EquipeUpdate = {
-        matchs_joues: Math.max(0, (eqLoser.matchs_joues || 0) - 1),
-        defaites: Math.max(0, (eqLoser.defaites || 0) - 1),
-      }
-      up.points_classement = (eqLoser.victoires || 0) * 3 + (eqLoser.nuls || 0)
-      await supabase.from('equipes').update(up).eq('id', eqLoser.id)
-    }
+  const teamName = (m: CadetMatchWithTeams, side: 'a' | 'b') => {
+    const info = side === 'a' ? m.equipe_a_info : m.equipe_b_info
+    const raw = side === 'a' ? m.equipe_a : m.equipe_b
+    return info?.nom || raw
   }
 
-  async function reverseStats(m: Match) {
-    if (m.forfait) {
-      await reverseForfaitStats(m, m.forfait)
-      return
-    }
-    const sA = m.score_a ?? 0
-    const sB = m.score_b ?? 0
-    const { data: eqA } = await supabase.from('equipes').select('*').eq('id', m.equipe_a_id).single()
-    const { data: eqB } = await supabase.from('equipes').select('*').eq('id', m.equipe_b_id).single()
-
-    if (eqA) {
-      const res = resultFor(sA, sB)
-      const up: EquipeUpdate = {
-        matchs_joues: Math.max(0, (eqA.matchs_joues || 0) - 1),
-        buts_marques: Math.max(0, (eqA.buts_marques || 0) - sA),
-        buts_encaisses: Math.max(0, (eqA.buts_encaisses || 0) - sB),
-      }
-      if (res === 'victoire') up.victoires = Math.max(0, (eqA.victoires || 0) - 1)
-      else if (res === 'nul') up.nuls = Math.max(0, (eqA.nuls || 0) - 1)
-      else up.defaites = Math.max(0, (eqA.defaites || 0) - 1)
-      up.points_classement = (up.victoires || 0) * 3 + (up.nuls || 0)
-      await supabase.from('equipes').update(up).eq('id', eqA.id)
-    }
-
-    if (eqB) {
-      const res = resultFor(sB, sA)
-      const up: EquipeUpdate = {
-        matchs_joues: Math.max(0, (eqB.matchs_joues || 0) - 1),
-        buts_marques: Math.max(0, (eqB.buts_marques || 0) - sB),
-        buts_encaisses: Math.max(0, (eqB.buts_encaisses || 0) - sA),
-      }
-      if (res === 'victoire') up.victoires = Math.max(0, (eqB.victoires || 0) - 1)
-      else if (res === 'nul') up.nuls = Math.max(0, (eqB.nuls || 0) - 1)
-      else up.defaites = Math.max(0, (eqB.defaites || 0) - 1)
-      up.points_classement = (up.victoires || 0) * 3 + (up.nuls || 0)
-      await supabase.from('equipes').update(up).eq('id', eqB.id)
-    }
-  }
-
-  async function applyForfaitStats(m: Match, forfaitSide: string) {
-    const winner = forfaitSide === 'a' ? m.equipe_b : m.equipe_a
-    const loser = forfaitSide === 'a' ? m.equipe_a : m.equipe_b
-    const { data: eqWinner } = await supabase.from('equipes').select('*').eq('id', winner.id).single()
-    const { data: eqLoser } = await supabase.from('equipes').select('*').eq('id', loser.id).single()
-
-    if (eqWinner) {
-      const up: EquipeUpdate = {
-        matchs_joues: (eqWinner.matchs_joues || 0) + 1,
-        victoires: (eqWinner.victoires || 0) + 1,
-      }
-      up.points_classement = (up.victoires || 0) * 3 + (eqWinner.nuls || 0)
-      await supabase.from('equipes').update(up).eq('id', eqWinner.id)
-    }
-
-    if (eqLoser) {
-      const up: EquipeUpdate = {
-        matchs_joues: (eqLoser.matchs_joues || 0) + 1,
-        defaites: (eqLoser.defaites || 0) + 1,
-      }
-      up.points_classement = (eqLoser.victoires || 0) * 3 + (eqLoser.nuls || 0)
-      await supabase.from('equipes').update(up).eq('id', eqLoser.id)
-    }
-  }
-
-  async function applyStats(m: Match, sA: number, sB: number) {
-    const { data: eqA } = await supabase.from('equipes').select('*').eq('id', m.equipe_a_id).single()
-    const { data: eqB } = await supabase.from('equipes').select('*').eq('id', m.equipe_b_id).single()
-
-    if (eqA) {
-      const res = resultFor(sA, sB)
-      const up: EquipeUpdate = {
-        matchs_joues: (eqA.matchs_joues || 0) + 1,
-        buts_marques: (eqA.buts_marques || 0) + sA,
-        buts_encaisses: (eqA.buts_encaisses || 0) + sB,
-      }
-      if (res === 'victoire') up.victoires = (eqA.victoires || 0) + 1
-      else if (res === 'nul') up.nuls = (eqA.nuls || 0) + 1
-      else up.defaites = (eqA.defaites || 0) + 1
-      up.points_classement = (up.victoires || 0) * 3 + (up.nuls || 0)
-      await supabase.from('equipes').update(up).eq('id', eqA.id)
-    }
-
-    if (eqB) {
-      const res = resultFor(sB, sA)
-      const up: EquipeUpdate = {
-        matchs_joues: (eqB.matchs_joues || 0) + 1,
-        buts_marques: (eqB.buts_marques || 0) + sB,
-        buts_encaisses: (eqB.buts_encaisses || 0) + sA,
-      }
-      if (res === 'victoire') up.victoires = (eqB.victoires || 0) + 1
-      else if (res === 'nul') up.nuls = (eqB.nuls || 0) + 1
-      else up.defaites = (eqB.defaites || 0) + 1
-      up.points_classement = (up.victoires || 0) * 3 + (up.nuls || 0)
-      await supabase.from('equipes').update(up).eq('id', eqB.id)
-    }
-  }
-
-  async function finalizeMatch(m: Match, scoreAInt: number, scoreBInt: number, forfait: string = '') {
+  async function finalizeMatch(m: CadetMatchWithTeams, scoreAInt: number, scoreBInt: number, forfait: string = '') {
     const isForfait = !!forfait
     const { error } = await supabase
-      .from('matchs')
+      .from('cadet_matchs')
       .update({
         statut: 'termine',
         forfait: isForfait ? forfait : null,
@@ -209,25 +89,9 @@ export default function AdminResultats() {
       .eq('id', m.id)
 
     if (!error) {
-      try {
-        // Annule l'ancien résultat s'il existait, puis applique le nouveau
-        if (m.statut === 'termine' && (m.score_a !== null || m.forfait)) {
-          await reverseStats(m)
-        }
-        if (isForfait) {
-          await applyForfaitStats(m, forfait)
-        } else {
-          await applyStats(m, scoreAInt, scoreBInt)
-        }
-        return isForfait
-          ? `Résultat validé : Forfait — ${forfait === 'a' ? m.equipe_a.nom : m.equipe_b.nom} — Classement mis à jour !`
-          : `Résultat validé : ${m.equipe_a.nom} ${scoreAInt} – ${scoreBInt} ${m.equipe_b.nom} — Classement mis à jour !`
-      } catch (statsError) {
-        console.error('Erreur mise à jour stats:', statsError)
-        return isForfait
-          ? `Résultat validé : Forfait — ${forfait === 'a' ? m.equipe_a.nom : m.equipe_b.nom}`
-          : `Résultat validé : ${m.equipe_a.nom} ${scoreAInt} – ${scoreBInt} ${m.equipe_b.nom}`
-      }
+      return isForfait
+        ? `Résultat cadet validé : Forfait — ${teamName(m, forfait === 'a' ? 'a' : 'b')}`
+        : `Résultat cadet validé : ${teamName(m, 'a')} ${scoreAInt} – ${scoreBInt} ${teamName(m, 'b')}`
     }
     return null
   }
@@ -235,7 +99,6 @@ export default function AdminResultats() {
   async function handleValidate() {
     if (!selected) return
     setLoading(true)
-
     const scoreAInt = parseInt(scoreA) || 0
     const scoreBInt = parseInt(scoreB) || 0
 
@@ -248,53 +111,50 @@ export default function AdminResultats() {
     setLoading(false)
   }
 
-  // ===== Scores en direct =====
-  const liveMatchs = matchs.filter(m => m.statut === 'en_cours')
-
-  const stepLive = (m: Match, team: 'a' | 'b', delta: number) => {
+  const stepLive = (m: CadetMatchWithTeams, team: 'a' | 'b', delta: number) => {
     setLiveScores(prev => {
-      const cur = prev[m.id] || { a: m.score_a ?? 0, b: m.score_b ?? 0 }
-      const next = { ...prev, [m.id]: { ...cur } }
-      next[m.id][team] = Math.max(0, cur[team] + delta)
+      const cur = prev[m.id!] || { a: m.score_a ?? 0, b: m.score_b ?? 0 }
+      const next = { ...prev, [m.id!]: { ...cur } }
+      next[m.id!][team] = Math.max(0, cur[team] + delta)
       return next
     })
   }
 
-  async function saveLiveScore(m: Match) {
-    const s = liveScores[m.id]
+  async function saveLiveScore(m: CadetMatchWithTeams) {
+    const s = liveScores[m.id!]
     if (!s) return
-    setSavingId(m.id)
+    setSavingId(m.id!)
     const { error } = await supabase
-      .from('matchs')
+      .from('cadet_matchs')
       .update({ score_a: s.a, score_b: s.b })
       .eq('id', m.id)
     if (!error) {
-      setSuccess(`Score en direct mis à jour : ${m.equipe_a.nom} ${s.a} – ${s.b} ${m.equipe_b.nom}`)
+      setSuccess(`Score en direct mis à jour : ${teamName(m, 'a')} ${s.a} – ${s.b} ${teamName(m, 'b')}`)
     }
     setSavingId(null)
   }
 
-  async function finishLive(m: Match) {
-    const s = liveScores[m.id] || { a: m.score_a ?? 0, b: m.score_b ?? 0 }
-    setSavingId(m.id)
+  async function finishLive(m: CadetMatchWithTeams) {
+    const s = liveScores[m.id!] || { a: m.score_a ?? 0, b: m.score_b ?? 0 }
+    setSavingId(m.id!)
     const msg = await finalizeMatch(m, s.a, s.b)
     if (msg) {
       setSuccess(msg)
-      setLiveScores(prev => { const next = { ...prev }; delete next[m.id]; return next })
+      setLiveScores(prev => { const next = { ...prev }; delete next[m.id!]; return next })
       await loadMatchs()
     }
     setSavingId(null)
   }
 
-  const selectMatch = (m: Match) => {
+  const selectMatch = (m: CadetMatchWithTeams) => {
     setSelected(m)
     setScoreA(m.score_a != null ? String(m.score_a) : '')
     setScoreB(m.score_b != null ? String(m.score_b) : '')
     setForfaitSide(m.forfait || '')
   }
 
-  const renderRow = (m: Match, i: number, isPending: boolean) => (
-    <div key={m.id}
+  const renderRow = (m: CadetMatchWithTeams, i: number, isPending: boolean) => (
+    <div key={m.id || `${m.journee}-${m.date_match}-${m.equipe_a}-${m.equipe_b}`}
       style={{
         padding: '16px 20px',
         borderBottom: i < (isPending ? pending : valides).length - 1 ? '1px solid var(--color-border)' : 'none',
@@ -309,12 +169,19 @@ export default function AdminResultats() {
       onMouseOut={e => { if (selected?.id !== m.id) e.currentTarget.style.background = 'transparent' }}
     >
       <div>
-        <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: 4 }}>
-          {m.equipe_a.nom} vs {m.equipe_b.nom}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 600, fontSize: '0.9rem', marginBottom: 4 }}>
+          <span style={{
+            fontSize: '0.68rem', fontWeight: 800, color: 'var(--color-text-muted)',
+            background: 'var(--color-surface)', border: '1px solid var(--color-border)',
+            borderRadius: 6, padding: '2px 7px', flexShrink: 0,
+          }}>
+            J{m.journee} · {m.poule}
+          </span>
+          <span>{teamName(m, 'a')} vs {teamName(m, 'b')}</span>
         </div>
         <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-          {new Date(m.date_match).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
-          {m.heure_match && ` à ${m.heure_match.slice(0, 5)}`}
+          {new Date(`${m.date_match}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+          {m.terrain && ` · ${m.terrain}`}
           {m.statut === 'en_cours' && <span className="status-live" style={{ marginLeft: 8, display: 'inline-flex' }}>LIVE</span>}
         </div>
       </div>
@@ -327,7 +194,7 @@ export default function AdminResultats() {
           background: 'rgba(255,201,77,0.12)', border: '1px solid rgba(255,201,77,0.35)',
           color: 'var(--color-accent)', fontWeight: 800, fontSize: '0.75rem',
         }}>
-          Forfait {m.forfait === 'a' ? m.equipe_a.nom : m.equipe_b.nom}
+          Forfait {teamName(m, m.forfait === 'a' ? 'a' : 'b')}
         </span>
       ) : (
         <span style={{
@@ -346,22 +213,22 @@ export default function AdminResultats() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 8 }}>
-        <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.8rem', fontWeight: 800 }}>✅ Valider Résultats</h1>
+        <h1 style={{ fontFamily: 'var(--font-plus-jakarta)', fontSize: '1.8rem', fontWeight: 800 }}>👶 Résultats Cadets</h1>
         <div style={{ display: 'inline-flex', padding: 4, borderRadius: 999, background: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)' }}>
+          <a href="/admin/resultats" style={{
+            display: 'inline-flex', alignItems: 'center', padding: '6px 16px', borderRadius: 999,
+            color: 'var(--color-text-secondary)', fontWeight: 700, fontSize: '0.8rem', textDecoration: 'none',
+            fontFamily: 'var(--font-plus-jakarta)',
+          }}>⚽ Seniors</a>
           <span style={{
             display: 'inline-flex', alignItems: 'center', padding: '6px 16px', borderRadius: 999,
             background: 'var(--gradient-green)', color: 'white', fontWeight: 800, fontSize: '0.8rem',
             fontFamily: 'var(--font-plus-jakarta)',
-          }}>⚽ Seniors</span>
-          <a href="/admin/resultats-cadets" style={{
-            display: 'inline-flex', alignItems: 'center', padding: '6px 16px', borderRadius: 999,
-            color: 'var(--color-text-secondary)', fontWeight: 700, fontSize: '0.8rem', textDecoration: 'none',
-            fontFamily: 'var(--font-plus-jakarta)',
-          }}>👶 Cadets</a>
+          }}>👶 Cadets</span>
         </div>
       </div>
       <p style={{ color: 'var(--color-text-secondary)', marginBottom: 32 }}>
-        Saisissez les scores des matchs terminés — le classement des poules A/B/C se met à jour automatiquement
+        Saisissez rapidement les scores des rencontres cadettes (poules A/B/C)
       </p>
 
       {success && (
@@ -384,7 +251,7 @@ export default function AdminResultats() {
               boxShadow: '0 0 0 0 rgba(255,77,90,0.7)', animation: 'livePulse 1.4s infinite',
             }} />
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--color-text-primary)' }}>Scores en direct</div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--color-text-primary)' }}>Scores en direct — Cadets</div>
               <div style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)' }}>
                 {liveMatchs.length} match{liveMatchs.length > 1 ? 's' : ''} en cours — ajustez les scores en temps réel
               </div>
@@ -393,7 +260,7 @@ export default function AdminResultats() {
 
           <div style={{ display: 'grid', gap: 12, padding: 16 }} className="live-grid">
             {liveMatchs.map(m => {
-              const s = liveScores[m.id] || { a: m.score_a ?? 0, b: m.score_b ?? 0 }
+              const s = liveScores[m.id!] || { a: m.score_a ?? 0, b: m.score_b ?? 0 }
               const busy = savingId === m.id
               return (
                 <div key={m.id} style={{
@@ -403,7 +270,7 @@ export default function AdminResultats() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
                     <span className="status-live" style={{ display: 'inline-flex' }}>LIVE</span>
                     <span style={{ fontSize: '0.74rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-                      {m.equipe_a.nom} vs {m.equipe_b.nom}
+                      {teamName(m, 'a')} vs {teamName(m, 'b')}
                     </span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 12, alignItems: 'center' }}>
@@ -453,7 +320,7 @@ export default function AdminResultats() {
           </div>
 
           <h2 style={{ fontWeight: 700, marginBottom: 16, fontSize: '1rem' }}>
-            {tab === 'attente' ? 'Matchs en attente' : 'Résultats validés'}
+            {tab === 'attente' ? 'Matchs cadets en attente' : 'Résultats cadets validés'}
           </h2>
           <div className="card" style={{ overflow: 'hidden' }}>
             {list.length === 0 ? (
@@ -463,8 +330,8 @@ export default function AdminResultats() {
                 </div>
                 <p>
                   {tab === 'attente'
-                    ? 'Tous les matchs ont leur résultat'
-                    : 'Aucun résultat validé pour le moment'}
+                    ? 'Tous les matchs cadets ont leur résultat'
+                    : 'Aucun résultat cadet validé pour le moment'}
                 </p>
               </div>
             ) : list.map((m, i) => renderRow(m, i, tab === 'attente'))}
@@ -472,7 +339,7 @@ export default function AdminResultats() {
 
           {tab === 'valides' && valides.length > 0 && (
             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: 12 }}>
-              💡 Cliquez sur un résultat pour corriger le score — le classement sera recalculé.
+              💡 Cliquez sur un résultat pour corriger le score.
             </p>
           )}
         </div>
@@ -487,8 +354,11 @@ export default function AdminResultats() {
               <div style={{ textAlign: 'center', marginBottom: 24 }}>
                 <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: 8 }}>Match sélectionné</p>
                 <h3 style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--color-primary)' }}>
-                  {selected.equipe_a.nom} vs {selected.equipe_b.nom}
+                  {teamName(selected, 'a')} vs {teamName(selected, 'b')}
                 </h3>
+                <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', marginTop: 4 }}>
+                  Journée {selected.journee} · Poule {selected.poule} · {selected.terrain}
+                </p>
               </div>
 
               {/* Option Forfait */}
@@ -513,7 +383,7 @@ export default function AdminResultats() {
                       cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta)',
                     }}
                   >
-                    Forfait {selected.equipe_a.nom}
+                    Forfait {teamName(selected, 'a')}
                   </button>
                   <button
                     type="button"
@@ -531,12 +401,12 @@ export default function AdminResultats() {
                       cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta)',
                     }}
                   >
-                    Forfait {selected.equipe_b.nom}
+                    Forfait {teamName(selected, 'b')}
                   </button>
                 </div>
                 {forfaitSide && (
                   <p style={{ fontSize: '0.72rem', color: 'var(--color-accent)', marginTop: 8, fontWeight: 600 }}>
-                    🚩 {forfaitSide === 'a' ? selected.equipe_a.nom : selected.equipe_b.nom} déclare forfait — {forfaitSide === 'a' ? selected.equipe_b.nom : selected.equipe_a.nom} gagne sans buts.
+                    🚩 {teamName(selected, forfaitSide === 'a' ? 'a' : 'b')} déclare forfait — {teamName(selected, forfaitSide === 'a' ? 'b' : 'a')} gagne sans buts.
                   </p>
                 )}
               </div>
@@ -546,7 +416,7 @@ export default function AdminResultats() {
                 opacity: forfaitSide ? 0.4 : 1, pointerEvents: forfaitSide ? 'none' : 'auto',
               }}>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: 8 }}>{selected.equipe_a.nom}</div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: 8 }}>{teamName(selected, 'a')}</div>
                   <input
                     type="number" min="0" max="20"
                     value={scoreA}
@@ -554,12 +424,12 @@ export default function AdminResultats() {
                     className="input"
                     style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 900, height: 72, fontFamily: 'var(--font-plus-jakarta)' }}
                     placeholder="0"
-                    id="admin-score-a"
+                    id="admin-cadet-score-a"
                   />
                 </div>
                 <div style={{ fontFamily: 'var(--font-plus-jakarta)', fontWeight: 900, fontSize: '1.5rem', color: 'var(--color-text-muted)', textAlign: 'center', paddingTop: 24 }}>—</div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: 8 }}>{selected.equipe_b.nom}</div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: 8 }}>{teamName(selected, 'b')}</div>
                   <input
                     type="number" min="0" max="20"
                     value={scoreB}
@@ -567,7 +437,7 @@ export default function AdminResultats() {
                     className="input"
                     style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 900, height: 72, fontFamily: 'var(--font-plus-jakarta)' }}
                     placeholder="0"
-                    id="admin-score-b"
+                    id="admin-cadet-score-b"
                   />
                 </div>
               </div>
@@ -579,20 +449,20 @@ export default function AdminResultats() {
                   className="btn btn-primary"
                   style={{ flex: 2 }}
                   disabled={loading || (forfaitSide ? false : (!scoreA || !scoreB))}
-                  id="validate-result-btn"
+                  id="validate-cadet-result-btn"
                 >
                   {loading ? '⏳ Validation...' : forfaitSide ? '🚩 Valider le Forfait' : selected.statut === 'termine' ? '🔄 Corriger le Résultat' : '✅ Valider le Résultat'}
                 </button>
               </div>
 
               <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'center', marginTop: 16 }}>
-                ⚠️ La validation mettra à jour automatiquement les stats des équipes dans les poules A/B/C
+                ⚠️ Le match sera marqué « Terminé » dans le calendrier public.
               </p>
             </div>
           ) : (
             <div className="card" style={{ padding: 48, textAlign: 'center', color: 'var(--color-text-muted)' }}>
               <div style={{ fontSize: '3rem', marginBottom: 12 }}>👆</div>
-              <p style={{ fontSize: '0.9rem' }}>Sélectionnez un match à gauche pour saisir son score</p>
+              <p style={{ fontSize: '0.9rem' }}>Sélectionnez un match cadet à gauche pour saisir son score</p>
             </div>
           )}
         </div>

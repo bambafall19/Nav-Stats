@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Search, X } from 'lucide-react'
+import { Search, X, LayoutDashboard } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import NotificationBell from '@/components/shared/NotificationBell'
@@ -103,6 +103,24 @@ export default function MobileHeader() {
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
             <ThemeToggle compact />
             <LanguageSwitcher compact />
+
+            {profile?.is_admin && (
+              <Link href="/admin" aria-label="Administration" style={{
+                width: 44, height: 44, borderRadius: '50%',
+                border: '1px solid rgba(255,201,77,0.25)',
+                background: 'rgba(255,201,77,0.12)',
+                color: 'var(--color-accent)',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                textDecoration: 'none', flexShrink: 0,
+                transition: 'transform 0.2s ease, background 0.2s ease',
+              }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,201,77,0.2)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,201,77,0.12)'}
+              >
+                <LayoutDashboard size={20} />
+              </Link>
+            )}
 
             <button
               onClick={() => setSearchOpen(!searchOpen)}

@@ -1,9 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import {
-  LayoutDashboard, Shield, Users, Target, Calendar, Trophy,
-  CheckCircle, UserCheck, Newspaper, Bell, ArrowLeft, BarChart3, Handshake, Flag,
-} from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
+import AdminMobileNav from '@/components/admin/AdminMobileNav'
+import { adminLinks } from '@/lib/adminLinks'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -15,23 +14,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   if (!profile?.is_admin) redirect('/')
 
-  const adminLinks = [
-    { href: '/admin', icon: LayoutDashboard, label: 'Tableau de bord' },
-    { href: '/admin/equipes', icon: Shield, label: 'Équipes' },
-    { href: '/admin/joueurs', icon: UserCheck, label: 'Joueurs' },
-    { href: '/admin/matchs', icon: Target, label: 'Matchs' },
-    { href: '/admin/cadets', icon: Calendar, label: 'Cadets' },
-    { href: '/admin/classements', icon: Trophy, label: 'Classements' },
-    { href: '/admin/resultats', icon: CheckCircle, label: 'Résultats' },
-    { href: '/admin/reports', icon: Flag, label: 'Reports' },
-    { href: '/admin/utilisateurs', icon: Users, label: 'Utilisateurs' },
-    { href: '/admin/actualites', icon: Newspaper, label: 'Actualités' },
-    { href: '/admin/partenaires', icon: Handshake, label: 'Partenaires' },
-    { href: '/admin/notifications', icon: Bell, label: 'Notifications' },
-  ]
-
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--color-bg-primary)' }}>
+      <AdminMobileNav />
       {/* Sidebar */}
       <aside
         className="admin-sidebar"
@@ -157,7 +142,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         }
         @media (max-width: 768px) {
           .admin-sidebar { display: none !important; }
-          .admin-main { margin-left: 0 !important; padding: 20px !important; }
+          .admin-main { margin-left: 0 !important; padding: 88px 16px 24px !important; }
         }
       `}</style>
     </div>

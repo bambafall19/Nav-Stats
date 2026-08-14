@@ -120,6 +120,7 @@ export default async function AdminDashboard() {
   const quickActions = [
     { href: '/admin/matchs', icon: '⚽', label: 'Nouveau match', detail: 'Créer une affiche', color: '#0dca6b' },
     { href: '/admin/resultats', icon: '✅', label: 'Résultats', detail: 'Saisir les scores', color: '#1D4ED8' },
+    { href: '/admin/resultats-cadets', icon: '👶', label: 'Résultats Cadets', detail: 'Saisir les scores cadets', color: '#7C3AED' },
     { href: '/admin/classement', icon: '📊', label: 'Classement', detail: 'Modifier les stats', color: '#B45309' },
     { href: '/admin/notifications', icon: '🔔', label: 'Notifications', detail: 'Alerter la communauté', color: '#7C3AED' },
   ]

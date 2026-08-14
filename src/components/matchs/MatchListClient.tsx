@@ -31,6 +31,7 @@ export interface Match {
   journee: number | null
   phase: 'phase_groupe' | 'quart_finale' | 'demi_finale' | 'finale'
   statut: 'a_venir' | 'en_cours' | 'termine' | 'reporte'
+  forfait: string | null
   score_a: number | null
   score_b: number | null
   equipe_a: Team
@@ -541,8 +542,8 @@ export default function MatchListClient({ initialMatchs }: Props) {
                   {matches.map((m, idx) => {
                     const isDone = m.statut === 'termine'
                     const isLive = m.statut === 'en_cours'
-                    const isWinA = isDone && (m.score_a ?? 0) > (m.score_b ?? 0)
-                    const isWinB = isDone && (m.score_b ?? 0) > (m.score_a ?? 0)
+                    const isWinA = isDone && (m.forfait === 'b' || (!m.forfait && (m.score_a ?? 0) > (m.score_b ?? 0)))
+                    const isWinB = isDone && (m.forfait === 'a' || (!m.forfait && (m.score_b ?? 0) > (m.score_a ?? 0)))
                     const poule = m.equipe_a.poule || 'A'
                     const pouleColor = POULE_COLORS[poule] || '#0dca6b'
                     const shareText = `${m.equipe_a.nom} vs ${m.equipe_b.nom} sur NavéStats\n${new Date(m.date_match).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${m.heure_match?.slice(0, 5)}\nhttps://navestats.site/matchs/${m.id}`
@@ -595,7 +596,18 @@ export default function MatchListClient({ initialMatchs }: Props) {
                           <div style={{
                             minWidth: 62, textAlign: 'center', flexShrink: 0,
                           }}>
-                            {isDone || isLive ? (
+                            {isDone && m.forfait ? (
+                              <span style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 4,
+                                padding: '4px 9px', borderRadius: 9,
+                                background: 'rgba(255,201,77,0.12)', border: '1px solid rgba(255,201,77,0.35)',
+                                color: 'var(--color-accent)', fontWeight: 800, fontSize: '0.58rem',
+                                fontFamily: 'var(--font-plus-jakarta)', letterSpacing: '0.02em',
+                                whiteSpace: 'nowrap',
+                              }}>
+                                FORFAIT
+                              </span>
+                            ) : isDone || isLive ? (
                               <div style={{
                                 display: 'inline-flex', alignItems: 'center', gap: 5,
                                 fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '1rem',
